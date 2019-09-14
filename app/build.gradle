@@ -1,0 +1,51 @@
+import com.allsoftdroid.buildsrc.AndroidConfig
+import com.allsoftdroid.buildsrc.BuildTypeDebug
+import com.allsoftdroid.buildsrc.BuildTypeRelease
+import com.allsoftdroid.buildsrc.LibraryDependency
+
+apply plugin: GradlePluginId.ANDROID_APPLICATION
+apply plugin: GradlePluginId.KOTLIN_ANDROID
+apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
+
+android {
+    compileSdkVersion(AndroidConfig.COMPILE_SDK_VERSION)
+    buildToolsVersion(AndroidConfig.BUILD_TOOLS_VERSION)
+
+    defaultConfig {
+        applicationId AndroidConfig.ID
+        minSdkVersion(AndroidConfig.MIN_SDK_VERSION)
+        targetSdkVersion(AndroidConfig.TARGET_SDK_VERSION)
+        versionCode AndroidConfig.VERSION_CODE
+        versionName AndroidConfig.VERSION_NAME
+        testInstrumentationRunner AndroidConfig.TEST_INSTRUMENTATION_RUNNER
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled BuildTypeRelease.isMinifyEnabled
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            minifyEnabled BuildTypeDebug.isMinifyEnabled
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation(LibraryDependency.KOTLIN)
+    implementation(LibraryDependency.APP_COMPACT)
+    implementation(LibraryDependency.CORE_KTX)
+    implementation(LibraryDependency.SUPPORT_CONSTRAINT_LAYOUT)
+
+    testImplementation(TestLibraryDependency.JUNIT)
+    androidTestImplementation(TestLibraryDependency.TEST_RUNNER)
+    androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
+}
