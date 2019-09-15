@@ -1,0 +1,56 @@
+import com.allsoftdroid.buildsrc.AndroidConfig
+import com.allsoftdroid.buildsrc.LibraryDependency
+
+apply plugin: GradlePluginId.ANDROID_DYNAMIC_FEATURE
+apply plugin: GradlePluginId.KOTLIN_ANDROID
+apply plugin: GradlePluginId.KOTLIN_KAPT
+apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
+
+android {
+    compileSdkVersion AndroidConfig.COMPILE_SDK_VERSION
+
+    defaultConfig {
+        minSdkVersion(AndroidConfig.MIN_SDK_VERSION)
+        targetSdkVersion(AndroidConfig.TARGET_SDK_VERSION)
+        versionCode AndroidConfig.VERSION_CODE
+        versionName AndroidConfig.VERSION_NAME
+    }
+
+
+}
+
+dependencies {
+//    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation(project(":app"))
+
+    implementation(LibraryDependency.KOTLIN)
+    implementation(LibraryDependency.APP_COMPACT)
+    implementation(LibraryDependency.CORE_KTX)
+
+
+    implementation(LibraryDependency.FRAGMENT_KTX)
+    implementation(LibraryDependency.SUPPORT_CONSTRAINT_LAYOUT)
+
+    implementation(LibraryDependency.LIFECYCLE_EXTENSIONS)
+    kapt(LibraryDependency.LIFECYCLE_COMPILER)
+
+    implementation(LibraryDependency.LIFECYCLE_VIEW_MODEL_KTX)
+
+    implementation(LibraryDependency.ROOM_KTX)
+    kapt(LibraryDependency.ROOM_COMPILER)
+
+    implementation(LibraryDependency.COROUTINES_CORE)
+    implementation(LibraryDependency.COROUTINES_ANDROID)
+
+    implementation(LibraryDependency.RETROFIT)
+    implementation(LibraryDependency.RETROFIT_SCALARS)
+    implementation(LibraryDependency.RETROFIT_COROUTINES_ADAPTER){
+//        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-common'
+//        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
+    }
+
+    implementation(LibraryDependency.GSON)
+}
+repositories {
+    mavenCentral()
+}
