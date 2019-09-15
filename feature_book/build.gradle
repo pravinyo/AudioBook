@@ -15,8 +15,6 @@ android {
         versionCode AndroidConfig.VERSION_CODE
         versionName AndroidConfig.VERSION_NAME
     }
-
-
 }
 
 dependencies {
@@ -42,15 +40,23 @@ dependencies {
     implementation(LibraryDependency.COROUTINES_CORE)
     implementation(LibraryDependency.COROUTINES_ANDROID)
 
+
     implementation(LibraryDependency.RETROFIT)
     implementation(LibraryDependency.RETROFIT_SCALARS)
-    implementation(LibraryDependency.RETROFIT_COROUTINES_ADAPTER){
-//        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-common'
-//        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
-    }
+    implementation(LibraryDependency.RETROFIT_COROUTINES_ADAPTER)
 
     implementation(LibraryDependency.GSON)
+
+    testImplementation(TestLibraryDependency.JUNIT)
+    testImplementation(TestLibraryDependency.MOCKITO_ANDROID)
+    testImplementation(TestLibraryDependency.MOCKITO_KOTLIN)
+    testImplementation(TestLibraryDependency.COROUTINES_TEST)
+    testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
+    androidTestImplementation(TestLibraryDependency.TEST_RUNNER)
+    androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
+
 }
+
 repositories {
     mavenCentral()
 }
