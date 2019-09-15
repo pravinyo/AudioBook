@@ -4,7 +4,7 @@ private object TestLibraryVersion {
     const val TEST_RUNNER = "1.0.2"
     const val ESPRESSO_CORE = "3.0.2"
     const val MOCKITO = "3.0.0"
-    const val MOCKITO_KOTLIN = "2.1.0"
+    const val MOCKITO_KOTLIN = "2.2.0"
     const val ANDROID_X_TEST = "1.2.0"
 }
 
