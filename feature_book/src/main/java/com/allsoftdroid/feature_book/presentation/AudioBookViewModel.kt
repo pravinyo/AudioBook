@@ -9,7 +9,7 @@ import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
 import kotlinx.coroutines.launch
 
-internal class AudioBookViewModel(
+class AudioBookViewModel(
     private val getAlbumListUseCase: GetAudioBookListUsecase, application: Application
 ) : ViewModel() {
 
