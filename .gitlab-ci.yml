@@ -41,8 +41,12 @@ assembleDebug:
   artifacts:
     paths:
       - app/build/outputs/
-
+  only:
+    - master
+    
 debugTests:
   stage: test
   script:
     - ./gradlew -Pci --console=plain :app:testDebug
+  only:
+    - merge_requests
