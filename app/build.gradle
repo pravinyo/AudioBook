@@ -36,14 +36,24 @@ android {
             targetCompatibility = JavaVersion.VERSION_1_8
         }
     }
+
+    dynamicFeatures = [":feature_book"]
+
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
     implementation(LibraryDependency.KOTLIN)
+    implementation(LibraryDependency.KOTLIN_REFLECT)
+
     implementation(LibraryDependency.APP_COMPACT)
     implementation(LibraryDependency.CORE_KTX)
     implementation(LibraryDependency.SUPPORT_CONSTRAINT_LAYOUT)
+
+    implementation(LibraryDependency.NAVIGATION_FRAGMENT_KTX)
+    implementation(LibraryDependency.NAVIGATION_UI_KTX)
 
     testImplementation(TestLibraryDependency.JUNIT)
     androidTestImplementation(TestLibraryDependency.TEST_RUNNER)

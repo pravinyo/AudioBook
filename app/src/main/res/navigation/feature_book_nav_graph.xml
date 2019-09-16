@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/feature_book_nav_graph"
+    app:startDestination="@+id/AudioBookListFragment">
+
+    <fragment
+        android:id="@+id/AudioBookListFragment"
+        android:name="com.allsoftdroid.feature_book.presentation.AudioBookListFragment"
+        android:label="AudioBookListFragment">
+    </fragment>
+
+</navigation>
