@@ -50,3 +50,4 @@ debugTests:
     - ./gradlew -Pci --console=plain :app:testDebug
   only:
     - merge_requests
+    - master
