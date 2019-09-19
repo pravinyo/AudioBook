@@ -1,53 +1,44 @@
 package com.allsoftdroid.feature_book.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.allsoftdroid.feature_book.R
-import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
-import com.allsoftdroid.feature_book.data.repository.AudioBookRepositoryImpl
-import kotlinx.android.synthetic.main.fragment_audiobook_list.*
+import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
+import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
+import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModelFactory
 
 class AudioBookListFragment : Fragment(){
 
     /**
     Lazily initialize the view model
      */
-    private val viewModel: AudioBookViewModel by lazy {
+    private val booksViewModel: AudioBookListViewModel by lazy {
 
         val activity = requireNotNull(this.activity) {
-            "You can only access the viewModel after onCreated()"
+            "You can only access the booksViewModel after onCreated()"
         }
 
-        ViewModelProviders.of(this, AudioBookViewModelFactory(
-                GetAudioBookListUsecase(AudioBookRepositoryImpl()),
-                activity.application)
+        ViewModelProviders.of(this, AudioBookListViewModelFactory(activity.application))
+            .get(AudioBookListViewModel::class.java)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val binding:FragmentAudiobookListBinding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_audiobook_list,
+            container,
+            false
         )
-            .get(AudioBookViewModel::class.java)
+
+        binding.lifecycleOwner = viewLifecycleOwner
+
+        binding.audioBookListViewModel = booksViewModel
+
+        return binding.root
     }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.fragment_audiobook_list, null).also {
-            Log.i(AudioBookListFragment::class.java.simpleName,"Loading list fragment")
-        }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel.audioBooks.observe(viewLifecycleOwner, Observer {
-          it?.let {
-              it.map {book ->
-                  text.append("${book.title}\n")
-              }
-
-              Log.i(AudioBookListFragment::class.java.simpleName,"Content:$text")
-          }
-        })
-    }
-
 }
