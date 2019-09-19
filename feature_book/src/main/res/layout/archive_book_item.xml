@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="book" type="com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel"/>
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_marginTop="@dimen/card_margin_top"
+        android:layout_marginStart="@dimen/card_margin_top"
+        android:layout_marginEnd="@dimen/card_margin_top"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/item_image"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:minHeight="@dimen/image_min_height"
+                android:adjustViewBounds="true"
+                app:bookImage="@{book}"
+                android:contentDescription="@string/thumbnail"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:id="@+id/item_title"
+                    android:textStyle="bold"
+                    app:bookTitle="@{book}"
+                    android:padding="@dimen/card_padding"/>
+
+                <TextView
+                    android:id="@+id/item_summary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/card_padding"
+                    app:bookDescription="@{book}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</layout>
