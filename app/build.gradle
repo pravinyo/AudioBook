@@ -1,6 +1,7 @@
 import com.allsoftdroid.buildsrc.AndroidConfig
 import com.allsoftdroid.buildsrc.BuildTypeDebug
 import com.allsoftdroid.buildsrc.BuildTypeRelease
+import com.allsoftdroid.buildsrc.DataBinding
 import com.allsoftdroid.buildsrc.LibraryDependency
 
 apply plugin: GradlePluginId.ANDROID_APPLICATION
@@ -38,6 +39,10 @@ android {
     }
 
     dynamicFeatures = [":feature_book"]
+
+    dataBinding{
+        enabled = DataBinding.IS_ENABLED
+    }
 
 
 }
