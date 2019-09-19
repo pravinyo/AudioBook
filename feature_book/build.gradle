@@ -1,4 +1,5 @@
 import com.allsoftdroid.buildsrc.AndroidConfig
+import com.allsoftdroid.buildsrc.DataBinding
 import com.allsoftdroid.buildsrc.LibraryDependency
 
 apply plugin: GradlePluginId.ANDROID_DYNAMIC_FEATURE
@@ -14,6 +15,10 @@ android {
         targetSdkVersion(AndroidConfig.TARGET_SDK_VERSION)
         versionCode AndroidConfig.VERSION_CODE
         versionName AndroidConfig.VERSION_NAME
+    }
+
+    dataBinding{
+        enabled = DataBinding.IS_ENABLED
     }
 }
 
@@ -46,6 +51,12 @@ dependencies {
     implementation(LibraryDependency.RETROFIT_COROUTINES_ADAPTER)
 
     implementation(LibraryDependency.GSON)
+
+    implementation(LibraryDependency.GLIDE)
+    annotationProcessor(LibraryDependency.GLIDE_COMPILER)
+
+    implementation(LibraryDependency.RECYCLER_VIEW)
+    implementation(LibraryDependency.MATERIAL)
 
     testImplementation(TestLibraryDependency.JUNIT)
     testImplementation(TestLibraryDependency.MOCKITO_ANDROID)
