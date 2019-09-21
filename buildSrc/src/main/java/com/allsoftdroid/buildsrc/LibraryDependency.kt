@@ -21,7 +21,6 @@ private object LibraryVersion {
     const val CONSTRAINT_LAYOUT = "1.1.3"
     const val CORE_KTX = "1.0.2"
     const val FRAGMENT_KTX = "1.1.0-beta01"
-    const val LIFECYCLE = "1.1.1"
     const val LIFECYCLE_VIEW_MODEL_KTX = "2.2.0-alpha01"
     const val COIL = "0.6.1"
     const val K_ANDROID = "0.8.8@aar"
@@ -58,7 +57,7 @@ object LibraryDependency {
     const val COROUTINES_ANDROID = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${CoreVersion.COROUTINES_ANDROID}"
 
     const val CORE_KTX = "androidx.core:core-ktx:${LibraryVersion.CORE_KTX}"
-    const val FRAGMENT_KTX = "androidx.fragment:fragment-ktx:${LibraryVersion.FRAGMENT_KTX}"
+    const val FRAGMENT_KTX = "androidx.fragment:fragment:${LibraryVersion.FRAGMENT_KTX}"
 
     const val LIFECYCLE_EXTENSIONS = "androidx.lifecycle:lifecycle-extensions:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
     const val LIFECYCLE_COMPILER ="androidx.lifecycle:lifecycle-compiler:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
