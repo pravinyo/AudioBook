@@ -3,6 +3,7 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val GLIDE = "4.9.0"
     const val ROOM = "2.1.0-rc01"
     const val version_retrofit_coroutines_adapter = "0.9.2"
     const val GSON = "2.8.5"
@@ -13,14 +14,13 @@ private object LibraryVersion {
     const val TIMBER = "4.7.1"
     const val PLAY_CORE = "1.6.1"
     const val APP_COMPACT = "1.0.2"
-    const val RECYCLER_VIEW = "1.0.0"
+    const val RECYCLER_VIEW = "1.1.0-beta04"
     const val COORDINATOR_LAYOUT = "1.0.0"
     // 1.1.x version is required in order to support the dark theme functionality in Android Q (adds Theme.MaterialComponents.DayNight)
     const val MATERIAL = "1.1.0-alpha09"
     const val CONSTRAINT_LAYOUT = "1.1.3"
     const val CORE_KTX = "1.0.2"
     const val FRAGMENT_KTX = "1.1.0-beta01"
-    const val LIFECYCLE = "1.1.1"
     const val LIFECYCLE_VIEW_MODEL_KTX = "2.2.0-alpha01"
     const val COIL = "0.6.1"
     const val K_ANDROID = "0.8.8@aar"
@@ -57,7 +57,7 @@ object LibraryDependency {
     const val COROUTINES_ANDROID = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${CoreVersion.COROUTINES_ANDROID}"
 
     const val CORE_KTX = "androidx.core:core-ktx:${LibraryVersion.CORE_KTX}"
-    const val FRAGMENT_KTX = "androidx.fragment:fragment-ktx:${LibraryVersion.FRAGMENT_KTX}"
+    const val FRAGMENT_KTX = "androidx.fragment:fragment:${LibraryVersion.FRAGMENT_KTX}"
 
     const val LIFECYCLE_EXTENSIONS = "androidx.lifecycle:lifecycle-extensions:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
     const val LIFECYCLE_COMPILER ="androidx.lifecycle:lifecycle-compiler:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
@@ -74,4 +74,7 @@ object LibraryDependency {
 
     const val ROOM_KTX = "androidx.room:room-runtime:${LibraryVersion.ROOM}"
     const val ROOM_COMPILER = "androidx.room:room-compiler:${LibraryVersion.ROOM}"
+
+    const val GLIDE = "com.github.bumptech.glide:glide:${LibraryVersion.GLIDE}"
+    const val GLIDE_COMPILER = "com.github.bumptech.glide:compiler:${LibraryVersion.GLIDE}"
 }
