@@ -1,5 +1,7 @@
 package com.allsoftdroid.feature_book.presentation
 
+import android.content.Context
+import android.os.Build
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -9,6 +11,9 @@ import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
 Handle visibility of progress bar
@@ -48,7 +53,7 @@ fun setImageUrl(imageView: ImageView, item: AudioBookDomainModel?) {
 @BindingAdapter("bookDescription")
 fun TextView.setBookDescription(item: AudioBookDomainModel?){
     item?.let {
-        text = getNormalizedText("- by ${it.creator},  ${it.date}",70)
+        text = getNormalizedText("- by ${it.creator},  ${convertDateToTime(it.date,this.context)}",70)
     }
 }
 
@@ -70,4 +75,47 @@ private fun getNormalizedText(text:String?,limit:Int):String{
     }
 
     return text?:""
+}
+
+private fun convertDateToTime(date:String?,context: Context) = date?.let {
+    calculateDateDiff(it,context)
+}?:"-"
+
+
+@Suppress("DEPRECATION")
+private fun calculateDateDiff(dateStr: String, context: Context?): String {
+
+    if (context == null) return "-"
+
+    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", getCurrentLocale(context))
+    format.timeZone = TimeZone.getTimeZone("UTC")
+
+    try {
+
+        val date = format.parse(dateStr)
+        val diff = Date().time - date.time //this is going to give you the difference in milliseconds
+
+        val result = Date(diff)
+
+        return if (result.year - 70 > 0) {
+             "${result.year - 70}y"
+        } else if (result.month > 0) {
+             "${1 + result.month}m"
+        } else {
+            "${result.date}d"
+        }
+
+    } catch (e: Exception) {
+        Timber.e(e.printStackTrace().toString())
+        return "-"
+    }
+}
+
+@Suppress("DEPRECATION")
+private fun getCurrentLocale(context: Context): Locale {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        context.resources.configuration.locales.get(0)
+    } else {
+        context.resources.configuration.locale
+    }
 }
