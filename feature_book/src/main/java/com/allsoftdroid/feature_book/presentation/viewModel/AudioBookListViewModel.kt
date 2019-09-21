@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.allsoftdroid.feature_book.data.database.AudioBookDatabase
 import com.allsoftdroid.feature_book.data.repository.AudioBookRepositoryImpl
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
@@ -11,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class AudioBookListViewModel(application : Application) : AndroidViewModel(application) {
     /**
@@ -39,19 +41,26 @@ class AudioBookListViewModel(application : Application) : AndroidViewModel(appli
         get() = _backArrowPressed
 
 
-    private var _audioBooks = MutableLiveData<List<AudioBookDomainModel>>()
-    val audioBooks:LiveData<List<AudioBookDomainModel>>
-        get() = _audioBooks
+    //database
+    private val database = AudioBookDatabase.getDatabase(application)
 
-    //dependency
-    val getAlbumListUseCase = GetAudioBookListUsecase(AudioBookRepositoryImpl())
+    //repository reference
+    private val bookRepository = AudioBookRepositoryImpl(database.audioBooksDao())
+
+    //Book list use case
+    private val getAlbumListUseCase = GetAudioBookListUsecase(bookRepository)
+
+    //audio book list reference
+    val audioBooks:LiveData<List<AudioBookDomainModel>>
 
     init {
         viewModelScope.launch {
-            getAlbumListUseCase.execute().also {
-                _audioBooks.value = getAlbumListUseCase.getAudioBook().value
-            }
+            Timber.i("Starting to fetch new content from Remote repository")
+            getAlbumListUseCase.execute()
         }
+
+        networkResponse = bookRepository.response
+        audioBooks = bookRepository.audioBook
     }
 
 
