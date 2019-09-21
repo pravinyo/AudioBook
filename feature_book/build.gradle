@@ -58,6 +58,8 @@ dependencies {
     implementation(LibraryDependency.RECYCLER_VIEW)
     implementation(LibraryDependency.MATERIAL)
 
+    implementation(LibraryDependency.TIMBER)
+
     testImplementation(TestLibraryDependency.JUNIT)
     testImplementation(TestLibraryDependency.MOCKITO_ANDROID)
     testImplementation(TestLibraryDependency.MOCKITO_KOTLIN)

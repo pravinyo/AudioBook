@@ -60,6 +60,8 @@ dependencies {
     implementation(LibraryDependency.NAVIGATION_FRAGMENT_KTX)
     implementation(LibraryDependency.NAVIGATION_UI_KTX)
 
+    implementation(LibraryDependency.TIMBER)
+
     testImplementation(TestLibraryDependency.JUNIT)
     androidTestImplementation(TestLibraryDependency.TEST_RUNNER)
     androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
