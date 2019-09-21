@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature_book.presentation.adapter
+package com.allsoftdroid.feature_book.presentation.recyclerView.adapter
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
-import com.allsoftdroid.feature_book.presentation.views.AudioBookItemViewHolder
+import com.allsoftdroid.feature_book.presentation.recyclerView.views.AudioBookItemViewHolder
 
 /**
  * Recycler Adapter uses efficient way to find the change in the list item.

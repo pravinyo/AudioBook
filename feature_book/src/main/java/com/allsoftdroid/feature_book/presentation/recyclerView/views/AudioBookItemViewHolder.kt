@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature_book.presentation.views
+package com.allsoftdroid.feature_book.presentation.recyclerView.views
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
