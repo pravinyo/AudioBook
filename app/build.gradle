@@ -29,7 +29,7 @@ android {
 
         debug {
             minifyEnabled BuildTypeDebug.isMinifyEnabled
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         compileOptions {
@@ -40,7 +40,7 @@ android {
 
     dynamicFeatures = [":feature_book"]
 
-    dataBinding{
+    dataBinding {
         enabled = DataBinding.IS_ENABLED
     }
 
@@ -48,13 +48,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation(project(":library_base"))
 
-    implementation(LibraryDependency.KOTLIN)
-    implementation(LibraryDependency.KOTLIN_REFLECT)
-
-    implementation(LibraryDependency.APP_COMPACT)
-    implementation(LibraryDependency.CORE_KTX)
     implementation(LibraryDependency.SUPPORT_CONSTRAINT_LAYOUT)
 
     implementation(LibraryDependency.NAVIGATION_FRAGMENT_KTX)
