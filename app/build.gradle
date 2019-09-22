@@ -29,7 +29,6 @@ android {
 
         debug {
             minifyEnabled BuildTypeDebug.isMinifyEnabled
-//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         compileOptions {
@@ -48,14 +47,23 @@ android {
 }
 
 dependencies {
-    implementation(project(":library_base"))
 
     implementation(LibraryDependency.SUPPORT_CONSTRAINT_LAYOUT)
 
     implementation(LibraryDependency.NAVIGATION_FRAGMENT_KTX)
     implementation(LibraryDependency.NAVIGATION_UI_KTX)
 
+    implementation(LibraryDependency.KOTLIN)
+    implementation(LibraryDependency.KOTLIN_REFLECT)
+
+    implementation(LibraryDependency.APP_COMPACT)
+    implementation(LibraryDependency.CORE_KTX)
+
     implementation(LibraryDependency.TIMBER)
+
+    implementation(LibraryDependency.FRAGMENT_KTX)
+    implementation(LibraryDependency.LIFECYCLE_VIEW_MODEL_KTX)
+    implementation(LibraryDependency.LIFECYCLE_EXTENSIONS)
 
     testImplementation(TestLibraryDependency.JUNIT)
     androidTestImplementation(TestLibraryDependency.TEST_RUNNER)
