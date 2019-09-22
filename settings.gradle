@@ -1,3 +1,2 @@
-include ':app', ':buildSrc', ':feature_book', ':library_base'
+include ':app', ':buildSrc', ':feature_book'
 rootProject.name='AudioBook'
-//include(*ModuleDependency.getAllModules().toTypedArray())
