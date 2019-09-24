@@ -29,7 +29,7 @@ class AudioBookAdapter(private val listener: AudioBookItemClickedListener): List
         when(holder){
             is AudioBookItemViewHolder ->{
                 val dataItem = getItem(position)
-                holder.bind(dataItem)
+                holder.bind(dataItem,listener)
             }
 
             else -> throw Exception("View Holder type is unknown:$holder")
