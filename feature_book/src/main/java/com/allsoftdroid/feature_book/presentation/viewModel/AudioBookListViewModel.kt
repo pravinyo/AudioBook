@@ -64,11 +64,11 @@ class AudioBookListViewModel(application : Application) : AndroidViewModel(appli
     }
 
 
-    fun onUserItemClicked(username: String){
+    fun onBookItemClicked(username: String){
         _itemClicked.value = username
     }
 
-    fun onUserItemClickedFinished(){
+    fun onBookItemClickedFinished(){
         _itemClicked.value = null
     }
 

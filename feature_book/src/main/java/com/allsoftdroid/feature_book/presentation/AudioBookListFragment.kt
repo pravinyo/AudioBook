@@ -12,6 +12,7 @@ import com.allsoftdroid.audiobook.base.fragment.BaseContainerFragment
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookAdapter
+import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookItemClickedListener
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModelFactory
 
@@ -43,7 +44,9 @@ class AudioBookListFragment : BaseContainerFragment(){
         binding.audioBookListViewModel = booksViewModel
 
         //val audio book adapter
-        val bookAdapter = AudioBookAdapter()
+        val bookAdapter = AudioBookAdapter(AudioBookItemClickedListener {
+            booksViewModel.onBookItemClicked(it)
+        })
 
         //attach adapter to recycler view
         binding.recyclerViewBooks.adapter = bookAdapter
