@@ -1,6 +1,7 @@
 package com.allsoftdroid.feature_book.presentation
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Build
 import android.view.View
 import android.widget.ImageView
@@ -36,7 +37,9 @@ fun setImageUrl(imageView: ImageView, item: AudioBookDomainModel?) {
 
         Glide
             .with(imageView.context)
+            .asBitmap()
             .load(url)
+            .override(250,250)
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .dontAnimate()
             .apply(
@@ -117,5 +120,14 @@ private fun getCurrentLocale(context: Context): Locale {
         context.resources.configuration.locales.get(0)
     } else {
         context.resources.configuration.locale
+    }
+}
+
+fun ImageView.setFormattedImageForAudioBookList(image : Bitmap,heightLimit:Int,defaultImageId:Int,defaultBackgroundId:Int){
+    if(image.height<250){
+        setImageResource(defaultImageId)
+        setBackgroundResource(defaultBackgroundId)
+    }else {
+        setImageBitmap(image)
     }
 }
