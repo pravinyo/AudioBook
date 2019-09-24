@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.allsoftdroid.audiobook.base.extension.showSnackbar
 import com.allsoftdroid.audiobook.base.fragment.BaseContainerFragment
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
@@ -15,6 +16,7 @@ import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBook
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookItemClickedListener
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModelFactory
+import com.google.android.material.snackbar.Snackbar
 
 class AudioBookListFragment : BaseContainerFragment(){
 
@@ -60,6 +62,14 @@ class AudioBookListFragment : BaseContainerFragment(){
         booksViewModel.audioBooks.observe(viewLifecycleOwner, Observer {
             it?.let {
                 bookAdapter.submitList(it)
+            }
+        })
+
+        booksViewModel.itemClicked.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                //Navigate to display page
+                binding.toolbar.showSnackbar(it,Snackbar.LENGTH_SHORT)
+
             }
         })
 
