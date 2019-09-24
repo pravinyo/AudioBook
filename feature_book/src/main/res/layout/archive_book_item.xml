@@ -15,7 +15,7 @@
         android:layout_marginTop="@dimen/card_margin_top"
         android:layout_marginStart="@dimen/card_margin_top"
         android:layout_marginEnd="@dimen/card_margin_top"
-        android:onClick="@{()->clickListener.onAudioBookItemClicked(user)}"
+        android:onClick="@{()->clickListener.onAudioBookItemClicked(book)}"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
 
