@@ -13,7 +13,7 @@ import com.allsoftdroid.feature_book.presentation.recyclerView.views.AudioBookIt
  * It uses DiffUtils for efficient management of the recycler view list item
  */
 
-class AudioBookAdapter: ListAdapter<AudioBookDomainModel, RecyclerView.ViewHolder>(RandomBookDiffCallback()) {
+class AudioBookAdapter(private val listener: AudioBookItemClickedListener): ListAdapter<AudioBookDomainModel, RecyclerView.ViewHolder>(RandomBookDiffCallback()) {
 
     /**
      * Create view Holder of type BookViewHolder
@@ -63,4 +63,11 @@ class RandomBookDiffCallback : DiffUtil.ItemCallback<AudioBookDomainModel>(){
         return oldItem == newItem
     }
 
+}
+
+/*
+listener to check for the click event
+ */
+class AudioBookItemClickedListener(val clickListener : (identifier : String)->Unit){
+    fun onAudioBookItemClicked(book : AudioBookDomainModel) = clickListener(book.mId)
 }
