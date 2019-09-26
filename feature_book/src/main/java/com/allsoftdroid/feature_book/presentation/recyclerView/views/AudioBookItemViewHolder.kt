@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.allsoftdroid.feature_book.databinding.ArchiveBookItemBinding
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
+import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookItemClickedListener
 
 /**
  * ViewHolder Class for binding the data to the Layout and constructing layout for the display
@@ -12,8 +13,9 @@ import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 class AudioBookItemViewHolder private constructor(private val binding : ArchiveBookItemBinding) : RecyclerView.ViewHolder(binding.root){
 
     // bind the data to the view
-    fun bind(item: AudioBookDomainModel){
+    fun bind(item: AudioBookDomainModel,listner: AudioBookItemClickedListener){
         binding.book = item
+        binding.clickListener = listner
         binding.executePendingBindings()
     }
 

@@ -5,17 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.allsoftdroid.audiobook.base.extension.showSnackbar
+import com.allsoftdroid.audiobook.base.fragment.BaseContainerFragment
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookAdapter
+import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookItemClickedListener
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModelFactory
+import com.google.android.material.snackbar.Snackbar
 
-class AudioBookListFragment : Fragment(){
+class AudioBookListFragment : BaseContainerFragment(){
 
     /**
     Lazily initialize the view model
@@ -43,7 +46,9 @@ class AudioBookListFragment : Fragment(){
         binding.audioBookListViewModel = booksViewModel
 
         //val audio book adapter
-        val bookAdapter = AudioBookAdapter()
+        val bookAdapter = AudioBookAdapter(AudioBookItemClickedListener {
+            booksViewModel.onBookItemClicked(it)
+        })
 
         //attach adapter to recycler view
         binding.recyclerViewBooks.adapter = bookAdapter
@@ -57,6 +62,14 @@ class AudioBookListFragment : Fragment(){
         booksViewModel.audioBooks.observe(viewLifecycleOwner, Observer {
             it?.let {
                 bookAdapter.submitList(it)
+            }
+        })
+
+        booksViewModel.itemClicked.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                //Navigate to display page
+                binding.toolbar.showSnackbar(it,Snackbar.LENGTH_SHORT)
+
             }
         })
 
