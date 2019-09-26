@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.allsoftdroid.audiobook.base.extension.Event
 import com.allsoftdroid.feature_book.data.database.AudioBookDatabase
 import com.allsoftdroid.feature_book.data.repository.AudioBookRepositoryImpl
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
@@ -30,14 +31,14 @@ class AudioBookListViewModel(application : Application) : AndroidViewModel(appli
 
 
     //handle item click event
-    private var _itemClicked = MutableLiveData<String>()
-    val itemClicked: LiveData<String>
+    private var _itemClicked = MutableLiveData<Event<String>>()
+    val itemClicked: LiveData<Event<String>>
         get() = _itemClicked
 
 
     // when back button is pressed in the UI
-    private var _backArrowPressed = MutableLiveData<Boolean>()
-    val backArrowPressed: LiveData<Boolean>
+    private var _backArrowPressed = MutableLiveData<Event<Boolean>>()
+    val backArrowPressed: LiveData<Event<Boolean>>
         get() = _backArrowPressed
 
 
@@ -63,17 +64,12 @@ class AudioBookListViewModel(application : Application) : AndroidViewModel(appli
         audioBooks = bookRepository.audioBook
     }
 
-
-    fun onUserItemClicked(username: String){
-        _itemClicked.value = username
-    }
-
-    fun onUserItemClickedFinished(){
-        _itemClicked.value = null
+    fun onBookItemClicked(bookId: String){
+        _itemClicked.value = Event(bookId)
     }
 
     fun onBackArrowPressed(){
-        _backArrowPressed.value = true
+        _backArrowPressed.value = Event(true)
     }
 
     //cancel the job when viewmodel is not longer in use

@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature_book.presentation.adapter
+package com.allsoftdroid.feature_book.presentation.recyclerView.adapter
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
@@ -6,14 +6,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
-import com.allsoftdroid.feature_book.presentation.views.AudioBookItemViewHolder
+import com.allsoftdroid.feature_book.presentation.recyclerView.views.AudioBookItemViewHolder
 
 /**
  * Recycler Adapter uses efficient way to find the change in the list item.
  * It uses DiffUtils for efficient management of the recycler view list item
  */
 
-class AudioBookAdapter: ListAdapter<AudioBookDomainModel, RecyclerView.ViewHolder>(RandomBookDiffCallback()) {
+class AudioBookAdapter(private val listener: AudioBookItemClickedListener): ListAdapter<AudioBookDomainModel, RecyclerView.ViewHolder>(RandomBookDiffCallback()) {
 
     /**
      * Create view Holder of type BookViewHolder
@@ -29,7 +29,7 @@ class AudioBookAdapter: ListAdapter<AudioBookDomainModel, RecyclerView.ViewHolde
         when(holder){
             is AudioBookItemViewHolder ->{
                 val dataItem = getItem(position)
-                holder.bind(dataItem)
+                holder.bind(dataItem,listener)
             }
 
             else -> throw Exception("View Holder type is unknown:$holder")
@@ -63,4 +63,11 @@ class RandomBookDiffCallback : DiffUtil.ItemCallback<AudioBookDomainModel>(){
         return oldItem == newItem
     }
 
+}
+
+/*
+listener to check for the click event
+ */
+class AudioBookItemClickedListener(val clickListener : (identifier : String)->Unit){
+    fun onAudioBookItemClicked(book : AudioBookDomainModel) = clickListener(book.mId)
 }

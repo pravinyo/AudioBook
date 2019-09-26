@@ -1,5 +1,7 @@
 package com.allsoftdroid.buildsrc
 
+//package com.allsoftdroid.buildsrc
+//
 //import org.gradle.api.artifacts.Dependency
 //import org.gradle.api.artifacts.ProjectDependency
 //import org.gradle.api.artifacts.dsl.DependencyHandler

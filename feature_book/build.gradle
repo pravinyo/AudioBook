@@ -1,4 +1,6 @@
 import com.allsoftdroid.buildsrc.AndroidConfig
+import com.allsoftdroid.buildsrc.BuildTypeDebug
+import com.allsoftdroid.buildsrc.BuildTypeRelease
 import com.allsoftdroid.buildsrc.DataBinding
 import com.allsoftdroid.buildsrc.LibraryDependency
 
@@ -17,13 +19,27 @@ android {
         versionName AndroidConfig.VERSION_NAME
     }
 
+    buildTypes {
+        release {
+            minifyEnabled BuildTypeRelease.isMinifyEnabled
+        }
+
+        debug {
+            minifyEnabled BuildTypeDebug.isMinifyEnabled
+        }
+
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
+    }
+
     dataBinding{
         enabled = DataBinding.IS_ENABLED
     }
 }
 
 dependencies {
-//    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation(project(":app"))
 
     implementation(LibraryDependency.KOTLIN)
@@ -68,8 +84,4 @@ dependencies {
     androidTestImplementation(TestLibraryDependency.TEST_RUNNER)
     androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
 
-}
-
-repositories {
-    mavenCentral()
 }

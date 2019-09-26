@@ -1,6 +1,7 @@
-package com.allsoftdroid.feature_book.presentation
+package com.allsoftdroid.feature_book.presentation.utility
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Build
 import android.view.View
 import android.widget.ImageView
@@ -36,13 +37,20 @@ fun setImageUrl(imageView: ImageView, item: AudioBookDomainModel?) {
 
         Glide
             .with(imageView.context)
+            .asBitmap()
             .load(url)
+            .override(250,250)
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .dontAnimate()
             .apply(
                 RequestOptions()
                     .placeholder(R.drawable.loading_animation)
-                    .error(R.drawable.notfound))
+                    .error(
+                        CreateImageOverlay
+                            .with(imageView.context)
+                            .buildOverlay(front = R.drawable.ic_book_play,back = R.drawable.gradiant_background)
+                    )
+            )
             .into(imageView)
     }
 }
@@ -53,7 +61,12 @@ fun setImageUrl(imageView: ImageView, item: AudioBookDomainModel?) {
 @BindingAdapter("bookDescription")
 fun TextView.setBookDescription(item: AudioBookDomainModel?){
     item?.let {
-        text = getNormalizedText("- by ${it.creator},  ${convertDateToTime(it.date,this.context)}",70)
+        text = getNormalizedText(
+            "- by ${it.creator},  ${convertDateToTime(
+                it.date,
+                this.context
+            )}", 70
+        )
     }
 }
 
@@ -63,7 +76,7 @@ Binding adapter for updating the title in list items
 @BindingAdapter("bookTitle")
 fun TextView.setBookTitle(item: AudioBookDomainModel?){
     item?.let {
-        text = getNormalizedText(item.title,30)
+        text = getNormalizedText(item.title, 30)
     }
 }
 
@@ -78,7 +91,7 @@ private fun getNormalizedText(text:String?,limit:Int):String{
 }
 
 private fun convertDateToTime(date:String?,context: Context) = date?.let {
-    calculateDateDiff(it,context)
+    calculateDateDiff(it, context)
 }?:"-"
 
 
@@ -87,7 +100,9 @@ private fun calculateDateDiff(dateStr: String, context: Context?): String {
 
     if (context == null) return "-"
 
-    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", getCurrentLocale(context))
+    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",
+        getCurrentLocale(context)
+    )
     format.timeZone = TimeZone.getTimeZone("UTC")
 
     try {
@@ -117,5 +132,14 @@ private fun getCurrentLocale(context: Context): Locale {
         context.resources.configuration.locales.get(0)
     } else {
         context.resources.configuration.locale
+    }
+}
+
+fun ImageView.setFormattedImageForAudioBookList(image : Bitmap,heightLimit:Int,defaultImageId:Int,defaultBackgroundId:Int){
+    if(image.height<250){
+        setImageResource(defaultImageId)
+        setBackgroundResource(defaultBackgroundId)
+    }else {
+        setImageBitmap(image)
     }
 }
