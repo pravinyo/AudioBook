@@ -1,0 +1,13 @@
+<manifest xmlns:dist="http://schemas.android.com/apk/distribution"
+    package="com.allsoftdroid.feature.book_details">
+
+    <dist:module
+        dist:instant="false"
+        dist:title="@string/title_feature_book_details">
+        <dist:delivery>
+            <dist:on-demand />
+        </dist:delivery>
+        <dist:fusing dist:include="true" />
+    </dist:module>
+</manifest>
+

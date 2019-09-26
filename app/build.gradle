@@ -37,7 +37,7 @@ android {
         }
     }
 
-    dynamicFeatures = [":feature_book"]
+    dynamicFeatures = [":feature_book", ":feature_book_details"]
 
     dataBinding {
         enabled = DataBinding.IS_ENABLED
