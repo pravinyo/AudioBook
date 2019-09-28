@@ -1,6 +1,9 @@
 import com.allsoftdroid.buildsrc.AndroidConfig
 
 apply plugin: GradlePluginId.ANDROID_DYNAMIC_FEATURE
+apply plugin: GradlePluginId.KOTLIN_ANDROID
+apply plugin: GradlePluginId.KOTLIN_KAPT
+apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
 
 android {
     compileSdkVersion AndroidConfig.COMPILE_SDK_VERSION
@@ -15,4 +18,5 @@ android {
 
 dependencies {
     implementation(project(':app'))
+
 }

@@ -41,20 +41,8 @@ android {
 
 dependencies {
     implementation(project(":app"))
+    implementation(project(":database"))
 
-
-    implementation(LibraryDependency.ROOM_KTX)
-    kapt(LibraryDependency.ROOM_COMPILER)
-
-    implementation(LibraryDependency.COROUTINES_CORE)
-    implementation(LibraryDependency.COROUTINES_ANDROID)
-
-
-    implementation(LibraryDependency.RETROFIT)
-    implementation(LibraryDependency.RETROFIT_SCALARS)
-    implementation(LibraryDependency.RETROFIT_COROUTINES_ADAPTER)
-
-    implementation(LibraryDependency.GSON)
 
     implementation(LibraryDependency.GLIDE)
     annotationProcessor(LibraryDependency.GLIDE_COMPILER)
