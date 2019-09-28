@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.audiobook.base.extension.Event
-import com.allsoftdroid.feature_book.data.database.AudioBookDatabase
+import com.allsoftdroid.database.bookListDB.AudioBookDatabase
 import com.allsoftdroid.feature_book.data.repository.AudioBookRepositoryImpl
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
