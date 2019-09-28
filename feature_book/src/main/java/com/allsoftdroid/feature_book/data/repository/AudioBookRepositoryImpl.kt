@@ -4,8 +4,8 @@ import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import com.allsoftdroid.feature_book.data.database.AudioBookDao
-import com.allsoftdroid.feature_book.data.database.DatabaseAudioBook
+import com.allsoftdroid.database.bookListDB.AudioBookDao
+import com.allsoftdroid.database.bookListDB.DatabaseAudioBook
 import com.allsoftdroid.feature_book.data.database.asBookDomainModel
 import com.allsoftdroid.feature_book.data.model.AudioBookDataModel
 import com.allsoftdroid.feature_book.data.model.toDatabaseModel
