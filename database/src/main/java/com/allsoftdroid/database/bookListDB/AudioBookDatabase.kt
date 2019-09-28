@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature_book.data.database
+package com.allsoftdroid.database.bookListDB
 
 import android.content.Context
 import androidx.room.Database
@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
  * Contains Database definition
  */
 @Database(entities = [DatabaseAudioBook::class],version = 2 ,exportSchema = false)
-abstract class AudioBookDatabase : RoomDatabase(){
+public abstract class AudioBookDatabase : RoomDatabase(){
 
     //Books DAO
     abstract fun audioBooksDao() : AudioBookDao

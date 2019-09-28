@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature_book.data.database
+package com.allsoftdroid.database.bookListDB
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
