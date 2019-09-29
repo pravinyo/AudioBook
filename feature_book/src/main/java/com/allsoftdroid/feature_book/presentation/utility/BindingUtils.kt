@@ -95,7 +95,7 @@ private fun convertDateToTime(date:String?,context: Context) = date?.let {
 }?:"-"
 
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 private fun calculateDateDiff(dateStr: String, context: Context?): String {
 
     if (context == null) return "-"
