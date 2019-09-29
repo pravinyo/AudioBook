@@ -11,7 +11,7 @@
             type="com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookItemClickedListener" />
     </data>
 
-    <com.google.android.material.card.MaterialCardView
+    <androidx.cardview.widget.CardView
         android:layout_marginTop="@dimen/card_margin_top"
         android:layout_marginStart="@dimen/card_margin_top"
         android:layout_marginEnd="@dimen/card_margin_top"
@@ -58,6 +58,6 @@
             </LinearLayout>
         </LinearLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.cardview.widget.CardView>
 
 </layout>
