@@ -52,7 +52,7 @@ dependencies {
     annotationProcessor(LibraryDependency.GLIDE_COMPILER)
 
     implementation(LibraryDependency.RECYCLER_VIEW)
-    implementation(LibraryDependency.MATERIAL)
+    implementation(LibraryDependency.CARD_VIEW)
 
 
     testImplementation(TestLibraryDependency.JUNIT)
