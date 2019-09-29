@@ -1,2 +1,2 @@
-include ':app', ':buildSrc', ':feature_book', ':feature_book_details', ':database'
+include ':app', ':buildSrc', ':feature_book', ':feature_book_details', ':database', ':common'
 rootProject.name='AudioBook'
