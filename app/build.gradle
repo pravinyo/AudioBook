@@ -38,44 +38,20 @@ android {
         }
     }
 
-    dynamicFeatures = [":feature_book", ":feature_book_details"]
-
-    dataBinding {
+    dataBinding{
         enabled = DataBinding.IS_ENABLED
     }
 
+//    dynamicFeatures = [":feature_book", ":feature_book_details"]
 
 }
 
 dependencies {
 
-    api(LibraryDependency.SUPPORT_CONSTRAINT_LAYOUT)
+    implementation(project(path: ':common'))
+    implementation(project(path: ':feature_book'))
+    implementation(project(path: ':feature_book_details'))
 
-    implementation(LibraryDependency.NAVIGATION_FRAGMENT_KTX)
-    implementation(LibraryDependency.NAVIGATION_UI_KTX)
+    
 
-    api(LibraryDependency.KOTLIN)
-    implementation(LibraryDependency.KOTLIN_REFLECT)
-
-    api(LibraryDependency.APP_COMPACT)
-    api(LibraryDependency.CORE_KTX)
-
-    api(LibraryDependency.TIMBER)
-
-    api(LibraryDependency.FRAGMENT_KTX)
-    api(LibraryDependency.LIFECYCLE_VIEW_MODEL_KTX)
-    api(LibraryDependency.LIFECYCLE_EXTENSIONS)
-    kapt(LibraryDependency.LIFECYCLE_COMPILER)
-
-    api(LibraryDependency.ROOM_KTX)
-    kapt(LibraryDependency.ROOM_COMPILER)
-
-    api(LibraryDependency.COROUTINES_CORE)
-    api(LibraryDependency.COROUTINES_ANDROID)
-
-    api(LibraryDependency.GSON)
-
-    api(LibraryDependency.RETROFIT)
-    api(LibraryDependency.RETROFIT_SCALARS)
-    api(LibraryDependency.RETROFIT_COROUTINES_ADAPTER)
 }
