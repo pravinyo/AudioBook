@@ -13,9 +13,9 @@ import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBook
 class AudioBookItemViewHolder private constructor(private val binding : ArchiveBookItemBinding) : RecyclerView.ViewHolder(binding.root){
 
     // bind the data to the view
-    fun bind(item: AudioBookDomainModel,listner: AudioBookItemClickedListener){
+    fun bind(item: AudioBookDomainModel,listener: AudioBookItemClickedListener){
         binding.book = item
-        binding.clickListener = listner
+        binding.clickListener = listener
         binding.executePendingBindings()
     }
 
