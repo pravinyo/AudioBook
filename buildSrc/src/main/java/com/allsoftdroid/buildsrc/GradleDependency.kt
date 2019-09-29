@@ -15,7 +15,7 @@ object GradlePluginId {
     const val KOTLIN_ANDROID = "org.jetbrains.kotlin.android"
     const val KOTLIN_ANDROID_EXTENSIONS = "kotlin-android-extensions"
     const val GRADLE_VERSION_PLUGIN = "com.github.ben-manes.versions"
-    const val SAFE_ARGS = "androidx.navigation.safeargs.kotlin"
+    const val SAFE_ARGS = "androidx.navigation.safeargs"
 }
 
 object GradleDependency {
