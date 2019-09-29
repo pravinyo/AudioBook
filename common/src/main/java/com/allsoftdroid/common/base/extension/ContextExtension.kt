@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.base.extension
+package com.allsoftdroid.common.base.extension
 
 import android.content.Context
 import android.content.Intent

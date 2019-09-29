@@ -1,6 +1,5 @@
-package com.allsoftdroid.audiobook.base.viewModel
+package com.allsoftdroid.common.base.viewModel
 
-import com.allsoftdroid.audiobook.base.viewModel.BaseAction
 import timber.log.Timber
 import kotlin.reflect.full.memberProperties
 

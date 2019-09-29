@@ -1,9 +1,9 @@
-package com.allsoftdroid.audiobook.base.viewModel
+package com.allsoftdroid.common.base.viewModel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.allsoftdroid.audiobook.BuildConfig
-import com.allsoftdroid.audiobook.base.extension.toLiveData
+import com.allsoftdroid.common.BuildConfig
+import com.allsoftdroid.common.base.extension.toLiveData
 import kotlin.properties.Delegates
 
 

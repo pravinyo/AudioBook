@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.base.activity
+package com.allsoftdroid.common.base.activity
 
 import android.os.Bundle
 import androidx.annotation.LayoutRes

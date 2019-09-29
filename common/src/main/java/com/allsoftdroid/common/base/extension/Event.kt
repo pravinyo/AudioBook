@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.base.extension
+package com.allsoftdroid.common.base.extension
 
 /**
  * Used as a wrapper for data that is exposed via a LiveData that represents an event.

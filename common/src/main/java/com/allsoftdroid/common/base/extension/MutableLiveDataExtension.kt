@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.base.extension
+package com.allsoftdroid.common.base.extension
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

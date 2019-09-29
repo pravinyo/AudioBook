@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.base.extension
+package com.allsoftdroid.common.base.extension
 
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
