@@ -4,10 +4,11 @@ import com.allsoftdroid.buildsrc.BuildTypeRelease
 import com.allsoftdroid.buildsrc.DataBinding
 import com.allsoftdroid.buildsrc.LibraryDependency
 
-apply plugin: GradlePluginId.ANDROID_DYNAMIC_FEATURE
+apply plugin: GradlePluginId.ANDROID_LIBRARY
 apply plugin: GradlePluginId.KOTLIN_ANDROID
 apply plugin: GradlePluginId.KOTLIN_KAPT
 apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
+apply plugin: GradlePluginId.SAFE_ARGS
 
 android {
     compileSdkVersion AndroidConfig.COMPILE_SDK_VERSION
@@ -40,9 +41,12 @@ android {
 }
 
 dependencies {
-    implementation(project(":app"))
-    implementation(project(":database"))
 
+    implementation(project(':database'))
+    implementation(project(':common'))
+
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation(LibraryDependency.GLIDE)
     annotationProcessor(LibraryDependency.GLIDE_COMPILER)
