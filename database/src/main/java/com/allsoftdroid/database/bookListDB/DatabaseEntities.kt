@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
  */
 
 @Entity(tableName = "AudioBook_Table")
-public data class DatabaseAudioBook(
+data class DatabaseAudioBook(
 
     @PrimaryKey
     @ColumnInfo(name = "id")
