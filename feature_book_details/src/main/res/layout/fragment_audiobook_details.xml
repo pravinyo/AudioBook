@@ -21,7 +21,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/book_details_banner_image_height"
                 android:scaleType="centerCrop"
-                android:src="@drawable/boat"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
