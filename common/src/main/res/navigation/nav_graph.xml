@@ -21,6 +21,9 @@
         <argument
             android:name="bookId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_AudioBookDetailsFragment_to_AudioBookListFragment"
+            app:destination="@id/AudioBookListFragment" />
     </fragment>
 
 </navigation>
