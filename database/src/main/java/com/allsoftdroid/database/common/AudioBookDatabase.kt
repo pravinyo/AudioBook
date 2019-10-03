@@ -1,18 +1,30 @@
-package com.allsoftdroid.database.bookListDB
+package com.allsoftdroid.database.common
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.allsoftdroid.database.bookListDB.AudioBookDao
+import com.allsoftdroid.database.bookListDB.DatabaseAudioBook
+import com.allsoftdroid.database.metadataCacheDB.MetadataDao
+import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseAlbumEntity
+import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseMetadataEntity
+import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseTrackEntity
 
 /**
  * Contains Database definition
  */
-@Database(entities = [DatabaseAudioBook::class],version = 2 ,exportSchema = false)
-public abstract class AudioBookDatabase : RoomDatabase(){
+@Database(
+    entities = [DatabaseAudioBook::class,DatabaseMetadataEntity::class,DatabaseAlbumEntity::class,DatabaseTrackEntity::class],
+    version = 4 ,
+    exportSchema = false)
+abstract class AudioBookDatabase : RoomDatabase(){
 
     //Books DAO
     abstract fun audioBooksDao() : AudioBookDao
+
+    //Metadata DAO
+    abstract fun metadataDao() : MetadataDao
 
 
     /**
