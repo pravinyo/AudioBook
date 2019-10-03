@@ -6,9 +6,9 @@ internal data class AudioBookMetadataDataModel(
     val creator : String,
     val date : String,
     val description : String,
-    val licenseUrl : String,
-    val tag : List<String>,
+    val licenseurl : String,
+    val subject : String,
     val title : String,
-    val release_year : String,
-    val runtime: String
+    val publicdate : String,
+    val runtime: String?
 )
