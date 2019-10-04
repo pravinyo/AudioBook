@@ -5,6 +5,6 @@ import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomai
 
 interface AudioBookMetadataRepository {
 
-    suspend fun loadMetadataForBookId(bookId : String)
-    suspend fun getMetadata() : LiveData<AudioBookMetadataDomainModel>
+    suspend fun loadMetadata()
+    fun getMetadata() : LiveData<AudioBookMetadataDomainModel>
 }

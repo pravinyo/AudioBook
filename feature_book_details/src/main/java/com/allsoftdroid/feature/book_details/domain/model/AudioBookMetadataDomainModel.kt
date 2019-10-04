@@ -6,7 +6,7 @@ data class AudioBookMetadataDomainModel(
     val date : String,
     val description : String,
     val licenseUrl : String,
-    val tag : List<String>,
+    val tag : String,
     val title : String,
     val release_year : String,
     val runtime: String

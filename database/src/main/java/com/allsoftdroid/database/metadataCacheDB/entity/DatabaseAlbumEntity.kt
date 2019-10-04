@@ -1,13 +1,15 @@
 package com.allsoftdroid.database.metadataCacheDB.entity
 
 import androidx.room.ColumnInfo
+import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-data class AlbumEntity(
+@Entity(tableName = "Album_Table")
+data class DatabaseAlbumEntity(
 
     @ForeignKey(
-        entity = MetadataEntity::class,
+        entity = DatabaseMetadataEntity::class,
         parentColumns = ["metadata_id"],
         childColumns = ["metadata_id"],
         onDelete = ForeignKey.CASCADE)

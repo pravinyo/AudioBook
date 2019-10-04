@@ -10,7 +10,9 @@
         android:label="AudioBookListFragment">
         <action
             android:id="@+id/action_AudioBookListFragment_to_AudioBookDetailsFragment"
-            app:destination="@id/AudioBookDetailsFragment" />
+            app:destination="@id/AudioBookDetailsFragment"
+            app:popUpTo="@+id/AudioBookListFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -21,6 +23,11 @@
         <argument
             android:name="bookId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_AudioBookDetailsFragment_to_AudioBookListFragment"
+            app:destination="@id/AudioBookListFragment"
+            app:popUpTo="@+id/AudioBookDetailsFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
 </navigation>
