@@ -4,19 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.allsoftdroid.audiobook.base.extension.showSnackbar
-import com.allsoftdroid.audiobook.base.fragment.BaseContainerFragment
+import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookAdapter
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookItemClickedListener
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModelFactory
-import com.google.android.material.snackbar.Snackbar
 
 class AudioBookListFragment : BaseContainerFragment(){
 
@@ -34,12 +33,8 @@ class AudioBookListFragment : BaseContainerFragment(){
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val binding:FragmentAudiobookListBinding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_audiobook_list,
-            container,
-            false
-        )
+
+        val binding:FragmentAudiobookListBinding = inflateLayout(inflater,R.layout.fragment_audiobook_list,container)
 
         binding.lifecycleOwner = viewLifecycleOwner
 
@@ -66,10 +61,12 @@ class AudioBookListFragment : BaseContainerFragment(){
         })
 
         booksViewModel.itemClicked.observe(this, Observer {
-            it.getContentIfNotHandled()?.let {
+            it.getContentIfNotHandled()?.let { bookId ->
                 //Navigate to display page
-                binding.toolbar.showSnackbar(it,Snackbar.LENGTH_SHORT)
+                val bundle = bundleOf("bookId" to bookId)
 
+                this.findNavController()
+                    .navigate(R.id.action_AudioBookListFragment_to_AudioBookDetailsFragment,bundle)
             }
         })
 

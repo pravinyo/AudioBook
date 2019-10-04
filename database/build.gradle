@@ -1,0 +1,57 @@
+import com.allsoftdroid.buildsrc.AndroidConfig
+import com.allsoftdroid.buildsrc.BuildTypeDebug
+import com.allsoftdroid.buildsrc.BuildTypeRelease
+import com.allsoftdroid.buildsrc.LibraryDependency
+
+apply plugin: GradlePluginId.ANDROID_LIBRARY
+apply plugin: GradlePluginId.KOTLIN_ANDROID
+apply plugin: GradlePluginId.KOTLIN_KAPT
+apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
+
+android {
+    compileSdkVersion AndroidConfig.COMPILE_SDK_VERSION
+    buildToolsVersion AndroidConfig.BUILD_TOOLS_VERSION
+
+    defaultConfig {
+        minSdkVersion(AndroidConfig.MIN_SDK_VERSION)
+        targetSdkVersion(AndroidConfig.TARGET_SDK_VERSION)
+        versionCode AndroidConfig.VERSION_CODE
+        versionName AndroidConfig.VERSION_NAME
+
+        testInstrumentationRunner AndroidConfig.TEST_INSTRUMENTATION_RUNNER
+        consumerProguardFiles 'consumer-rules.pro'
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.incremental":"true"]
+            }
+        }
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled BuildTypeRelease.isMinifyEnabled
+        }
+
+        debug {
+            minifyEnabled BuildTypeDebug.isMinifyEnabled
+        }
+
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
+    }
+
+}
+
+dependencies {
+    implementation(LibraryDependency.LIFECYCLE_EXTENSIONS)
+    kapt(LibraryDependency.LIFECYCLE_COMPILER)
+
+    implementation(LibraryDependency.KOTLIN)
+
+    api(LibraryDependency.ROOM_KTX)
+    kapt(LibraryDependency.ROOM_COMPILER)
+}

@@ -1,6 +1,6 @@
 package com.allsoftdroid.audiobook
 
-import com.allsoftdroid.audiobook.base.activity.BaseActivity
+import com.allsoftdroid.common.base.activity.BaseActivity
 
 
 class MainActivity : BaseActivity() {

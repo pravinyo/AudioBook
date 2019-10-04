@@ -9,6 +9,6 @@ class Utils {
 
         fun getBaseURL() = BASE_URL
 
-        const val BOOKS_COLLECTION = "/advancedsearch.php?q=($QUERY)+AND+collection%3A($COLLECTIONS)$FILTER_MOST_RECENT"
+        const val BOOKS_COLLECTION_PATH = "/advancedsearch.php?q=($QUERY)+AND+collection%3A($COLLECTIONS)$FILTER_MOST_RECENT"
     }
 }

@@ -1,6 +1,6 @@
 package com.allsoftdroid.feature_book.data.model
 
-import com.allsoftdroid.feature_book.data.database.DatabaseAudioBook
+import com.allsoftdroid.database.bookListDB.DatabaseAudioBook
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 
 internal data class AudioBookDataModel(

@@ -6,6 +6,7 @@ import com.allsoftdroid.buildsrc.LibraryDependency
 
 apply plugin: GradlePluginId.ANDROID_APPLICATION
 apply plugin: GradlePluginId.KOTLIN_ANDROID
+apply plugin: GradlePluginId.KOTLIN_KAPT
 apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
 
 android {
@@ -37,35 +38,20 @@ android {
         }
     }
 
-    dynamicFeatures = [":feature_book"]
-
-    dataBinding {
+    dataBinding{
         enabled = DataBinding.IS_ENABLED
     }
 
+//    dynamicFeatures = [":feature_book", ":feature_book_details"]
 
 }
 
 dependencies {
 
-    implementation(LibraryDependency.SUPPORT_CONSTRAINT_LAYOUT)
+    implementation(project(path: ':common'))
+    implementation(project(path: ':feature_book'))
+    implementation(project(path: ':feature_book_details'))
 
-    implementation(LibraryDependency.NAVIGATION_FRAGMENT_KTX)
-    implementation(LibraryDependency.NAVIGATION_UI_KTX)
+    
 
-    implementation(LibraryDependency.KOTLIN)
-    implementation(LibraryDependency.KOTLIN_REFLECT)
-
-    implementation(LibraryDependency.APP_COMPACT)
-    implementation(LibraryDependency.CORE_KTX)
-
-    implementation(LibraryDependency.TIMBER)
-
-    implementation(LibraryDependency.FRAGMENT_KTX)
-    implementation(LibraryDependency.LIFECYCLE_VIEW_MODEL_KTX)
-    implementation(LibraryDependency.LIFECYCLE_EXTENSIONS)
-
-    testImplementation(TestLibraryDependency.JUNIT)
-    androidTestImplementation(TestLibraryDependency.TEST_RUNNER)
-    androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
 }

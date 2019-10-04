@@ -3,8 +3,9 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val CARD_VIEW = "28.0.0"
     const val GLIDE = "4.9.0"
-    const val ROOM = "2.1.0-rc01"
+    const val ROOM = "2.2.0-rc01"
     const val version_retrofit_coroutines_adapter = "0.9.2"
     const val GSON = "2.8.5"
     const val KODEIN = "6.3.3"
@@ -77,4 +78,6 @@ object LibraryDependency {
 
     const val GLIDE = "com.github.bumptech.glide:glide:${LibraryVersion.GLIDE}"
     const val GLIDE_COMPILER = "com.github.bumptech.glide:compiler:${LibraryVersion.GLIDE}"
+
+    const val CARD_VIEW = "com.android.support:cardview-v7:${LibraryVersion.CARD_VIEW}"
 }
