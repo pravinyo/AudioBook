@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back_screen_button">back screen button</string>
+    <string name="banner_image_for_audio_book">banner image for audio book</string>
+</resources>

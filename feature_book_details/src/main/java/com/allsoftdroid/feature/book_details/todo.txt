@@ -1,0 +1,1 @@
+clear stack after navigating back

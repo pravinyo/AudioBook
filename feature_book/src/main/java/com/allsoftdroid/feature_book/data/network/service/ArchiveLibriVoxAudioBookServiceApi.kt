@@ -20,7 +20,7 @@ private val retrofit = Retrofit.Builder()
  */
 internal interface ArchiveLibriVoxAudioBookService{
 
-    @GET(Utils.Books.BOOKS_COLLECTION) //implement paging
+    @GET(Utils.Books.BOOKS_COLLECTION_PATH) //implement paging
     fun getAudioBooks(): Call<String>
 }
 
