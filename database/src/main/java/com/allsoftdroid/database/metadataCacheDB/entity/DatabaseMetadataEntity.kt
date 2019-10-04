@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 
 @Entity(tableName = "Metadata_Table")
-data class MetadataEntity(
+data class DatabaseMetadataEntity(
 
     @PrimaryKey
     @ColumnInfo(name = "metadata_id")
@@ -23,7 +23,7 @@ data class MetadataEntity(
     var licenseUrl : String,
 
     @ColumnInfo(name = "category")
-    var tag : List<String>,
+    var tag : String,
 
     var title : String,
 

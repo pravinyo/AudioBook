@@ -3,9 +3,9 @@ package com.allsoftdroid.feature.book_details.domain.usecase
 import com.allsoftdroid.feature.book_details.domain.repository.AudioBookMetadataRepository
 
 class GetMetadataUsecase (
-    private val metadataRepository: AudioBookMetadataRepository,private val bookId:String
+    private val metadataRepository: AudioBookMetadataRepository
 ){
-    suspend fun execute() = metadataRepository.loadMetadataForBookId(bookId)
+    suspend fun execute() = metadataRepository.loadMetadata()
 
-    suspend fun getMetadata() = metadataRepository.getMetadata()
+    fun getMetadata() = metadataRepository.getMetadata()
 }

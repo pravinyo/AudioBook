@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.bumptech.glide.Glide
