@@ -28,7 +28,7 @@ interface MetadataDao{
      * @param metadata_id unique id given to audio book
      * @return {@link DatabaseAlbumEntity} has details of the album
      */
-    @Query("SELECT * FROM Album_Table  where metadata_id = :metadata_id")
+    @Query("SELECT * FROM Album_Table  where album_metadata_id = :metadata_id")
     fun getAlbumDetails( metadata_id:String):LiveData<DatabaseAlbumEntity>
 
     /**
@@ -37,9 +37,8 @@ interface MetadataDao{
      * @param metadata_id unique id given to audio book
      * @return list of {@link DatabaseTrackEntity} track
      */
-    @Query("SELECT * FROM MediaTrack_Table where album_id=:metadata_id")
+    @Query("SELECT * FROM MediaTrack_Table where track_album_id=:metadata_id")
     fun getTrackDetails(metadata_id:String):LiveData<List<DatabaseTrackEntity>>
-
 
 
     /**
