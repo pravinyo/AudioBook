@@ -13,7 +13,7 @@ import com.allsoftdroid.feature.book_details.presentation.recyclerView.views.Tra
  * It uses DiffUtils for efficient management of the recycler view list item
  */
 
-class AudioBookTrackAdapter: ListAdapter<AudioBookTrackDomainModel, RecyclerView.ViewHolder>(TrackDiffCallback()) {
+class AudioBookTrackAdapter(private val listener: TrackItemClickedListener): ListAdapter<AudioBookTrackDomainModel, RecyclerView.ViewHolder>(TrackDiffCallback()) {
 
     /**
      * Create view Holder of type BookViewHolder
@@ -29,7 +29,7 @@ class AudioBookTrackAdapter: ListAdapter<AudioBookTrackDomainModel, RecyclerView
         when(holder){
             is TrackItemViewHolder ->{
                 val dataItem = getItem(position)
-                holder.bind(dataItem)
+                holder.bind(dataItem,listener)
             }
 
             else -> throw Exception("View Holder type is unknown:$holder")
@@ -62,5 +62,12 @@ class TrackDiffCallback : DiffUtil.ItemCallback<AudioBookTrackDomainModel>(){
          */
         return oldItem == newItem
     }
+}
 
+
+/*
+listener to check for the click event
+ */
+class TrackItemClickedListener(val clickListener : (trackNumber : Int?,filename:String,trackTitle:String?)->Unit){
+    fun onTrackItemClicked(track : AudioBookTrackDomainModel) = clickListener(track.trackNumber,track.filename,track.trackTitle)
 }
