@@ -13,6 +13,7 @@ import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.AudioBookTrackAdapter
+import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModelFactory
 import timber.log.Timber
@@ -54,13 +55,14 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
             }
         })
 
-        bookDetailsViewModel.playItemClicked.observe(viewLifecycleOwner, Observer {
-            it.getContentIfNotHandled()?.let {bookId ->
-                Toast.makeText(context,bookId,Toast.LENGTH_SHORT).show()
+        val trackAdapter = AudioBookTrackAdapter(TrackItemClickedListener{ trackNumber,filename,title ->
+            trackNumber?.let {
+                bookDetailsViewModel.onPlayItemClicked(trackNumber.toString())
             }
+
+            dataBinding.tvToolbarTitle.text = title
         })
 
-        val trackAdapter = AudioBookTrackAdapter()
         dataBinding.recyclerView.adapter = trackAdapter
 
         dataBinding.recyclerView.apply {
@@ -70,10 +72,9 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
         bookDetailsViewModel.audioBookTracks.observe(viewLifecycleOwner, Observer {
             it?.let {
                 Timber.d("list size received is ${it.size}")
-                trackAdapter.submitList(it)
+                trackAdapter.submitList(it.filter { it.format?.contains("64")?:false })
             }
         })
-
 
         return dataBinding.root
     }
