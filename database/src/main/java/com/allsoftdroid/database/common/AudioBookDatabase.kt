@@ -16,7 +16,7 @@ import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseTrackEntity
  */
 @Database(
     entities = [DatabaseAudioBook::class,DatabaseMetadataEntity::class,DatabaseAlbumEntity::class,DatabaseTrackEntity::class],
-    version = 4 ,
+    version = 5 ,
     exportSchema = false)
 abstract class AudioBookDatabase : RoomDatabase(){
 
