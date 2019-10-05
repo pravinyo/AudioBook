@@ -8,11 +8,14 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
+import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.AudioBookTrackAdapter
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModelFactory
+import timber.log.Timber
 
 
 class AudioBookDetailsFragment : BaseContainerFragment(){
@@ -54,6 +57,20 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
         bookDetailsViewModel.playItemClicked.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let {bookId ->
                 Toast.makeText(context,bookId,Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        val trackAdapter = AudioBookTrackAdapter()
+        dataBinding.recyclerView.adapter = trackAdapter
+
+        dataBinding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+        }
+
+        bookDetailsViewModel.audioBookTracks.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                Timber.d("list size received is ${it.size}")
+                trackAdapter.submitList(it)
             }
         })
 
