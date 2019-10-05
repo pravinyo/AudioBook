@@ -19,17 +19,27 @@ import com.bumptech.glide.request.RequestOptions
 @BindingAdapter("trackTitle")
 fun TextView.setTrackTitle(item : AudioBookTrackDomainModel?){
     item?.let {
-        text = item.trackTitle
+        text = getNormalizedText(item.trackTitle,38)
     }
 }
 
-@BindingAdapter("trackNumber")
-fun TextView.setTrackNumber(item : AudioBookTrackDomainModel?){
+@BindingAdapter("trackLength")
+fun TextView.setTrackLength(item : AudioBookTrackDomainModel?){
     item?.let {
-        text = item.trackNumber?.toString()?:"NA"
+        text = item.length
     }
 }
 
+@BindingAdapter("trackPlayingStatus")
+fun ImageView.setTrackPlayingStatus(item :AudioBookTrackDomainModel?){
+    item?.let {
+        if(item.isPlaying){
+            setImageResource(R.drawable.play_circle)
+        }else{
+            setImageResource(R.drawable.play_circle_outline)
+        }
+    }
+}
 
 /**
 Handle visibility of progress bar
