@@ -57,7 +57,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
 
         val trackAdapter = AudioBookTrackAdapter(TrackItemClickedListener{ trackNumber,filename,title ->
             trackNumber?.let {
-                bookDetailsViewModel.onPlayItemClicked(trackNumber.toString())
+                bookDetailsViewModel.onPlayItemClicked(trackNumber)
             }
 
             dataBinding.tvToolbarTitle.text = title
@@ -72,7 +72,8 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
         bookDetailsViewModel.audioBookTracks.observe(viewLifecycleOwner, Observer {
             it?.let {
                 Timber.d("list size received is ${it.size}")
-                trackAdapter.submitList(it.filter { it.format?.contains("64")?:false })
+                trackAdapter.submitList(null)
+                trackAdapter.submitList(it)
             }
         })
 
