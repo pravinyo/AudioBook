@@ -45,13 +45,11 @@ class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,@Non
 
 
     private var _audioBookTrackList : LiveData<List<AudioBookTrackDomainModel>> = Transformations.map(
-        metadataDao.getTrackDetails(bookId)
+        metadataDao.getTrackDetails(bookId,formatContains = "64")
     ){
         it.asTrackDomainModel()
     }
 
-    private val audioBookTrackList : LiveData<List<AudioBookTrackDomainModel>>
-        get() = _audioBookTrackList
 
     /***
      * track network response for  completion and started
@@ -94,7 +92,7 @@ class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,@Non
         Timber.d("Metadata loaded check:${response.value}")
     }
 
-    override fun getTrackList() = audioBookTrackList
+    override fun getTrackList() = _audioBookTrackList
 
     /**
      * Load the database with the provided list of Book Instance
