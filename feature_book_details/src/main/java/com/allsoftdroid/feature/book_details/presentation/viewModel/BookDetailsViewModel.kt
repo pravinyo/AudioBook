@@ -35,8 +35,8 @@ class BookDetailsViewModel(application : Application,bookId : String) : AndroidV
 
 
     //handle item click event
-    private var _playItemClicked = MutableLiveData<Event<String>>()
-    val playItemClicked: LiveData<Event<String>>
+    private var _playItemClicked = MutableLiveData<Event<Int>>()
+    val playItemClicked: LiveData<Event<Int>>
         get() = _playItemClicked
 
 
@@ -50,7 +50,9 @@ class BookDetailsViewModel(application : Application,bookId : String) : AndroidV
     val audioBookMetadata: LiveData<AudioBookMetadataDomainModel>
 
     //audio book track reference
+    private var _audioBookTracks = MutableLiveData<List<AudioBookTrackDomainModel>>()
     val audioBookTracks : LiveData<List<AudioBookTrackDomainModel>>
+    get() = _audioBookTracks
 
 
     //database
@@ -73,11 +75,30 @@ class BookDetailsViewModel(application : Application,bookId : String) : AndroidV
         }
 
         audioBookMetadata = getMetadataUsecase.getMetadata()
-        audioBookTracks = getTrackListUsecase.getTrackListData()
+        getTrackListUsecase.getTrackListData().observeForever {
+            _audioBookTracks.value = it
+        }
     }
 
-    fun onPlayItemClicked(bookId: String){
-        _playItemClicked.value = Event(bookId)
+    fun onPlayItemClicked(trackNumber: Int){
+        //TODO: look for prints out of how to handle this situation like data is coming from course but want to
+        // show change in livedata
+        _audioBookTracks.value?.let {
+
+            val list = it
+            var currentPlaying = 0
+
+            _playItemClicked.value?.let {
+                currentPlaying = it.peekContent()
+            }
+
+            list[currentPlaying].isPlaying = false
+            list[trackNumber-1].isPlaying = true
+
+            _audioBookTracks.value=list.toList()
+        }
+
+        _playItemClicked.value = Event(trackNumber-1)
     }
 
     fun onBackArrowPressed(){
