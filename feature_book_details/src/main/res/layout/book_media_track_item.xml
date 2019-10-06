@@ -30,7 +30,8 @@
             <ImageView
                 app:trackPlayingStatus="@{track}"
                 android:layout_width="@dimen/track_item_control_btn_size"
-                android:layout_height="@dimen/track_item_control_btn_size"/>
+                android:layout_height="@dimen/track_item_control_btn_size"
+                android:contentDescription="@string/play_icons" />
 
             <View
                 android:layout_width="@dimen/track_item_element_spacing"
