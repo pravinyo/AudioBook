@@ -40,6 +40,15 @@ interface MetadataDao{
     @Query("SELECT * FROM MediaTrack_Table where track_album_id=:metadata_id")
     fun getTrackDetails(metadata_id:String):LiveData<List<DatabaseTrackEntity>>
 
+    /**
+     * get list of  media track files for the given album id . here album id is same as metadata id so we will
+     * directly use it without writing complex SQL Query
+     * @param metadata_id unique id given to audio book
+     * @param formatContains keyword that should be part of the string
+     * @return list of {@link DatabaseTrackEntity} track
+     */
+    @Query("SELECT * FROM MediaTrack_Table where track_album_id=:metadata_id and format like '%' || :formatContains || '%'")
+    fun getTrackDetails(metadata_id:String,formatContains:String):LiveData<List<DatabaseTrackEntity>>
 
     /**
      * Insert individual book metadata in the database
