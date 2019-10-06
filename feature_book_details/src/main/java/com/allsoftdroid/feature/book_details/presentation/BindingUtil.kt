@@ -31,12 +31,12 @@ fun TextView.setTrackLength(item : AudioBookTrackDomainModel?){
 }
 
 @BindingAdapter("trackPlayingStatus")
-fun ImageView.setTrackPlayingStatus(item :AudioBookTrackDomainModel?){
+fun setTrackPlayingStatus(imageView: ImageView,item :AudioBookTrackDomainModel?){
     item?.let {
         if(item.isPlaying){
-            setImageResource(R.drawable.play_circle)
+            imageView.setImageResource(R.drawable.play_circle)
         }else{
-            setImageResource(R.drawable.play_circle_outline)
+            imageView.setImageResource(R.drawable.play_circle_outline)
         }
     }
 }
