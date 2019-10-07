@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="book_details_banner_image_height">250dp</dimen>
+    <dimen name="track_item_control_btn_size">24dp</dimen>
+    <dimen name="track_item_element_spacing">2dp</dimen>
+    <dimen name="track_item_margin_top">8dp</dimen>
+    <dimen name="track_item_margin_start">8dp</dimen>
+    <dimen name="track_item_margin_end">4dp</dimen>
 </resources>
