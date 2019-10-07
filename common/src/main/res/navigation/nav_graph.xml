@@ -11,8 +11,7 @@
         <action
             android:id="@+id/action_AudioBookListFragment_to_AudioBookDetailsFragment"
             app:destination="@id/AudioBookDetailsFragment"
-            app:popUpTo="@+id/AudioBookListFragment"
-            app:popUpToInclusive="true"/>
+            app:popUpTo="@+id/AudioBookListFragment"/>
     </fragment>
 
     <fragment
@@ -26,7 +25,7 @@
         <action
             android:id="@+id/action_AudioBookDetailsFragment_to_AudioBookListFragment"
             app:destination="@id/AudioBookListFragment"
-            app:popUpTo="@+id/AudioBookDetailsFragment"
+            app:popUpTo="@+id/AudioBookListFragment"
             app:popUpToInclusive="true"/>
     </fragment>
 
