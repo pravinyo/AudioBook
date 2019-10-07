@@ -1,0 +1,66 @@
+import com.allsoftdroid.buildsrc.AndroidConfig
+import com.allsoftdroid.buildsrc.BuildTypeDebug
+import com.allsoftdroid.buildsrc.BuildTypeRelease
+import com.allsoftdroid.buildsrc.DataBinding
+import com.allsoftdroid.buildsrc.LibraryDependency
+
+apply plugin: GradlePluginId.ANDROID_LIBRARY
+apply plugin: GradlePluginId.KOTLIN_ANDROID
+apply plugin: GradlePluginId.KOTLIN_KAPT
+apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
+apply plugin: GradlePluginId.SAFE_ARGS
+
+android {
+    compileSdkVersion AndroidConfig.COMPILE_SDK_VERSION
+
+    defaultConfig {
+        minSdkVersion(AndroidConfig.MIN_SDK_VERSION)
+        targetSdkVersion(AndroidConfig.TARGET_SDK_VERSION)
+        versionCode AndroidConfig.VERSION_CODE
+        versionName AndroidConfig.VERSION_NAME
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled BuildTypeRelease.isMinifyEnabled
+        }
+
+        debug {
+            minifyEnabled BuildTypeDebug.isMinifyEnabled
+        }
+
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
+    }
+
+    dataBinding{
+        enabled = DataBinding.IS_ENABLED
+    }
+}
+
+dependencies {
+
+    implementation(project(':database'))
+    implementation(project(':common'))
+
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation(LibraryDependency.GLIDE)
+    annotationProcessor(LibraryDependency.GLIDE_COMPILER)
+
+    implementation(LibraryDependency.RECYCLER_VIEW)
+    implementation(LibraryDependency.CARD_VIEW)
+
+
+    testImplementation(TestLibraryDependency.JUNIT)
+    testImplementation(TestLibraryDependency.MOCKITO_ANDROID)
+    testImplementation(TestLibraryDependency.MOCKITO_KOTLIN)
+    testImplementation(TestLibraryDependency.COROUTINES_TEST)
+    testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
+    androidTestImplementation(TestLibraryDependency.TEST_RUNNER)
+    androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
+
+}

@@ -1,10 +1,12 @@
 import com.allsoftdroid.buildsrc.AndroidConfig
 import com.allsoftdroid.buildsrc.BuildTypeDebug
 import com.allsoftdroid.buildsrc.BuildTypeRelease
+import com.allsoftdroid.buildsrc.DataBinding
 import com.allsoftdroid.buildsrc.LibraryDependency
 
 apply plugin: GradlePluginId.ANDROID_APPLICATION
 apply plugin: GradlePluginId.KOTLIN_ANDROID
+apply plugin: GradlePluginId.KOTLIN_KAPT
 apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
 
 android {
@@ -28,7 +30,6 @@ android {
 
         debug {
             minifyEnabled BuildTypeDebug.isMinifyEnabled
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         compileOptions {
@@ -36,16 +37,21 @@ android {
             targetCompatibility = JavaVersion.VERSION_1_8
         }
     }
+
+    dataBinding{
+        enabled = DataBinding.IS_ENABLED
+    }
+
+//    dynamicFeatures = [":feature_book", ":feature_book_details"]
+
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation(LibraryDependency.KOTLIN)
-    implementation(LibraryDependency.APP_COMPACT)
-    implementation(LibraryDependency.CORE_KTX)
-    implementation(LibraryDependency.SUPPORT_CONSTRAINT_LAYOUT)
 
-    testImplementation(TestLibraryDependency.JUNIT)
-    androidTestImplementation(TestLibraryDependency.TEST_RUNNER)
-    androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
+    implementation(project(path: ':common'))
+    implementation(project(path: ':feature_book'))
+    implementation(project(path: ':feature_book_details'))
+
+    
+
 }

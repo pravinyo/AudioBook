@@ -35,3 +35,7 @@ object BuildTypeRelease : BuildType {
 object TestOptions {
     const val IS_RETURN_DEFAULT_VALUES = true
 }
+
+object DataBinding{
+    const val IS_ENABLED = true
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/AudioBookListFragment">
+
+    <fragment
+        android:id="@+id/AudioBookListFragment"
+        android:name="com.allsoftdroid.feature_book.presentation.AudioBookListFragment"
+        android:label="AudioBookListFragment">
+        <action
+            android:id="@+id/action_AudioBookListFragment_to_AudioBookDetailsFragment"
+            app:destination="@id/AudioBookDetailsFragment"
+            app:popUpTo="@+id/AudioBookListFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/AudioBookDetailsFragment"
+        android:name="com.allsoftdroid.feature.book_details.presentation.AudioBookDetailsFragment"
+        android:label="AudioBookDetailsFragment">
+
+        <argument
+            android:name="bookId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_AudioBookDetailsFragment_to_AudioBookListFragment"
+            app:destination="@id/AudioBookListFragment"
+            app:popUpTo="@+id/AudioBookListFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+</navigation>

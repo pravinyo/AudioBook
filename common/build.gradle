@@ -1,0 +1,80 @@
+import com.allsoftdroid.buildsrc.AndroidConfig
+import com.allsoftdroid.buildsrc.BuildTypeDebug
+import com.allsoftdroid.buildsrc.BuildTypeRelease
+import com.allsoftdroid.buildsrc.DataBinding
+import com.allsoftdroid.buildsrc.LibraryDependency
+
+
+apply plugin: GradlePluginId.ANDROID_LIBRARY
+apply plugin: GradlePluginId.KOTLIN_ANDROID
+apply plugin: GradlePluginId.KOTLIN_KAPT
+apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
+
+android {
+
+    compileSdkVersion(AndroidConfig.COMPILE_SDK_VERSION)
+    buildToolsVersion(AndroidConfig.BUILD_TOOLS_VERSION)
+
+    defaultConfig {
+
+        minSdkVersion(AndroidConfig.MIN_SDK_VERSION)
+        targetSdkVersion(AndroidConfig.TARGET_SDK_VERSION)
+        versionCode AndroidConfig.VERSION_CODE
+        versionName AndroidConfig.VERSION_NAME
+        testInstrumentationRunner AndroidConfig.TEST_INSTRUMENTATION_RUNNER
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled BuildTypeRelease.isMinifyEnabled
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            minifyEnabled BuildTypeDebug.isMinifyEnabled
+        }
+
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
+    }
+
+    dataBinding{
+        enabled = DataBinding.IS_ENABLED
+    }
+
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    api(LibraryDependency.SUPPORT_CONSTRAINT_LAYOUT)
+
+    api(LibraryDependency.NAVIGATION_FRAGMENT_KTX)
+    api(LibraryDependency.NAVIGATION_UI_KTX)
+
+    api(LibraryDependency.KOTLIN)
+    api(LibraryDependency.KOTLIN_REFLECT)
+
+    api(LibraryDependency.APP_COMPACT)
+    api(LibraryDependency.CORE_KTX)
+
+    api(LibraryDependency.TIMBER)
+
+    api(LibraryDependency.FRAGMENT_KTX)
+    api(LibraryDependency.LIFECYCLE_VIEW_MODEL_KTX)
+    api(LibraryDependency.LIFECYCLE_EXTENSIONS)
+    kapt(LibraryDependency.LIFECYCLE_COMPILER)
+
+    api(LibraryDependency.COROUTINES_CORE)
+    api(LibraryDependency.COROUTINES_ANDROID)
+
+    api(LibraryDependency.GSON)
+
+    api(LibraryDependency.RETROFIT)
+    api(LibraryDependency.RETROFIT_SCALARS)
+    api(LibraryDependency.RETROFIT_COROUTINES_ADAPTER)
+}
