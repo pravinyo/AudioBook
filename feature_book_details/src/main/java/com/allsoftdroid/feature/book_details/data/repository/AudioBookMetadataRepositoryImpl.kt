@@ -1,23 +1,21 @@
 package com.allsoftdroid.feature.book_details.data.repository
 
 import android.os.AsyncTask
-import android.os.Build
-import android.text.Html
+import androidx.annotation.NonNull
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import com.allsoftdroid.database.bookListDB.AudioBookDao
-import com.allsoftdroid.database.bookListDB.DatabaseAudioBook
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseAlbumEntity
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseMetadataEntity
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseTrackEntity
 import com.allsoftdroid.feature.book_details.data.databaseExtension.asMetadataDomainModel
-import com.allsoftdroid.feature.book_details.data.model.AudioBookMetadataResultDataModel
+import com.allsoftdroid.feature.book_details.data.databaseExtension.asTrackDomainModel
 import com.allsoftdroid.feature.book_details.data.model.toDatabaseModel
 import com.allsoftdroid.feature.book_details.data.network.response.GetAudioBookMetadataResponse
 import com.allsoftdroid.feature.book_details.data.network.service.ArchiveMetadataApi
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
+import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.AudioBookMetadataRepository
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +27,7 @@ import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
 
-class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,private val bookId: String) : AudioBookMetadataRepository{
+class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,@NonNull private val bookId: String) : AudioBookMetadataRepository{
 
     /**
      * Books type live data is fetched from the database and notify observer for any change in data.
@@ -46,9 +44,17 @@ class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,priv
         get() = _audioBookMetadata
 
 
+    private var _audioBookTrackList : LiveData<List<AudioBookTrackDomainModel>> = Transformations.map(
+        metadataDao.getTrackDetails(bookId,formatContains = "64")
+    ){
+        it.asTrackDomainModel()
+    }
+
+
     /***
      * track network response for  completion and started
      */
+
     private var _response = MutableLiveData<String>()
     val response: LiveData<String>
         get() = _response
@@ -82,6 +88,12 @@ class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,priv
 
     override fun getMetadata() = audioBookMetadata
 
+    override suspend fun loadTrackListData() {
+        Timber.d("Metadata loaded check:${response.value}")
+    }
+
+    override fun getTrackList() = _audioBookTrackList
+
     /**
      * Load the database with the provided list of Book Instance
      * It first clears old Books records  from the DB  and reload fresh content
@@ -113,14 +125,12 @@ class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,priv
             }
 
             for(track in tracks){
-                Timber.i(track.trackTitle)
-                Timber.i(track.format)
                 trackList.add(track.toDatabaseModel(metadata.identifier))
             }
 
             val album = DatabaseAlbumEntity(
                 identifier = result.metadata.identifier,
-                albumName = tracks[0].trackAlbum?:"NA",
+                albumName = tracks[0].album?:"NA",
                 creator = metadata.creator?:"NA"
             )
 
@@ -132,7 +142,14 @@ class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,priv
             metadataDao.insertAllTracks(trackList)
             Timber.d("#${trackList.size} tracks loaded in the DB")
 
-            return metadataDao.getTrackDetails(metadata_id = metadata.identifier).value?.size?:0
+            val list = metadataDao.getTrackDetails(metadata_id = metadata.identifier).value
+
+            list?.forEach {
+                Timber.d(it.trackAlbum_id)
+                Timber.d(it.trackTitle)
+            }
+
+            return list?.size?:0
         }
 
         /**

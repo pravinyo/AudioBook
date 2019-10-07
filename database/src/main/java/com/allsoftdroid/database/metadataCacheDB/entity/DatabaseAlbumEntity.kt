@@ -11,9 +11,9 @@ data class DatabaseAlbumEntity(
     @ForeignKey(
         entity = DatabaseMetadataEntity::class,
         parentColumns = ["metadata_id"],
-        childColumns = ["metadata_id"],
-        onDelete = ForeignKey.CASCADE)
-    @ColumnInfo(name = "metadata_id")
+        childColumns = ["album_metadata_id"],
+        onDelete = ForeignKey.RESTRICT)
+    @ColumnInfo(name = "album_metadata_id")
     var identifier : String,
 
     @PrimaryKey
