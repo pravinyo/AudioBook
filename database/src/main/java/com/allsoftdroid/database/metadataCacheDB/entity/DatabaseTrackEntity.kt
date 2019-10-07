@@ -13,10 +13,10 @@ data class DatabaseTrackEntity(
 
     @ForeignKey(
         entity = DatabaseAlbumEntity::class,
-        parentColumns = ["metadata_id"],
-        childColumns = ["album_id"],
-        onDelete = ForeignKey.CASCADE)
-    @ColumnInfo(name = "album_id")
+        parentColumns = ["album_metadata_id"],
+        childColumns = ["track_album_id"],
+        onDelete = ForeignKey.RESTRICT)
+    @ColumnInfo(name = "track_album_id")
     var trackAlbum_id : String,
 
     @ColumnInfo(name = "remote_filename")

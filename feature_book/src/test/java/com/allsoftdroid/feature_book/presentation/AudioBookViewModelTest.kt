@@ -19,8 +19,8 @@ class AudioBookViewModelTest{
     @JvmField
     val instantExecutorRule = InstantTaskExecutorRule()
 
-    lateinit var viewModel: AudioBookViewModel
-    lateinit var albumUseCase: GetAudioBookListUsecase
+//    lateinit var viewModel: AudioBookListViewModel
+    lateinit var albumUsecase: GetAudioBookListUsecase
     lateinit var application: Application
     private val mainThreadSurrogate = newSingleThreadContext("UI thread")
 
@@ -29,21 +29,21 @@ class AudioBookViewModelTest{
     @Before
     fun setup(){
         val repository : AudioBookRepository = FakeAudioBookRepository()
-        albumUseCase = GetAudioBookListUsecase(repository)
+        albumUsecase = GetAudioBookListUsecase(repository)
         application = Application()
 
         Dispatchers.setMain(mainThreadSurrogate)
     }
 
     @Test
-    fun viewModel_audiobooks_fetchSuccess(){
-        viewModel = runBlocking(Dispatchers.Main) {
-            AudioBookViewModel(getAlbumListUseCase = albumUseCase,application = application)
-        }
+    fun albumUsecase_audioBooks_fetchSuccess(){
+        runBlocking {
+            albumUsecase.execute()
 
-        viewModel.audioBooks.observeForever {
-            it?.let {
-                Assert.assertSame("creator",it[0].creator)
+            albumUsecase.getAudioBook().observeForever {
+                it?.let {
+                    Assert.assertSame("creator",it[0].creator)
+                }
             }
         }
     }

@@ -1,1 +1,3 @@
-clear stack after navigating back
+TODO: Write test scripts
+TODO: Static analysis tools
+TODO: Follow TDD Approach
