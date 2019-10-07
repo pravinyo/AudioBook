@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="track" type="com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel"/>
+        <variable
+            name="clickListener"
+            type="com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_marginTop="@dimen/track_item_margin_top"
+        android:layout_marginStart="@dimen/track_item_margin_start"
+        android:layout_marginEnd="@dimen/track_item_margin_end"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:onClick="@{()->clickListener.onTrackItemClicked(track)}"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                app:trackPlayingStatus="@{track}"
+                android:layout_width="@dimen/track_item_control_btn_size"
+                android:layout_height="@dimen/track_item_control_btn_size"
+                android:contentDescription="@string/play_icons" />
+
+            <View
+                android:layout_width="@dimen/track_item_element_spacing"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:trackTitle="@{track}"/>
+
+            <View
+                android:layout_width="@dimen/track_item_element_spacing"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:trackLength="@{track}"/>
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>

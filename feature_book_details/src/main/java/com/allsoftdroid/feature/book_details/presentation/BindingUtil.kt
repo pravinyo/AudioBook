@@ -9,9 +9,37 @@ import androidx.databinding.BindingAdapter
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
+import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+
+
+
+@BindingAdapter("trackTitle")
+fun TextView.setTrackTitle(item : AudioBookTrackDomainModel?){
+    item?.let {
+        text = getNormalizedText(item.trackTitle,38)
+    }
+}
+
+@BindingAdapter("trackLength")
+fun TextView.setTrackLength(item : AudioBookTrackDomainModel?){
+    item?.let {
+        text = item.length
+    }
+}
+
+@BindingAdapter("trackPlayingStatus")
+fun setTrackPlayingStatus(imageView: ImageView,item :AudioBookTrackDomainModel?){
+    item?.let {
+        if(item.isPlaying){
+            imageView.setImageResource(R.drawable.play_circle)
+        }else{
+            imageView.setImageResource(R.drawable.play_circle_outline)
+        }
+    }
+}
 
 /**
 Handle visibility of progress bar
@@ -21,7 +49,7 @@ fun goneIfNotNull(view: View, it: Any?){
     view.visibility = if(it!=null) View.GONE else View.VISIBLE
 }
 
-/*
+/**
 load images using glide library
 If content is not yet available to be displayed show loading animation
 If content is not there show broken image
@@ -36,7 +64,6 @@ fun setImageUrl(imageView: ImageView, item: AudioBookMetadataDomainModel?) {
             .with(imageView.context)
             .asBitmap()
             .load(url)
-            .override(250,250)
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .dontAnimate()
             .apply(
