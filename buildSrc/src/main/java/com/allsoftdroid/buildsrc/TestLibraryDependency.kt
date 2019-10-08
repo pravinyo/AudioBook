@@ -1,4 +1,5 @@
 private object TestLibraryVersion {
+    const val FRAGMENT_TEST = CoreVersion.FRAGMENT_KTX
     const val JUNIT = "4.12"
     const val KLUENT = "1.53"
     const val TEST_RUNNER = "1.0.2"
@@ -20,4 +21,5 @@ object TestLibraryDependency {
     const val COROUTINES_TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${CoreVersion.COROUTINES_ANDROID}"
     const val ANDROID_X_CORE_TESTING = "android.arch.core:core-testing:${TestLibraryVersion.ANDROID_X_TEST}"
     const val ANDROID_X_TEST_RULES = "androidx.test:rules:${TestLibraryVersion.ANDROID_X_TEST}"
+    const val FRAGMENT_TEST = "androidx.fragment:fragment-testing:${TestLibraryVersion.FRAGMENT_TEST}"
 }
