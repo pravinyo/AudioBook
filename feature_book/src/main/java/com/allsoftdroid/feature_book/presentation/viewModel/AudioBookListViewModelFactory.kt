@@ -3,6 +3,9 @@ package com.allsoftdroid.feature_book.presentation.viewModel
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.allsoftdroid.database.common.AudioBookDatabase
+import com.allsoftdroid.feature_book.data.repository.AudioBookRepositoryImpl
+import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
 
 
 @Suppress("UNCHECKED_CAST")
@@ -14,7 +17,11 @@ class AudioBookListViewModelFactory(private val application: Application): ViewM
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AudioBookListViewModel::class.java)) {
-            return AudioBookListViewModel(application) as T
+            return AudioBookListViewModel(
+                application,
+                GetAudioBookListUsecase(AudioBookRepositoryImpl(
+                    AudioBookDatabase.getDatabase(application).audioBooksDao())
+                )) as T
         }
 
         throw IllegalArgumentException("Unknown ViewModel class")
