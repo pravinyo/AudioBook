@@ -4,6 +4,7 @@ import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.database.bookListDB.AudioBookDao
 import com.allsoftdroid.database.bookListDB.DatabaseAudioBook
 import com.allsoftdroid.feature_book.data.databaseExtension.asBookDomainModel
@@ -23,7 +24,6 @@ import timber.log.Timber
 
 
 class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRepository {
-
     /**
      * Books type live data is fetched from the database and notify observer for any change in data.
      * Books count at restricted to {@link BOOK_LIMIT}.
@@ -35,15 +35,15 @@ class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRep
         it.asBookDomainModel()
     }
 
-    val audioBook : LiveData<List<AudioBookDomainModel>>
+    private val audioBook : LiveData<List<AudioBookDomainModel>>
     get() = _audioBooks
 
     /***
-     * track network response for  completion and started
+     * track error response for  completion and started
      */
-    private var _response = MutableLiveData<Int>()
-    val response: LiveData<Int>
-        get() = _response
+    private var _errorResponse = MutableLiveData<Event<Any>>()
+    private val errorResponse: LiveData<Event<Any>>
+        get() = _errorResponse
 
     /**
      * for debugging purpose
@@ -67,7 +67,7 @@ class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRep
             ArchiveBooksApi.RETROFIT_SERVICE.getAudioBooks().enqueue(object : Callback<String> {
                 override fun onFailure(call: Call<String>, t: Throwable) {
                     Timber.i("Failure occur")
-                    _response.value=0
+                    _errorResponse.value = Event(t)
                 }
 
                 override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -77,7 +77,7 @@ class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRep
                     Timber.i("Response got: ${result.response.docs[0].title}")
 
                     result?.response?.docs?.let {
-                        _response.value = result.response.docs.size
+                        _errorResponse.value = Event("Success")
                         Timber.i("Size:${result.response.docs.size}")
                         Timber.i("First:${result.response.docs[0].title}")
                         Timber.i("Creator:${result.response.docs[0].creator}")
@@ -90,8 +90,9 @@ class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRep
         }
     }
 
-    override suspend fun getAudioBooks() =  _audioBooks
+    override fun getAudioBooks() =  audioBook
 
+    override fun onError() = errorResponse
 
     /**
      * Load the database with the provided list of Book Instance
