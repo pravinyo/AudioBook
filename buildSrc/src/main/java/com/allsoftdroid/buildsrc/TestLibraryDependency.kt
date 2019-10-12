@@ -1,4 +1,5 @@
 private object TestLibraryVersion {
+    const val MOCKITO_CORE = "2.10.0"
     const val FRAGMENT_TEST = CoreVersion.FRAGMENT_KTX
     const val JUNIT = "4.12"
     const val KLUENT = "1.53"
@@ -15,9 +16,12 @@ object TestLibraryDependency {
     const val KLUENT = "org.amshove.kluent:kluent:${TestLibraryVersion.KLUENT}"
     const val TEST_RUNNER = "com.android.support.test:runner:${TestLibraryVersion.TEST_RUNNER}"
     const val ESPRESSO_CORE = "com.android.support.test.espresso:espresso-core:${TestLibraryVersion.ESPRESSO_CORE}"
+
     const val MOCKITO_INLINE = "org.mockito:mockito-inline:${TestLibraryVersion.MOCKITO}"
     const val MOCKITO_ANDROID = "org.mockito:mockito-android:${TestLibraryVersion.MOCKITO}"
     const val MOCKITO_KOTLIN = "com.nhaarman.mockitokotlin2:mockito-kotlin:${TestLibraryVersion.MOCKITO_KOTLIN}"
+    const val MOCKITO_CORE = "org.mockito:mockito-core:${TestLibraryVersion.MOCKITO_CORE}"
+
     const val COROUTINES_TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${CoreVersion.COROUTINES_ANDROID}"
     const val ANDROID_X_CORE_TESTING = "android.arch.core:core-testing:${TestLibraryVersion.ANDROID_X_TEST}"
     const val ANDROID_X_TEST_RULES = "androidx.test:rules:${TestLibraryVersion.ANDROID_X_TEST}"
