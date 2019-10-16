@@ -8,5 +8,7 @@ class GetAudioBookListUsecase(
 
     suspend fun execute() = audioBookRep.searchAudioBooks()
 
-    suspend fun getAudioBook() = audioBookRep.getAudioBooks()
+    fun getAudioBook() = audioBookRep.getAudioBooks()
+
+    fun onError() = audioBookRep.onError()
 }

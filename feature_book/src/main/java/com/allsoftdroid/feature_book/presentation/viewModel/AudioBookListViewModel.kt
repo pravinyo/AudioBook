@@ -5,8 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.common.base.extension.Event
-import com.allsoftdroid.database.common.AudioBookDatabase
-import com.allsoftdroid.feature_book.data.repository.AudioBookRepositoryImpl
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +13,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class AudioBookListViewModel(application : Application) : AndroidViewModel(application) {
+class AudioBookListViewModel(application : Application,bookListUsecase: GetAudioBookListUsecase) : AndroidViewModel(application) {
     /**
      * cancelling this job cancels all the job started by this viewmodel
      */
@@ -27,7 +25,7 @@ class AudioBookListViewModel(application : Application) : AndroidViewModel(appli
     private val viewModelScope = CoroutineScope(viewModelJob+ Dispatchers.Main)
 
     //track network response
-    var networkResponse : LiveData<Int>? = null
+    var errorResponse : LiveData<Event<Any>>? = null
 
 
     //handle item click event
@@ -41,15 +39,8 @@ class AudioBookListViewModel(application : Application) : AndroidViewModel(appli
     val backArrowPressed: LiveData<Event<Boolean>>
         get() = _backArrowPressed
 
-
-    //database
-    private val database = AudioBookDatabase.getDatabase(application)
-
-    //repository reference
-    private val bookRepository = AudioBookRepositoryImpl(database.audioBooksDao())
-
     //Book list use case
-    private val getAlbumListUseCase = GetAudioBookListUsecase(bookRepository)
+    private val getAlbumListUseCase = bookListUsecase
 
     //audio book list reference
     val audioBooks:LiveData<List<AudioBookDomainModel>>
@@ -60,8 +51,8 @@ class AudioBookListViewModel(application : Application) : AndroidViewModel(appli
             getAlbumListUseCase.execute()
         }
 
-        networkResponse = bookRepository.response
-        audioBooks = bookRepository.audioBook
+        errorResponse = getAlbumListUseCase.onError()
+        audioBooks = getAlbumListUseCase.getAudioBook()
     }
 
     fun onBookItemClicked(bookId: String){
