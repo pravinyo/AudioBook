@@ -3,9 +3,7 @@ package com.allsoftdroid.feature.book_details.presentation.viewModel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.database.common.AudioBookDatabase
 import com.allsoftdroid.feature.book_details.data.repository.AudioBookMetadataRepositoryImpl
@@ -19,7 +17,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class BookDetailsViewModel(application : Application,bookId : String) : AndroidViewModel(application){
+class BookDetailsViewModel(application : Application, private val bookId : String) : AndroidViewModel(application){
     /**
      * cancelling this job cancels all the job started by this viewmodel
      */
@@ -109,5 +107,15 @@ class BookDetailsViewModel(application : Application,bookId : String) : AndroidV
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
+    }
+
+    /**
+     * This function generated the file path on the remote server
+     * @param filename unique filename on the server
+     * @return complete file path on the remote server
+     */
+    fun getRemoteFilePath(filename: String):String{
+        val base = "https://archive.org/download"
+        return "$base/$bookId/$filename"
     }
 }
