@@ -83,13 +83,13 @@ class AudioService : Service(){
             .setWhen(notifWhen)
             .setShowWhen(showWhen)
             .setUsesChronometer(usesChronometer)
-//            .setContentIntent(getContentIntent())
+            .setContentIntent(getContentIntent())
             .setOngoing(ongoing)
             .setChannelId(NOTIFICATION_CHANNEL)
             .setCategory(Notification.CATEGORY_SERVICE)
-//            .addAction(R.drawable.play_circle, getString(R.string.previous), getIntent("PREV"))
-//            .addAction(playPauseIcon, getString(R.string.playpause), getIntent("PP"))
-//            .addAction(R.drawable.play_circle_outline, getString(R.string.next), getIntent("NEX"))
+            .addAction(R.drawable.play_circle, getString(R.string.previous), getIntent("PREV"))
+            .addAction(playPauseIcon, getString(R.string.playpause), getIntent("PP"))
+            .addAction(R.drawable.play_circle_outline, getString(R.string.next), getIntent("NEX"))
 
         startForeground(NOTIFY_ID, notification.build())
 
@@ -102,14 +102,19 @@ class AudioService : Service(){
 
     }
 
-//    private fun getContentIntent(): PendingIntent {
-//        val contentIntent = Intent(this,com.allsoftdroid.audiobook.MainActivity::class.java)
-//        return PendingIntent.getActivity(this, 0, contentIntent, 0)
-//    }
-//
-//    private fun getIntent(action: String): PendingIntent {
-//        val intent = Intent(this, com.allsoftdroid.audiobook.MainActivity::class.java)
-//        intent.action = action
-//        return PendingIntent.getBroadcast(applicationContext, 0, intent, 0)
-//    }
+    private fun getContentIntent(): PendingIntent {
+        val contentIntent = packageManager.getLaunchIntentForPackage("com.allsoftdroid.audiobook")
+        return PendingIntent.getActivity(this, 0, contentIntent, 0)
+    }
+
+    private fun getIntent(action: String): PendingIntent {
+
+        val intent = packageManager.getLaunchIntentForPackage("com.allsoftdroid.audiobook")
+        intent?.let {
+            it.action = action
+            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        return PendingIntent.getBroadcast(applicationContext, 0, intent, 0)
+    }
 }
