@@ -146,7 +146,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
             }
 
             dataBinding.tvToolbarTitle.text = title
-            playSelectedTrackFile(trackNumber?:0)
+            playSelectedTrackFile(trackNumber?.minus(1)?:0)
         })
 
         dataBinding.recyclerView.adapter = trackAdapter
