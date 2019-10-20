@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.database.common.AudioBookDatabase
+import com.allsoftdroid.feature.book_details.Utility.Utils
 import com.allsoftdroid.feature.book_details.data.repository.AudioBookMetadataRepositoryImpl
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
@@ -115,7 +116,6 @@ class BookDetailsViewModel(application : Application, private val bookId : Strin
      * @return complete file path on the remote server
      */
     fun getRemoteFilePath(filename: String):String{
-        val base = "https://archive.org/download"
-        return "$base/$bookId/$filename"
+        return Utils.getRemoteFilePath(filename,bookId)
     }
 }
