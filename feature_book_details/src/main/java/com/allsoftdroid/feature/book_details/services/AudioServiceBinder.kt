@@ -184,9 +184,7 @@ class AudioServiceBinder : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     override fun onPrepared(player: MediaPlayer?) {
-        player?.let {
-            it.start()
-        }
+        player?.start()
     }
 
     override fun onError(player: MediaPlayer?, p1: Int, p2: Int): Boolean {
