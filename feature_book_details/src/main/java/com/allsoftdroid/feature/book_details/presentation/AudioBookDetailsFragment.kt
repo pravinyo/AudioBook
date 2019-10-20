@@ -24,8 +24,6 @@ import android.content.ServiceConnection
 import android.content.Context.BIND_AUTO_CREATE
 import com.allsoftdroid.feature.book_details.services.AudioService
 import android.content.Intent
-import android.annotation.SuppressLint
-import android.os.Message
 import android.widget.Toast
 
 
@@ -55,29 +53,33 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
 
     var audioServiceBinder : AudioServiceBinder? = null
     var audioProgressUpdateHandler : Handler? = null
-    var backgroundAudioProgress : Float  = 0f
+//    var backgroundAudioProgress : Float  = 0f
 
 
     // This service connection object is the bridge between activity and background service.
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
+    private val serviceConnection by lazy {
+        object : ServiceConnection {
+            override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
             // Cast and assign background service's onBind method returned iBander object.
-            audioServiceBinder = iBinder as AudioServiceBinder
-        }
+                val service = iBinder as AudioServiceBinder
+                audioServiceBinder = service
+            }
 
         override fun onServiceDisconnected(componentName: ComponentName) {
-
+            }
         }
     }
 
     // Bind background service with caller . Then this caller can use
     // background service's AudioServiceBinder instance to invoke related methods.
+
+    private val playIntent by lazy { Intent(this.activity, AudioService::class.java) }
+
     private fun bindAudioService() {
         if (audioServiceBinder == null) {
-            val intent = Intent(this.activity, AudioService::class.java)
-
             // Below code will invoke serviceConnection's onServiceConnected method.
-            context!!.bindService(intent, serviceConnection, BIND_AUTO_CREATE)
+            context!!.bindService(playIntent, serviceConnection, BIND_AUTO_CREATE)
+            context!!.startService(playIntent)
         }
     }
 
@@ -85,33 +87,34 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
     private fun unBoundAudioService() {
         if (audioServiceBinder != null) {
             context!!.unbindService(serviceConnection)
+            context!!.stopService(playIntent)
         }
     }
 
     // Create audio player progressbar updater.
     // This updater is used to update progressbar to reflect audio play process.
-    private fun createAudioProgressbarUpdater() {
-        /* Initialize audio progress handler. */
-        if (audioProgressUpdateHandler == null) {
-            audioProgressUpdateHandler = @SuppressLint("HandlerLeak")
-            object : Handler() {
-                override fun handleMessage(msg: Message) {
-                    // The update process message is sent from AudioServiceBinder class's thread object.
-                    if (msg.what === audioServiceBinder!!.UPDATE_AUDIO_PROGRESS_BAR) {
-
-                        if (audioServiceBinder != null) {
-                            // Calculate the percentage.
-                            val currProgress = (audioServiceBinder as AudioServiceBinder).getAudioProgress()
-
-                            // Update progressbar. Make the value 10 times to show more clear UI change.
-                            backgroundAudioProgress = currProgress * 10f
-                            Timber.d("Progress: $backgroundAudioProgress")
-                        }
-                    }
-                }
-            }
-        }
-    }
+//    private fun createAudioProgressbarUpdater() {
+//        /* Initialize audio progress handler. */
+//        if (audioProgressUpdateHandler == null) {
+//            audioProgressUpdateHandler = @SuppressLint("HandlerLeak")
+//            object : Handler() {
+//                override fun handleMessage(msg: Message) {
+//                    // The update process message is sent from AudioServiceBinder class's thread object.
+//                    if (msg.what === audioServiceBinder!!.UPDATE_AUDIO_PROGRESS_BAR) {
+//
+//                        if (audioServiceBinder != null) {
+//                            // Calculate the percentage.
+//                            val currProgress = (audioServiceBinder as AudioServiceBinder).getAudioProgress()
+//
+//                            // Update progressbar. Make the value 10 times to show more clear UI change.
+//                            backgroundAudioProgress = currProgress * 10f
+//                            Timber.d("Progress: $backgroundAudioProgress")
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
     /**
      *
      * Audio Service code end
@@ -143,7 +146,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
             }
 
             dataBinding.tvToolbarTitle.text = title
-            playTrackFile(filename,title)
+            playSelectedTrackFile(trackNumber?:0)
         })
 
         dataBinding.recyclerView.adapter = trackAdapter
@@ -176,9 +179,9 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
             audioService.stopAudio()
         }
 
-        if(audioProgressUpdateHandler == null){
-            createAudioProgressbarUpdater()
-        }
+//        if(audioProgressUpdateHandler == null){
+//            createAudioProgressbarUpdater()
+//        }
 
         audioService.setAudioFileUrl(filePath)
         audioService.setStreamAudio(true)
@@ -187,6 +190,24 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
         audioService.startAudio()
 
         Toast.makeText(this.context,"Playing #$title",Toast.LENGTH_SHORT).show()
+    }
+
+    private fun playSelectedTrackFile(currentPos:Int) {
+        bookDetailsViewModel.audioBookTracks.value?.let {
+            val audioService  = audioServiceBinder as AudioServiceBinder
+
+            if(audioService.isStreamAudio()){
+                audioService.stopAudio()
+            }
+
+            audioService.setMultipleTracks(it)
+            audioService.setStreamAudio(true)
+            audioService.setContext(this.activity!!.applicationContext)
+            audioService.onCreate(bookId)
+            audioService.setTrackPosition(currentPos)
+            audioService.playTrack()
+
+        }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {
