@@ -5,6 +5,7 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 /**
  * create retrofit instance
@@ -21,7 +22,7 @@ private val retrofit = Retrofit.Builder()
 internal interface ArchiveLibriVoxAudioBookService{
 
     @GET(Utils.Books.BOOKS_COLLECTION_PATH) //implement paging
-    fun getAudioBooks(): Call<String>
+    fun getAudioBooks(@Query(Utils.Books.QUERY_ROW) rowCount:Int, @Query(Utils.Books.QUERY_PAGE) page:Int): Call<String>
 }
 
 
