@@ -25,6 +25,7 @@ import android.content.Context.BIND_AUTO_CREATE
 import com.allsoftdroid.feature.book_details.services.AudioService
 import android.content.Intent
 import android.widget.Toast
+import androidx.core.content.getSystemService
 
 
 class AudioBookDetailsFragment : BaseContainerFragment(){
@@ -211,7 +212,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
     }
 
     override fun onDestroy() {
-        unBoundAudioService()
+//        unBoundAudioService()
         super.onDestroy()
     }
 }
