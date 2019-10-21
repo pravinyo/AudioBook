@@ -7,12 +7,12 @@ import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 class FakeAudioBookRepository : AudioBookRepository{
     private var audioBooks = MutableLiveData<List<AudioBookDomainModel>>()
 
-    override suspend fun searchAudioBooks() {
+    override suspend fun searchAudioBooks(page: Int) {
         val list = ArrayList<AudioBookDomainModel>()
         list.add(AudioBookDomainModel("1","Title","creator","2019"))
 
         audioBooks.value = list
     }
 
-    override suspend fun getAudioBooks()= audioBooks
+    override fun getAudioBooks()= audioBooks
 }
