@@ -5,6 +5,6 @@ import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 
 interface AudioBookRepository {
 
-    suspend fun searchAudioBooks()
-    suspend fun getAudioBooks() : LiveData<List<AudioBookDomainModel>>
+    suspend fun searchAudioBooks(page : Int)
+    fun getAudioBooks() : LiveData<List<AudioBookDomainModel>>
 }
