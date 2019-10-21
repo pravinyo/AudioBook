@@ -59,7 +59,7 @@ class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRep
      * Using coroutine to handle the execution and update the network response and load database
      * It request the content of type books for new updates
      */
-    override suspend fun searchAudioBooks() {
+    override suspend fun searchAudioBooks(page:Int) {
 
         withContext(Dispatchers.IO){
             Timber.i("Starting network call")
@@ -90,7 +90,7 @@ class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRep
         }
     }
 
-    override suspend fun getAudioBooks() =  _audioBooks
+    override fun getAudioBooks() =  this.audioBook
 
 
     /**
