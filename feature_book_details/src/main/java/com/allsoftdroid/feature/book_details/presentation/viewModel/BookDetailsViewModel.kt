@@ -98,25 +98,34 @@ class BookDetailsViewModel(application : Application, private val bookId : Strin
 
 
     init {
+
         viewModelScope.launch {
             Timber.i("Starting to fetch new content from Remote repository")
             getMetadataUsecase.execute()
         }
 
+        // connect the reference to metadata liveData
         audioBookMetadata = getMetadataUsecase.getMetadata()
 
+        //Observe for new list and sent the new state for the track list
         getTrackListUsecase.getTrackListData().observeForever {
             _audioBookTracks.value = it
             _newTrackStateEvent.value = Event(Unit)
         }
     }
 
+    /**
+     * Creates a event when play item is clicked from the track list
+     */
     fun onPlayItemClicked(trackNumber: Int){
 
         _newTrackStateEvent.value = Event(trackNumber)
 
     }
 
+    /**
+     * creates a event when back arrow is pressed
+     */
     fun onBackArrowPressed(){
         _backArrowPressed.value = Event(true)
     }
