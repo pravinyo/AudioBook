@@ -18,7 +18,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class AudioBookListViewModel(application : Application) : AndroidViewModel(application) {
+class AudioBookListViewModel(
+    application : Application,
+    private val useCaseHandler : UseCaseHandler,
+    private val getAlbumListUseCase:GetAudioBookListUsecase) : AndroidViewModel(application) {
     /**
      * cancelling this job cancels all the job started by this viewmodel
      */
@@ -46,17 +49,6 @@ class AudioBookListViewModel(application : Application) : AndroidViewModel(appli
     val backArrowPressed: LiveData<Event<Boolean>>
         get() = _backArrowPressed
 
-
-    //database
-    private val database = AudioBookDatabase.getDatabase(application)
-
-    //repository reference
-    private val bookRepository = AudioBookRepositoryImpl(database.audioBooksDao())
-
-    //Book list use case
-    private val getAlbumListUseCase = GetAudioBookListUsecase(bookRepository)
-
-    private val useCaseHandler  = UseCaseHandler.getInstance()
 
     private val requestValues  = GetAudioBookListUsecase.RequestValues(pageNumber = 1)
 
