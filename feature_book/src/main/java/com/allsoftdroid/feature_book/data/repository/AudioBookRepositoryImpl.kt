@@ -9,6 +9,7 @@ import com.allsoftdroid.database.bookListDB.DatabaseAudioBook
 import com.allsoftdroid.feature_book.data.databaseExtension.asBookDomainModel
 import com.allsoftdroid.feature_book.data.model.AudioBookDataModel
 import com.allsoftdroid.feature_book.data.model.toDatabaseModel
+import com.allsoftdroid.feature_book.data.network.Utils
 import com.allsoftdroid.feature_book.data.network.response.GetAudioBooksResponse
 import com.allsoftdroid.feature_book.data.network.service.ArchiveBooksApi
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
@@ -64,7 +65,7 @@ class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRep
         withContext(Dispatchers.IO){
             Timber.i("Starting network call")
 
-            ArchiveBooksApi.RETROFIT_SERVICE.getAudioBooks().enqueue(object : Callback<String> {
+            ArchiveBooksApi.RETROFIT_SERVICE.getAudioBooks(page = page,rowCount = Utils.Books.DEFAULT_ROW_COUNT).enqueue(object : Callback<String> {
                 override fun onFailure(call: Call<String>, t: Throwable) {
                     Timber.i("Failure occur")
                     _response.value=0
