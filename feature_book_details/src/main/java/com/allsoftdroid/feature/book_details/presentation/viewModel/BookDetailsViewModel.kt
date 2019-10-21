@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.database.common.AudioBookDatabase
 import com.allsoftdroid.feature.book_details.Utility.Utils
@@ -35,8 +36,8 @@ class BookDetailsViewModel(application : Application, private val bookId : Strin
 
     //handle item click event
     private var _playItemClicked = MutableLiveData<Event<Int>>()
-    val playItemClicked: LiveData<Event<Int>>
-        get() = _playItemClicked
+//    val playItemClicked: LiveData<Event<Int>>
+//        get() = _playItemClicked
 
 
     // when back button is pressed in the UI
@@ -48,10 +49,39 @@ class BookDetailsViewModel(application : Application, private val bookId : Strin
     //audio book metadata reference
     val audioBookMetadata: LiveData<AudioBookMetadataDomainModel>
 
+    //track state event
+    private val _newTrackStateEvent = MutableLiveData<Event<Any>>() //holds track number clicked by user
+
     //audio book track reference
     private var _audioBookTracks = MutableLiveData<List<AudioBookTrackDomainModel>>()
-    val audioBookTracks : LiveData<List<AudioBookTrackDomainModel>>
-    get() = _audioBookTracks
+
+    //get updated track list on track state change
+    val audioBookTracks : LiveData<List<AudioBookTrackDomainModel>> =
+        Transformations.switchMap(_newTrackStateEvent){trackNumberEvent ->
+
+        val trackNumber = trackNumberEvent.getContentIfNotHandled()?:trackNumberEvent.peekContent()
+
+        if (trackNumber is Int){
+            _audioBookTracks.value?.let {
+
+                val list = it
+                var currentPlaying = 0
+
+                _playItemClicked.value?.let {
+                    currentPlaying = it.peekContent()
+                }
+
+                list[currentPlaying].isPlaying = false
+                list[trackNumber-1].isPlaying = true
+
+                _audioBookTracks.value=list.toList()
+            }
+
+            _playItemClicked.value = Event(trackNumber-1)
+        }
+
+        _audioBookTracks
+    }
 
 
     //database
@@ -74,30 +104,17 @@ class BookDetailsViewModel(application : Application, private val bookId : Strin
         }
 
         audioBookMetadata = getMetadataUsecase.getMetadata()
+
         getTrackListUsecase.getTrackListData().observeForever {
             _audioBookTracks.value = it
+            _newTrackStateEvent.value = Event(Unit)
         }
     }
 
     fun onPlayItemClicked(trackNumber: Int){
-        //TODO: look for prints out of how to handle this situation like data is coming from course but want to
-        // show change in livedata
-        _audioBookTracks.value?.let {
 
-            val list = it
-            var currentPlaying = 0
+        _newTrackStateEvent.value = Event(trackNumber)
 
-            _playItemClicked.value?.let {
-                currentPlaying = it.peekContent()
-            }
-
-            list[currentPlaying].isPlaying = false
-            list[trackNumber-1].isPlaying = true
-
-            _audioBookTracks.value=list.toList()
-        }
-
-        _playItemClicked.value = Event(trackNumber-1)
     }
 
     fun onBackArrowPressed(){
@@ -109,6 +126,8 @@ class BookDetailsViewModel(application : Application, private val bookId : Strin
         super.onCleared()
         viewModelJob.cancel()
     }
+
+
 
     /**
      * This function generated the file path on the remote server
