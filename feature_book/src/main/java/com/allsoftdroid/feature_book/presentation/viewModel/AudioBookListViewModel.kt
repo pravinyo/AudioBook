@@ -4,7 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.usecase.BaseUseCase
+import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.database.common.AudioBookDatabase
 import com.allsoftdroid.feature_book.data.repository.AudioBookRepositoryImpl
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
@@ -27,7 +30,9 @@ class AudioBookListViewModel(application : Application) : AndroidViewModel(appli
     private val viewModelScope = CoroutineScope(viewModelJob+ Dispatchers.Main)
 
     //track network response
-    var networkResponse : LiveData<Int>? = null
+    private val _networkResponse = MutableLiveData<Int>()
+    val networkResponse : LiveData<Int>
+    get() = _networkResponse
 
 
     //handle item click event
@@ -51,17 +56,40 @@ class AudioBookListViewModel(application : Application) : AndroidViewModel(appli
     //Book list use case
     private val getAlbumListUseCase = GetAudioBookListUsecase(bookRepository)
 
+    private val useCaseHandler  = UseCaseHandler.getInstance()
+
+    private val requestValues  = GetAudioBookListUsecase.RequestValues(pageNumber = 1)
+
+    //book list state change event
+    private val listChangedEvent = MutableLiveData<Event<Any>>()
+
     //audio book list reference
-    val audioBooks:LiveData<List<AudioBookDomainModel>>
+    val audioBooks:LiveData<List<AudioBookDomainModel>> = Transformations.switchMap(listChangedEvent){
+        getAlbumListUseCase.getBookList()
+    }
 
     init {
         viewModelScope.launch {
             Timber.i("Starting to fetch new content from Remote repository")
-            getAlbumListUseCase.execute()
+            fetchBookList()
         }
+    }
 
-        networkResponse = bookRepository.response
-        audioBooks = bookRepository.audioBook
+    private suspend fun fetchBookList(){
+        useCaseHandler.execute(getAlbumListUseCase,requestValues,
+            object : BaseUseCase.UseCaseCallback<GetAudioBookListUsecase.ResponseValues>{
+                override suspend fun onSuccess(response: GetAudioBookListUsecase.ResponseValues) {
+                    listChangedEvent.value = response.event
+
+                    Timber.d("Data received in viewModel onSuccess")
+                }
+
+                override suspend fun onError(t: Throwable) {
+                    _networkResponse.value = 0
+                    listChangedEvent.value = Event(Unit)
+                    Timber.d("Data received in viewModel onError ${t.message}")
+                }
+            })
     }
 
     fun onBookItemClicked(bookId: String){
