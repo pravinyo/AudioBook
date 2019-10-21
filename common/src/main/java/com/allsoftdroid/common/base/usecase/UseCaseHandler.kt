@@ -1,29 +1,42 @@
 package com.allsoftdroid.common.base.usecase
 
-class UseCaseHandler(private val mUseCaseScheduler: BaseUseCaseScheduler) {
+class UseCaseHandler(/*private val mUseCaseScheduler: BaseUseCaseScheduler*/) {
 
-    fun <T : BaseUseCase.RequestValues, R : BaseUseCase.ResponseValues> execute(
+    suspend fun <T : BaseUseCase.RequestValues, R : BaseUseCase.ResponseValues> execute(
         useCase: BaseUseCase<T,R>, values : T , callback: BaseUseCase.UseCaseCallback<R>
     ){
         useCase.requestValues = values
         useCase.useCaseCallback = UiCallbackWrapper(callback,this)
 
-        mUseCaseScheduler.execute(Runnable {
-            useCase.run()
-        })
+        useCase.run()
+
     }
 
-    fun <V : BaseUseCase.ResponseValues> notifyResponse(
+    suspend fun <V : BaseUseCase.ResponseValues> notifyResponse(
         response : V ,
         useCaseCallback: BaseUseCase.UseCaseCallback<V>)
     {
-        mUseCaseScheduler.notifyResponse(response,useCaseCallback)
+        useCaseCallback.onSuccess(response)
     }
 
-    fun < V : BaseUseCase.ResponseValues> notifyError(
+    suspend fun < V : BaseUseCase.ResponseValues> notifyError(
         useCaseCallback: BaseUseCase.UseCaseCallback<V> ,
         t : Throwable)
     {
-        mUseCaseScheduler.onError(useCaseCallback,t)
+        useCaseCallback.onError(t)
+    }
+
+    companion object{
+
+        private var INSTANCE : UseCaseHandler ? = null
+
+        fun getInstance() : UseCaseHandler{
+
+            if(INSTANCE == null){
+                INSTANCE = UseCaseHandler()
+            }
+
+            return INSTANCE!!
+        }
     }
 }
