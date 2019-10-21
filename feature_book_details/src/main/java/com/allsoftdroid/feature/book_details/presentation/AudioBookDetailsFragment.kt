@@ -25,7 +25,6 @@ import android.content.Context.BIND_AUTO_CREATE
 import com.allsoftdroid.feature.book_details.services.AudioService
 import android.content.Intent
 import android.widget.Toast
-import androidx.core.content.getSystemService
 
 
 class AudioBookDetailsFragment : BaseContainerFragment(){
@@ -174,7 +173,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
 
     private fun playTrackFile(filename: String, title: String?) {
         val audioService  = audioServiceBinder as AudioServiceBinder
-        val filePath  = bookDetailsViewModel.getRemoteFilePath(filename)
+        val filePath  = bookDetailsViewModel.getFilePath(filename)
 
         if(audioService.isStreamAudio()){
             audioService.stopAudio()

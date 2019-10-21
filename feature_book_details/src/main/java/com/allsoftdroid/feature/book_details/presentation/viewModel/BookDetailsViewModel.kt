@@ -134,7 +134,7 @@ class BookDetailsViewModel(application : Application, private val bookId : Strin
      * @param filename unique filename on the server
      * @return complete file path on the remote server
      */
-    fun getRemoteFilePath(filename: String):String{
+    fun getFilePath(filename: String):String{
         return Utils.getRemoteFilePath(filename,bookId)
     }
 }
