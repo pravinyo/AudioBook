@@ -2,15 +2,20 @@ package com.allsoftdroid.feature.book_details.presentation.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.usecase.BaseUseCase
+import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.database.common.AudioBookDatabase
 import com.allsoftdroid.feature.book_details.Utility.Utils
 import com.allsoftdroid.feature.book_details.data.repository.AudioBookMetadataRepositoryImpl
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
+import com.allsoftdroid.feature.book_details.domain.repository.AudioBookMetadataRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +24,11 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class BookDetailsViewModel(application : Application, private val bookId : String) : AndroidViewModel(application){
+class BookDetailsViewModel(
+    application : Application,
+    private val useCaseHandler: UseCaseHandler,
+    private val getMetadataUsecase:GetMetadataUsecase,
+    private val getTrackListUsecase : GetTrackListUsecase) : AndroidViewModel(application){
     /**
      * cancelling this job cancels all the job started by this viewmodel
      */
@@ -31,7 +40,9 @@ class BookDetailsViewModel(application : Application, private val bookId : Strin
     private val viewModelScope = CoroutineScope(viewModelJob+ Dispatchers.Main)
 
     //track network response
-    var networkResponse : LiveData<Int>? = null
+    private var _networkResponse = MutableLiveData<Int>()
+    val networkResponse : LiveData<Int>
+    get() = _networkResponse
 
 
     //handle item click event
@@ -46,8 +57,13 @@ class BookDetailsViewModel(application : Application, private val bookId : Strin
         get() = _backArrowPressed
 
 
+    //book metadata state change event
+    private val metadataStateChangeEvent = MutableLiveData<Event<Any>>()
+
     //audio book metadata reference
-    val audioBookMetadata: LiveData<AudioBookMetadataDomainModel>
+    val audioBookMetadata = Transformations.switchMap(metadataStateChangeEvent){
+        getMetadataUsecase.getMetadata()
+    }
 
     //track state event
     private val _newTrackStateEvent = MutableLiveData<Event<Any>>() //holds track number clicked by user
@@ -84,34 +100,65 @@ class BookDetailsViewModel(application : Application, private val bookId : Strin
     }
 
 
-    //database
-    private val database = AudioBookDatabase.getDatabase(application)
-
-    //repository reference
-    private val metadataRepository = AudioBookMetadataRepositoryImpl(database.metadataDao(),bookId)
-
-    //Book metadata use case
-    private val getMetadataUsecase = GetMetadataUsecase(metadataRepository)
-
-    //Book Track list usecase
-    private val getTrackListUsecase = GetTrackListUsecase(metadataRepository)
-
 
     init {
 
         viewModelScope.launch {
             Timber.i("Starting to fetch new content from Remote repository")
-            getMetadataUsecase.execute()
+            fetchMetadata()
+            fetchTrackList()
         }
+    }
 
-        // connect the reference to metadata liveData
-        audioBookMetadata = getMetadataUsecase.getMetadata()
+    /**
+     * Function which fetch the metadata for the book
+     */
+    private suspend fun fetchMetadata() {
 
-        //Observe for new list and sent the new state for the track list
-        getTrackListUsecase.getTrackListData().observeForever {
-            _audioBookTracks.value = it
-            _newTrackStateEvent.value = Event(Unit)
-        }
+        val requestValues  = GetMetadataUsecase.RequestValues(bookId = getMetadataUsecase.getBookIdentifier())
+
+        useCaseHandler.execute(
+            useCase = getMetadataUsecase,
+            values = requestValues,
+            callback = object : BaseUseCase.UseCaseCallback<GetMetadataUsecase.ResponseValues> {
+                override suspend fun onSuccess(response: GetMetadataUsecase.ResponseValues) {
+                    metadataStateChangeEvent.value = response.event
+                }
+
+                override suspend fun onError(t: Throwable) {
+                    _networkResponse.value = 0
+                    metadataStateChangeEvent.value = Event(Unit)
+                }
+            }
+        )
+    }
+
+    /**
+     * Function which fetch track list for the book
+     */
+    private suspend fun fetchTrackList(){
+        val requestValues  = GetTrackListUsecase.RequestValues(bookId = getMetadataUsecase.getBookIdentifier())
+
+        useCaseHandler.execute(
+            useCase = getTrackListUsecase,
+            values = requestValues,
+            callback = object : BaseUseCase.UseCaseCallback<GetTrackListUsecase.ResponseValues> {
+                override suspend fun onSuccess(response: GetTrackListUsecase.ResponseValues) {
+
+                    getTrackListUsecase.getTrackListData().observeForever {
+                        _audioBookTracks.value = it
+                        _newTrackStateEvent.value = response.event
+                    }
+
+                    Timber.d("Track list fetch success")
+                }
+
+                override suspend fun onError(t: Throwable) {
+                    _networkResponse.value = 0
+                    _newTrackStateEvent.value = Event(Unit)
+                }
+            }
+        )
     }
 
     /**
@@ -137,13 +184,12 @@ class BookDetailsViewModel(application : Application, private val bookId : Strin
     }
 
 
-
     /**
      * This function generated the file path on the remote server
      * @param filename unique filename on the server
      * @return complete file path on the remote server
      */
     fun getFilePath(filename: String):String{
-        return Utils.getRemoteFilePath(filename,bookId)
+        return Utils.getRemoteFilePath(filename,getMetadataUsecase.getBookIdentifier())
     }
 }
