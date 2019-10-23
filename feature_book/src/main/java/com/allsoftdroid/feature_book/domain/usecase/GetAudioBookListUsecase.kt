@@ -5,15 +5,6 @@ import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import timber.log.Timber
 
-//class GetAudioBookListUsecase(
-//    private val audioBookRep: AudioBookRepository
-//) {
-//    suspend fun execute() = audioBookRep.searchAudioBooks(page = 1)
-//
-//    fun getAudioBook() = audioBookRep.getAudioBooks()
-//}
-//
-
 
 class GetAudioBookListUsecase( private val audioBookRep: AudioBookRepository) :
     BaseUseCase<GetAudioBookListUsecase.RequestValues,GetAudioBookListUsecase.ResponseValues>(){
