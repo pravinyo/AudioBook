@@ -5,6 +5,7 @@ import androidx.annotation.NonNull
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseAlbumEntity
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseMetadataEntity
@@ -27,6 +28,7 @@ import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
 
+//TODO: make using coroutine replace async with coroutine or rxjava
 class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,@NonNull private val bookId: String) : AudioBookMetadataRepository{
 
     /**
@@ -43,13 +45,22 @@ class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,@Non
     private val audioBookMetadata : LiveData<AudioBookMetadataDomainModel>
         get() = _audioBookMetadata
 
+    private val trackLoadEvent = MutableLiveData<Event<Any>>()
 
-    private var _audioBookTrackList : LiveData<List<AudioBookTrackDomainModel>> = Transformations.map(
-        metadataDao.getTrackDetails(bookId,formatContains = "64")
-    ){
-        it.asTrackDomainModel()
+    private var _audioBookTrackList : LiveData<List<AudioBookTrackDomainModel>>
+            = Transformations.switchMap(trackLoadEvent){
+        Transformations.map(
+            metadataDao.getTrackDetails(bookId,formatContains = "64")
+        ){
+            it.asTrackDomainModel()
+        }
     }
 
+    val audioBookTrackList : LiveData<List<AudioBookTrackDomainModel>>
+    get() = _audioBookTrackList
+
+
+    override fun getBookId() = bookId
 
     /***
      * track network response for  completion and started
@@ -89,10 +100,11 @@ class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,@Non
     override fun getMetadata() = audioBookMetadata
 
     override suspend fun loadTrackListData() {
+        trackLoadEvent.value = Event(Unit)
         Timber.d("Metadata loaded check:${response.value}")
     }
 
-    override fun getTrackList() = _audioBookTrackList
+    override fun getTrackList() = audioBookTrackList
 
     /**
      * Load the database with the provided list of Book Instance
