@@ -3,3 +3,19 @@ TODO: Static analysis tools
 TODO: Follow TDD Approach
 TODO: go for full coroutine
 TODO: seal class for network request success failure and db operation success failure
+TODO: play screen band below fragment screen
+TODO: notification play buttons and actions
+TODO: Save current playing
+TODO: resume last playing book feature
+TODO: local save book feature
+TODO: playing book screen
+TODO: auto resume after call, interruption
+TODO: feature to support earphone button control
+TODO: Analysis feature[hours played, books played, fav book, bookmark book,watch later list]
+TODO: ADS feature
+TODO: leak canary implementation
+TODO: save app data online [google drive apps folder and local]
+TODO: Default image for book with constant size
+TODO: portrait and landscape screen
+TODO: Japanese language support, english
+TODO: new book available alert
