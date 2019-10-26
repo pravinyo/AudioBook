@@ -1,3 +1,5 @@
 TODO: Write test scripts
 TODO: Static analysis tools
 TODO: Follow TDD Approach
+TODO: go for full coroutine
+TODO: seal class for network request success failure and db operation success failure
