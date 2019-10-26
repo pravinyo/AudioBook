@@ -15,7 +15,7 @@ class GetAudioBookListUsecase( private val audioBookRep: AudioBookRepository) :
         val pageNumber = requestValues?.pageNumber?:1
 
 
-        audioBookRep.searchAudioBooks(page = pageNumber)
+        audioBookRep.fetchBookList(page = pageNumber)
         Timber.d("fetching started")
 
         val responseValues = ResponseValues(Event(Unit))
