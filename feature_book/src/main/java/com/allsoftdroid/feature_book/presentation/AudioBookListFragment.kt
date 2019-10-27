@@ -76,10 +76,12 @@ class AudioBookListFragment : BaseContainerFragment(){
             it.getContentIfNotHandled()?.let { networkState ->
                 when(networkState){
                     NetworkState.LOADING -> {
+                        Toast.makeText(context,"Loading",Toast.LENGTH_SHORT).show()
                         binding.loadingProgressbar.visibility = View.VISIBLE
                     }
 
                     NetworkState.COMPLETED -> {
+                        Toast.makeText(context,"Success",Toast.LENGTH_SHORT).show()
                         binding.loadingProgressbar.visibility = View.GONE
                     }
 
