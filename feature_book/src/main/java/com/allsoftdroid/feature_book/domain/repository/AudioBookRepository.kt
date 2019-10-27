@@ -7,4 +7,7 @@ interface AudioBookRepository {
 
     suspend fun fetchBookList(page : Int)
     fun getAudioBooks() : LiveData<List<AudioBookDomainModel>>
+
+    fun registerNetworkResponse(listener: NetworkResponseListener)
+    fun unRegisterNetworkResponse()
 }
