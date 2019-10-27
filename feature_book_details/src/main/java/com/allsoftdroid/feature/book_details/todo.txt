@@ -22,3 +22,6 @@ TODO: portrait and landscape screen
 TODO: Japanese language support, english
 TODO: new book available alert
 TODO: alert to play book based on users daily commute time and activity.
+TODO: usecase for services
+TODO: better listener from repository to usecase
+TODO: alternative to global scope in coroutine. starting new coroutine in suspend function error
