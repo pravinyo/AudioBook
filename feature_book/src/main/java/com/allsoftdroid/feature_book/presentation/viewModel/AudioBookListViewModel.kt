@@ -8,8 +8,7 @@ import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
-import com.allsoftdroid.database.common.AudioBookDatabase
-import com.allsoftdroid.feature_book.data.repository.AudioBookRepositoryImpl
+import com.allsoftdroid.feature_book.NetworkState
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
 import kotlinx.coroutines.CoroutineScope
@@ -33,8 +32,8 @@ class AudioBookListViewModel(
     private val viewModelScope = CoroutineScope(viewModelJob+ Dispatchers.Main)
 
     //track network response
-    private val _networkResponse = MutableLiveData<Int>()
-    val networkResponse : LiveData<Int>
+    private val _networkResponse = MutableLiveData<Event<NetworkState>>()
+    val networkResponse : LiveData<Event<NetworkState>>
     get() = _networkResponse
 
 
@@ -68,16 +67,19 @@ class AudioBookListViewModel(
     }
 
     private suspend fun fetchBookList(){
+
+        _networkResponse.value = Event(NetworkState.LOADING)
+
         useCaseHandler.execute(getAlbumListUseCase,requestValues,
             object : BaseUseCase.UseCaseCallback<GetAudioBookListUsecase.ResponseValues>{
                 override suspend fun onSuccess(response: GetAudioBookListUsecase.ResponseValues) {
                     listChangedEvent.value = response.event
-
+                    _networkResponse.value = Event(NetworkState.COMPLETED)
                     Timber.d("Data received in viewModel onSuccess")
                 }
 
                 override suspend fun onError(t: Throwable) {
-                    _networkResponse.value = 0
+                    _networkResponse.value = Event(NetworkState.ERROR)
                     listChangedEvent.value = Event(Unit)
                     Timber.d("Data received in viewModel onError ${t.message}")
                 }
