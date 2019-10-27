@@ -1,8 +1,9 @@
 package com.allsoftdroid.feature_book.data.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import com.allsoftdroid.common.base.network.Failure
+import com.allsoftdroid.common.base.network.Success
 import com.allsoftdroid.database.bookListDB.AudioBookDao
 import com.allsoftdroid.feature_book.data.databaseExtension.SaveBookListInDatabase
 import com.allsoftdroid.feature_book.data.databaseExtension.asBookDomainModel
@@ -12,6 +13,7 @@ import com.allsoftdroid.feature_book.data.network.response.GetAudioBooksResponse
 import com.allsoftdroid.feature_book.data.network.service.ArchiveBooksApi
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
+import com.allsoftdroid.feature_book.domain.repository.NetworkResponseListener
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -36,16 +38,23 @@ class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRep
         it.asBookDomainModel()
     }
 
-    val audioBook : LiveData<List<AudioBookDomainModel>>
+    private val audioBook : LiveData<List<AudioBookDomainModel>>
     get() = _audioBooks
 
     /***
      * track network response for  completion and started
      */
-    private var _response = MutableLiveData<Int>()
-    val response: LiveData<Int>
-        get() = _response
+//    private var _networkResponse = MutableLiveData<NetworkResult>()
 
+    private var listener: NetworkResponseListener? = null
+
+    override fun registerNetworkResponse(listener: NetworkResponseListener){
+        this.listener = listener
+    }
+
+    override fun unRegisterNetworkResponse() {
+        this.listener = null
+    }
 
     /**
      * Using coroutine to handle the execution and update the network response and load database
@@ -61,7 +70,10 @@ class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRep
             ).enqueue(object : Callback<String> {
                 override fun onFailure(call: Call<String>, t: Throwable) {
                     Timber.i("Failure occur")
-                    _response.value = 0
+
+                    GlobalScope.launch {
+                        listener?.onResponse(Failure(Error(t)))
+                    }
                 }
 
                 override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -72,7 +84,6 @@ class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRep
                     Timber.i("Response got: ${result.response.docs[0].title}")
 
                     result?.response?.docs?.let {
-                        _response.value = result.response.docs.size
                         Timber.i("Size:${result.response.docs.size}")
 
                         /**
@@ -81,7 +92,9 @@ class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRep
                          */
                         GlobalScope.launch {
                             saveToDatabase(result.response.docs)
+                            listener?.onResponse(Success(result = result.response.docs.size))
                         }
+
                     }
                 }
             })
