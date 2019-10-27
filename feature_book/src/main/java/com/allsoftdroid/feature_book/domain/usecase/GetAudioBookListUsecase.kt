@@ -13,26 +13,26 @@ import timber.log.Timber
 
 
 class GetAudioBookListUsecase( private val audioBookRep: AudioBookRepository) :
-    BaseUseCase<GetAudioBookListUsecase.RequestValues,GetAudioBookListUsecase.ResponseValues>(),
-        NetworkResponseListener{
-
-    override suspend fun onResponse(result: NetworkResult) {
-        withContext(Dispatchers.Main){
-            when(result){
-                is Success -> useCaseCallback?.onSuccess(ResponseValues(Event(Unit)))
-                is Failure -> useCaseCallback?.onError(result.error)
-            }
-        }
-
-        audioBookRep.unRegisterNetworkResponse()
-    }
+    BaseUseCase<GetAudioBookListUsecase.RequestValues,GetAudioBookListUsecase.ResponseValues>(){
 
     override suspend fun executeUseCase(requestValues: RequestValues?) {
 
         Timber.d("Request received data=${requestValues?.pageNumber?:-1}")
         val pageNumber = requestValues?.pageNumber?:1
 
-        audioBookRep.registerNetworkResponse(this)
+        audioBookRep.registerNetworkResponse(listener = object : NetworkResponseListener{
+
+            override suspend fun onResponse(result: NetworkResult) {
+                withContext(Dispatchers.Main){
+                    when(result){
+                        is Success -> useCaseCallback?.onSuccess(ResponseValues(Event(Unit)))
+                        is Failure -> useCaseCallback?.onError(result.error)
+                    }
+                }
+
+                audioBookRep.unRegisterNetworkResponse()
+            }
+        })
 
         audioBookRep.fetchBookList(page = pageNumber)
         Timber.d("fetching started")
