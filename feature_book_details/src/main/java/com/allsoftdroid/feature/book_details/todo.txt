@@ -3,6 +3,8 @@ TODO: Static analysis tools
 TODO: Follow TDD Approach
 TODO: go for full coroutine
 TODO: seal class for network request success failure and db operation success failure
+TODO: db failure callback
+TODO: network connection alert
 TODO: play screen band below fragment screen
 TODO: notification play buttons and actions
 TODO: Save current playing
@@ -19,3 +21,4 @@ TODO: Default image for book with constant size
 TODO: portrait and landscape screen
 TODO: Japanese language support, english
 TODO: new book available alert
+TODO: alert to play book based on users daily commute time and activity.
