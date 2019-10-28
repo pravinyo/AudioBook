@@ -1,54 +1,40 @@
 package com.allsoftdroid.feature.book_details.services
 
+import android.app.Application
 import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Binder
-import android.os.Handler
-import android.os.Message
 import android.os.PowerManager
 import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.feature.book_details.Utility.Utils
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
-import java.io.IOException
 
 
-class AudioServiceBinder : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
+class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
     MediaPlayer.OnCompletionListener {
 
-    // Save local audio file uri ( local storage file. ).
-    private var audioFileUri: Uri? = null
-
-    // Save web audio file url.
-    private var audioFileUrl = ""
-
     // Check if stream audio.
-    private var streamAudio = false
+    private var streamAudio = true
 
     // Media player that play audio.
     private var audioPlayer: MediaPlayer? = null
 
     // Caller activity context, used when play local audio file.
-    private var context: Context? = null
-
-    // This Handler object is a reference to the caller activity's Handler.
-    // In the caller activity's handler, it will update the audio play progress.
-    private var audioProgressUpdateHandler: Handler? = null
-
+    private var context: Context = application
 
     //id of playing audio book
     private lateinit var bookId:String
 
-    companion object{
+    private var isPlayerInitialized = false
+
+    companion object {
         //song list
         private lateinit var trackList: List<AudioBookTrackDomainModel>
         //current position
-
-        // This is the message signal that inform audio progress updater to update audio progress.
-        val UPDATE_AUDIO_PROGRESS_BAR = 1
     }
 
     private var trackPos:Int = 0
@@ -59,21 +45,11 @@ class AudioServiceBinder : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.
 
 
 
-    fun getContext(): Context? {
-        return context
-    }
-
     fun setContext(context: Context) {
         this.context = context
     }
 
-    fun getAudioFileUrl(): String {
-        return audioFileUrl
-    }
-
-    fun setAudioFileUrl(audioFileUrl: String) {
-        this.audioFileUrl = audioFileUrl
-    }
+    private fun getContext() = context
 
     fun isStreamAudio(): Boolean {
         return streamAudio
@@ -85,11 +61,7 @@ class AudioServiceBinder : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.
         this.streamAudio = streamAudio
     }
 
-    fun getAudioFileUri(): Uri? {
-        return audioFileUri
-    }
-
-    fun setTrackPosition(pos:Int){
+    private fun setTrackPosition(pos:Int){
         trackPos = pos
     }
 
@@ -101,27 +73,8 @@ class AudioServiceBinder : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.
         trackList = tracks
     }
 
-    fun setAudioFileUri(audioFileUri: Uri) {
-        this.audioFileUri = audioFileUri
-    }
-
-    fun getAudioProgressUpdateHandler(): Handler? {
-        return audioProgressUpdateHandler
-    }
-
-    fun setAudioProgressUpdateHandler(audioProgressUpdateHandler: Handler) {
-        this.audioProgressUpdateHandler = audioProgressUpdateHandler
-    }
-
     fun getCurrentTrackTitle() = trackTitle
 
-    // Start play audio.
-    fun startAudio() {
-        initAudioPlayer()
-        if (audioPlayer != null) {
-            audioPlayer!!.start()
-        }
-    }
 
     // Pause playing audio.
     fun pauseAudio() {
@@ -134,20 +87,28 @@ class AudioServiceBinder : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.
     fun stopAudio() {
         if (audioPlayer != null) {
             audioPlayer!!.stop()
-            destroyAudioPlayer()
         }
     }
 
-    fun onCreate(id : String){
-        audioPlayer = MediaPlayer()
-        trackPos = 0
+    fun initializeAndPlay(id : String,pos : Int=0){
 
-        bookId = id
+        if(!isPlayerInitialized){
+            initAudioPlayer()
+            isPlayerInitialized = true
+        }
 
-        initAudioPlayer2()
+        if(isStreamAudio()){
+            stopAudio()
+        }
+
+        setBookId(id)
+        setTrackPosition(pos)
+        playTrack()
     }
 
-    private fun initAudioPlayer2(){
+    private fun initAudioPlayer(){
+        audioPlayer = MediaPlayer()
+
         audioPlayer?.let {
 
             it.setWakeMode(getContext(),
@@ -160,7 +121,7 @@ class AudioServiceBinder : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.
         }
     }
 
-    fun playTrack(){
+    private fun playTrack(){
         audioPlayer?.let {player ->
             player.reset()
 
@@ -217,54 +178,6 @@ class AudioServiceBinder : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
 
-    // Initialise audio player.
-    private fun initAudioPlayer() {
-        try {
-            if (audioPlayer == null) {
-                trackPos = 0
-                audioPlayer = MediaPlayer()
-
-                if (!TextUtils.isEmpty(getAudioFileUrl())) {
-                    if (isStreamAudio()) {
-                        audioPlayer!!.setAudioStreamType(AudioManager.STREAM_MUSIC)
-                    }
-                    audioPlayer!!.setDataSource(getAudioFileUrl())
-                } else {
-                    audioPlayer!!.setDataSource(getContext()!!, getAudioFileUri()!!)
-                }
-
-                audioPlayer!!.prepare()
-
-                // This thread object will send update audio progress message to caller activity every 1 second.
-                val updateAudioProgressThread = object : Thread() {
-                    override fun run() {
-                        while (true) {
-                            // Create update audio progress message.
-                            val updateAudioProgressMsg = Message()
-                            updateAudioProgressMsg.what = UPDATE_AUDIO_PROGRESS_BAR
-
-                            // Send the message to caller activity's update audio prgressbar Handler object.
-                            audioProgressUpdateHandler!!.sendMessage(updateAudioProgressMsg)
-
-                            // Sleep one second.
-                            try {
-                                Thread.sleep(1000)
-                            } catch (ex: InterruptedException) {
-                                ex.printStackTrace()
-                            }
-
-                        }
-                    }
-                }
-                // Run above thread object.
-                updateAudioProgressThread.start()
-            }
-        } catch (ex: IOException) {
-            ex.printStackTrace()
-        }
-
-    }
-
     // Destroy audio player.
     private fun destroyAudioPlayer() {
         if (audioPlayer != null) {
@@ -275,6 +188,8 @@ class AudioServiceBinder : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.
             audioPlayer!!.release()
 
             audioPlayer = null
+
+            isPlayerInitialized = false
         }
     }
 
