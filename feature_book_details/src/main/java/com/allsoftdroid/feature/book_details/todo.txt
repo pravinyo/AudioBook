@@ -25,3 +25,5 @@ TODO: alert to play book based on users daily commute time and activity.
 TODO: usecase for services
 TODO: better listener from repository to usecase
 TODO: alternative to global scope in coroutine. starting new coroutine in suspend function error
+TODO: fetching is happening even in backpress from book details [bug]
+TODO: current playing icon changes on first click to before list gets updated [bug]
