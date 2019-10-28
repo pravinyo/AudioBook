@@ -15,7 +15,7 @@ import com.allsoftdroid.feature.book_details.R
 
 class AudioService : Service(){
 
-    private val audioServiceBinder by lazy { AudioServiceBinder() }
+    private val audioServiceBinder by lazy { AudioServiceBinder(application) }
 
     companion object{
         //notification id
