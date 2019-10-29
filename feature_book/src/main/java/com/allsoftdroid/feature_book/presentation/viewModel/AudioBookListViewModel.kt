@@ -4,9 +4,11 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
-import com.allsoftdroid.database.common.AudioBookDatabase
-import com.allsoftdroid.feature_book.data.repository.AudioBookRepositoryImpl
+import com.allsoftdroid.common.base.usecase.BaseUseCase
+import com.allsoftdroid.common.base.usecase.UseCaseHandler
+import com.allsoftdroid.feature_book.NetworkState
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +17,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class AudioBookListViewModel(application : Application) : AndroidViewModel(application) {
+class AudioBookListViewModel(
+    application : Application,
+    private val useCaseHandler : UseCaseHandler,
+    private val getAlbumListUseCase:GetAudioBookListUsecase) : AndroidViewModel(application) {
     /**
      * cancelling this job cancels all the job started by this viewmodel
      */
@@ -27,7 +32,9 @@ class AudioBookListViewModel(application : Application) : AndroidViewModel(appli
     private val viewModelScope = CoroutineScope(viewModelJob+ Dispatchers.Main)
 
     //track network response
-    var networkResponse : LiveData<Int>? = null
+    private val _networkResponse = MutableLiveData<Event<NetworkState>>()
+    val networkResponse : LiveData<Event<NetworkState>>
+    get() = _networkResponse
 
 
     //handle item click event
@@ -42,26 +49,41 @@ class AudioBookListViewModel(application : Application) : AndroidViewModel(appli
         get() = _backArrowPressed
 
 
-    //database
-    private val database = AudioBookDatabase.getDatabase(application)
+    private val requestValues  = GetAudioBookListUsecase.RequestValues(pageNumber = 1)
 
-    //repository reference
-    private val bookRepository = AudioBookRepositoryImpl(database.audioBooksDao())
-
-    //Book list use case
-    private val getAlbumListUseCase = GetAudioBookListUsecase(bookRepository)
+    //book list state change event
+    private val listChangedEvent = MutableLiveData<Event<Any>>()
 
     //audio book list reference
-    val audioBooks:LiveData<List<AudioBookDomainModel>>
+    val audioBooks:LiveData<List<AudioBookDomainModel>> = Transformations.switchMap(listChangedEvent){
+        getAlbumListUseCase.getBookList()
+    }
 
     init {
         viewModelScope.launch {
             Timber.i("Starting to fetch new content from Remote repository")
-            getAlbumListUseCase.execute()
+            fetchBookList()
         }
+    }
 
-        networkResponse = bookRepository.response
-        audioBooks = bookRepository.audioBook
+    private suspend fun fetchBookList(){
+
+        _networkResponse.value = Event(NetworkState.LOADING)
+
+        useCaseHandler.execute(getAlbumListUseCase,requestValues,
+            object : BaseUseCase.UseCaseCallback<GetAudioBookListUsecase.ResponseValues>{
+                override suspend fun onSuccess(response: GetAudioBookListUsecase.ResponseValues) {
+                    listChangedEvent.value = response.event
+                    _networkResponse.value = Event(NetworkState.COMPLETED)
+                    Timber.d("Data received in viewModel onSuccess")
+                }
+
+                override suspend fun onError(t: Throwable) {
+                    _networkResponse.value = Event(NetworkState.ERROR)
+                    listChangedEvent.value = Event(Unit)
+                    Timber.d("Data received in viewModel onError ${t.message}")
+                }
+            })
     }
 
     fun onBookItemClicked(bookId: String){

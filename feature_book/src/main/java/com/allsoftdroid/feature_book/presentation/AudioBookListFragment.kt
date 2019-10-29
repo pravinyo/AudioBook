@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
+import com.allsoftdroid.feature_book.NetworkState
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookAdapter
@@ -70,6 +72,26 @@ class AudioBookListFragment : BaseContainerFragment(){
             }
         })
 
+        booksViewModel.networkResponse.observe(viewLifecycleOwner, Observer {
+            it.getContentIfNotHandled()?.let { networkState ->
+                when(networkState){
+                    NetworkState.LOADING -> {
+                        Toast.makeText(context,"Loading",Toast.LENGTH_SHORT).show()
+                        binding.loadingProgressbar.visibility = View.VISIBLE
+                    }
+
+                    NetworkState.COMPLETED -> {
+                        Toast.makeText(context,"Success",Toast.LENGTH_SHORT).show()
+                        binding.loadingProgressbar.visibility = View.GONE
+                    }
+
+                    NetworkState.ERROR -> {
+                        binding.loadingProgressbar.visibility = View.GONE
+                        Toast.makeText(context,"Network Error",Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
 
         return binding.root
     }
