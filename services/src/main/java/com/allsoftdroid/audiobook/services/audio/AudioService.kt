@@ -1,21 +1,24 @@
-package com.allsoftdroid.feature.book_details.services
+package com.allsoftdroid.audiobook.services.audio
 
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.getIntent
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
-import com.allsoftdroid.feature.book_details.R
+import com.allsoftdroid.audiobook.services.R
 
 
 class AudioService : Service(){
 
-    private val audioServiceBinder by lazy { AudioServiceBinder(application) }
+    private val audioServiceBinder by lazy {
+        AudioServiceBinder(
+            application
+        )
+    }
 
     companion object{
         //notification id
@@ -73,7 +76,9 @@ class AudioService : Service(){
             }
         }
 
-        val notification = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL)
+        val notification = NotificationCompat.Builder(applicationContext,
+            NOTIFICATION_CHANNEL
+        )
             .setContentTitle(title)
             .setContentText("artist")
             .setSmallIcon(R.drawable.ic_book_play)

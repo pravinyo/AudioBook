@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature.book_details.services
+package com.allsoftdroid.audiobook.services.audio
 
 import android.app.Application
 import android.content.Context
@@ -10,8 +10,8 @@ import android.os.PowerManager
 import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.allsoftdroid.feature.book_details.Utility.Utils
-import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
+import com.allsoftdroid.common.base.Utility.Utils
+import com.allsoftdroid.common.base.extension.AudioPlayListItem
 
 
 class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
@@ -33,7 +33,7 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
 
     companion object {
         //song list
-        private lateinit var trackList: List<AudioBookTrackDomainModel>
+        private lateinit var trackList: List<AudioPlayListItem>
         //current position
     }
 
@@ -69,7 +69,7 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
         bookId = id
     }
 
-    fun setMultipleTracks(tracks: List<AudioBookTrackDomainModel>){
+    fun setMultipleTracks(tracks: List<AudioPlayListItem>){
         trackList = tracks
     }
 
@@ -126,7 +126,7 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
             player.reset()
 
             val track = trackList[trackPos]
-            _trackTitle.value = track.trackTitle?:"UNKNOWN"
+            _trackTitle.value = track.title?:"UNKNOWN"
 
             val filePath = Utils.getRemoteFilePath(track.filename,bookId)
 
