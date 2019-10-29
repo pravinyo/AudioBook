@@ -38,5 +38,4 @@ android {
 
 dependencies {
     implementation(project(":common"))
-    implementation(project(":feature_book_details"))
 }
