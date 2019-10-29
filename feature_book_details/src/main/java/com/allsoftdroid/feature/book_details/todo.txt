@@ -27,3 +27,14 @@ TODO: better listener from repository to usecase
 TODO: alternative to global scope in coroutine. starting new coroutine in suspend function error
 TODO: fetching is happening even in backpress from book details [bug]
 TODO: current playing icon changes on first click to before list gets updated [bug]
+TODO: mini player fragment
+1. http://sapandiwakar.in/creating-a-global-music-player-toolbar/
+2. https://stackoverflow.com/questions/15235773/bind-service-to-fragmentactivity-or-fragment
+3. https://commonsware.com/blog/2010/09/29/another-use-getapplicationcontext-binding-rotation.html
+TODO: Implement leaky canary
+https://stackoverflow.com/questions/33654503/how-to-use-leak-canary
+TODO: mvvm based bound service
+https://github.com/mitchtabian/Bound-Services-with-MVVM
+TODO: exoplayer implement
+https://blog.mindorks.com/using-exoplayer-to-play-video-and-audio-in-android-like-a-pro
+
