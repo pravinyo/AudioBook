@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature.book_details.Utility
+package com.allsoftdroid.common.base.Utility
 
 class Utils {
     companion object{
