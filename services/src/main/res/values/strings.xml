@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">services</string>
+    <string name="previous">prev</string>
+    <string name="playpause">pp</string>
+    <string name="next">nxt</string>
 </resources>
