@@ -23,7 +23,7 @@
         </activity>
 
         <service
-            android:name="com.allsoftdroid.feature.book_details.services.AudioService"
+            android:name=".services.audio.AudioService"
             android:enabled="true"
             android:exported="true"/>
     </application>
