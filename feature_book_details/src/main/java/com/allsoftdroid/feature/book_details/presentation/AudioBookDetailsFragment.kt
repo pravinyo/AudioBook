@@ -1,7 +1,6 @@
 package com.allsoftdroid.feature.book_details.presentation
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,13 +15,13 @@ import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.A
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModelFactory
-import com.allsoftdroid.feature.book_details.services.AudioServiceBinder
+import com.allsoftdroid.audiobook.services.audio.AudioServiceBinder
 import timber.log.Timber
 import android.content.ComponentName
 import android.os.IBinder
 import android.content.ServiceConnection
 import android.content.Context.BIND_AUTO_CREATE
-import com.allsoftdroid.feature.book_details.services.AudioService
+import com.allsoftdroid.audiobook.services.audio.AudioService
 import android.content.Intent
 import android.widget.Toast
 
