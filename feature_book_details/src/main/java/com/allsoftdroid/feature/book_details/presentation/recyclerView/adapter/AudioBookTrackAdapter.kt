@@ -69,5 +69,5 @@ class TrackDiffCallback : DiffUtil.ItemCallback<AudioBookTrackDomainModel>(){
 listener to check for the click event
  */
 class TrackItemClickedListener(val clickListener : (trackNumber : Int?,filename:String,trackTitle:String?)->Unit){
-    fun onTrackItemClicked(track : AudioBookTrackDomainModel) = clickListener(track.trackNumber,track.filename,track.trackTitle)
+    fun onTrackItemClicked(track : AudioBookTrackDomainModel) = clickListener(track.trackNumber,track.filename,track.title)
 }

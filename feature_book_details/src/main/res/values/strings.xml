@@ -3,4 +3,7 @@
     <string name="back_screen_button">back screen button</string>
     <string name="banner_image_for_audio_book">banner image for audio book</string>
     <string name="play_icons">play icons</string>
+    <string name="previous">prev</string>
+    <string name="playpause">pp</string>
+    <string name="next">nex</string>
 </resources>

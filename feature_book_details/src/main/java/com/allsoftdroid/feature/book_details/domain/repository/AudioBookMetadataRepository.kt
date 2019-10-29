@@ -8,6 +8,7 @@ interface AudioBookMetadataRepository {
 
     suspend fun loadMetadata()
     fun getMetadata() : LiveData<AudioBookMetadataDomainModel>
+    fun getBookId() : String
 
 
     suspend fun loadTrackListData()

@@ -51,11 +51,8 @@ android {
 }
 
 dependencies {
-
     implementation(project(path: ':common'))
+    implementation(project(path: ':services'))
     implementation(project(path: ':feature_book'))
     implementation(project(path: ':feature_book_details'))
-
-    
-
 }
