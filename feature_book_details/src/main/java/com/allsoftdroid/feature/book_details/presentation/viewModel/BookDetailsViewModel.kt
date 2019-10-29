@@ -2,20 +2,14 @@ package com.allsoftdroid.feature.book_details.presentation.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
-import com.allsoftdroid.database.common.AudioBookDatabase
-import com.allsoftdroid.feature.book_details.Utility.Utils
-import com.allsoftdroid.feature.book_details.data.repository.AudioBookMetadataRepositoryImpl
-import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
+import com.allsoftdroid.common.base.Utility.Utils
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
-import com.allsoftdroid.feature.book_details.domain.repository.AudioBookMetadataRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
 import kotlinx.coroutines.CoroutineScope
