@@ -10,8 +10,8 @@ import android.os.PowerManager
 import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.allsoftdroid.common.base.Utility.Utils
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
+import com.allsoftdroid.common.base.utils.Utils
 
 
 class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
@@ -65,7 +65,7 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
         trackPos = pos
     }
 
-    private fun setBookId(id:String){
+    fun setBookId(id:String){
         bookId = id
     }
 
@@ -73,13 +73,19 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
         trackList = tracks
     }
 
-    fun getCurrentTrackTitle() = trackTitle
+    fun getCurrentTrackTitle() = trackTitle.value
 
 
     // Pause playing audio.
     fun pauseAudio() {
         if (audioPlayer != null) {
             audioPlayer!!.pause()
+        }
+    }
+
+    fun continueAudio(){
+        if (audioPlayer != null) {
+            audioPlayer!!.start()
         }
     }
 
@@ -90,7 +96,7 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
         }
     }
 
-    fun initializeAndPlay(id : String,pos : Int=0){
+    fun initializeAndPlay(pos : Int=0){
 
         if(!isPlayerInitialized){
             initAudioPlayer()
@@ -101,7 +107,7 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
             stopAudio()
         }
 
-        setBookId(id)
+//        setBookId(id)
         setTrackPosition(pos)
         playTrack()
     }
@@ -165,7 +171,7 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
 
     //skip to previous track
     fun playPrev() {
-
+        if (trackPos<=0) return
         trackPos = (trackPos-1)% trackList.size
         playTrack()
     }
@@ -223,5 +229,6 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
         return ret
     }
 
+    fun getBookId() = bookId
 
 }
