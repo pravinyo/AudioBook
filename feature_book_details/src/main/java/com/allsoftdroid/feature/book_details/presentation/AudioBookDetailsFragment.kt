@@ -1,29 +1,26 @@
 package com.allsoftdroid.feature.book_details.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.allsoftdroid.audiobook.services.audio.AudioManager
+import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
+import com.allsoftdroid.common.base.utils.PlayerStatusListener
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.AudioBookTrackAdapter
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModelFactory
-import com.allsoftdroid.audiobook.services.audio.AudioServiceBinder
 import timber.log.Timber
-import android.content.ComponentName
-import android.os.IBinder
-import android.content.ServiceConnection
-import android.content.Context.BIND_AUTO_CREATE
-import com.allsoftdroid.audiobook.services.audio.AudioService
-import android.content.Intent
-import android.widget.Toast
 
 
 class AudioBookDetailsFragment : BaseContainerFragment(){
@@ -44,54 +41,15 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
             .get(BookDetailsViewModel::class.java)
     }
     
-    
-    /**
-     *
-     * Audio service code start
-     */
-
-    var audioServiceBinder : AudioServiceBinder? = null
-    private var _currentTrack = 0
-
-
-    // This service connection object is the bridge between activity and background service.
-    private val serviceConnection by lazy {
-        object : ServiceConnection {
-            override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
-            // Cast and assign background service's onBind method returned iBander object.
-                val service = iBinder as AudioServiceBinder
-                audioServiceBinder = service
-            }
-
-        override fun onServiceDisconnected(componentName: ComponentName) {
-            }
+    private val audioManager : AudioManager by lazy {
+        val activity = requireNotNull(this.activity) {
+            "You can only access the booksViewModel after onCreated()"
         }
+
+        AudioManager.getInstance(activity.applicationContext)
     }
 
-    // Bind background service with caller . Then this caller can use
-    // background service's AudioServiceBinder instance to invoke related methods.
-
-    private val playIntent by lazy { Intent(this.activity, AudioService::class.java) }
-
-    private val audioService by lazy {
-        audioServiceBinder as AudioServiceBinder
-    }
-
-    private fun bindAudioService() {
-        if (audioServiceBinder == null) {
-            // Below code will invoke serviceConnection's onServiceConnected method.
-            context!!.bindService(playIntent, serviceConnection, BIND_AUTO_CREATE)
-            context!!.startService(playIntent)
-        }
-    }
-
-    // Unbound background audio service with caller activity.
-    private fun unBoundAudioService() {
-        if (audioServiceBinder != null) {
-            context!!.unbindService(serviceConnection)
-            context!!.stopService(playIntent)
-        }
-    }
+    private lateinit var listener : PlayerStatusListener
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -114,15 +72,13 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
         })
 
         val trackAdapter = AudioBookTrackAdapter(TrackItemClickedListener{ trackNumber,filename,title ->
-            if (_currentTrack != trackNumber){
-                trackNumber?.let {
-                    bookDetailsViewModel.onPlayItemClicked(trackNumber)
-                }
-
+            trackNumber?.let {
                 dataBinding.tvToolbarTitle.text = title
-                _currentTrack = trackNumber?:1
+                bookDetailsViewModel.onPlayItemClicked(trackNumber)
+                playSelectedTrackFile(it)
 
-                playSelectedTrackFile(_currentTrack.minus(1))
+                listener.onPlayerStatusChange(shouldShow = Event(true))
+                Timber.d("State change event sent")
             }
         })
 
@@ -145,14 +101,26 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        bindAudioService()
+        audioManager.bindAudioService()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context is PlayerStatusListener) {
+            Timber.d("Listener attached")
+            listener = context
+        } else {
+            throw ClassCastException(
+                "$context must implement ${PlayerStatusListener::class.java.simpleName}."
+            )
+        }
     }
 
     private fun playSelectedTrackFile(currentPos:Int) {
         bookDetailsViewModel.audioBookTracks.value?.let {
-
-            audioService.setMultipleTracks(it)
-            audioService.initializeAndPlay(bookId,currentPos)
+            audioManager.setPlayTrackList(it,bookId)
+            audioManager.playTrackAtPosition(currentPos)
 
         }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
     }
