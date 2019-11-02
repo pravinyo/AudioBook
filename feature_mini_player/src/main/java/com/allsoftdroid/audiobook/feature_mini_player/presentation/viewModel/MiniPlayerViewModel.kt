@@ -2,27 +2,47 @@ package com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.allsoftdroid.common.base.extension.Event
 
 class MiniPlayerViewModel(application : Application) : AndroidViewModel(application){
 
-    /**
-     * cancelling this job cancels all the job started by this viewmodel
-     */
-    private val viewModelJob  = SupervisorJob()
+    private var _previousTrackClicked = MutableLiveData<Event<Boolean>>()
+    val previousTrackClicked : LiveData<Event<Boolean>> = _previousTrackClicked
 
-    /**
-     * main scope for all coroutine launched by viewmodel
-     */
-    private val viewModelScope = CoroutineScope(viewModelJob+ Dispatchers.Main)
+    private var _nextTrackClicked = MutableLiveData<Event<Boolean>>()
+    val nextTrackClicked : LiveData<Event<Boolean>> = _nextTrackClicked
 
+    private var _playPauseClicked = MutableLiveData<Event<Boolean>>()
+    var  playPausedClicked : LiveData<Event<Boolean>> = _playPauseClicked
 
+    private var shouldItPlay : Boolean = true
 
-    //cancel the job when viewmodel is not longer in use
-    override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancel()
+    private var _trackTitle = MutableLiveData<String>()
+    val trackTitle :LiveData<String> = _trackTitle
+
+    private var _bookId = MutableLiveData<String>()
+    val bookId :LiveData<String> = _bookId
+
+    fun playPrevious(){
+        _previousTrackClicked.value = Event(true)
+    }
+
+    fun playNext(){
+        _nextTrackClicked.value = Event(true)
+    }
+
+    fun playPause(){
+        shouldItPlay = !shouldItPlay
+        _previousTrackClicked.value = Event(shouldItPlay)
+    }
+
+    fun setTrackTitle(title : String?){
+        _trackTitle.value = title?:"UNKNOWN"
+    }
+
+    fun setBookId(bookId:String){
+        _bookId.value = bookId
     }
 }
