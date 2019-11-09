@@ -185,7 +185,7 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
 
 
     // Destroy audio player.
-    private fun destroyAudioPlayer() {
+    fun destroyAudioPlayer() {
         if (audioPlayer != null) {
             if (audioPlayer!!.isPlaying) {
                 audioPlayer!!.stop()
