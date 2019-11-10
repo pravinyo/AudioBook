@@ -16,6 +16,7 @@ import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.*
 import com.allsoftdroid.common.base.utils.PlayerStatusListener
+import io.reactivex.disposables.Disposable
 import timber.log.Timber
 
 class MiniPlayerFragment : BaseContainerFragment() {
@@ -33,19 +34,12 @@ class MiniPlayerFragment : BaseContainerFragment() {
             .get(MiniPlayerViewModel::class.java)
     }
 
-    private val audioManager: AudioManager by lazy {
-        val activity = requireNotNull(this.activity){
-            "You can only access the miniPlayerViewModel after onCreated()"
-        }
-
-        AudioManager.getInstance(activity.applicationContext)
-    }
-
     private val eventStore : AudioPlayerEventStore by lazy {
         AudioPlayerEventStore.getInstance(Event(Play("")))
     }
 
     private lateinit var listener : PlayerStatusListener
+    private lateinit var dispose : Disposable
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,8 +56,6 @@ class MiniPlayerFragment : BaseContainerFragment() {
         miniPlayerViewModel.nextTrackClicked.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let { nextClicked ->
                 if(nextClicked){
-                    audioManager.playNext()
-                    updateTrackDetails()
                     eventStore.publish(Event(Next("")))
                 }
             }
@@ -74,8 +66,6 @@ class MiniPlayerFragment : BaseContainerFragment() {
                 previousClicked ->
 
                 if(previousClicked){
-                    audioManager.playPrevious()
-                    updateTrackDetails()
                     eventStore.publish(Event(Previous("")))
                 }
             }
@@ -87,21 +77,30 @@ class MiniPlayerFragment : BaseContainerFragment() {
 
                 Timber.d("should play is $shouldPlay")
                 if(shouldPlay){
-                    audioManager.pauseTrack()
                     eventStore.publish(Event(Play("")))
                 }else{
-                    audioManager.playTrack()
                     eventStore.publish(Event(Pause("")))
                 }
             }
         })
 
+        dispose = eventStore.observe()
+            .subscribe {
+                it.peekContent().let {event ->
+                    when(event){
+                        is TrackDetails -> {
+                            updateTrackDetails(title = event.trackTitle,bookId = event.bookId)
+                        }
+                    }
+                }
+            }
+
         return binding.root
     }
 
-    private fun updateTrackDetails() {
-        miniPlayerViewModel.setTrackTitle(audioManager.getTrackTitle())
-        miniPlayerViewModel.setBookId(audioManager.getBookId())
+    private fun updateTrackDetails(title:String,bookId:String) {
+        miniPlayerViewModel.setTrackTitle(title)
+        miniPlayerViewModel.setBookId(bookId)
 
         listener.onPlayerStatusChange(shouldShow = Event(true))
         Timber.d("State change event sent")
