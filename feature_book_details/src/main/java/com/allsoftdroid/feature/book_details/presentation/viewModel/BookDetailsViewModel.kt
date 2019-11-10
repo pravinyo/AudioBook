@@ -39,6 +39,7 @@ class BookDetailsViewModel(
     get() = _networkResponse
 
 
+    private var currentPlayingTrack : Int = 0
     //handle item click event
     private var _playItemClicked = MutableLiveData<Event<Int>>()
 //    val playItemClicked: LiveData<Event<Int>>
@@ -159,9 +160,19 @@ class BookDetailsViewModel(
      * Creates a event when play item is clicked from the track list
      */
     fun onPlayItemClicked(trackNumber: Int){
-
         _newTrackStateEvent.value = Event(trackNumber)
+        currentPlayingTrack = trackNumber
+    }
 
+    fun updateNextTrackPlaying(){
+        val newTrack =  (currentPlayingTrack+1)%audioBookTracks.value!!.size
+        onPlayItemClicked(newTrack)
+    }
+
+    fun updatePreviousTrackPlaying(){
+
+        val newTrack =  if (currentPlayingTrack>1)(currentPlayingTrack-1)%audioBookTracks.value!!.size else 1
+        onPlayItemClicked(newTrack)
     }
 
     /**
