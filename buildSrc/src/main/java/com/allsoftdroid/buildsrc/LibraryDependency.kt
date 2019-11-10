@@ -3,6 +3,10 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val RX_RELAY = "2.1.1"
+    const val RX_JAVA = "2.2.10"
+    const val RX_KOTLIN = "2.4.0"
+    const val RX_ANDROID = "2.1.1"
     const val CARD_VIEW = "28.0.0"
     const val GLIDE = "4.9.0"
     const val ROOM = "2.2.0-rc01"
@@ -80,4 +84,9 @@ object LibraryDependency {
     const val GLIDE_COMPILER = "com.github.bumptech.glide:compiler:${LibraryVersion.GLIDE}"
 
     const val CARD_VIEW = "com.android.support:cardview-v7:${LibraryVersion.CARD_VIEW}"
+
+    const val RX_JAVA = "io.reactivex.rxjava2:rxjava:${LibraryVersion.RX_JAVA}"
+    const val RX_KOTLIN ="io.reactivex.rxjava2:rxkotlin:${LibraryVersion.RX_KOTLIN}"
+    const val RX_ANDROID = "io.reactivex.rxjava2:rxandroid:${LibraryVersion.RX_ANDROID}"
+    const val RX_RELAY = "com.jakewharton.rxrelay2:rxrelay:${LibraryVersion.RX_RELAY}"
 }
