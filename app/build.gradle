@@ -55,4 +55,5 @@ dependencies {
     implementation(project(path: ':feature_book'))
     implementation(project(path: ':feature_book_details'))
     implementation(project(path: ':feature_mini_player'))
+    implementation(project(path: ':services'))
 }
