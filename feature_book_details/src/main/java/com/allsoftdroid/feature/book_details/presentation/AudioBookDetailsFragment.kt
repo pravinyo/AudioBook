@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
+import com.allsoftdroid.common.base.store.*
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.common.base.utils.PlayerStatusListener
@@ -20,6 +21,9 @@ import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.A
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModelFactory
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 
@@ -49,7 +53,12 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
         AudioManager.getInstance(activity.applicationContext)
     }
 
+    private val eventStore : AudioPlayerEventStore by lazy {
+        AudioPlayerEventStore.getInstance(Event(Play("")))
+    }
+
     private lateinit var listener : PlayerStatusListener
+    private lateinit var disposable : Disposable
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -96,7 +105,28 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
             }
         })
 
+        disposable  = eventStore.observe()
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                handleEvent(it)
+            }
+
         return dataBinding.root
+    }
+
+    private fun handleEvent(event: Event<AudioPlayerEvent>) {
+        activity?.let {
+            event.getContentIfNotHandled()?.let { event ->
+                when(event){
+                    is Next -> bookDetailsViewModel.updateNextTrackPlaying()
+                    is Previous -> bookDetailsViewModel.updatePreviousTrackPlaying()
+                    is Play -> Toast.makeText(it.applicationContext,"Play Pressed Details Fragment",Toast.LENGTH_SHORT).show()
+                    is Pause -> Toast.makeText(it.applicationContext,"Pause Pressed Details Fragment",Toast.LENGTH_SHORT).show()
+                    else -> Toast.makeText(it.applicationContext,"Unknown Pressed Details Fragment",Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -123,5 +153,10 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
             audioManager.playTrackAtPosition(currentPos)
 
         }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable.dispose()
     }
 }
