@@ -14,6 +14,7 @@ import com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel.Min
 import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
+import com.allsoftdroid.common.base.store.*
 import com.allsoftdroid.common.base.utils.PlayerStatusListener
 import timber.log.Timber
 
@@ -40,6 +41,10 @@ class MiniPlayerFragment : BaseContainerFragment() {
         AudioManager.getInstance(activity.applicationContext)
     }
 
+    private val eventStore : AudioPlayerEventStore by lazy {
+        AudioPlayerEventStore.getInstance(Event(Play("")))
+    }
+
     private lateinit var listener : PlayerStatusListener
 
     override fun onCreateView(
@@ -59,6 +64,7 @@ class MiniPlayerFragment : BaseContainerFragment() {
                 if(nextClicked){
                     audioManager.playNext()
                     updateTrackDetails()
+                    eventStore.publish(Event(Next("")))
                 }
             }
         })
@@ -70,6 +76,7 @@ class MiniPlayerFragment : BaseContainerFragment() {
                 if(previousClicked){
                     audioManager.playPrevious()
                     updateTrackDetails()
+                    eventStore.publish(Event(Previous("")))
                 }
             }
         })
@@ -81,8 +88,10 @@ class MiniPlayerFragment : BaseContainerFragment() {
                 Timber.d("should play is $shouldPlay")
                 if(shouldPlay){
                     audioManager.pauseTrack()
+                    eventStore.publish(Event(Play("")))
                 }else{
                     audioManager.playTrack()
+                    eventStore.publish(Event(Pause("")))
                 }
             }
         })
