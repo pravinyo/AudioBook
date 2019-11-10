@@ -7,9 +7,14 @@ import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModelFactory
+import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.store.*
 import com.allsoftdroid.common.base.utils.PlayerStatusListener
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 
@@ -27,9 +32,24 @@ class MainActivity : BaseActivity(), PlayerStatusListener {
             .get(MainActivityViewModel::class.java)
     }
 
+    private val eventStore : AudioPlayerEventStore by lazy {
+        AudioPlayerEventStore.getInstance(Event(Initial("")))
+    }
+
+    private val audioManager : AudioManager by lazy {
+        val activity = requireNotNull(this) {
+            "You can only access the booksViewModel after onCreated()"
+        }
+
+        AudioManager.getInstance(activity.applicationContext)
+    }
+
+    private lateinit var disposable : Disposable
 
     override fun onStart() {
         super.onStart()
+
+        audioManager.bindAudioService()
 
         Timber.d("Main Activity  start")
         mainActivityViewModel.showPlayer.observe(this, Observer {
@@ -51,6 +71,58 @@ class MainActivity : BaseActivity(), PlayerStatusListener {
                 }
             }
         })
+
+        disposable  = eventStore.observe()
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                handleEvent(it)
+            }
+    }
+
+    private fun handleEvent(event: Event<AudioPlayerEvent>) {
+
+        if(event.hasBeenHandled){
+            performAction(event = event.peekContent())
+        }
+
+        event.getContentIfNotHandled()?.let {
+            performAction(it)
+        }
+
+    }
+
+    private fun performAction(event: AudioPlayerEvent){
+        when(event){
+            is Next -> {
+                audioManager.playNext()
+                eventStore.publish(Event(TrackDetails(trackTitle = audioManager.getTrackTitle()?:"UNKNOWN",bookId = audioManager.getBookId())))
+                Toast.makeText(applicationContext,"Next Pressed",Toast.LENGTH_SHORT).show()
+            }
+
+            is Previous -> {
+                audioManager.playPrevious()
+                eventStore.publish(Event(TrackDetails(trackTitle = audioManager.getTrackTitle()?:"UNKNOWN",bookId = audioManager.getBookId())))
+                Toast.makeText(applicationContext,"Previous Pressed",Toast.LENGTH_SHORT).show()
+            }
+
+            is Play -> {
+                audioManager.playTrack()
+                Toast.makeText(applicationContext,"Play Pressed",Toast.LENGTH_SHORT).show()
+            }
+            is Pause -> {
+                audioManager.playPrevious()
+                Toast.makeText(applicationContext,"Pause Pressed",Toast.LENGTH_SHORT).show()
+            }
+
+            is PlaySelectedTrack -> {
+                audioManager.setPlayTrackList(event.trackList,event.bookId)
+                audioManager.playTrackAtPosition(event.position)
+                eventStore.publish(Event(TrackDetails(trackTitle = audioManager.getTrackTitle()?:"UNKNOWN",bookId = audioManager.getBookId())))
+                Toast.makeText(applicationContext,"Play Selected Pressed",Toast.LENGTH_SHORT).show()
+            }
+            else -> Toast.makeText(applicationContext,"Unknown Pressed",Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onPlayerStatusChange(shouldShow: Event<Boolean>) {
@@ -58,5 +130,11 @@ class MainActivity : BaseActivity(), PlayerStatusListener {
             Timber.d("Player state event received from fragment")
             mainActivityViewModel.playerStatus(it)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable.dispose()
+        audioManager.unBoundAudioService()
     }
 }
