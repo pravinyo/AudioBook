@@ -44,14 +44,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
         ViewModelProviders.of(this, BookDetailsViewModelFactory(activity.application,bookId))
             .get(BookDetailsViewModel::class.java)
     }
-    
-    private val audioManager : AudioManager by lazy {
-        val activity = requireNotNull(this.activity) {
-            "You can only access the booksViewModel after onCreated()"
-        }
-
-        AudioManager.getInstance(activity.applicationContext)
-    }
 
     private val eventStore : AudioPlayerEventStore by lazy {
         AudioPlayerEventStore.getInstance(Event(Play("")))
@@ -83,7 +75,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
         val trackAdapter = AudioBookTrackAdapter(TrackItemClickedListener{ trackNumber,filename,title ->
             trackNumber?.let {
                 dataBinding.tvToolbarTitle.text = title
-                bookDetailsViewModel.onPlayItemClicked(trackNumber)
                 playSelectedTrackFile(it)
 
                 listener.onPlayerStatusChange(shouldShow = Event(true))
@@ -117,7 +108,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
 
     private fun handleEvent(event: Event<AudioPlayerEvent>) {
         activity?.let {
-            event.getContentIfNotHandled()?.let { event ->
+            event.peekContent().let {event->
                 when(event){
                     is Next -> bookDetailsViewModel.updateNextTrackPlaying()
                     is Previous -> bookDetailsViewModel.updatePreviousTrackPlaying()
@@ -127,11 +118,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
                 }
             }
         }
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        audioManager.bindAudioService()
     }
 
     override fun onAttach(context: Context) {
@@ -149,9 +135,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
 
     private fun playSelectedTrackFile(currentPos:Int) {
         bookDetailsViewModel.audioBookTracks.value?.let {
-            audioManager.setPlayTrackList(it,bookId)
-            audioManager.playTrackAtPosition(currentPos)
-
+            eventStore.publish(Event(PlaySelectedTrack(trackList = it,bookId = bookId,position = currentPos)))
         }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
     }
 
