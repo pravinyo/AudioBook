@@ -1,9 +1,10 @@
 package com.allsoftdroid.common.base.utils
 
-class Utils {
+class ArchiveUtils {
     companion object{
 
-        val BASE = "https://archive.org/download"
+        private const val BASE_DOWNLOAD_URL = "https://archive.org/download"
+        private const val BASE_IMAGE_URL = "https://archive.org/services/img"
 
         /**
          * This function generated the file path on the remote server
@@ -11,7 +12,9 @@ class Utils {
          * @return complete file path on the remote server
          */
         fun getRemoteFilePath(filename: String,identifier:String):String{
-            return "$BASE/$identifier/$filename"
+            return "$BASE_DOWNLOAD_URL/$identifier/$filename"
         }
+
+        fun getThumbnail(imageId: String?) = "$BASE_IMAGE_URL/$imageId/"
     }
 }
