@@ -52,6 +52,8 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
     private lateinit var listener : PlayerStatusListener
     private lateinit var disposable : Disposable
 
+    private lateinit var dataBindingReference : FragmentAudiobookDetailsBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -74,7 +76,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
 
         val trackAdapter = AudioBookTrackAdapter(TrackItemClickedListener{ trackNumber,filename,title ->
             trackNumber?.let {
-                dataBinding.tvToolbarTitle.text = title
                 playSelectedTrackFile(it)
 
                 listener.onPlayerStatusChange(shouldShow = Event(true))
@@ -103,6 +104,8 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
                 handleEvent(it)
             }
 
+        dataBindingReference = dataBinding
+
         return dataBinding.root
     }
 
@@ -112,6 +115,12 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
                 when(event){
                     is Next -> bookDetailsViewModel.updateNextTrackPlaying()
                     is Previous -> bookDetailsViewModel.updatePreviousTrackPlaying()
+
+                    is PlaySelectedTrack -> {
+                        dataBindingReference.tvToolbarTitle.text = event.trackList[event.position-1].title
+                        bookDetailsViewModel.onPlayItemClicked(event.position)
+                    }
+
                     is Play -> Toast.makeText(it.applicationContext,"Play Pressed Details Fragment",Toast.LENGTH_SHORT).show()
                     is Pause -> Toast.makeText(it.applicationContext,"Pause Pressed Details Fragment",Toast.LENGTH_SHORT).show()
                     else -> Toast.makeText(it.applicationContext,"Unknown Pressed Details Fragment",Toast.LENGTH_SHORT).show()
