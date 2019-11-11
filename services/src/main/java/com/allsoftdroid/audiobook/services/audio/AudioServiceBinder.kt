@@ -11,7 +11,8 @@ import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
-import com.allsoftdroid.common.base.utils.Utils
+import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.utils.ArchiveUtils
 
 
 class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
@@ -44,14 +45,15 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
         get() = _trackTitle
 
 
+    val nextTrack = MutableLiveData<Event<Boolean>>()
 
-    fun setContext(context: Context) {
-        this.context = context
-    }
+//    fun setContext(context: Context) {
+//        this.context = context
+//    }
 
     private fun getContext() = context
 
-    fun isStreamAudio(): Boolean {
+    private fun isStreamAudio(): Boolean {
         return streamAudio
     }
 
@@ -134,7 +136,7 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
             val track = trackList[trackPos]
             _trackTitle.value = track.title?:"UNKNOWN"
 
-            val filePath = Utils.getRemoteFilePath(track.filename,bookId)
+            val filePath = ArchiveUtils.getRemoteFilePath(track.filename,bookId)
 
             if (!TextUtils.isEmpty(filePath)) {
                 if (isStreamAudio()) {
@@ -164,7 +166,8 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
         player?.let {
             if (player.currentPosition>0){
                 player.reset()
-                playNext()
+//                playNext()
+                nextTrack.value = Event(true)
             }
         }
     }
