@@ -2,7 +2,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="@color/semi_transparent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp">
@@ -15,8 +14,10 @@
 
         <ImageView
             android:id="@+id/notification_track_thumbnail"
-            android:src="@drawable/play_circle"
+            android:contentDescription="@string/audiobook_thumbnail"
             android:layout_width="50dp"
+            android:background="@drawable/background_drawable_round_corner"
+            android:layout_marginEnd="8dp"
             android:layout_height="50dp"/>
 
         <LinearLayout
@@ -28,12 +29,15 @@
             <TextView
                 android:id="@+id/notification_book_name"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/notification_track_name"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
@@ -51,12 +55,16 @@
             android:src="@drawable/ic_skip_previous_black_24dp"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:backgroundTint="@color/transparent"
+            android:contentDescription="@string/play_previous_track"
             android:layout_height="wrap_content"/>
 
         <ImageButton
             android:id="@+id/image_notification_playpause"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:backgroundTint="@color/transparent"
+            android:contentDescription="@string/play_or_pause_track"
             android:layout_height="wrap_content"/>
 
         <ImageButton
@@ -64,6 +72,8 @@
             android:src="@drawable/ic_skip_next_black_24dp"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:backgroundTint="@color/transparent"
+            android:contentDescription="@string/play_next_track"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
