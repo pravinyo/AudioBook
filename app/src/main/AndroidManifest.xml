@@ -26,6 +26,14 @@
             android:name=".services.audio.AudioService"
             android:enabled="true"
             android:exported="true"/>
+
+        <receiver
+            android:name="com.allsoftdroid.common.base.network.ConnectivityReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
