@@ -8,7 +8,7 @@ import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
-import com.allsoftdroid.common.base.utils.Utils
+import com.allsoftdroid.common.base.utils.ArchiveUtils
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
@@ -195,6 +195,6 @@ class BookDetailsViewModel(
      * @return complete file path on the remote server
      */
     fun getFilePath(filename: String):String{
-        return Utils.getRemoteFilePath(filename,getMetadataUsecase.getBookIdentifier())
+        return ArchiveUtils.getRemoteFilePath(filename,getMetadataUsecase.getBookIdentifier())
     }
 }
