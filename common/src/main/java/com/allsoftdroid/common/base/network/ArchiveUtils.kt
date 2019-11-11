@@ -1,4 +1,4 @@
-package com.allsoftdroid.common.base.utils
+package com.allsoftdroid.common.base.network
 
 class ArchiveUtils {
     companion object{

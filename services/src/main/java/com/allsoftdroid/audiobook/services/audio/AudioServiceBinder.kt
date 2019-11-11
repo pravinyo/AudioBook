@@ -12,7 +12,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
 import com.allsoftdroid.common.base.extension.Event
-import com.allsoftdroid.common.base.utils.ArchiveUtils
+import com.allsoftdroid.common.base.network.ArchiveUtils
 
 
 class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
