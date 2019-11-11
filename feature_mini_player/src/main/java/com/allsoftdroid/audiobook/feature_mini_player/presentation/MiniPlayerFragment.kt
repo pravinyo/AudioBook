@@ -35,7 +35,7 @@ class MiniPlayerFragment : BaseContainerFragment() {
     }
 
     private val eventStore : AudioPlayerEventStore by lazy {
-        AudioPlayerEventStore.getInstance(Event(Play("")))
+        AudioPlayerEventStore.getInstance(Event(Initial("")))
     }
 
     private lateinit var listener : PlayerStatusListener
