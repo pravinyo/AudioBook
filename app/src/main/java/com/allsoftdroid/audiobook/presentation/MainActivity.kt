@@ -2,7 +2,9 @@ package com.allsoftdroid.audiobook.presentation
 
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.allsoftdroid.audiobook.R
@@ -72,19 +74,7 @@ class MainActivity : BaseActivity(), PlayerStatusListener,ConnectivityReceiver.C
             it.getContentIfNotHandled()?.let { shouldShow ->
 
                 Timber.d("Player state event received from view model")
-                if(shouldShow){
-
-                    val fragment = supportFragmentManager.findFragmentByTag(MINI_PLAYER_TAG)
-
-                    if(fragment == null){
-                        supportFragmentManager.beginTransaction()
-                            .add(R.id.miniPlayerContainer,MiniPlayerFragment(),MINI_PLAYER_TAG)
-                            .commit()
-                    }
-
-                }else{
-                    Toast.makeText(this,"Hide Mini Player",Toast.LENGTH_SHORT).show()
-                }
+                miniPlayerViewState(shouldShow)
             }
         })
 
@@ -94,6 +84,32 @@ class MainActivity : BaseActivity(), PlayerStatusListener,ConnectivityReceiver.C
             .subscribe {
                 handleEvent(it)
             }
+    }
+
+    private fun miniPlayerViewState(shouldShow: Boolean) {
+        if(shouldShow){
+
+            val fragment = supportFragmentManager.findFragmentByTag(MINI_PLAYER_TAG)
+
+            if(fragment == null){
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.miniPlayerContainer,MiniPlayerFragment(),MINI_PLAYER_TAG)
+                    .commit()
+                findViewById<FragmentContainerView>(R.id.miniPlayerContainer).visibility = View.VISIBLE
+            }
+
+        }else{
+            val fragment = supportFragmentManager.findFragmentByTag(MINI_PLAYER_TAG)
+
+            fragment?.let {
+                supportFragmentManager.beginTransaction()
+                    .hide(it)
+                    .commit()
+            }
+
+            Toast.makeText(this,"Hide Mini Player",Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun handleEvent(event: Event<AudioPlayerEvent>) {
