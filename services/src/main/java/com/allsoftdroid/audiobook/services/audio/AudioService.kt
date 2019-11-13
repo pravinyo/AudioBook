@@ -85,6 +85,7 @@ class AudioService : Service(){
 
     private fun getContentIntent(): PendingIntent {
         val contentIntent = packageManager.getLaunchIntentForPackage("com.allsoftdroid.audiobook")
+        contentIntent?.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         return PendingIntent.getActivity(this, 0, contentIntent, 0)
     }
 
