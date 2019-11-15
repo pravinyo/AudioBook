@@ -14,8 +14,15 @@ class AudioService : Service(){
 
     companion object CONSTANT{
         const val ACTION_PREVIOUS = 0
+        const val PREVIOUS="previous"
+
         const val ACTION_PLAY_PAUSE=1
+        const val PLAY="play"
+        const val PAUSE="pause"
+
         const val ACTION_NEXT = 2
+        const val NEXT="next"
+
     }
 
     private val audioServiceBinder by lazy {
