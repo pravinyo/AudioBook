@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.allsoftdroid.audiobook">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -32,9 +33,14 @@
             android:name="com.allsoftdroid.common.base.network.ConnectivityReceiver"
             android:enabled="true">
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"
+                    tools:ignore="BatteryLife" />
             </intent-filter>
         </receiver>
+
+        <receiver android:name=".services.audio.NotificationPlayerEventBroadcastReceiver"
+            android:enabled="true"/>
+
     </application>
 
 </manifest>
