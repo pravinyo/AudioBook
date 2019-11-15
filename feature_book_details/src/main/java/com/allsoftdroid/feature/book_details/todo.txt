@@ -1,8 +1,6 @@
 TODO: Write test scripts
 TODO: Static analysis tools
 TODO: Follow TDD Approach
-TODO: network connection alert
-TODO: play screen band below fragment screen
 TODO: notification play buttons and actions
 TODO: send event for ui update when updating for notification. It could be notification from services
 TODO: Save current playing
@@ -12,7 +10,7 @@ TODO: playing book screen
 TODO: auto resume after call, interruption
 TODO: feature to support earphone button control
 TODO: Analysis feature[hours played, books played, fav book, bookmark book,watch later list]
-TODO: ADS feature
+TODO: Advertisement  feature
 TODO: leak canary implementation
 TODO: save app data online [google drive apps folder and local]
 TODO: Default image for book with constant size
