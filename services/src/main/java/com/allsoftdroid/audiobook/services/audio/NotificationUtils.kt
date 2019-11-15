@@ -42,39 +42,26 @@ class NotificationUtils {
 
             collapsedView.setImageViewBitmap(R.id.notification_track_thumbnail,roundImage)
 
-            val intentPrevious = Intent(applicationContext, AudioService::class.java)
-            intentPrevious.action = "Previous"
+            collapsedView.setOnClickPendingIntent(
+                R.id.image_notification_prev,
+                NotificationPlayerEventBroadcastReceiver.newPendingIntent(
+                    context = applicationContext,
+                    action = AudioService.PREVIOUS,
+                    requestCode = AudioService.ACTION_PREVIOUS))
 
-            val previousPendingIntent = PendingIntent.getActivity(
-                applicationContext,
-                AudioService.ACTION_PREVIOUS,
-                intentPrevious,
-                PendingIntent.FLAG_UPDATE_CURRENT)
+            collapsedView.setOnClickPendingIntent(R.id.image_notification_next,
+                NotificationPlayerEventBroadcastReceiver.newPendingIntent(
+                    context = applicationContext,
+                    action = AudioService.NEXT,
+                    requestCode = AudioService.ACTION_NEXT
+                ))
 
-            collapsedView.setOnClickPendingIntent(R.id.image_notification_prev,previousPendingIntent)
-
-            val intentNext = Intent(applicationContext, AudioService::class.java)
-            intentNext.action = "Next"
-
-            val nextPendingIntent = PendingIntent.getActivity(
-                applicationContext,
-                AudioService.ACTION_NEXT,
-                intentNext,
-                PendingIntent.FLAG_UPDATE_CURRENT)
-
-            collapsedView.setOnClickPendingIntent(R.id.image_notification_next,nextPendingIntent)
-
-            val intentPlayPause = Intent(applicationContext, AudioService::class.java)
-            intentPlayPause.action = "PlayPause"
-
-            val playPausePendingIntent = PendingIntent.getActivity(
-                applicationContext,
-                AudioService.ACTION_PLAY_PAUSE,
-                intentPlayPause,
-                PendingIntent.FLAG_UPDATE_CURRENT)
-
-            collapsedView.setOnClickPendingIntent(R.id.image_notification_playpause,playPausePendingIntent)
-
+            collapsedView.setOnClickPendingIntent(R.id.image_notification_playpause,
+                NotificationPlayerEventBroadcastReceiver.newPendingIntent(
+                    context = applicationContext,
+                    action = if(isAudioPlaying) AudioService.PAUSE else AudioService.PLAY,
+                    requestCode = AudioService.ACTION_PLAY_PAUSE
+                ))
 
             var notifyWhen = 0L
             var showWhen = false
@@ -89,7 +76,7 @@ class NotificationUtils {
             if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.O) {
                 val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 val name = applicationContext.getString(R.string.app_name)
-                val importance = NotificationManager.IMPORTANCE_LOW
+                val importance = NotificationManager.IMPORTANCE_HIGH
                 NotificationChannel(NOTIFICATION_CHANNEL, name, importance).apply {
                     enableLights(false)
                     enableVibration(false)
@@ -132,15 +119,4 @@ class NotificationUtils {
             return PendingIntent.getActivity(applicationContext, 0, contentIntent, 0)
         }
     }
-
-//    private fun getIntent(action: String): PendingIntent {
-//
-//        val intent = packageManager.getLaunchIntentForPackage("com.allsoftdroid.audiobook")
-//        intent?.let {
-//            it.action = action
-//            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//        }
-//
-//        return PendingIntent.getBroadcast(applicationContext, 0, intent, 0)
-//    }
 }
