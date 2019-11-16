@@ -5,9 +5,8 @@ import android.app.*
 import android.content.Intent
 import android.os.IBinder
 import com.allsoftdroid.common.base.extension.Event
-import com.allsoftdroid.common.base.store.AudioPlayerEventStore
-import com.allsoftdroid.common.base.store.Initial
-import com.allsoftdroid.common.base.store.Next
+import com.allsoftdroid.common.base.store.*
+import timber.log.Timber
 
 
 class AudioService : Service(){
@@ -32,7 +31,7 @@ class AudioService : Service(){
     }
 
     private val eventStore : AudioPlayerEventStore by lazy {
-        AudioPlayerEventStore.getInstance(Event(Initial("")))
+        AudioPlayerEventBus.getEventBusInstance()
     }
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -47,9 +46,13 @@ class AudioService : Service(){
             }
         }
 
+        //TODO: replace with RxObservable or completable
+        //TODO: this event doesn't cause playing of track , though UI is updated. What's the matter
         audioServiceBinder.nextTrack.observeForever {
             it.getContentIfNotHandled()?.let {nextEvent ->
+                Timber.d("Received next event from AudioService binder")
                 if(nextEvent){
+                    Timber.d("Sending next Event")
                     eventStore.publish(Event(Next("")))
                 }
             }
