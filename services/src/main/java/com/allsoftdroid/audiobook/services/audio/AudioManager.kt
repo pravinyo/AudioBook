@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
 import com.allsoftdroid.common.base.utils.SingletonHolder
+import timber.log.Timber
 
 class AudioManager private constructor(context: Context){
 
@@ -74,6 +75,7 @@ class AudioManager private constructor(context: Context){
     }
 
     fun playNext(){
+        Timber.d("Playing next Audio File")
         audioService.playNext()
     }
 
