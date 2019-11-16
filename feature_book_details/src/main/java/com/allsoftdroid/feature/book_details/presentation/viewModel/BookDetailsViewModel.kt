@@ -42,9 +42,6 @@ class BookDetailsViewModel(
     private var currentPlayingTrack : Int = 0
     //handle item click event
     private var _playItemClicked = MutableLiveData<Event<Int>>()
-//    val playItemClicked: LiveData<Event<Int>>
-//        get() = _playItemClicked
-
 
     // when back button is pressed in the UI
     private var _backArrowPressed = MutableLiveData<Event<Boolean>>()
