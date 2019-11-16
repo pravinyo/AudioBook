@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
+import timber.log.Timber
 
 
 class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
@@ -35,10 +36,12 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
     companion object {
         //song list
         private lateinit var trackList: List<AudioPlayListItem>
+
         //current position
+        private var trackPos:Int = 0
     }
 
-    private var trackPos:Int = 0
+
 
     private var _trackTitle = MutableLiveData<String>()
     val trackTitle : LiveData<String>
@@ -46,10 +49,6 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
 
 
     val nextTrack = MutableLiveData<Event<Boolean>>()
-
-//    fun setContext(context: Context) {
-//        this.context = context
-//    }
 
     private fun getContext() = context
 
@@ -130,8 +129,11 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
     }
 
     private fun playTrack(){
+
         audioPlayer?.let {player ->
+
             player.reset()
+            Timber.d("Player Reset done")
 
             val track = trackList[trackPos]
             _trackTitle.value = track.title?:"UNKNOWN"
@@ -144,29 +146,28 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
                 }
                 player.setDataSource(filePath)
             } else {
-                player.setDataSource(getContext()!!, Uri.parse(filePath))
+                player.setDataSource(getContext(), Uri.parse(filePath))
             }
 
             player.prepareAsync()
-
-        }
+            Timber.d("Prepare async called")
+        }?:Timber.d("Audio Player is Null: ${audioPlayer==null}")
     }
 
     override fun onPrepared(player: MediaPlayer?) {
         player?.start()
+        Timber.d("player is ready, called start()")
     }
 
     override fun onError(player: MediaPlayer?, p1: Int, p2: Int): Boolean {
         player?.reset()
-
+        Timber.d("Error occurres reset called with player is null :${player == null}")
         return false
     }
 
     override fun onCompletion(player: MediaPlayer?) {
         player?.let {
             if (player.currentPosition>0){
-                player.reset()
-//                playNext()
                 nextTrack.value = Event(true)
             }
         }
@@ -181,8 +182,8 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
 
     //skip to next
     fun playNext() {
-
         trackPos = (trackPos+1)% trackList.size
+        Timber.d("Next track pos is $trackPos of ${trackList.size}")
         playTrack()
     }
 
