@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
@@ -29,6 +30,16 @@ class NotificationUtils {
 
             val collapsedView = RemoteViews(applicationContext.packageName, R.layout.notification_mini_player_collapsed)
             val playPauseIcon = if (isAudioPlaying) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
+
+            when (applicationContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                Configuration.UI_MODE_NIGHT_NO -> {
+
+                } // Night mode is not active, we're using the light theme
+                Configuration.UI_MODE_NIGHT_YES -> {
+                    collapsedView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.white))
+                    collapsedView.setTextColor(R.id.notification_book_name,applicationContext.getColor(R.color.white))
+                } // Night mode is active, we're using dark theme
+            }
 
             collapsedView.setTextViewText(R.id.notification_book_name,bookName)
             collapsedView.setTextViewText(R.id.notification_track_name,trackTitle)
