@@ -1,6 +1,5 @@
 package com.allsoftdroid.feature.book_details.presentation
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,13 +9,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.*
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
-import com.allsoftdroid.common.base.utils.PlayerStatusListener
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.AudioBookTrackAdapter
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
@@ -46,10 +43,9 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
     }
 
     private val eventStore : AudioPlayerEventStore by lazy {
-        AudioPlayerEventStore.getInstance(Event(Play("")))
+        AudioPlayerEventBus.getEventBusInstance()
     }
 
-    private lateinit var listener : PlayerStatusListener
     private lateinit var disposable : Disposable
 
     private lateinit var dataBindingReference : FragmentAudiobookDetailsBinding
@@ -78,7 +74,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
             trackNumber?.let {
                 playSelectedTrackFile(it)
 
-                listener.onPlayerStatusChange(shouldShow = Event(true))
                 Timber.d("State change event sent")
             }
         })
@@ -111,39 +106,46 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
 
     private fun handleEvent(event: Event<AudioPlayerEvent>) {
         activity?.let {
+            Timber.d("Peeking content by default")
             event.peekContent().let {event->
                 when(event){
-                    is Next -> bookDetailsViewModel.updateNextTrackPlaying()
-                    is Previous -> bookDetailsViewModel.updatePreviousTrackPlaying()
+                    is Next -> {
+                        Timber.d("next event received, updating next track playing")
+                        //TODO: when services call next there is no way to update UI with title
+                        bookDetailsViewModel.updateNextTrackPlaying()
+                    }
+
+                    is Previous -> {
+                        Timber.d("Previous event occurred, updating previous playing event")
+                        bookDetailsViewModel.updatePreviousTrackPlaying()
+                    }
 
                     is PlaySelectedTrack -> {
+                        Timber.d("Play selected track event occurred, updating ui")
                         dataBindingReference.tvToolbarTitle.text = event.trackList[event.position-1].title
                         bookDetailsViewModel.onPlayItemClicked(event.position)
                     }
 
-                    is Play -> Toast.makeText(it.applicationContext,"Play Pressed Details Fragment",Toast.LENGTH_SHORT).show()
-                    is Pause -> Toast.makeText(it.applicationContext,"Pause Pressed Details Fragment",Toast.LENGTH_SHORT).show()
+                    is TrackDetails -> {
+                        dataBindingReference.tvToolbarTitle.text = event.trackTitle
+                    }
+
+                    is Play -> {
+                        Timber.d("Play event received")
+                    }
+
+                    is Pause -> {
+                        Timber.d("Pause event received")
+                    }
                     else -> Toast.makeText(it.applicationContext,"Unknown Pressed Details Fragment",Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        if (context is PlayerStatusListener) {
-            Timber.d("Listener attached")
-            listener = context
-        } else {
-            throw ClassCastException(
-                "$context must implement ${PlayerStatusListener::class.java.simpleName}."
-            )
-        }
-    }
-
     private fun playSelectedTrackFile(currentPos:Int) {
         bookDetailsViewModel.audioBookTracks.value?.let {
+            Timber.d("Sending new event for play selected track by the user")
             eventStore.publish(Event(PlaySelectedTrack(trackList = it,bookId = bookId,position = currentPos)))
         }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
     }
