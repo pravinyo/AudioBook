@@ -1,6 +1,5 @@
 package com.allsoftdroid.audiobook.feature_mini_player.presentation
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,11 +10,9 @@ import com.allsoftdroid.audiobook.feature_mini_player.R
 import com.allsoftdroid.audiobook.feature_mini_player.databinding.FragmentMiniPlayerBinding
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel.MiniPlayerViewModel
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel.MiniPlayerViewModelFactory
-import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.*
-import com.allsoftdroid.common.base.utils.PlayerStatusListener
 import io.reactivex.disposables.Disposable
 import timber.log.Timber
 
@@ -35,10 +32,9 @@ class MiniPlayerFragment : BaseContainerFragment() {
     }
 
     private val eventStore : AudioPlayerEventStore by lazy {
-        AudioPlayerEventStore.getInstance(Event(Initial("")))
+        AudioPlayerEventBus.getEventBusInstance()
     }
 
-    private lateinit var listener : PlayerStatusListener
     private lateinit var dispose : Disposable
 
     override fun onCreateView(
@@ -56,6 +52,7 @@ class MiniPlayerFragment : BaseContainerFragment() {
         miniPlayerViewModel.nextTrackClicked.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let { nextClicked ->
                 if(nextClicked){
+                    Timber.d("Sending new next event")
                     eventStore.publish(Event(Next("")))
                 }
             }
@@ -66,6 +63,7 @@ class MiniPlayerFragment : BaseContainerFragment() {
                 previousClicked ->
 
                 if(previousClicked){
+                    Timber.d("Sending new Previous event")
                     eventStore.publish(Event(Previous("")))
                 }
             }
@@ -75,10 +73,12 @@ class MiniPlayerFragment : BaseContainerFragment() {
             it.getContentIfNotHandled()?.let {
                     shouldPlay ->
 
-                Timber.d("should play is $shouldPlay")
+                Timber.d("should play event is $shouldPlay")
                 if(shouldPlay){
+                    Timber.d("Sending new play event")
                     eventStore.publish(Event(Play("")))
                 }else{
+                    Timber.d("Sending new Previous event")
                     eventStore.publish(Event(Pause("")))
                 }
             }
@@ -86,9 +86,11 @@ class MiniPlayerFragment : BaseContainerFragment() {
 
         dispose = eventStore.observe()
             .subscribe {
+                Timber.d("Peeking event default")
                 it.peekContent().let {event ->
                     when(event){
                         is TrackDetails -> {
+                            Timber.d("Received event for update track details event")
                             updateTrackDetails(title = event.trackTitle,bookId = event.bookId)
                         }
                     }
@@ -102,20 +104,6 @@ class MiniPlayerFragment : BaseContainerFragment() {
         miniPlayerViewModel.setTrackTitle(title)
         miniPlayerViewModel.setBookId(bookId)
 
-        listener.onPlayerStatusChange(shouldShow = Event(true))
         Timber.d("State change event sent")
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        if (context is PlayerStatusListener) {
-            Timber.d("Listener attached")
-            listener = context
-        } else {
-            throw ClassCastException(
-                "$context must implement ${PlayerStatusListener::class.java.simpleName}."
-            )
-        }
     }
 }
