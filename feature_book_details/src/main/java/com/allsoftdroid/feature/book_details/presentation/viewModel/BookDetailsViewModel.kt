@@ -10,8 +10,10 @@ import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.common.base.network.ArchiveUtils
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
+import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,6 +22,7 @@ import timber.log.Timber
 
 class BookDetailsViewModel(
     application : Application,
+    private val sharedPreferenceRepository: BookDetailsSharedPreferenceRepository,
     private val useCaseHandler: UseCaseHandler,
     private val getMetadataUsecase:GetMetadataUsecase,
     private val getTrackListUsecase : GetTrackListUsecase) : AndroidViewModel(application){
@@ -86,11 +89,14 @@ class BookDetailsViewModel(
             }
 
             _playItemClicked.value = Event(trackNumber-1)
+            Timber.d("Track List Updated with trackNo as $trackNumber")
         }
 
         _audioBookTracks
     }
 
+
+//    private val disposables = CompositeDisposable()
 
 
     init {
@@ -101,6 +107,15 @@ class BookDetailsViewModel(
             fetchTrackList()
         }
     }
+
+//    fun fetchLastPlayingTrack() {
+//        Timber.d("Inside fetching track list")
+//        disposables.add(sharedPreferenceRepository.trackPosition().subscribe{
+//            Timber.d("Received trackNo: $it")
+//
+//            if (it>0) onPlayItemClicked(it)
+//        })
+//    }
 
     /**
      * Function which fetch the metadata for the book
@@ -141,8 +156,8 @@ class BookDetailsViewModel(
                         _audioBookTracks.value = it
                         _newTrackStateEvent.value = response.event
                     }
-
                     Timber.d("Track list fetch success")
+//                    fetchLastPlayingTrack()
                 }
 
                 override suspend fun onError(t: Throwable) {
@@ -159,6 +174,7 @@ class BookDetailsViewModel(
     fun onPlayItemClicked(trackNumber: Int){
         _newTrackStateEvent.value = Event(trackNumber)
         currentPlayingTrack = trackNumber
+//        disposables.add(sharedPreferenceRepository.saveTrackPosition(currentPlayingTrack).subscribe())
     }
 
     fun updateNextTrackPlaying(){
@@ -183,6 +199,7 @@ class BookDetailsViewModel(
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
+//        disposables.dispose()
     }
 
 
