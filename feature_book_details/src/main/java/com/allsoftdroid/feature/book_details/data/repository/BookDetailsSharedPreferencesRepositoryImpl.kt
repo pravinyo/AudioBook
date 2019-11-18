@@ -8,17 +8,9 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.subjects.BehaviorSubject
 
-class BookDetailsSharedPreferencesRepositoryImpl(preferences : SharedPreferences) : BookDetailsSharedPreferenceRepository {
-
-    private val prefSubject = BehaviorSubject.createDefault(preferences)
-
-    private val prefChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, _ ->
-        prefSubject.onNext(sharedPreferences)
-    }
-
+class BookDetailsSharedPreferencesRepositoryImpl(private val preferences : SharedPreferences) : BookDetailsSharedPreferenceRepository {
 
     companion object {
-
         @JvmStatic
         fun create(context: Context): BookDetailsSharedPreferencesRepositoryImpl {
             val preferences = context.getSharedPreferences("BookDetailsRxPrefs", Context.MODE_PRIVATE)
@@ -27,53 +19,37 @@ class BookDetailsSharedPreferencesRepositoryImpl(preferences : SharedPreferences
 
         private const val KEY_NAME_TRACK_PLAYING_NUMBER = "key_name_current_track_playing_number"
         private const val KEY_NAME_TRACK_PLAYING_TITLE = "key_name_current_track_playing_title"
-
+        private const val KEY_NAME_TRACK_IS_PLAYING = "Key_name_is_track_playing"
     }
 
-    init {
-        preferences.registerOnSharedPreferenceChangeListener(prefChangeListener)
-    }
-
-    override fun saveTrackPosition(pos: Int): Completable = prefSubject
-        .firstOrError()
-        .editSharedPreferences {
+    override fun saveTrackPosition(pos: Int)=
+        preferences.editSharedPreferences {
             putInt(KEY_NAME_TRACK_PLAYING_NUMBER,pos)
+            }
+
+    override fun trackPosition():Int = preferences.getInt(KEY_NAME_TRACK_PLAYING_NUMBER,0)
+
+    fun saveIsPlaying(isPlaying: Boolean)=
+        preferences.editSharedPreferences {
+            putBoolean(KEY_NAME_TRACK_IS_PLAYING,isPlaying)
         }
 
-    override fun trackPosition(): Observable<Int> = prefSubject
-        .map {
-            it.getInt(KEY_NAME_TRACK_PLAYING_NUMBER,-1)
-        }
+    fun isPlaying():Boolean = preferences.getBoolean(KEY_NAME_TRACK_IS_PLAYING,false)
 
-    override fun saveTrackTitle(title: String): Completable = prefSubject
-        .firstOrError()
-        .editSharedPreferences {
+    override fun saveTrackTitle(title: String) =
+        preferences.editSharedPreferences {
             putString(KEY_NAME_TRACK_PLAYING_TITLE,title)
-        }
-
-    override fun trackTitle(): Observable<String> = prefSubject
-        .map {
-            it.getString(KEY_NAME_TRACK_PLAYING_TITLE,"")
-        }
-
-    override fun clear(): Completable = prefSubject
-        .firstOrError()
-        .clearSharedPreferences {
-            remove(KEY_NAME_TRACK_PLAYING_TITLE)
-            remove(KEY_NAME_TRACK_PLAYING_NUMBER)
-        }
-
-    private fun Single<SharedPreferences>.editSharedPreferences(batch: SharedPreferences.Editor.() -> Unit): Completable =
-        flatMapCompletable {
-            Completable.fromAction {
-                it.edit().also(batch).apply()
             }
-        }
 
-    private fun Single<SharedPreferences>.clearSharedPreferences(batch: SharedPreferences.Editor.() -> Unit): Completable =
-        flatMapCompletable {
-            Completable.fromAction {
-                it.edit().also(batch).apply()
-            }
-        }
+    override fun trackTitle():String = preferences.getString(KEY_NAME_TRACK_PLAYING_TITLE,"")?:""
+
+    override fun clear() = preferences.clearSharedPreferences {
+        remove(KEY_NAME_TRACK_PLAYING_TITLE)
+        remove(KEY_NAME_TRACK_PLAYING_NUMBER)
+        remove(KEY_NAME_TRACK_IS_PLAYING)
+    }
+
+    private fun SharedPreferences.editSharedPreferences(batch: SharedPreferences.Editor.() -> Unit) = edit().also(batch).apply()
+
+    private fun SharedPreferences.clearSharedPreferences(batch: SharedPreferences.Editor.() -> Unit)= edit().also(batch).apply()
 }
