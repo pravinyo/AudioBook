@@ -36,10 +36,10 @@ class AudioServiceBinder(application: Application) : Binder(),MediaPlayer.OnPrep
     companion object {
         //song list
         private lateinit var trackList: List<AudioPlayListItem>
-
-        //current position
-        private var trackPos:Int = 0
     }
+
+    //current position
+    private var trackPos:Int = 0
 
 
 
