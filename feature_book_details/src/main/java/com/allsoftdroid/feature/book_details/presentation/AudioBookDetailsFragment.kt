@@ -13,6 +13,7 @@ import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.*
 import com.allsoftdroid.feature.book_details.R
+import com.allsoftdroid.feature.book_details.data.repository.BookDetailsSharedPreferencesRepositoryImpl
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.AudioBookTrackAdapter
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
@@ -28,7 +29,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
 
 
     private lateinit var bookId : String
-
     /**
     Lazily initialize the view model
      */
@@ -45,6 +45,15 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
     private val eventStore : AudioPlayerEventStore by lazy {
         AudioPlayerEventBus.getEventBusInstance()
     }
+
+    private val sharedPreferences by lazy {
+        val activity = requireNotNull(this.activity) {
+            "You can only access the booksViewModel after onCreated()"
+        }
+
+        BookDetailsSharedPreferencesRepositoryImpl.create(activity.application)
+    }
+
 
     private lateinit var disposable : Disposable
 
@@ -101,6 +110,12 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
 
         dataBindingReference = dataBinding
 
+        //TODO: at this time tracks are not available that is why this change is not reflected
+        if(sharedPreferences.isPlaying()){
+            dataBindingReference.tvToolbarTitle.text = sharedPreferences.trackTitle()
+            bookDetailsViewModel.onPlayItemClicked(sharedPreferences.trackPosition())
+        }
+
         return dataBinding.root
     }
 
@@ -124,6 +139,8 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
                         Timber.d("Play selected track event occurred, updating ui")
                         dataBindingReference.tvToolbarTitle.text = event.trackList[event.position-1].title
                         bookDetailsViewModel.onPlayItemClicked(event.position)
+
+
                     }
 
                     is TrackDetails -> {
@@ -137,6 +154,11 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
                     is Pause -> {
                         Timber.d("Pause event received")
                     }
+
+                    is Initial -> {
+                        Timber.d("Initial event received")
+                    }
+
                     else -> Toast.makeText(it.applicationContext,"Unknown Pressed Details Fragment",Toast.LENGTH_SHORT).show()
                 }
             }
@@ -147,6 +169,12 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
         bookDetailsViewModel.audioBookTracks.value?.let {
             Timber.d("Sending new event for play selected track by the user")
             eventStore.publish(Event(PlaySelectedTrack(trackList = it,bookId = bookId,position = currentPos)))
+
+            sharedPreferences.saveTrackPosition(pos = currentPos)
+            sharedPreferences.saveIsPlaying(true)
+            sharedPreferences.saveTrackTitle(it[currentPos-1].title?:"")
+            Timber.d("saving current state event of the track")
+
         }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
     }
 
