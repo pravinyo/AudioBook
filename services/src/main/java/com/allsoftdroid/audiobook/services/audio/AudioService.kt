@@ -5,6 +5,7 @@ import android.app.*
 import android.content.Intent
 import android.os.IBinder
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.store.*
 import timber.log.Timber
 
@@ -21,7 +22,6 @@ class AudioService : Service(){
 
         const val ACTION_NEXT = 2
         const val NEXT="next"
-
     }
 
     private val audioServiceBinder by lazy {
@@ -46,14 +46,15 @@ class AudioService : Service(){
             }
         }
 
-        //TODO: replace with RxObservable or completable
-        //TODO: this event doesn't cause playing of track , though UI is updated. What's the matter
-        audioServiceBinder.nextTrack.observeForever {
+        audioServiceBinder.nextTrackEvent.observeForever {
             it.getContentIfNotHandled()?.let {nextEvent ->
                 Timber.d("Received next event from AudioService binder")
                 if(nextEvent){
                     Timber.d("Sending next Event")
-                    eventStore.publish(Event(Next("")))
+                    eventStore.publish(Event(Next( result = PlayingState(
+                        playingItemIndex = audioServiceBinder.getCurrentAudioPosition()+1,
+                        action_need = false
+                    ))))
                 }
             }
         }
@@ -63,7 +64,7 @@ class AudioService : Service(){
 
     private fun buildNotification() {
         sendNotification(
-            trackTitle = audioServiceBinder.getCurrentTrackTitle()?:"UNKNOWN",
+            trackTitle = audioServiceBinder.getCurrentTrackTitle(),
             bookId = audioServiceBinder.getBookId(),
             bookName = audioServiceBinder.getBookId(),
             applicationContext = applicationContext,
@@ -73,8 +74,7 @@ class AudioService : Service(){
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        audioServiceBinder.stopAudio()
-        audioServiceBinder.destroyAudioPlayer()
+        audioServiceBinder.onUnbind()
         return super.onUnbind(intent)
     }
 
