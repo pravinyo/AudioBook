@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable name="viewModel"
@@ -19,6 +18,7 @@
             android:layout_width="0dp"
             android:layout_weight="3"
             android:layout_height="match_parent"
+            app:bookImage="@{viewModel.bookId}"
             android:contentDescription="@string/audio_book_album_art" />
 
         <LinearLayout
@@ -55,6 +55,7 @@
                     android:layout_weight="3"
                     style="?android:attr/buttonBarButtonStyle"
                     android:onClick="@{() -> viewModel.playPause()}"
+                    app:controlIconPlayPause="@{viewModel.shouldItPlay}"
                     android:layout_height="wrap_content"/>
 
                 <Button
