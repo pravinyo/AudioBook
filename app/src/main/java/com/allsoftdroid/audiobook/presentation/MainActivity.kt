@@ -14,6 +14,7 @@ import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModelFa
 import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.network.ConnectivityReceiver
 import com.allsoftdroid.common.base.store.*
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -123,14 +124,28 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
     private fun performAction(event: AudioPlayerEvent){
         when(event){
             is Next -> {
-                audioManager.playNext()
-                eventStore.publish(Event(TrackDetails(trackTitle = audioManager.getTrackTitle()?:"UNKNOWN",bookId = audioManager.getBookId())))
+                val state = event.result as PlayingState
+
+                if(state.action_need) audioManager.playNext()
+
+                eventStore.publish(Event(TrackDetails(
+                    trackTitle = audioManager.getTrackTitle(),
+                    bookId = audioManager.getBookId(),
+                    position = state.playingItemIndex)))
+
                 Timber.d("Next event occurred")
             }
 
             is Previous -> {
+
+                val state = event.result as PlayingState
+
                 audioManager.playPrevious()
-                eventStore.publish(Event(TrackDetails(trackTitle = audioManager.getTrackTitle()?:"UNKNOWN",bookId = audioManager.getBookId())))
+
+                eventStore.publish(Event(TrackDetails(
+                    trackTitle = audioManager.getTrackTitle(),
+                    bookId = audioManager.getBookId(),
+                    position = state.playingItemIndex)))
                 Timber.d("Previous event occur")
             }
 
@@ -145,10 +160,17 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
             }
 
             is PlaySelectedTrack -> {
+
                 audioManager.setPlayTrackList(event.trackList,event.bookId)
                 audioManager.playTrackAtPosition(event.position)
-                eventStore.publish(Event(TrackDetails(trackTitle = audioManager.getTrackTitle()?:"UNKNOWN",bookId = audioManager.getBookId())))
+
+                eventStore.publish(Event(TrackDetails(
+                    trackTitle = audioManager.getTrackTitle(),
+                    bookId = audioManager.getBookId(),
+                    position = event.position)))
+
                 mainActivityViewModel.playerStatus(true)
+
                 Timber.d("Play selected track event")
             }
             else -> {
