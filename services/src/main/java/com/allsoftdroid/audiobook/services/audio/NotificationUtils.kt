@@ -15,6 +15,7 @@ import androidx.core.graphics.drawable.toBitmap
 import com.allsoftdroid.audiobook.services.R
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.common.base.utils.ImageUtils
+import com.allsoftdroid.audiobook.services.audio.NotificationPlayerEventBroadcastReceiver.Companion as NotificationPlayerEventBroadcastReceiver1
 
 
 class NotificationUtils {
@@ -55,23 +56,30 @@ class NotificationUtils {
 
             collapsedView.setOnClickPendingIntent(
                 R.id.image_notification_prev,
-                NotificationPlayerEventBroadcastReceiver.newPendingIntent(
+                NotificationPlayerEventBroadcastReceiver1.newPendingIntent(
                     context = applicationContext,
                     action = AudioService.PREVIOUS,
-                    requestCode = AudioService.ACTION_PREVIOUS))
+                    requestCode = AudioService.ACTION_PREVIOUS,
+                    key = NotificationPlayerEventBroadcastReceiver1.ACTION_PREVIOUS_ITEM_INDEX,
+                    value = if (currentAudioPos>1) currentAudioPos-1 else 0))
 
             collapsedView.setOnClickPendingIntent(R.id.image_notification_next,
-                NotificationPlayerEventBroadcastReceiver.newPendingIntent(
+                NotificationPlayerEventBroadcastReceiver1.newPendingIntent(
                     context = applicationContext,
                     action = AudioService.NEXT,
-                    requestCode = AudioService.ACTION_NEXT
+                    requestCode = AudioService.ACTION_NEXT,
+                    key = NotificationPlayerEventBroadcastReceiver1.ACTION_NEXT_ITEM_INDEX,
+                    value = currentAudioPos+1
                 ))
 
             collapsedView.setOnClickPendingIntent(R.id.image_notification_playpause,
-                NotificationPlayerEventBroadcastReceiver.newPendingIntent(
+                NotificationPlayerEventBroadcastReceiver1.newPendingIntent(
                     context = applicationContext,
                     action = if(isAudioPlaying) AudioService.PAUSE else AudioService.PLAY,
-                    requestCode = AudioService.ACTION_PLAY_PAUSE
+                    requestCode = AudioService.ACTION_PLAY_PAUSE,
+                    key = if(isAudioPlaying) NotificationPlayerEventBroadcastReceiver1.ACTION_PAUSE_ITEM_INDEX else
+                        NotificationPlayerEventBroadcastReceiver1.ACTION_PLAY_ITEM_INDEX,
+                    value = currentAudioPos
                 ))
 
             var notifyWhen = 0L
