@@ -3,6 +3,7 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val EXOPLAYER = "2.10.8"
     const val RX_RELAY = "2.1.1"
     const val RX_JAVA = "2.2.10"
     const val RX_KOTLIN = "2.4.0"
@@ -89,4 +90,6 @@ object LibraryDependency {
     const val RX_KOTLIN ="io.reactivex.rxjava2:rxkotlin:${LibraryVersion.RX_KOTLIN}"
     const val RX_ANDROID = "io.reactivex.rxjava2:rxandroid:${LibraryVersion.RX_ANDROID}"
     const val RX_RELAY = "com.jakewharton.rxrelay2:rxrelay:${LibraryVersion.RX_RELAY}"
+
+    const val EXOPLAYER = "com.google.android.exoplayer:exoplayer:${LibraryVersion.EXOPLAYER}"
 }
