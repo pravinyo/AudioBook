@@ -46,13 +46,13 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
         AudioPlayerEventBus.getEventBusInstance()
     }
 
-    private val sharedPreferences by lazy {
-        val activity = requireNotNull(this.activity) {
-            "You can only access the booksViewModel after onCreated()"
-        }
-
-        BookDetailsSharedPreferencesRepositoryImpl.create(activity.application)
-    }
+//    private val sharedPreferences by lazy {
+//        val activity = requireNotNull(this.activity) {
+//            "You can only access the booksViewModel after onCreated()"
+//        }
+//
+//        BookDetailsSharedPreferencesRepositoryImpl.create(activity.application)
+//    }
 
 
     private lateinit var disposable : Disposable
@@ -111,10 +111,10 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
         dataBindingReference = dataBinding
 
         //TODO: at this time tracks are not available that is why this change is not reflected
-        if(sharedPreferences.isPlaying()){
-            dataBindingReference.tvToolbarTitle.text = sharedPreferences.trackTitle()
-            bookDetailsViewModel.onPlayItemClicked(sharedPreferences.trackPosition())
-        }
+//        if(sharedPreferences.isPlaying()){
+//            dataBindingReference.tvToolbarTitle.text = sharedPreferences.trackTitle()
+//            bookDetailsViewModel.onPlayItemClicked(sharedPreferences.trackPosition())
+//        }
 
         return dataBinding.root
     }
@@ -126,7 +126,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
                 when(event){
                     is Next -> {
                         Timber.d("next event received, updating next track playing")
-                        //TODO: when services call next there is no way to update UI with title
                         bookDetailsViewModel.updateNextTrackPlaying()
                     }
 
@@ -140,11 +139,11 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
                         dataBindingReference.tvToolbarTitle.text = event.trackList[event.position-1].title
                         bookDetailsViewModel.onPlayItemClicked(event.position)
 
-
                     }
 
                     is TrackDetails -> {
                         dataBindingReference.tvToolbarTitle.text = event.trackTitle
+                        bookDetailsViewModel.onPlayItemClicked(event.position)
                     }
 
                     is Play -> {
@@ -158,7 +157,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
                     is Initial -> {
                         Timber.d("Initial event received")
                     }
-
                     else -> Toast.makeText(it.applicationContext,"Unknown Pressed Details Fragment",Toast.LENGTH_SHORT).show()
                 }
             }
@@ -170,9 +168,9 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
             Timber.d("Sending new event for play selected track by the user")
             eventStore.publish(Event(PlaySelectedTrack(trackList = it,bookId = bookId,position = currentPos)))
 
-            sharedPreferences.saveTrackPosition(pos = currentPos)
-            sharedPreferences.saveIsPlaying(true)
-            sharedPreferences.saveTrackTitle(it[currentPos-1].title?:"")
+//            sharedPreferences.saveTrackPosition(pos = currentPos)
+//            sharedPreferences.saveIsPlaying(true)
+//            sharedPreferences.saveTrackTitle(it[currentPos-1].title?:"")
             Timber.d("saving current state event of the track")
 
         }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
