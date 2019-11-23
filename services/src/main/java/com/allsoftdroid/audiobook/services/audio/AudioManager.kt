@@ -76,22 +76,24 @@ class AudioManager private constructor(context: Context){
 
     fun playNext(){
         Timber.d("Playing next Audio File")
-        audioService.playNext()
+        audioService.goToNext()
     }
 
     fun playPrevious(){
-        audioService.playPrev()
+        audioService.goToPreviousOrBeginning()
     }
 
     fun pauseTrack(){
         if (audioService.isPlaying()){
-            audioService.pauseAudio()
+            //TODO: Implement pause logic
+            Timber.d("Pause pressed")
         }
     }
 
     fun playTrack(){
         if (!audioService.isPlaying()){
-            audioService.continueAudio()
+//TODO: Implement play logic
+            Timber.d("Play pressed")
         }
     }
 
