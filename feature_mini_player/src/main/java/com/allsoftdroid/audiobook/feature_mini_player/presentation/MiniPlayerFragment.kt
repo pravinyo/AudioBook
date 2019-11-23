@@ -11,6 +11,7 @@ import com.allsoftdroid.audiobook.feature_mini_player.databinding.FragmentMiniPl
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel.MiniPlayerViewModel
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel.MiniPlayerViewModelFactory
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.*
 import io.reactivex.disposables.Disposable
@@ -35,6 +36,8 @@ class MiniPlayerFragment : BaseContainerFragment() {
         AudioPlayerEventBus.getEventBusInstance()
     }
 
+    private var currentPlayingIndex = 0
+
     private lateinit var dispose : Disposable
 
     override fun onCreateView(
@@ -53,7 +56,10 @@ class MiniPlayerFragment : BaseContainerFragment() {
             it.getContentIfNotHandled()?.let { nextClicked ->
                 if(nextClicked){
                     Timber.d("Sending new next event")
-                    eventStore.publish(Event(Next("")))
+                    eventStore.publish(Event(Next(PlayingState(
+                        playingItemIndex = currentPlayingIndex+1,
+                        action_need = true
+                    ))))
                 }
             }
         })
@@ -64,7 +70,10 @@ class MiniPlayerFragment : BaseContainerFragment() {
 
                 if(previousClicked){
                     Timber.d("Sending new Previous event")
-                    eventStore.publish(Event(Previous("")))
+                    eventStore.publish(Event(Previous(PlayingState(
+                        playingItemIndex = currentPlayingIndex-1,
+                        action_need = true
+                    ))))
                 }
             }
         })
@@ -74,12 +83,19 @@ class MiniPlayerFragment : BaseContainerFragment() {
                     shouldPlay ->
 
                 Timber.d("should play event is $shouldPlay")
+
                 if(shouldPlay){
                     Timber.d("Sending new play event")
-                    eventStore.publish(Event(Play("")))
+                    eventStore.publish(Event(Play(PlayingState(
+                        playingItemIndex = currentPlayingIndex,
+                        action_need = true
+                    ))))
                 }else{
-                    Timber.d("Sending new Previous event")
-                    eventStore.publish(Event(Pause("")))
+                    Timber.d("Sending new pause event")
+                    eventStore.publish(Event(Pause(PlayingState(
+                        playingItemIndex = currentPlayingIndex,
+                        action_need = true
+                    ))))
                 }
             }
         })
@@ -92,6 +108,7 @@ class MiniPlayerFragment : BaseContainerFragment() {
                         is TrackDetails -> {
                             Timber.d("Received event for update track details event")
                             updateTrackDetails(title = event.trackTitle,bookId = event.bookId)
+                            currentPlayingIndex = event.position
                         }
                     }
                 }
