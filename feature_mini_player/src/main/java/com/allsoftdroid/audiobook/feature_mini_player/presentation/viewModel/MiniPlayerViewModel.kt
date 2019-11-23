@@ -15,9 +15,10 @@ class MiniPlayerViewModel(application : Application) : AndroidViewModel(applicat
     val nextTrackClicked : LiveData<Event<Boolean>> = _nextTrackClicked
 
     private var _playPauseClicked = MutableLiveData<Event<Boolean>>()
-    var  playPausedClicked : LiveData<Event<Boolean>> = _playPauseClicked
+    val  playPausedClicked : LiveData<Event<Boolean>> = _playPauseClicked
 
-    private var shouldItPlay : Boolean = true
+    private var _shouldItPlay:Boolean = false
+    var shouldItPlay  = MutableLiveData<Boolean>()
 
     private var _trackTitle = MutableLiveData<String>()
     val trackTitle :LiveData<String> = _trackTitle
@@ -34,8 +35,9 @@ class MiniPlayerViewModel(application : Application) : AndroidViewModel(applicat
     }
 
     fun playPause(){
-        shouldItPlay = !shouldItPlay
-        _previousTrackClicked.value = Event(shouldItPlay)
+        _shouldItPlay = !_shouldItPlay
+        _playPauseClicked.value = Event(_shouldItPlay)
+        shouldItPlay.value = _shouldItPlay
     }
 
     fun setTrackTitle(title : String?){
