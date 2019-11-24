@@ -132,6 +132,15 @@ class AudioServiceBinder(application: Application) : Binder(){
         exoPlayer = null
     }
 
+    fun initializeAndPlay(currentPos: Int) {
+        if (exoPlayer == null){
+            Timber.d("Player is not yet created. starting to create")
+            onCreate()
+        }
+        setTrackPosition(currentPos)
+        Timber.d("Track pos is set.")
+    }
+
     fun goToPreviousOrBeginning() {
         Timber.d("Previous called")
         exoPlayer?.run {
@@ -159,10 +168,17 @@ class AudioServiceBinder(application: Application) : Binder(){
         }
     }
 
-    /**
-     * EXO code end
-     */
+    fun pause(){
+        exoPlayer?.apply {
+            this.playWhenReady = false
+        }
+    }
 
+    fun resume(){
+        exoPlayer?.apply {
+            this.playWhenReady = true
+        }
+    }
 
     //TODO: Rx
     private var _trackTitle = MutableLiveData<String>()
@@ -216,14 +232,5 @@ class AudioServiceBinder(application: Application) : Binder(){
     }
 
     fun getBookId() = bookId
-
-    fun initializeAndPlay(currentPos: Int) {
-        if (exoPlayer == null){
-            Timber.d("Player is not yet created. starting to create")
-            onCreate()
-        }
-        setTrackPosition(currentPos)
-        Timber.d("Track pos is set.")
-    }
 
 }

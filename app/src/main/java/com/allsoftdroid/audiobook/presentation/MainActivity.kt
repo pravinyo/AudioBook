@@ -150,13 +150,13 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
             }
 
             is Play -> {
-                audioManager.playTrack()
-                Timber.d("Play track event")
+                audioManager.resumeTrack()
+                Timber.d("Play/Resume track event")
             }
 
             is Pause -> {
-                audioManager.playPrevious()
-                Timber.d("Play previous event")
+                audioManager.pauseTrack()
+                Timber.d("pause event")
             }
 
             is PlaySelectedTrack -> {

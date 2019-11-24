@@ -85,15 +85,15 @@ class AudioManager private constructor(context: Context){
 
     fun pauseTrack(){
         if (audioService.isPlaying()){
-            //TODO: Implement pause logic
+            audioService.pause()
             Timber.d("Pause pressed")
         }
     }
 
-    fun playTrack(){
+    fun resumeTrack(){
         if (!audioService.isPlaying()){
-//TODO: Implement play logic
-            Timber.d("Play pressed")
+            audioService.resume()
+            Timber.d("Resume pressed")
         }
     }
 
