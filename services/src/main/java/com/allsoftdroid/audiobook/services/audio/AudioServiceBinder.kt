@@ -146,7 +146,9 @@ class AudioServiceBinder(application: Application) : Binder(){
         exoPlayer?.run {
             if (hasPrevious()) {
                 previous()
-                _trackTitle.value = trackList[this.currentWindowIndex].title
+                if(this.currentWindowIndex>=0){
+                    _trackTitle.value = trackList[this.currentWindowIndex].title
+                }
                 Timber.d("Title: ${trackTitle.value}")
             } else {
                 seekToDefaultPosition()
@@ -160,7 +162,10 @@ class AudioServiceBinder(application: Application) : Binder(){
         exoPlayer?.let {
             if(it.hasNext()){
                 it.next()
-                _trackTitle.value = trackList[it.currentWindowIndex].title
+                if(it.currentWindowIndex< trackList.size)
+                {
+                    _trackTitle.value = trackList[it.currentWindowIndex].title
+                }
                 Timber.d("Title: ${trackTitle.value}")
             }else{
                 Timber.d("Track completed playing")
