@@ -19,7 +19,7 @@ import com.bumptech.glide.request.RequestOptions
 @BindingAdapter("trackTitle")
 fun TextView.setTrackTitle(item : AudioBookTrackDomainModel?){
     item?.let {
-        text = getNormalizedText(item.trackTitle,38)
+        text = getNormalizedText(item.title,38)
     }
 }
 

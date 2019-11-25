@@ -3,6 +3,11 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val EXOPLAYER = "2.10.8"
+    const val RX_RELAY = "2.1.1"
+    const val RX_JAVA = "2.2.10"
+    const val RX_KOTLIN = "2.4.0"
+    const val RX_ANDROID = "2.1.1"
     const val CARD_VIEW = "28.0.0"
     const val GLIDE = "4.9.0"
     const val ROOM = "2.2.0-rc01"
@@ -21,7 +26,7 @@ private object LibraryVersion {
     const val MATERIAL = "1.1.0-alpha09"
     const val CONSTRAINT_LAYOUT = "1.1.3"
     const val CORE_KTX = "1.0.2"
-    const val FRAGMENT_KTX = "1.1.0-beta01"
+    const val FRAGMENT_KTX = CoreVersion.FRAGMENT_KTX
     const val LIFECYCLE_VIEW_MODEL_KTX = "2.2.0-alpha01"
     const val COIL = "0.6.1"
     const val K_ANDROID = "0.8.8@aar"
@@ -58,7 +63,7 @@ object LibraryDependency {
     const val COROUTINES_ANDROID = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${CoreVersion.COROUTINES_ANDROID}"
 
     const val CORE_KTX = "androidx.core:core-ktx:${LibraryVersion.CORE_KTX}"
-    const val FRAGMENT_KTX = "androidx.fragment:fragment:${LibraryVersion.FRAGMENT_KTX}"
+    const val FRAGMENT_KTX = "androidx.fragment:fragment-ktx:${LibraryVersion.FRAGMENT_KTX}"
 
     const val LIFECYCLE_EXTENSIONS = "androidx.lifecycle:lifecycle-extensions:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
     const val LIFECYCLE_COMPILER ="androidx.lifecycle:lifecycle-compiler:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
@@ -80,4 +85,11 @@ object LibraryDependency {
     const val GLIDE_COMPILER = "com.github.bumptech.glide:compiler:${LibraryVersion.GLIDE}"
 
     const val CARD_VIEW = "com.android.support:cardview-v7:${LibraryVersion.CARD_VIEW}"
+
+    const val RX_JAVA = "io.reactivex.rxjava2:rxjava:${LibraryVersion.RX_JAVA}"
+    const val RX_KOTLIN ="io.reactivex.rxjava2:rxkotlin:${LibraryVersion.RX_KOTLIN}"
+    const val RX_ANDROID = "io.reactivex.rxjava2:rxandroid:${LibraryVersion.RX_ANDROID}"
+    const val RX_RELAY = "com.jakewharton.rxrelay2:rxrelay:${LibraryVersion.RX_RELAY}"
+
+    const val EXOPLAYER = "com.google.android.exoplayer:exoplayer:${LibraryVersion.EXOPLAYER}"
 }

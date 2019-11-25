@@ -23,7 +23,7 @@ fun List<DatabaseTrackEntity>.asTrackDomainModel():List<AudioBookTrackDomainMode
     return map {
         AudioBookTrackDomainModel(
             filename = it.filename,
-            trackTitle = it.trackTitle,
+            title = it.trackTitle,
             trackAlbum = it.trackAlbum_id,
             trackNumber = it.trackNumber,
             length = it.length,

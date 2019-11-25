@@ -1,3 +1,37 @@
 TODO: Write test scripts
 TODO: Static analysis tools
 TODO: Follow TDD Approach
+
+TODO: Save current playing
+TODO: resume last playing book feature
+TODO: local download/save book feature
+TODO: playing book screen
+TODO: auto resume after call, interruption
+
+
+
+TODO: alternative to global scope in coroutine. starting new coroutine in suspend function error
+TODO: Implement leaky canary
+https://stackoverflow.com/questions/33654503/how-to-use-leak-canary
+TODO: mvvm based bound service
+https://github.com/mitchtabian/Bound-Services-with-MVVM
+TODO: exoplayer implement
+https://blog.mindorks.com/using-exoplayer-to-play-video-and-audio-in-android-like-a-pro
+
+
+//TODO: Optional
+TODO: alert to play book based on users daily commute time and activity.
+TODO: Default image for book with constant size
+TODO: Japanese language support, english
+TODO: new book available alert
+TODO: feature to support earphone button control
+TODO: Analysis feature[hours played, books played, fav book, bookmark book,watch later list]
+TODO: Advertisement  feature
+TODO: save app data online [google drive apps folder and local]
+
+//TODO: BUGS:
+TODO: current playing icon changes on first click to before list gets updated [bug]
+TODO: fetching is happening even in backpress from book details [bug]
+TODO: bug found , when clicking first track and then fourth track app crashes.[Short notification vol 70]
+TODO: autoplay next event has some side effect as it causes crash of app. when playing 4th track and track crashes as it ,
+finishes play and about to play next event.

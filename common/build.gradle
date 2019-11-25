@@ -77,4 +77,10 @@ dependencies {
     api(LibraryDependency.RETROFIT)
     api(LibraryDependency.RETROFIT_SCALARS)
     api(LibraryDependency.RETROFIT_COROUTINES_ADAPTER)
+
+    api(LibraryDependency.RX_ANDROID)
+    api(LibraryDependency.RX_JAVA)
+    api(LibraryDependency.RX_KOTLIN)
+    api(LibraryDependency.RX_RELAY)
+
 }

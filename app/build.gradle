@@ -31,11 +31,15 @@ android {
         debug {
             minifyEnabled BuildTypeDebug.isMinifyEnabled
         }
+    }
 
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
-        }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 
     dataBinding{
@@ -47,11 +51,9 @@ android {
 }
 
 dependencies {
-
     implementation(project(path: ':common'))
     implementation(project(path: ':feature_book'))
     implementation(project(path: ':feature_book_details'))
-
-    
-
+    implementation(project(path: ':feature_mini_player'))
+    implementation(project(path: ':services'))
 }
