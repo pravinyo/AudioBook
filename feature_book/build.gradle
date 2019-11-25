@@ -18,6 +18,8 @@ android {
         targetSdkVersion(AndroidConfig.TARGET_SDK_VERSION)
         versionCode AndroidConfig.VERSION_CODE
         versionName AndroidConfig.VERSION_NAME
+
+        testInstrumentationRunner(AndroidConfig.TEST_INSTRUMENTATION_RUNNER)
     }
 
     buildTypes {
@@ -28,11 +30,15 @@ android {
         debug {
             minifyEnabled BuildTypeDebug.isMinifyEnabled
         }
+    }
 
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
-        }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 
     dataBinding{
@@ -56,11 +62,8 @@ dependencies {
 
 
     testImplementation(TestLibraryDependency.JUNIT)
-    testImplementation(TestLibraryDependency.MOCKITO_ANDROID)
-    testImplementation(TestLibraryDependency.MOCKITO_KOTLIN)
-    testImplementation(TestLibraryDependency.COROUTINES_TEST)
+    testImplementation(TestLibraryDependency.MOCKITO_CORE)
     testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
-    androidTestImplementation(TestLibraryDependency.TEST_RUNNER)
-    androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
-
+    testImplementation(TestLibraryDependency.COROUTINES_TEST)
 }
+

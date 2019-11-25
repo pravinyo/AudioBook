@@ -3,4 +3,9 @@
     <string name="previous">prev</string>
     <string name="playpause">pp</string>
     <string name="next">nxt</string>
+    <string name="play_next_track">Play Next Track</string>
+    <string name="play_or_pause_track">Play or Pause Track</string>
+    <string name="play_previous_track">Play Previous Track</string>
+    <string name="audiobook_thumbnail">AudioBook thumbnail</string>
+    <string name="audio_player_service">audio_player_service</string>
 </resources>
