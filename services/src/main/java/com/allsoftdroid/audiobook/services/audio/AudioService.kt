@@ -1,12 +1,14 @@
 package com.allsoftdroid.audiobook.services.audio
 
-import com.allsoftdroid.audiobook.services.audio.NotificationUtils.Companion.sendNotification
-import android.app.*
+import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import com.allsoftdroid.audiobook.services.audio.NotificationUtils.Companion.sendNotification
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.store.*
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import timber.log.Timber
 
 
@@ -34,6 +36,8 @@ class AudioService : Service(){
         AudioPlayerEventBus.getEventBusInstance()
     }
 
+    private lateinit var disposable:Disposable
+
     override fun onBind(p0: Intent?): IBinder? {
         return audioServiceBinder
     }
@@ -42,7 +46,7 @@ class AudioService : Service(){
         super.onCreate()
         audioServiceBinder.trackTitle.observeForever {
             it?.let {
-                buildNotification()
+                buildNotification(isItFirst = true)
             }
         }
 
@@ -58,18 +62,39 @@ class AudioService : Service(){
                 }
             }
         }
+
+        disposable  = eventStore.observe()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                handleEvent(it)
+            }
+    }
+
+    private fun handleEvent(event: Event<AudioPlayerEvent>?) {
+        event?.let {
+            if(it.hasBeenHandled){
+                when(it.peekContent()){
+                    is Play -> {
+                        buildNotification()
+                    }
+
+                    is Pause -> {
+                        buildNotification()
+                    }
+                }
+            }
+        }
     }
 
 
-
-    private fun buildNotification() {
+    private fun buildNotification( isItFirst:Boolean = false) {
         sendNotification(
             trackTitle = audioServiceBinder.getCurrentTrackTitle(),
             bookId = audioServiceBinder.getBookId(),
             bookName = audioServiceBinder.getBookId(),
             applicationContext = applicationContext,
             service = this,
-            isAudioPlaying = audioServiceBinder.isPlaying(),
+            isAudioPlaying = if(isItFirst) true else audioServiceBinder.isPlaying(),
             currentAudioPos = audioServiceBinder.getCurrentAudioPosition())
     }
 
@@ -81,5 +106,6 @@ class AudioService : Service(){
     override fun onDestroy() {
         super.onDestroy()
         stopForeground(true)
+        disposable.dispose()
     }
 }
