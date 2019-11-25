@@ -110,6 +110,14 @@ class MiniPlayerFragment : BaseContainerFragment() {
                             updateTrackDetails(title = event.trackTitle,bookId = event.bookId)
                             currentPlayingIndex = event.position
                         }
+
+                        is Play -> {
+                            miniPlayerViewModel.setShouldPlay(play = true)
+                        }
+
+                        is Pause -> {
+                            miniPlayerViewModel.setShouldPlay(play = false)
+                        }
                     }
                 }
             }
