@@ -73,7 +73,8 @@ class BookDetailsViewModel(
 
         val trackNumber = trackNumberEvent.getContentIfNotHandled()?:trackNumberEvent.peekContent()
 
-        if (trackNumber is Int){
+        if (trackNumber is Int && trackNumber>0){
+
             _audioBookTracks.value?.let {
 
                 val list = it
