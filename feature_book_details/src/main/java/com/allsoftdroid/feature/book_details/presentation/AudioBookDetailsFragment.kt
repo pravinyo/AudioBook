@@ -4,33 +4,31 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
+import com.allsoftdroid.common.base.store.*
 import com.allsoftdroid.feature.book_details.R
+import com.allsoftdroid.feature.book_details.data.repository.BookDetailsSharedPreferencesRepositoryImpl
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.AudioBookTrackAdapter
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModelFactory
-import com.allsoftdroid.audiobook.services.audio.AudioServiceBinder
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import android.content.ComponentName
-import android.os.IBinder
-import android.content.ServiceConnection
-import android.content.Context.BIND_AUTO_CREATE
-import com.allsoftdroid.audiobook.services.audio.AudioService
-import android.content.Intent
-import android.widget.Toast
 
 
 class AudioBookDetailsFragment : BaseContainerFragment(){
 
 
     private lateinit var bookId : String
-
     /**
     Lazily initialize the view model
      */
@@ -43,55 +41,23 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
         ViewModelProviders.of(this, BookDetailsViewModelFactory(activity.application,bookId))
             .get(BookDetailsViewModel::class.java)
     }
-    
-    
-    /**
-     *
-     * Audio service code start
-     */
 
-    var audioServiceBinder : AudioServiceBinder? = null
-    private var _currentTrack = 0
-
-
-    // This service connection object is the bridge between activity and background service.
-    private val serviceConnection by lazy {
-        object : ServiceConnection {
-            override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
-            // Cast and assign background service's onBind method returned iBander object.
-                val service = iBinder as AudioServiceBinder
-                audioServiceBinder = service
-            }
-
-        override fun onServiceDisconnected(componentName: ComponentName) {
-            }
-        }
+    private val eventStore : AudioPlayerEventStore by lazy {
+        AudioPlayerEventBus.getEventBusInstance()
     }
 
-    // Bind background service with caller . Then this caller can use
-    // background service's AudioServiceBinder instance to invoke related methods.
+//    private val sharedPreferences by lazy {
+//        val activity = requireNotNull(this.activity) {
+//            "You can only access the booksViewModel after onCreated()"
+//        }
+//
+//        BookDetailsSharedPreferencesRepositoryImpl.create(activity.application)
+//    }
 
-    private val playIntent by lazy { Intent(this.activity, AudioService::class.java) }
 
-    private val audioService by lazy {
-        audioServiceBinder as AudioServiceBinder
-    }
+    private lateinit var disposable : Disposable
 
-    private fun bindAudioService() {
-        if (audioServiceBinder == null) {
-            // Below code will invoke serviceConnection's onServiceConnected method.
-            context!!.bindService(playIntent, serviceConnection, BIND_AUTO_CREATE)
-            context!!.startService(playIntent)
-        }
-    }
-
-    // Unbound background audio service with caller activity.
-    private fun unBoundAudioService() {
-        if (audioServiceBinder != null) {
-            context!!.unbindService(serviceConnection)
-            context!!.stopService(playIntent)
-        }
-    }
+    private lateinit var dataBindingReference : FragmentAudiobookDetailsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -114,15 +80,10 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
         })
 
         val trackAdapter = AudioBookTrackAdapter(TrackItemClickedListener{ trackNumber,filename,title ->
-            if (_currentTrack != trackNumber){
-                trackNumber?.let {
-                    bookDetailsViewModel.onPlayItemClicked(trackNumber)
-                }
+            trackNumber?.let {
+                playSelectedTrackFile(it)
 
-                dataBinding.tvToolbarTitle.text = title
-                _currentTrack = trackNumber?:1
-
-                playSelectedTrackFile(_currentTrack.minus(1))
+                Timber.d("State change event sent")
             }
         })
 
@@ -140,20 +101,83 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
             }
         })
 
+        disposable  = eventStore.observe()
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                handleEvent(it)
+            }
+
+        dataBindingReference = dataBinding
+
+        //TODO: at this time tracks are not available that is why this change is not reflected
+//        if(sharedPreferences.isPlaying()){
+//            dataBindingReference.tvToolbarTitle.text = sharedPreferences.trackTitle()
+//            bookDetailsViewModel.onPlayItemClicked(sharedPreferences.trackPosition())
+//        }
+
         return dataBinding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        bindAudioService()
+    private fun handleEvent(event: Event<AudioPlayerEvent>) {
+        activity?.let {
+            Timber.d("Peeking content by default")
+            event.peekContent().let {event->
+                when(event){
+                    is Next -> {
+                        Timber.d("next event received, updating next track playing")
+                        bookDetailsViewModel.updateNextTrackPlaying()
+                    }
+
+                    is Previous -> {
+                        Timber.d("Previous event occurred, updating previous playing event")
+                        bookDetailsViewModel.updatePreviousTrackPlaying()
+                    }
+
+                    is PlaySelectedTrack -> {
+                        Timber.d("Play selected track event occurred, updating ui")
+                        dataBindingReference.tvToolbarTitle.text = event.trackList[event.position-1].title
+                        bookDetailsViewModel.onPlayItemClicked(event.position)
+
+                    }
+
+                    is TrackDetails -> {
+                        dataBindingReference.tvToolbarTitle.text = event.trackTitle
+                        bookDetailsViewModel.onPlayItemClicked(event.position)
+                    }
+
+                    is Play -> {
+                        Timber.d("Play event received")
+                    }
+
+                    is Pause -> {
+                        Timber.d("Pause event received")
+                    }
+
+                    is Initial -> {
+                        Timber.d("Initial event received")
+                    }
+                    else -> Toast.makeText(it.applicationContext,"Unknown Pressed Details Fragment",Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun playSelectedTrackFile(currentPos:Int) {
         bookDetailsViewModel.audioBookTracks.value?.let {
+            Timber.d("Sending new event for play selected track by the user")
+            eventStore.publish(Event(PlaySelectedTrack(trackList = it,bookId = bookId,position = currentPos)))
 
-            audioService.setMultipleTracks(it)
-            audioService.initializeAndPlay(bookId,currentPos)
+//            sharedPreferences.saveTrackPosition(pos = currentPos)
+//            sharedPreferences.saveIsPlaying(true)
+//            sharedPreferences.saveTrackTitle(it[currentPos-1].title?:"")
+            Timber.d("saving current state event of the track")
 
         }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable.dispose()
     }
 }
