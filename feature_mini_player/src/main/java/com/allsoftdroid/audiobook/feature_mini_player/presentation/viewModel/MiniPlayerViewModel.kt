@@ -51,4 +51,9 @@ class MiniPlayerViewModel(application : Application) : AndroidViewModel(applicat
     fun setBookId(bookId:String){
         _bookId.value = bookId
     }
+    
+    fun setShouldPlay(play:Boolean){
+        _shouldItPlay = play
+        shouldItPlay.value = _shouldItPlay
+    }
 }
