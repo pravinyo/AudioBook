@@ -30,7 +30,7 @@ class NotificationUtils {
         fun sendNotification(isAudioPlaying:Boolean,currentAudioPos:Int,service: AudioService,applicationContext: Context,trackTitle:String,bookId: String,bookName:String) {
 
             val collapsedView = RemoteViews(applicationContext.packageName, R.layout.notification_mini_player_collapsed)
-            val playPauseIcon = if (isAudioPlaying) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
+            val playPauseIcon = if (!isAudioPlaying) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
 
             when (applicationContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
                 Configuration.UI_MODE_NIGHT_NO -> {
