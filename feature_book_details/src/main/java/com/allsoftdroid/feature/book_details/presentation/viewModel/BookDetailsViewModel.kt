@@ -8,10 +8,13 @@ import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
-import com.allsoftdroid.common.base.Utility.Utils
+import com.allsoftdroid.common.base.network.ArchiveUtils
+import com.allsoftdroid.feature.book_details.data.model.BookDetailsStateModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
+import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,6 +23,7 @@ import timber.log.Timber
 
 class BookDetailsViewModel(
     application : Application,
+    private val state : BookDetailsStateModel,
     private val useCaseHandler: UseCaseHandler,
     private val getMetadataUsecase:GetMetadataUsecase,
     private val getTrackListUsecase : GetTrackListUsecase) : AndroidViewModel(application){
@@ -39,11 +43,9 @@ class BookDetailsViewModel(
     get() = _networkResponse
 
 
+    private var currentPlayingTrack : Int = state.trackPlaying
     //handle item click event
     private var _playItemClicked = MutableLiveData<Event<Int>>()
-//    val playItemClicked: LiveData<Event<Int>>
-//        get() = _playItemClicked
-
 
     // when back button is pressed in the UI
     private var _backArrowPressed = MutableLiveData<Event<Boolean>>()
@@ -71,7 +73,8 @@ class BookDetailsViewModel(
 
         val trackNumber = trackNumberEvent.getContentIfNotHandled()?:trackNumberEvent.peekContent()
 
-        if (trackNumber is Int){
+        if (trackNumber is Int && trackNumber>0){
+
             _audioBookTracks.value?.let {
 
                 val list = it
@@ -88,15 +91,13 @@ class BookDetailsViewModel(
             }
 
             _playItemClicked.value = Event(trackNumber-1)
+            Timber.d("Track List Updated with trackNo as $trackNumber")
         }
 
         _audioBookTracks
     }
 
-
-
     init {
-
         viewModelScope.launch {
             Timber.i("Starting to fetch new content from Remote repository")
             fetchMetadata()
@@ -145,6 +146,10 @@ class BookDetailsViewModel(
                     }
 
                     Timber.d("Track list fetch success")
+
+                    if(state.isPlaying){
+                        onPlayItemClicked(state.trackPlaying)
+                    }
                 }
 
                 override suspend fun onError(t: Throwable) {
@@ -159,9 +164,19 @@ class BookDetailsViewModel(
      * Creates a event when play item is clicked from the track list
      */
     fun onPlayItemClicked(trackNumber: Int){
-
         _newTrackStateEvent.value = Event(trackNumber)
+        currentPlayingTrack = trackNumber
+    }
 
+    fun updateNextTrackPlaying(){
+        val newTrack =  (currentPlayingTrack+1)%audioBookTracks.value!!.size
+        onPlayItemClicked(newTrack)
+    }
+
+    fun updatePreviousTrackPlaying(){
+
+        val newTrack =  if (currentPlayingTrack>1)(currentPlayingTrack-1)%audioBookTracks.value!!.size else 1
+        onPlayItemClicked(newTrack)
     }
 
     /**
@@ -171,19 +186,10 @@ class BookDetailsViewModel(
         _backArrowPressed.value = Event(true)
     }
 
+
     //cancel the job when viewmodel is not longer in use
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
-    }
-
-
-    /**
-     * This function generated the file path on the remote server
-     * @param filename unique filename on the server
-     * @return complete file path on the remote server
-     */
-    fun getFilePath(filename: String):String{
-        return Utils.getRemoteFilePath(filename,getMetadataUsecase.getBookIdentifier())
     }
 }

@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.database.common.AudioBookDatabase
+import com.allsoftdroid.feature.book_details.data.model.BookDetailsStateModel
 import com.allsoftdroid.feature.book_details.data.repository.AudioBookMetadataRepositoryImpl
+import com.allsoftdroid.feature.book_details.data.repository.BookDetailsSharedPreferencesRepositoryImpl
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
 
@@ -36,8 +38,19 @@ class BookDetailsViewModelFactory(private val application: Application,private v
             //Use case handler
             val useCaseHandler  = UseCaseHandler.getInstance()
 
+            //sharedPref Dependency
+            val sharedPreferences by lazy {
+                BookDetailsSharedPreferencesRepositoryImpl.create(application)
+            }
+
+            val modelState = BookDetailsStateModel(
+                isPlaying = sharedPreferences.isPlaying(),
+                title = sharedPreferences.trackTitle(),
+                trackPlaying = sharedPreferences.trackPosition())
+
             return BookDetailsViewModel(
                 application = application,
+                state = modelState,
                 useCaseHandler = useCaseHandler,
                 getMetadataUsecase = getMetadataUsecase,
                 getTrackListUsecase = getTrackListUsecase) as T
