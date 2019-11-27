@@ -13,7 +13,7 @@ private object LibraryVersion {
     const val ROOM = "2.2.0-rc01"
     const val version_retrofit_coroutines_adapter = "0.9.2"
     const val GSON = "2.8.5"
-    const val KODEIN = "6.3.3"
+    const val koin_version = "2.0.1"
     const val RETROFIT = "2.6.1"
     const val LOGGING_INTERCEPTOR = "4.1.0"
     const val STETHO = "1.5.0"
@@ -37,8 +37,15 @@ object LibraryDependency {
     const val KOTLIN = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${CoreVersion.KOTLIN}"
     // Required by Android dynamic feature modules and SafeArgs
     const val KOTLIN_REFLECT = "org.jetbrains.kotlin:kotlin-reflect:${CoreVersion.KOTLIN}"
-    const val KODEIN = "org.kodein.di:kodein-di-generic-jvm:${LibraryVersion.KODEIN}"
-    const val KODEIN_ANDROID_X = "org.kodein.di:kodein-di-framework-android-x:${LibraryVersion.KODEIN}"
+
+    const val KOIN = "org.koin:koin-android:${LibraryVersion.koin_version}"
+    const val KOIN_SCOPE="org.koin:koin-android-scope:${LibraryVersion.koin_version}"
+    const val KOIN_VIEWMODEL = "org.koin:koin-android-viewmodel:${LibraryVersion.koin_version}"
+
+    // Koin AndroidX
+    const val KOIN_X_SCOPE = "org.koin:koin-androidx-scope:${LibraryVersion.koin_version}"
+    const val KOIN_X_VIEWMODEL = "org.koin:koin-androidx-viewmodel:${LibraryVersion.koin_version}"
+    const val KOIN_X_FRAGMENT="org.koin:koin-androidx-fragment:${LibraryVersion.koin_version}"
 
     const val RETROFIT = "com.squareup.retrofit2:retrofit:${LibraryVersion.RETROFIT}"
     const val RETROFIT_MOSHI_CONVERTER = "com.squareup.retrofit2:converter-moshi:${LibraryVersion.RETROFIT}"
