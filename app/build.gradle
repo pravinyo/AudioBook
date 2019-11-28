@@ -3,6 +3,7 @@ import com.allsoftdroid.buildsrc.BuildTypeDebug
 import com.allsoftdroid.buildsrc.BuildTypeRelease
 import com.allsoftdroid.buildsrc.DataBinding
 import com.allsoftdroid.buildsrc.LibraryDependency
+import com.allsoftdroid.buildsrc.ModuleDependency
 
 apply plugin: GradlePluginId.ANDROID_APPLICATION
 apply plugin: GradlePluginId.KOTLIN_ANDROID
@@ -51,9 +52,15 @@ android {
 }
 
 dependencies {
-    implementation(project(path: ':common'))
-    implementation(project(path: ':feature_book'))
-    implementation(project(path: ':feature_book_details'))
-    implementation(project(path: ':feature_mini_player'))
-    implementation(project(path: ':services'))
+
+    implementation(project(path: ModuleDependency.LIBRARY_COMMON))
+
+    implementation(project(path: ModuleDependency.FEATURE_BOOK))
+    implementation(project(path: ModuleDependency.FEATURE_BOOK_DETAILS))
+    implementation(project(path: ModuleDependency.FEATURE_MINI_PLAYER))
+
+    implementation(project(path: ModuleDependency.SERVICES))
+
+    implementation(LibraryDependency.KOIN)
+    implementation(LibraryDependency.KOIN_X_VIEWMODEL)
 }
