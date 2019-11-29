@@ -48,4 +48,6 @@ dependencies {
 
     implementation(LibraryDependency.GLIDE)
     annotationProcessor(LibraryDependency.GLIDE_COMPILER)
+
+    implementation(LibraryDependency.KOIN_X_VIEWMODEL)
 }
