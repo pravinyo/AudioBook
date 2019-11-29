@@ -61,6 +61,5 @@ dependencies {
 
     implementation(project(path: ModuleDependency.SERVICES))
 
-    implementation(LibraryDependency.KOIN)
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
 }
