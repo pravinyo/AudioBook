@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.services.audio
+package com.allsoftdroid.audiobook.services.audio.service
 
 import android.app.Application
 import android.content.Context
