@@ -66,5 +66,7 @@ dependencies {
     testImplementation(TestLibraryDependency.MOCKITO_CORE)
     testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
     testImplementation(TestLibraryDependency.COROUTINES_TEST)
+
+    implementation(LibraryDependency.KOIN_X_VIEWMODEL)
 }
 
