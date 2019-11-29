@@ -7,39 +7,33 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
-import com.allsoftdroid.feature_book.NetworkState
+import com.allsoftdroid.feature_book.utils.NetworkState
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
+import com.allsoftdroid.feature_book.di.injectFeature
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookAdapter
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookItemClickedListener
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
-import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModelFactory
+import org.koin.android.ext.android.inject
 
 class AudioBookListFragment : BaseContainerFragment(){
 
     /**
     Lazily initialize the view model
      */
-    private val booksViewModel: AudioBookListViewModel by lazy {
+    private val booksViewModel: AudioBookListViewModel by inject()
 
-        val activity = requireNotNull(this.activity) {
-            "You can only access the booksViewModel after onCreated()"
-        }
-
-        ViewModelProviders.of(this, AudioBookListViewModelFactory(activity.application))
-            .get(AudioBookListViewModel::class.java)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         val binding:FragmentAudiobookListBinding = inflateLayout(inflater,R.layout.fragment_audiobook_list,container)
 
-        binding.lifecycleOwner = viewLifecycleOwner
+        injectFeature()
 
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.audioBookListViewModel = booksViewModel
 
         //val audio book adapter
