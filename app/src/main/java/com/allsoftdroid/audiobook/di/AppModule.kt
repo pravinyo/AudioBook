@@ -25,8 +25,6 @@ val viewModelModule: Module = module{
     viewModel {
         MainActivityViewModel(get())
     }
-
-    single {  }
 }
 
 val audioPlayerEventBusModule : Module = module {
