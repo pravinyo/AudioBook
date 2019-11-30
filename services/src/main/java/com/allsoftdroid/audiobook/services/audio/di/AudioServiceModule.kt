@@ -7,15 +7,15 @@ import org.koin.core.context.loadKoinModules
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
+object AudioServiceModule {
+    fun injectFeature() = loadFeature
 
-fun injectFeature() = loadFeature
-
-private val loadFeature by lazy {
-    loadKoinModules(listOf(
-        intentModule,
-        serviceBinderModule
-    ))
-}
+    private val loadFeature by lazy {
+        loadKoinModules(listOf(
+            intentModule,
+            serviceBinderModule
+        ))
+    }
 
 
 //It's already defined in the app module
@@ -26,16 +26,17 @@ private val loadFeature by lazy {
 //    }
 //}
 
-val intentModule:Module = module {
-    single {
-        Intent(get(), AudioService::class.java)
+    private val intentModule:Module = module {
+        single {
+            Intent(get(), AudioService::class.java)
+        }
     }
-}
 
-val serviceBinderModule : Module = module {
-    single {
-        AudioServiceBinder(
-            get()
-        )
+    private val serviceBinderModule : Module = module {
+        single {
+            AudioServiceBinder(
+                get()
+            )
+        }
     }
 }
