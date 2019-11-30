@@ -38,19 +38,19 @@ class BookDetailsViewModelFactory(private val application: Application,private v
             //Use case handler
             val useCaseHandler  = UseCaseHandler.getInstance()
 
-            //sharedPref Dependency
-            val sharedPreferences by lazy {
-                BookDetailsSharedPreferencesRepositoryImpl.create(application)
-            }
+//            //sharedPref Dependency
+//            val sharedPreferences by lazy {
+//                BookDetailsSharedPreferencesRepositoryImpl.create(application)
+//            }
 
-            val modelState = BookDetailsStateModel(
-                isPlaying = sharedPreferences.isPlaying(),
-                title = sharedPreferences.trackTitle(),
-                trackPlaying = sharedPreferences.trackPosition())
+//            val modelState = BookDetailsStateModel(
+//                isPlaying = sharedPreferences.isPlaying(),
+//                title = sharedPreferences.trackTitle(),
+//                trackPlaying = sharedPreferences.trackPosition())
 
             return BookDetailsViewModel(
                 application = application,
-                state = modelState,
+//                state = modelState,
                 useCaseHandler = useCaseHandler,
                 getMetadataUsecase = getMetadataUsecase,
                 getTrackListUsecase = getTrackListUsecase) as T
