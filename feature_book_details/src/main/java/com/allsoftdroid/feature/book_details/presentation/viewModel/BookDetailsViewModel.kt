@@ -23,7 +23,6 @@ import timber.log.Timber
 
 class BookDetailsViewModel(
     application : Application,
-    private val state : BookDetailsStateModel,
     private val useCaseHandler: UseCaseHandler,
     private val getMetadataUsecase:GetMetadataUsecase,
     private val getTrackListUsecase : GetTrackListUsecase) : AndroidViewModel(application){
@@ -43,7 +42,7 @@ class BookDetailsViewModel(
     get() = _networkResponse
 
 
-    private var currentPlayingTrack : Int = state.trackPlaying
+    private var currentPlayingTrack : Int = /*state.trackPlaying*/ 0
     //handle item click event
     private var _playItemClicked = MutableLiveData<Event<Int>>()
 
@@ -147,9 +146,9 @@ class BookDetailsViewModel(
 
                     Timber.d("Track list fetch success")
 
-                    if(state.isPlaying){
-                        onPlayItemClicked(state.trackPlaying)
-                    }
+//                    if(state.isPlaying){
+//                        onPlayItemClicked(state.trackPlaying)
+//                    }
                 }
 
                 override suspend fun onError(t: Throwable) {
