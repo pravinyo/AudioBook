@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import com.allsoftdroid.audiobook.feature_mini_player.R
 import com.allsoftdroid.audiobook.feature_mini_player.databinding.FragmentMiniPlayerBinding
-import com.allsoftdroid.audiobook.feature_mini_player.di.injectFeature
+import com.allsoftdroid.audiobook.feature_mini_player.di.FeatureMiniPlayerModule
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel.MiniPlayerViewModel
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
@@ -38,7 +38,7 @@ class MiniPlayerFragment : BaseContainerFragment() {
         Timber.d("Mini Player fragment created")
         val binding : FragmentMiniPlayerBinding = inflateLayout(inflater,R.layout.fragment_mini_player,container)
 
-        injectFeature()
+        FeatureMiniPlayerModule.injectFeature()
 
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = miniPlayerViewModel
@@ -109,6 +109,14 @@ class MiniPlayerFragment : BaseContainerFragment() {
 
                         is Pause -> {
                             miniPlayerViewModel.setShouldPlay(play = false)
+                        }
+
+                        is Next -> {
+                            miniPlayerViewModel.setShouldPlay(play = true)
+                        }
+
+                        is Previous -> {
+                            miniPlayerViewModel.setShouldPlay(play = true)
                         }
                     }
                 }
