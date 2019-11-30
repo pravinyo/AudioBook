@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import com.allsoftdroid.audiobook.services.audio.di.injectFeature
+import com.allsoftdroid.audiobook.services.audio.di.AudioServiceModule
 import com.allsoftdroid.audiobook.services.audio.service.AudioServiceBinder
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
 import com.allsoftdroid.common.base.utils.SingletonHolder
@@ -47,7 +47,7 @@ class AudioManager private constructor(context: Context):KoinComponent{
 
 
     init {
-        injectFeature()
+        AudioServiceModule.injectFeature()
     }
 
 
