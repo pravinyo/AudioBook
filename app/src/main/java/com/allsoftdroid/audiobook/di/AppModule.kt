@@ -10,38 +10,40 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 
-fun injectFeature() = loadFeature
+object AppModule {
+    fun injectFeature() = loadFeature
 
-private val loadFeature by lazy {
-    loadKoinModules(listOf(
-        viewModelModule,
-        audioManagerModule,
-        audioPlayerEventBusModule,
-        connectivityModule
-    ))
-}
-
-val viewModelModule: Module = module{
-    viewModel {
-        MainActivityViewModel(get())
+    private val loadFeature by lazy {
+        loadKoinModules(listOf(
+            viewModelModule,
+            audioManagerModule,
+            audioPlayerEventBusModule,
+            connectivityModule
+        ))
     }
-}
 
-val audioPlayerEventBusModule : Module = module {
-    single {
-        AudioPlayerEventBus.getEventBusInstance()
+    private val viewModelModule: Module = module{
+        viewModel {
+            MainActivityViewModel(get())
+        }
     }
-}
 
-
-val audioManagerModule : Module = module {
-    single {
-        AudioManager.getInstance(get())
+    private val audioPlayerEventBusModule : Module = module {
+        single {
+            AudioPlayerEventBus.getEventBusInstance()
+        }
     }
-}
 
-val connectivityModule : Module = module {
-    single {
-        ConnectivityReceiver()
+
+    private val audioManagerModule : Module = module {
+        single {
+            AudioManager.getInstance(get())
+        }
+    }
+
+    private val connectivityModule : Module = module {
+        single {
+            ConnectivityReceiver()
+        }
     }
 }
