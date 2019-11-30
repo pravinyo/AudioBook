@@ -6,16 +6,18 @@ import org.koin.core.context.loadKoinModules
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-fun injectFeature() = loadFeature
+object FeatureMiniPlayerModule {
+    fun injectFeature() = loadFeature
 
-private val loadFeature by lazy {
-    loadKoinModules(listOf(
-        miniPlayerViewModelModule
-    ))
-}
+    private val loadFeature by lazy {
+        loadKoinModules(listOf(
+            miniPlayerViewModelModule
+        ))
+    }
 
-val miniPlayerViewModelModule: Module = module{
-    viewModel {
-        MiniPlayerViewModel(get())
+    private val miniPlayerViewModelModule: Module = module{
+        viewModel {
+            MiniPlayerViewModel(get())
+        }
     }
 }
