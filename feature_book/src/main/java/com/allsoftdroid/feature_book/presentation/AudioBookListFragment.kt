@@ -13,7 +13,7 @@ import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.feature_book.utils.NetworkState
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
-import com.allsoftdroid.feature_book.di.injectFeature
+import com.allsoftdroid.feature_book.di.FeatureBookModule
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookAdapter
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookItemClickedListener
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
@@ -31,7 +31,7 @@ class AudioBookListFragment : BaseContainerFragment(){
 
         val binding:FragmentAudiobookListBinding = inflateLayout(inflater,R.layout.fragment_audiobook_list,container)
 
-        injectFeature()
+        FeatureBookModule.injectFeature()
 
         binding.lifecycleOwner = viewLifecycleOwner
         binding.audioBookListViewModel = booksViewModel
