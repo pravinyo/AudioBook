@@ -17,65 +17,63 @@ import org.koin.dsl.module
 import kotlin.coroutines.CoroutineContext
 
 
-fun injectFeature() = loadFeature
+object FeatureBookModule {
+    fun injectFeature() = loadFeature
 
-private val loadFeature by lazy {
-    loadKoinModules(listOf(
-        bookListViewModelModule,
-        usecaseModule,
-        repositoryModule,
-        databaseModule,
-        jobModule
-    ))
+    private val loadFeature by lazy {
+        loadKoinModules(listOf(
+            bookListViewModelModule,
+            usecaseModule,
+            repositoryModule,
+            databaseModule,
+            jobModule
+        ))
+    }
+
+    private val bookListViewModelModule : Module = module {
+        viewModel {
+            AudioBookListViewModel(
+                application = get(),
+                useCaseHandler = get(),
+                getAlbumListUseCase = get()
+            )
+        }
+    }
+
+    private val usecaseModule : Module = module {
+        factory {
+            UseCaseHandler.getInstance()
+        }
+
+        factory {
+            GetAudioBookListUsecase(audioBookRep = get())
+        }
+    }
+
+    private val repositoryModule : Module = module {
+        single {
+            AudioBookRepositoryImpl(get()) as AudioBookRepository
+        }
+    }
+
+
+    private val databaseModule : Module = module {
+        single {
+            AudioBookDatabase.getDatabase(get()).audioBooksDao()
+        }
+    }
+
+    private val jobModule : Module = module {
+
+        single(named(name = SUPER_VISOR_JOB)) {
+            SupervisorJob()
+        }
+
+        factory(named(name = VIEW_MODEL_SCOPE)) {
+            CoroutineScope(get(named(name = SUPER_VISOR_JOB)) as CoroutineContext+ Dispatchers.Main)
+        }
+    }
+
+    const val SUPER_VISOR_JOB = "SuperVisorJob"
+    const val VIEW_MODEL_SCOPE = "ViewModelScope"
 }
-
-val bookListViewModelModule : Module = module {
-    viewModel {
-        AudioBookListViewModel(
-            application = get(),
-            useCaseHandler = get(),
-            getAlbumListUseCase = get()
-        )
-    }
-}
-
-val usecaseModule : Module = module {
-    factory {
-        UseCaseHandler.getInstance()
-    }
-
-    factory {
-        GetAudioBookListUsecase(audioBookRep = get())
-    }
-}
-
-val repositoryModule : Module = module {
-    single {
-        AudioBookRepositoryImpl(get()) as AudioBookRepository
-    }
-}
-
-
-val databaseModule : Module = module {
-    single {
-        AudioBookDatabase.getDatabase(get()).audioBooksDao()
-    }
-
-    single {
-        AudioBookDatabase.getDatabase(get()).metadataDao()
-    }
-}
-
-val jobModule : Module = module {
-
-    single(named(name = SUPER_VISOR_JOB)) {
-        SupervisorJob()
-    }
-
-    factory(named(name = VIEW_MODEL_SCOPE)) {
-        CoroutineScope(get(named(name = SUPER_VISOR_JOB)) as CoroutineContext+ Dispatchers.Main)
-    }
-}
-
-const val SUPER_VISOR_JOB = "SuperVisorJob"
-const val VIEW_MODEL_SCOPE = "ViewModelScope"
