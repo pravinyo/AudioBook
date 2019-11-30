@@ -145,6 +145,7 @@ class AudioServiceBinder(application: Application) : Binder(){
         Timber.d("Previous called")
         exoPlayer?.run {
             if (hasPrevious()) {
+                this.playWhenReady = true
                 previous()
                 if(this.currentWindowIndex>=0){
                     _trackTitle.value = trackList[this.currentWindowIndex].title
@@ -161,6 +162,7 @@ class AudioServiceBinder(application: Application) : Binder(){
         Timber.d("Next called")
         exoPlayer?.let {
             if(it.hasNext()){
+                it.playWhenReady = true
                 it.next()
                 if(it.currentWindowIndex< trackList.size)
                 {
