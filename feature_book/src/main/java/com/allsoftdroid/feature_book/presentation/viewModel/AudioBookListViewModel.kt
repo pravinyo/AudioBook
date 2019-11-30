@@ -8,9 +8,9 @@ import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
+import com.allsoftdroid.feature_book.di.FeatureBookModule.SUPER_VISOR_JOB
+import com.allsoftdroid.feature_book.di.FeatureBookModule.VIEW_MODEL_SCOPE
 import com.allsoftdroid.feature_book.utils.NetworkState
-import com.allsoftdroid.feature_book.di.SUPER_VISOR_JOB
-import com.allsoftdroid.feature_book.di.VIEW_MODEL_SCOPE
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
 import kotlinx.coroutines.*
