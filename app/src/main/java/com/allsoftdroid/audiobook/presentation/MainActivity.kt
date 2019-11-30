@@ -7,12 +7,10 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.allsoftdroid.audiobook.R
-import com.allsoftdroid.audiobook.di.injectFeature
+import com.allsoftdroid.audiobook.di.AppModule
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
-import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModelFactory
 import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.extension.Event
@@ -25,7 +23,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -56,7 +53,7 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectFeature()
+        AppModule.injectFeature()
     }
 
     override fun onStart() {
