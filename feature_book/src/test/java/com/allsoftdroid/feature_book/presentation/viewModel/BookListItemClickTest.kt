@@ -2,6 +2,7 @@ package com.allsoftdroid.feature_book.presentation.viewModel
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.allsoftdroid.feature_book.presentation.common.mock
 import com.allsoftdroid.feature_book.presentation.di.bookListViewModelModule
 import com.allsoftdroid.feature_book.presentation.di.jobModule
 import com.allsoftdroid.feature_book.presentation.di.repositoryModule
@@ -26,7 +27,7 @@ class BookListItemClickTest : KoinTest {
     @ObsoleteCoroutinesApi
     private val mainThreadSurrogate = newSingleThreadContext("UI thread")
 
-    private val application = Mockito.mock(Application::class.java)
+    private val application = mock<Application>()
 
     private val bookId ="bookId"
     private val viewModel: AudioBookListViewModel by inject{ parametersOf(application)}
