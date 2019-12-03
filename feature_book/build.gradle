@@ -61,12 +61,12 @@ dependencies {
     implementation(LibraryDependency.RECYCLER_VIEW)
     implementation(LibraryDependency.CARD_VIEW)
 
+    implementation(LibraryDependency.KOIN_X_VIEWMODEL)
 
     testImplementation(TestLibraryDependency.JUNIT)
     testImplementation(TestLibraryDependency.MOCKITO_CORE)
     testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
     testImplementation(TestLibraryDependency.COROUTINES_TEST)
-
-    implementation(LibraryDependency.KOIN_X_VIEWMODEL)
+    testImplementation(TestLibraryDependency.KOIN_TEST)
 }
 
