@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature_book.presentation
+package com.allsoftdroid.feature_book.presentation.viewModel
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -7,10 +7,8 @@ import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.newSingleThreadContext
-import kotlinx.coroutines.runBlocking
+import com.allsoftdroid.feature_book.presentation.common.FakeAudioBookRepository
+import kotlinx.coroutines.*
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.*
@@ -27,9 +25,11 @@ class AudioBookViewModelTest{
     lateinit var application: Application
     lateinit var useCaseHandler: UseCaseHandler
     lateinit var requestValues : GetAudioBookListUsecase.RequestValues
+    @ObsoleteCoroutinesApi
     private val mainThreadSurrogate = newSingleThreadContext("UI thread")
 
 
+    @ObsoleteCoroutinesApi
     @ExperimentalCoroutinesApi
     @Before
     fun setup(){
@@ -52,11 +52,11 @@ class AudioBookViewModelTest{
                 values = requestValues,
                 callback = object : BaseUseCase.UseCaseCallback<GetAudioBookListUsecase.ResponseValues>{
                     override suspend fun onSuccess(response: GetAudioBookListUsecase.ResponseValues) {
-                        event = response.event
+                        event = Event(Unit)
                     }
 
                     override suspend fun onError(t: Throwable) {
-                        event = Event("NULL")
+                        event = Event(t.message?:"ERROR")
                     }
                 }
             )
@@ -68,6 +68,8 @@ class AudioBookViewModelTest{
         }
     }
 
+    @ObsoleteCoroutinesApi
+    @ExperimentalCoroutinesApi
     @After
     fun tearDown() {
         Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
