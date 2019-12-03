@@ -14,11 +14,6 @@ TODO: auto resume after call, interruption
 TODO: alternative to global scope in coroutine. starting new coroutine in suspend function error
 TODO: Implement leaky canary
 https://stackoverflow.com/questions/33654503/how-to-use-leak-canary
-TODO: mvvm based bound service
-https://github.com/mitchtabian/Bound-Services-with-MVVM
-TODO: exoplayer implement
-https://blog.mindorks.com/using-exoplayer-to-play-video-and-audio-in-android-like-a-pro
-
 
 //TODO: Optional
 TODO: alert to play book based on users daily commute time and activity.
