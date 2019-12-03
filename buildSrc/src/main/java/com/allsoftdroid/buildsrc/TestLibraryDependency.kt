@@ -7,6 +7,7 @@ private object TestLibraryVersion {
     const val ESPRESSO_CORE = "3.0.2"
     const val MOCKITO = "3.0.0"
     const val MOCKITO_KOTLIN = "2.2.0"
+    const val koin_version = "2.0.1"
     const val ANDROID_X_TEST = "1.2.0"
 }
 
@@ -26,4 +27,7 @@ object TestLibraryDependency {
     const val ANDROID_X_CORE_TESTING = "android.arch.core:core-testing:${TestLibraryVersion.ANDROID_X_TEST}"
     const val ANDROID_X_TEST_RULES = "androidx.test:rules:${TestLibraryVersion.ANDROID_X_TEST}"
     const val FRAGMENT_TEST = "androidx.fragment:fragment-testing:${TestLibraryVersion.FRAGMENT_TEST}"
+
+    //koin test
+    const val KOIN_TEST = "org.koin:koin-test:${TestLibraryVersion.koin_version}"
 }
