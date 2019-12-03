@@ -9,10 +9,7 @@ import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
 import com.allsoftdroid.feature_book.presentation.common.mock
 import com.allsoftdroid.feature_book.presentation.common.whenever
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.newSingleThreadContext
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.*
@@ -34,6 +31,7 @@ class AlbumUsecaseUnitTest{
     private val list = ArrayList<AudioBookDomainModel>()
 
 
+    @ExperimentalCoroutinesApi
     @Before
     fun setup(){
         Dispatchers.setMain(mainThreadSurrogate)
@@ -42,13 +40,13 @@ class AlbumUsecaseUnitTest{
     @Test
     fun testAudioBookListUsecase_getBookList_Completed(){
         runBlocking {
-            whenever(audioBookRepository.searchAudioBooks())
+            whenever(audioBookRepository.fetchBookList(0))
                 .thenReturn(searchAudioBooks())
             whenever(audioBookRepository.getAudioBooks())
                 .thenReturn(getAudioBooks())
 
-            albumUsecase.execute()
-            albumUsecase.getAudioBook().let {
+            albumUsecase.executeUseCase(GetAudioBookListUsecase.RequestValues(0))
+            albumUsecase.getBookList().let {
                 Assert.assertNotNull(it)
             }
         }
@@ -57,19 +55,20 @@ class AlbumUsecaseUnitTest{
     @Test
     fun testAudioBookListUsecase_getBookList_response(){
         runBlocking {
-            whenever(audioBookRepository.searchAudioBooks())
+            whenever(audioBookRepository.fetchBookList(0))
                 .thenReturn(searchAudioBooks())
             whenever(audioBookRepository.getAudioBooks())
                 .thenReturn(getAudioBooks())
 
-            albumUsecase.execute()
-            albumUsecase.getAudioBook().observeForever {
+            albumUsecase.executeUseCase(GetAudioBookListUsecase.RequestValues(0))
+            albumUsecase.getBookList().observeForever {
                 Assert.assertSame(list,it)
             }
         }
     }
 
 
+    @ExperimentalCoroutinesApi
     @After
     fun tearDown() {
         Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
