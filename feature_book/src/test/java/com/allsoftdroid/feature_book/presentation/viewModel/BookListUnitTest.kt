@@ -41,7 +41,7 @@ class AudioBookViewModelTest{
     }
 
     @Test
-    fun albumUsecase_audioBooks_fetchSuccess(){
+    fun albumUsecase_audioBooksFetchSuccess_returnsSuccessEvent(){
         runBlocking {
             var event : Event<Any> = Event("NULL")
 
@@ -70,7 +70,7 @@ class AudioBookViewModelTest{
     }
 
     @Test
-    fun albumUsecase_audioBooks_fetchFailure(){
+    fun albumUsecase_audioBooksFetchFailure_returnsFailureEvent(){
         runBlocking {
             var event : Event<Any> = Event("NULL")
 
