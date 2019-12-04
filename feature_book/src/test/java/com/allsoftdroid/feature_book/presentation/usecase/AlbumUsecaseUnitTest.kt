@@ -12,6 +12,8 @@ import com.allsoftdroid.feature_book.presentation.common.whenever
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.notNullValue
 import org.junit.*
 
 
@@ -41,17 +43,31 @@ class AlbumUsecaseUnitTest{
     fun testAudioBookListUsecase_requestCompleted_returnsList(){
         runBlocking {
             whenever(audioBookRepository.fetchBookList(0))
-                .thenReturn(searchAudioBooks())
+                .thenReturn(searchAudioBooks(isError = false))
             whenever(audioBookRepository.getAudioBooks())
                 .thenReturn(getAudioBooks())
 
             albumUsecase.executeUseCase(GetAudioBookListUsecase.RequestValues(0))
             albumUsecase.getBookList().let {
-                Assert.assertNotNull(it)
+                Assert.assertThat(it.value,`is`(notNullValue()))
             }
         }
     }
 
+    @Test
+    fun testAudioBookListUsecase_requestFailed_returnsEmptyList(){
+        runBlocking {
+            whenever(audioBookRepository.fetchBookList(0))
+                .thenReturn(searchAudioBooks(isError = true))
+            whenever(audioBookRepository.getAudioBooks())
+                .thenReturn(getAudioBooks())
+
+            albumUsecase.executeUseCase(GetAudioBookListUsecase.RequestValues(0))
+            albumUsecase.getBookList().let {
+                Assert.assertThat(it.value?.size,`is`(0))
+            }
+        }
+    }
 
     @ExperimentalCoroutinesApi
     @After
@@ -62,9 +78,13 @@ class AlbumUsecaseUnitTest{
 
 
 
-    private fun searchAudioBooks() {
-        list.add(AudioBookDomainModel("1","Title","creator","2019"))
-        audioBooks.value = list
+    private fun searchAudioBooks(isError:Boolean) {
+        if(!isError){
+            list.add(AudioBookDomainModel("1","Title","creator","2019"))
+            audioBooks.value = list
+        }else{
+            audioBooks.value = emptyList()
+        }
     }
 
     private fun getAudioBooks()= audioBooks

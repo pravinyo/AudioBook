@@ -10,6 +10,8 @@ import com.allsoftdroid.feature_book.presentation.di.usecaseModule
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.nullValue
 import org.junit.*
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -51,7 +53,7 @@ class BookListItemClickTest : KoinTest {
 
             viewModel.itemClicked.observeForever {
                 it.getContentIfNotHandled().let {result->
-                    Assert.assertSame(bookId,result)
+                    Assert.assertThat(result,`is`(bookId))
                 }
             }
         }
@@ -66,12 +68,12 @@ class BookListItemClickTest : KoinTest {
 
             viewModel.itemClicked.observeForever {
                 it.getContentIfNotHandled().let {result ->
-                    Assert.assertSame(bookId,result)
+                    Assert.assertThat(result,`is`(bookId))
                 }
             }
 
             viewModel.itemClicked.observeForever {
-                Assert.assertNull(it.getContentIfNotHandled())
+                Assert.assertThat(it.getContentIfNotHandled(),`is`(nullValue()))
             }
         }
     }
