@@ -38,7 +38,7 @@ class AlbumUsecaseUnitTest{
     }
 
     @Test
-    fun testAudioBookListUsecase_getBookList_Completed(){
+    fun testAudioBookListUsecase_requestCompleted_returnsList(){
         runBlocking {
             whenever(audioBookRepository.fetchBookList(0))
                 .thenReturn(searchAudioBooks())
@@ -48,21 +48,6 @@ class AlbumUsecaseUnitTest{
             albumUsecase.executeUseCase(GetAudioBookListUsecase.RequestValues(0))
             albumUsecase.getBookList().let {
                 Assert.assertNotNull(it)
-            }
-        }
-    }
-
-    @Test
-    fun testAudioBookListUsecase_getBookList_response(){
-        runBlocking {
-            whenever(audioBookRepository.fetchBookList(0))
-                .thenReturn(searchAudioBooks())
-            whenever(audioBookRepository.getAudioBooks())
-                .thenReturn(getAudioBooks())
-
-            albumUsecase.executeUseCase(GetAudioBookListUsecase.RequestValues(0))
-            albumUsecase.getBookList().observeForever {
-                Assert.assertSame(list,it)
             }
         }
     }
