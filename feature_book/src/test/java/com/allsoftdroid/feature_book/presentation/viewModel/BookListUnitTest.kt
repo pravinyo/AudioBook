@@ -20,11 +20,11 @@ class AudioBookViewModelTest{
     @JvmField
     val instantExecutorRule = InstantTaskExecutorRule()
 
-//    lateinit var viewModel: AudioBookListViewModel
     lateinit var albumUsecase: GetAudioBookListUsecase
     lateinit var application: Application
     lateinit var useCaseHandler: UseCaseHandler
     lateinit var requestValues : GetAudioBookListUsecase.RequestValues
+    private lateinit var repository : AudioBookRepository
     @ObsoleteCoroutinesApi
     private val mainThreadSurrogate = newSingleThreadContext("UI thread")
 
@@ -33,8 +33,6 @@ class AudioBookViewModelTest{
     @ExperimentalCoroutinesApi
     @Before
     fun setup(){
-        val repository : AudioBookRepository = FakeAudioBookRepository()
-        albumUsecase = GetAudioBookListUsecase(repository)
         application = Application()
         useCaseHandler = UseCaseHandler.getInstance()
         requestValues = GetAudioBookListUsecase.RequestValues(pageNumber = 1)
@@ -46,6 +44,9 @@ class AudioBookViewModelTest{
     fun albumUsecase_audioBooks_fetchSuccess(){
         runBlocking {
             var event : Event<Any> = Event("NULL")
+
+            repository= FakeAudioBookRepository(manualFailure = false)
+            albumUsecase = GetAudioBookListUsecase(repository)
 
             useCaseHandler.execute(
                 useCase = albumUsecase,
@@ -63,6 +64,35 @@ class AudioBookViewModelTest{
 
             event.getContentIfNotHandled().let {
                 Assert.assertSame(Unit,it)
+            }
+
+        }
+    }
+
+    @Test
+    fun albumUsecase_audioBooks_fetchFailure(){
+        runBlocking {
+            var event : Event<Any> = Event("NULL")
+
+            repository= FakeAudioBookRepository(manualFailure = true)
+            albumUsecase = GetAudioBookListUsecase(repository)
+
+            useCaseHandler.execute(
+                useCase = albumUsecase,
+                values = requestValues,
+                callback = object : BaseUseCase.UseCaseCallback<GetAudioBookListUsecase.ResponseValues>{
+                    override suspend fun onSuccess(response: GetAudioBookListUsecase.ResponseValues) {
+                        event = Event(Unit)
+                    }
+
+                    override suspend fun onError(t: Throwable) {
+                        event = Event(t.message?:"")
+                    }
+                }
+            )
+
+            event.getContentIfNotHandled().let {
+                Assert.assertSame(FakeAudioBookRepository.FAILURE_MESSAGE,it)
             }
 
         }
