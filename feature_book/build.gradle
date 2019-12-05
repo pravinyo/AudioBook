@@ -63,9 +63,15 @@ dependencies {
 
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
 
-    testImplementation(TestLibraryDependency.JUNIT)
+//    testImplementation(TestLibraryDependency.JUNIT)
     testImplementation(TestLibraryDependency.MOCKITO_CORE)
+
+    // AndroidX Test - JVM testing
     testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
+    testImplementation(TestLibraryDependency.ANDROID_X_KTX_TESTING)
+    testImplementation(TestLibraryDependency.ROBOELECTRIC_TEST)
+    testImplementation(TestLibraryDependency.ANDROID_X_EXT_TESTING)
+
     testImplementation(TestLibraryDependency.COROUTINES_TEST)
     testImplementation(TestLibraryDependency.KOIN_TEST)
 }
