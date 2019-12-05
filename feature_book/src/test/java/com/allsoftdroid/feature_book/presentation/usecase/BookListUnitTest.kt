@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature_book.presentation.viewModel
+package com.allsoftdroid.feature_book.presentation.usecase
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -16,15 +16,16 @@ import org.junit.*
 class AudioBookViewModelTest{
 
     // Run tasks synchronously
-    @Rule
-    @JvmField
+    @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
+
 
     lateinit var albumUsecase: GetAudioBookListUsecase
     lateinit var application: Application
     lateinit var useCaseHandler: UseCaseHandler
     lateinit var requestValues : GetAudioBookListUsecase.RequestValues
     private lateinit var repository : AudioBookRepository
+
     @ObsoleteCoroutinesApi
     private val mainThreadSurrogate = newSingleThreadContext("UI thread")
 
