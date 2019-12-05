@@ -9,6 +9,9 @@ private object TestLibraryVersion {
     const val MOCKITO_KOTLIN = "2.2.0"
     const val koin_version = "2.0.1"
     const val ANDROID_X_TEST = "1.2.0"
+
+    const val ROBOELECTRIC_TEST = "4.3.1"
+    const val EXT_KOTLIN_RUNNER = "1.1.1"
 }
 
 object TestLibraryDependency {
@@ -30,4 +33,9 @@ object TestLibraryDependency {
 
     //koin test
     const val KOIN_TEST = "org.koin:koin-test:${TestLibraryVersion.koin_version}"
+
+    //JVM Testing
+    const val ANDROID_X_KTX_TESTING = "androidx.test:core-ktx:${TestLibraryVersion.ANDROID_X_TEST}"
+    const val ROBOELECTRIC_TEST = "org.robolectric:robolectric:${TestLibraryVersion.ROBOELECTRIC_TEST}"
+    const val ANDROID_X_EXT_TESTING ="androidx.test.ext:junit-ktx:${TestLibraryVersion.EXT_KOTLIN_RUNNER}"
 }
