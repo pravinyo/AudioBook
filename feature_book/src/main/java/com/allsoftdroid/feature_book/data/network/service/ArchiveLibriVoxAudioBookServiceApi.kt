@@ -19,7 +19,7 @@ private val retrofit = Retrofit.Builder()
 /**
  * API to allow access of the following content type as a json string
  */
-internal interface ArchiveLibriVoxAudioBookService{
+interface ArchiveLibriVoxAudioBookService{
 
     @GET(Utils.Books.BOOKS_COLLECTION_PATH) //implement paging
     fun getAudioBooks(@Query(Utils.Books.QUERY_ROW) rowCount:Int, @Query(Utils.Books.QUERY_PAGE) page:Int): Call<String>
