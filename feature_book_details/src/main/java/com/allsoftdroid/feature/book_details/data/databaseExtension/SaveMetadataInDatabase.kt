@@ -15,7 +15,7 @@ import kotlin.collections.ArrayList
 /**
  * Load the database with the provided metadata of Book Instance
  */
-class SaveMetadataInDatabase(metadataDao: MetadataDao) : SaveInDatabase<MetadataDao> {
+class SaveMetadataInDatabase(metadataDao: MetadataDao) : SaveInDatabase<MetadataDao,SaveMetadataInDatabase> {
     override var mDao: MetadataDao = metadataDao
     private lateinit var mData : GetAudioBookMetadataResponse
 
@@ -25,7 +25,7 @@ class SaveMetadataInDatabase(metadataDao: MetadataDao) : SaveInDatabase<Metadata
         fun setup(metadataDao: MetadataDao) = SaveMetadataInDatabase(metadataDao)
     }
 
-    internal fun addResponse(response: GetAudioBookMetadataResponse) : SaveMetadataInDatabase{
+    private fun addResponse(response: GetAudioBookMetadataResponse) : SaveMetadataInDatabase{
         this.mData = response
         return this
     }
