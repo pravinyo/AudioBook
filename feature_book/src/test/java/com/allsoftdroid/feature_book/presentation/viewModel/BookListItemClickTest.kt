@@ -2,6 +2,7 @@ package com.allsoftdroid.feature_book.presentation.viewModel
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.allsoftdroid.feature_book.presentation.common.getOrAwaitValue
 import com.allsoftdroid.feature_book.presentation.common.mock
 import com.allsoftdroid.feature_book.presentation.di.bookListViewModelModule
 import com.allsoftdroid.feature_book.presentation.di.jobModule
@@ -10,8 +11,7 @@ import com.allsoftdroid.feature_book.presentation.di.usecaseModule
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.nullValue
+import org.hamcrest.CoreMatchers.*
 import org.junit.*
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -22,15 +22,13 @@ import org.mockito.Mockito
 
 class BookListItemClickTest : KoinTest {
     // Run tasks synchronously
-    @Rule
-    @JvmField
+    @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
     @ObsoleteCoroutinesApi
     private val mainThreadSurrogate = newSingleThreadContext("UI thread")
 
     private val application = mock<Application>()
-
     private val bookId ="bookId"
     private val viewModel: AudioBookListViewModel by inject{ parametersOf(application)}
 
@@ -51,11 +49,9 @@ class BookListItemClickTest : KoinTest {
         runBlocking {
             viewModel.onBookItemClicked(bookId)
 
-            viewModel.itemClicked.observeForever {
-                it.getContentIfNotHandled().let {result->
-                    Assert.assertThat(result,`is`(bookId))
-                }
-            }
+            val value = viewModel.itemClicked.getOrAwaitValue()
+
+            Assert.assertThat(value.getContentIfNotHandled(),`is`(bookId))
         }
     }
 
@@ -66,15 +62,11 @@ class BookListItemClickTest : KoinTest {
 
             viewModel.onBookItemClicked(bookId)
 
-            viewModel.itemClicked.observeForever {
-                it.getContentIfNotHandled().let {result ->
-                    Assert.assertThat(result,`is`(bookId))
-                }
-            }
+            val value1 = viewModel.itemClicked.getOrAwaitValue()
+            val value2 = viewModel.itemClicked.getOrAwaitValue()
 
-            viewModel.itemClicked.observeForever {
-                Assert.assertThat(it.getContentIfNotHandled(),`is`(nullValue()))
-            }
+            Assert.assertThat(value1.getContentIfNotHandled(),`is`(not(nullValue())))
+            Assert.assertThat(value2.getContentIfNotHandled(),`is`((nullValue())))
         }
     }
 
