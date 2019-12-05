@@ -2,12 +2,12 @@ package com.allsoftdroid.feature_book.presentation.viewModel
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.allsoftdroid.feature_book.presentation.common.getOrAwaitValue
-import com.allsoftdroid.feature_book.presentation.common.mock
-import com.allsoftdroid.feature_book.presentation.di.bookListViewModelModule
-import com.allsoftdroid.feature_book.presentation.di.jobModule
-import com.allsoftdroid.feature_book.presentation.di.repositoryModule
-import com.allsoftdroid.feature_book.presentation.di.usecaseModule
+import com.allsoftdroid.feature_book.common.getOrAwaitValue
+import com.allsoftdroid.feature_book.common.mock
+import com.allsoftdroid.feature_book.di.bookListViewModelModule
+import com.allsoftdroid.feature_book.di.jobModule
+import com.allsoftdroid.feature_book.di.repositoryModule
+import com.allsoftdroid.feature_book.di.usecaseModule
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -18,7 +18,6 @@ import org.koin.core.context.stopKoin
 import org.koin.core.parameter.parametersOf
 import org.koin.test.KoinTest
 import org.koin.test.inject
-import org.mockito.Mockito
 
 class BookListItemClickTest : KoinTest {
     // Run tasks synchronously
