@@ -22,18 +22,25 @@ class AlbumUsecaseUnitTest{
     @JvmField
     val rule = InstantTaskExecutorRule()
 
-    private val audioBookRepository  = mock<AudioBookRepository>()
-    private val albumUsecase by lazy{
-        GetAudioBookListUsecase(audioBookRepository)
-    }
-    private val mainThreadSurrogate = newSingleThreadContext("UI thread")
-    private var audioBooks = MutableLiveData<List<AudioBookDomainModel>>()
-    private val list = ArrayList<AudioBookDomainModel>()
+
+    private lateinit var audioBookRepository: AudioBookRepository
+    private lateinit var albumUsecase :GetAudioBookListUsecase
+    private lateinit var mainThreadSurrogate: ExecutorCoroutineDispatcher
+    private lateinit var audioBooks: MutableLiveData<List<AudioBookDomainModel>>
+    private lateinit var list : ArrayList<AudioBookDomainModel>
 
 
     @ExperimentalCoroutinesApi
     @Before
     fun setup(){
+
+        audioBookRepository  = mock<AudioBookRepository>()
+        albumUsecase =   GetAudioBookListUsecase(audioBookRepository)
+
+        mainThreadSurrogate = newSingleThreadContext("UI thread")
+        audioBooks = MutableLiveData()
+        list = ArrayList()
+
         Dispatchers.setMain(mainThreadSurrogate)
     }
 
