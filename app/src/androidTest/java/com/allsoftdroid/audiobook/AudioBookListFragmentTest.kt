@@ -2,6 +2,9 @@ package com.allsoftdroid.audiobook
 
 
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.MediumTest
 import androidx.test.runner.AndroidJUnit4
 import com.allsoftdroid.audiobook.audiobookListFragment.di.bookListViewModelModule
@@ -31,6 +34,11 @@ class AudioBookListFragmentTest{
     @Test
     fun audioBookList_DisplayedInUI(){
         launchFragmentInContainer<AudioBookListFragment>(themeResId = R.style.AppTheme)
+        onView(withId(R.id.item_title)).check(matches(isDisplayed()))
+        onView(withId(R.id.item_title)).check(matches(withText("Title")))
+
+        onView(withId(R.id.item_summary)).check(matches(isDisplayed()))
+        onView(withId(R.id.item_summary)).check(matches(withSubstring("creator")))
         Thread.sleep(2000)
     }
 
