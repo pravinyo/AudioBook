@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.VisibleForTesting
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -25,6 +26,7 @@ class AudioBookListFragment : BaseContainerFragment(){
     Lazily initialize the view model
      */
     private val booksViewModel: AudioBookListViewModel by inject()
+    @VisibleForTesting var bundleShared: Bundle = Bundle.EMPTY
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -60,6 +62,7 @@ class AudioBookListFragment : BaseContainerFragment(){
             it.getContentIfNotHandled()?.let { bookId ->
                 //Navigate to display page
                 val bundle = bundleOf("bookId" to bookId)
+                bundleShared = bundle
 
                 this.findNavController()
                     .navigate(R.id.action_AudioBookListFragment_to_AudioBookDetailsFragment,bundle)
