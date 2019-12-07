@@ -3,8 +3,8 @@ private object TestLibraryVersion {
     const val FRAGMENT_TEST = CoreVersion.FRAGMENT_KTX
     const val JUNIT = "4.12"
     const val KLUENT = "1.53"
-    const val TEST_RUNNER = "1.0.2"
-    const val ESPRESSO_CORE = "3.0.2"
+    const val TEST_RUNNER = "1.1.0"
+    const val ESPRESSO_CORE = "3.1.0"
     const val MOCKITO = "3.0.0"
     const val MOCKITO_KOTLIN = "2.2.0"
     const val koin_version = "2.0.1"
@@ -18,8 +18,10 @@ object TestLibraryDependency {
     const val JUNIT = "junit:junit:${TestLibraryVersion.JUNIT}"
     const val KLUENT_ANDROID = "org.amshove.kluent:kluent-android:${TestLibraryVersion.KLUENT}"
     const val KLUENT = "org.amshove.kluent:kluent:${TestLibraryVersion.KLUENT}"
-    const val TEST_RUNNER = "com.android.support.test:runner:${TestLibraryVersion.TEST_RUNNER}"
-    const val ESPRESSO_CORE = "com.android.support.test.espresso:espresso-core:${TestLibraryVersion.ESPRESSO_CORE}"
+    const val TEST_RUNNER = "androidx.test:runner:${TestLibraryVersion.TEST_RUNNER}"
+
+    const val ESPRESSO_CORE = "androidx.test.espresso:espresso-core:${TestLibraryVersion.ESPRESSO_CORE}"
+    const val ESPRESSO_CONTRIB = "androidx.test.espresso:espresso-contrib:${TestLibraryVersion.ESPRESSO_CORE}"
 
     const val MOCKITO_INLINE = "org.mockito:mockito-inline:${TestLibraryVersion.MOCKITO}"
     const val MOCKITO_ANDROID = "org.mockito:mockito-android:${TestLibraryVersion.MOCKITO}"
