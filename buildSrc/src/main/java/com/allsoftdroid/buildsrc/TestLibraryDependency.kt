@@ -37,7 +37,7 @@ object TestLibraryDependency {
     //JVM Testing
     const val ANDROID_X_KTX_TESTING = "androidx.test:core-ktx:${TestLibraryVersion.ANDROID_X_TEST}"
     const val ROBOELECTRIC_TEST = "org.robolectric:robolectric:${TestLibraryVersion.ROBOELECTRIC_TEST}"
-    const val ANDROID_X_EXT_TESTING ="androidx.test.ext:junit-ktx:${TestLibraryVersion.EXT_KOTLIN_RUNNER}"
+    const val ANDROID_X_EXT_TESTING ="androidx.test.ext:junit:${TestLibraryVersion.EXT_KOTLIN_RUNNER}"
 
     const val ANDROID_X_CORE = "androidx.test:core:${TestLibraryVersion.ANDROID_X_TEST}"
 }
