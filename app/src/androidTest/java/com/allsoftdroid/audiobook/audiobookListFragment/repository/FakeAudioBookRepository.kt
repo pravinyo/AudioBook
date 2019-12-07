@@ -27,7 +27,7 @@ class FakeAudioBookRepository(private val manualFailure:Boolean = false) : Audio
     override suspend fun fetchBookList(page: Int) {
         if(!manualFailure){
             val list = ArrayList<AudioBookDomainModel>()
-            list.add(AudioBookDomainModel("1","Title","creator","2019"))
+            list.add(AudioBookDomainModel("1","Title","creator","2019-12-01'T'11:11:00'Z'"))
 
             audioBooks.value = list
 
