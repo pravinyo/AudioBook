@@ -18,7 +18,6 @@ import kotlin.coroutines.CoroutineContext
 val bookListViewModelModule : Module = module {
     viewModel {(app: Application) ->
         AudioBookListViewModel(
-            application = app,
             useCaseHandler = get(),
             getAlbumListUseCase = get()
         )

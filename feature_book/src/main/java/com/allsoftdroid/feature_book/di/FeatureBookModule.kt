@@ -37,7 +37,6 @@ object FeatureBookModule {
     private val bookListViewModelModule : Module = module {
         viewModel {
             AudioBookListViewModel(
-                application = get(),
                 useCaseHandler = get(),
                 getAlbumListUseCase = get()
             )
