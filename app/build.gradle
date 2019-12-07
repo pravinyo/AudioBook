@@ -62,4 +62,12 @@ dependencies {
     implementation(project(path: ModuleDependency.SERVICES))
 
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
+
+    androidTestImplementation(TestLibraryDependency.JUNIT)
+    androidTestImplementation(TestLibraryDependency.COROUTINES_TEST)
+    androidTestImplementation(TestLibraryDependency.ANDROID_X_EXT_TESTING)
+    androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
+
+    implementation(TestLibraryDependency.FRAGMENT_TEST)
+    implementation(TestLibraryDependency.ANDROID_X_CORE)
 }
