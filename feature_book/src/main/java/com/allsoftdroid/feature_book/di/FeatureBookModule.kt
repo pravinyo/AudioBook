@@ -1,5 +1,6 @@
 package com.allsoftdroid.feature_book.di
 
+import androidx.annotation.VisibleForTesting
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.database.bookListDB.AudioBookDao
 import com.allsoftdroid.database.common.AudioBookDatabase
@@ -15,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -23,6 +25,18 @@ import kotlin.coroutines.CoroutineContext
 
 object FeatureBookModule {
     fun injectFeature() = loadFeature
+
+    fun unLoadModules(){
+        unloadKoinModules(
+            listOf(
+                bookListViewModelModule,
+                usecaseModule,
+                repositoryModule,
+                dataModule,
+                jobModule
+            )
+        )
+    }
 
     private val loadFeature by lazy {
         loadKoinModules(listOf(
@@ -34,7 +48,7 @@ object FeatureBookModule {
         ))
     }
 
-    private val bookListViewModelModule : Module = module {
+    var bookListViewModelModule : Module = module {
         viewModel {
             AudioBookListViewModel(
                 useCaseHandler = get(),
@@ -42,8 +56,9 @@ object FeatureBookModule {
             )
         }
     }
+        @VisibleForTesting set
 
-    private val usecaseModule : Module = module {
+    var usecaseModule : Module = module {
         factory {
             UseCaseHandler.getInstance()
         }
@@ -52,15 +67,17 @@ object FeatureBookModule {
             GetAudioBookListUsecase(audioBookRep = get())
         }
     }
+        @VisibleForTesting set
 
-    private val repositoryModule : Module = module {
+    var repositoryModule : Module = module {
         single {
             AudioBookRepositoryImpl(get(),get(),get(named(name = BOOK_LIST_DATABASE))) as AudioBookRepository
         }
     }
+        @VisibleForTesting set
 
 
-    private val dataModule : Module = module {
+    var dataModule : Module = module {
         single {
             AudioBookDatabase.getDatabase(get()).audioBooksDao()
         }
@@ -73,8 +90,9 @@ object FeatureBookModule {
             SaveBookListInDatabase.setup(bookDao = get()) as SaveInDatabase<AudioBookDao,SaveBookListInDatabase>
         }
     }
+        @VisibleForTesting set
 
-    private val jobModule : Module = module {
+    var jobModule : Module = module {
 
         single(named(name = SUPER_VISOR_JOB)) {
             SupervisorJob()
@@ -84,6 +102,8 @@ object FeatureBookModule {
             CoroutineScope(get(named(name = SUPER_VISOR_JOB)) as CoroutineContext+ Dispatchers.Main)
         }
     }
+        @VisibleForTesting set
+
 
     const val SUPER_VISOR_JOB = "SuperVisorJob"
     const val VIEW_MODEL_SCOPE = "ViewModelScope"
