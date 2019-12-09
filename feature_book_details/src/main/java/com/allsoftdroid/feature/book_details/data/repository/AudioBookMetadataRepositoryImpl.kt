@@ -1,16 +1,16 @@
 package com.allsoftdroid.feature.book_details.data.repository
 
-import androidx.annotation.NonNull
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.feature.book_details.data.databaseExtension.SaveMetadataInDatabase
 import com.allsoftdroid.feature.book_details.data.databaseExtension.asMetadataDomainModel
 import com.allsoftdroid.feature.book_details.data.databaseExtension.asTrackDomainModel
 import com.allsoftdroid.feature.book_details.data.network.response.GetAudioBookMetadataResponse
-import com.allsoftdroid.feature.book_details.data.network.service.ArchiveMetadataApi
+import com.allsoftdroid.feature.book_details.data.network.service.ArchiveMetadataService
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.AudioBookMetadataRepository
@@ -24,7 +24,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
 
-class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,@NonNull private val bookId: String) : AudioBookMetadataRepository{
+class AudioBookMetadataRepositoryImpl(
+    private val metadataDao : MetadataDao,
+    private val bookId: String,
+    private val metadataDataSource : ArchiveMetadataService,
+    private val saveInDatabase: SaveInDatabase<MetadataDao,SaveMetadataInDatabase>
+) : AudioBookMetadataRepository{
 
     /**
      * Books type live data is fetched from the database and notify observer for any change in data.
@@ -51,7 +56,7 @@ class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,@Non
         }
     }
 
-    val audioBookTrackList : LiveData<List<AudioBookTrackDomainModel>>
+    private val audioBookTrackList : LiveData<List<AudioBookTrackDomainModel>>
     get() = _audioBookTrackList
 
 
@@ -69,7 +74,7 @@ class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,@Non
         withContext(Dispatchers.IO){
             Timber.i("Starting network call")
             Timber.i("Loading for id:$bookId")
-            ArchiveMetadataApi.RETROFIT_SERVICE.getMetadata(bookId).enqueue(object : Callback<String> {
+            metadataDataSource.getMetadata(bookId).enqueue(object : Callback<String> {
                 override fun onFailure(call: Call<String>, t: Throwable) {
                     Timber.i("Failure occur")
                     _response.value="NULL"
@@ -88,10 +93,11 @@ class AudioBookMetadataRepositoryImpl(private val metadataDao : MetadataDao,@Non
 
                         /**
                          * Run with application scope
+                         * TODO: better way?
                          */
                         GlobalScope.launch {
-                            SaveMetadataInDatabase.setup(metadataDao)
-                                .addResponse(result)
+                            saveInDatabase
+                                .addData(result)
                                 .execute()
                         }
                     }

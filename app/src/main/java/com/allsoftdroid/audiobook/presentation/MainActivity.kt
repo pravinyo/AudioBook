@@ -2,15 +2,15 @@ package com.allsoftdroid.audiobook.presentation
 
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.allsoftdroid.audiobook.R
+import com.allsoftdroid.audiobook.di.AppModule
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
-import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModelFactory
 import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.extension.Event
@@ -22,6 +22,8 @@ import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 
@@ -33,23 +35,13 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
         const val MINI_PLAYER_TAG = "MiniPlayer"
     }
 
-    private val mainActivityViewModel : MainActivityViewModel by lazy {
+    private val mainActivityViewModel : MainActivityViewModel by viewModel()
 
-        ViewModelProviders.of(this,MainActivityViewModelFactory(application))
-            .get(MainActivityViewModel::class.java)
-    }
+    private val eventStore : AudioPlayerEventStore by inject()
 
-    private val eventStore : AudioPlayerEventStore by lazy {
-        AudioPlayerEventBus.getEventBusInstance()
-    }
+    private val audioManager : AudioManager by inject()
 
-    private val audioManager : AudioManager by lazy {
-        val activity = requireNotNull(this) {
-            "You can only access the booksViewModel after onCreated()"
-        }
-
-        AudioManager.getInstance(activity.applicationContext)
-    }
+    private val connectionListener:ConnectivityReceiver by inject()
 
     private val snackbar by lazy {
         val sb = Snackbar.make(findViewById(R.id.navHostFragment), "You are offline", Snackbar.LENGTH_LONG) //Assume "rootLayout" as the root layout of every activity.
@@ -57,11 +49,12 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
         sb
     }
 
-    private val connectionListener by lazy {
-        ConnectivityReceiver()
-    }
-
     private lateinit var disposable : Disposable
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        AppModule.injectFeature()
+    }
 
     override fun onStart() {
         super.onStart()

@@ -5,16 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.allsoftdroid.audiobook.feature_mini_player.R
 import com.allsoftdroid.audiobook.feature_mini_player.databinding.FragmentMiniPlayerBinding
+import com.allsoftdroid.audiobook.feature_mini_player.di.FeatureMiniPlayerModule
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel.MiniPlayerViewModel
-import com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel.MiniPlayerViewModelFactory
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.*
 import io.reactivex.disposables.Disposable
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class MiniPlayerFragment : BaseContainerFragment() {
@@ -22,19 +22,9 @@ class MiniPlayerFragment : BaseContainerFragment() {
     /**
     Lazily initialize the view model
      */
-    private val miniPlayerViewModel: MiniPlayerViewModel by lazy {
+    private val miniPlayerViewModel: MiniPlayerViewModel by inject()
 
-        val activity = requireNotNull(this.activity) {
-            "You can only access the miniPlayerViewModel after onCreated()"
-        }
-
-        ViewModelProviders.of(this, MiniPlayerViewModelFactory(activity.application))
-            .get(MiniPlayerViewModel::class.java)
-    }
-
-    private val eventStore : AudioPlayerEventStore by lazy {
-        AudioPlayerEventBus.getEventBusInstance()
-    }
+    private val eventStore : AudioPlayerEventStore by inject()
 
     private var currentPlayingIndex = 0
 
@@ -47,6 +37,8 @@ class MiniPlayerFragment : BaseContainerFragment() {
     ): View? {
         Timber.d("Mini Player fragment created")
         val binding : FragmentMiniPlayerBinding = inflateLayout(inflater,R.layout.fragment_mini_player,container)
+
+        FeatureMiniPlayerModule.injectFeature()
 
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = miniPlayerViewModel
@@ -117,6 +109,14 @@ class MiniPlayerFragment : BaseContainerFragment() {
 
                         is Pause -> {
                             miniPlayerViewModel.setShouldPlay(play = false)
+                        }
+
+                        is Next -> {
+                            miniPlayerViewModel.setShouldPlay(play = true)
+                        }
+
+                        is Previous -> {
+                            miniPlayerViewModel.setShouldPlay(play = true)
                         }
                     }
                 }

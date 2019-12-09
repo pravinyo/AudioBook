@@ -3,6 +3,7 @@ import com.allsoftdroid.buildsrc.BuildTypeDebug
 import com.allsoftdroid.buildsrc.BuildTypeRelease
 import com.allsoftdroid.buildsrc.DataBinding
 import com.allsoftdroid.buildsrc.LibraryDependency
+import com.allsoftdroid.buildsrc.ModuleDependency
 
 apply plugin: GradlePluginId.ANDROID_LIBRARY
 apply plugin: GradlePluginId.KOTLIN_ANDROID
@@ -48,8 +49,8 @@ android {
 
 dependencies {
 
-    implementation(project(':database'))
-    implementation(project(':common'))
+    implementation(project(path: ModuleDependency.LIBRARY_COMMON))
+    implementation(project(path: ModuleDependency.DATABASE))
 
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -60,10 +61,26 @@ dependencies {
     implementation(LibraryDependency.RECYCLER_VIEW)
     implementation(LibraryDependency.CARD_VIEW)
 
+    implementation(LibraryDependency.KOIN_X_VIEWMODEL)
 
-    testImplementation(TestLibraryDependency.JUNIT)
+//    testImplementation(TestLibraryDependency.JUNIT)
     testImplementation(TestLibraryDependency.MOCKITO_CORE)
+
+    // AndroidX Test - JVM testing
     testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
+    testImplementation(TestLibraryDependency.ANDROID_X_KTX_TESTING)
+    testImplementation(TestLibraryDependency.ROBOELECTRIC_TEST)
+    testImplementation(TestLibraryDependency.ANDROID_X_EXT_TESTING)
+
     testImplementation(TestLibraryDependency.COROUTINES_TEST)
+    testImplementation(TestLibraryDependency.KOIN_TEST)
+
+    androidTestImplementation(TestLibraryDependency.JUNIT)
+    androidTestImplementation(TestLibraryDependency.COROUTINES_TEST)
+    androidTestImplementation(TestLibraryDependency.ANDROID_X_EXT_TESTING)
+    androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
+
+    implementation(TestLibraryDependency.FRAGMENT_TEST)
+    implementation(TestLibraryDependency.ANDROID_X_CORE)
 }
 

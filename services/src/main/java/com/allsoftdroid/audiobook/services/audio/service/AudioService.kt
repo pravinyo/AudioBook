@@ -1,18 +1,20 @@
-package com.allsoftdroid.audiobook.services.audio
+package com.allsoftdroid.audiobook.services.audio.service
 
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import com.allsoftdroid.audiobook.services.audio.NotificationUtils.Companion.sendNotification
+import com.allsoftdroid.audiobook.services.audio.utils.NotificationUtils.Companion.sendNotification
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.store.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import org.koin.android.ext.android.inject
+import org.koin.core.KoinComponent
 import timber.log.Timber
 
 
-class AudioService : Service(){
+class AudioService : Service(),KoinComponent{
 
     companion object CONSTANT{
         const val ACTION_PREVIOUS = 0
@@ -26,15 +28,9 @@ class AudioService : Service(){
         const val NEXT="next"
     }
 
-    private val audioServiceBinder by lazy {
-        AudioServiceBinder(
-            application
-        )
-    }
+    private val audioServiceBinder:AudioServiceBinder by inject()
 
-    private val eventStore : AudioPlayerEventStore by lazy {
-        AudioPlayerEventBus.getEventBusInstance()
-    }
+    private val eventStore : AudioPlayerEventStore by inject()
 
     private lateinit var disposable:Disposable
 

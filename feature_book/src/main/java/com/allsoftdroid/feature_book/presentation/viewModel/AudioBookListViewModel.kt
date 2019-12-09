@@ -1,35 +1,37 @@
 package com.allsoftdroid.feature_book.presentation.viewModel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
-import com.allsoftdroid.feature_book.NetworkState
+import com.allsoftdroid.feature_book.di.FeatureBookModule.SUPER_VISOR_JOB
+import com.allsoftdroid.feature_book.di.FeatureBookModule.VIEW_MODEL_SCOPE
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
+import com.allsoftdroid.feature_book.utils.NetworkState
+import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import org.koin.core.KoinComponent
+import org.koin.core.inject
+import org.koin.core.qualifier.named
 import timber.log.Timber
 
 class AudioBookListViewModel(
-    application : Application,
     private val useCaseHandler : UseCaseHandler,
-    private val getAlbumListUseCase:GetAudioBookListUsecase) : AndroidViewModel(application) {
+    private val getAlbumListUseCase:GetAudioBookListUsecase) : ViewModel(),KoinComponent {
     /**
      * cancelling this job cancels all the job started by this viewmodel
      */
-    private val viewModelJob  = SupervisorJob()
+    private val viewModelJob:CompletableJob  by inject(named(name = SUPER_VISOR_JOB))
 
     /**
      * main scope for all coroutine launched by viewmodel
      */
-    private val viewModelScope = CoroutineScope(viewModelJob+ Dispatchers.Main)
+    private val viewModelScope :CoroutineScope by inject(named(name = VIEW_MODEL_SCOPE))
 
     //track network response
     private val _networkResponse = MutableLiveData<Event<NetworkState>>()

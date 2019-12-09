@@ -5,41 +5,37 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.VisibleForTesting
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
-import com.allsoftdroid.feature_book.NetworkState
+import com.allsoftdroid.feature_book.utils.NetworkState
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
+import com.allsoftdroid.feature_book.di.FeatureBookModule
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookAdapter
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookItemClickedListener
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
-import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModelFactory
+import org.koin.android.ext.android.inject
 
 class AudioBookListFragment : BaseContainerFragment(){
 
     /**
     Lazily initialize the view model
      */
-    private val booksViewModel: AudioBookListViewModel by lazy {
+    private val booksViewModel: AudioBookListViewModel by inject()
+    @VisibleForTesting var bundleShared: Bundle = Bundle.EMPTY
 
-        val activity = requireNotNull(this.activity) {
-            "You can only access the booksViewModel after onCreated()"
-        }
-
-        ViewModelProviders.of(this, AudioBookListViewModelFactory(activity.application))
-            .get(AudioBookListViewModel::class.java)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         val binding:FragmentAudiobookListBinding = inflateLayout(inflater,R.layout.fragment_audiobook_list,container)
 
-        binding.lifecycleOwner = viewLifecycleOwner
+        FeatureBookModule.injectFeature()
 
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.audioBookListViewModel = booksViewModel
 
         //val audio book adapter
@@ -66,6 +62,7 @@ class AudioBookListFragment : BaseContainerFragment(){
             it.getContentIfNotHandled()?.let { bookId ->
                 //Navigate to display page
                 val bundle = bundleOf("bookId" to bookId)
+                bundleShared = bundle
 
                 this.findNavController()
                     .navigate(R.id.action_AudioBookListFragment_to_AudioBookDetailsFragment,bundle)

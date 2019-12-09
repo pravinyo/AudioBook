@@ -2,6 +2,7 @@ import com.allsoftdroid.buildsrc.AndroidConfig
 import com.allsoftdroid.buildsrc.BuildTypeDebug
 import com.allsoftdroid.buildsrc.BuildTypeRelease
 import com.allsoftdroid.buildsrc.LibraryDependency
+import com.allsoftdroid.buildsrc.ModuleDependency
 
 apply plugin: GradlePluginId.ANDROID_LIBRARY
 apply plugin: GradlePluginId.KOTLIN_ANDROID
@@ -38,7 +39,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":common"))
+    implementation(project(path: ModuleDependency.LIBRARY_COMMON))
 
     implementation(LibraryDependency.GLIDE)
     annotationProcessor(LibraryDependency.GLIDE_COMPILER)

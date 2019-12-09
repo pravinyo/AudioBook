@@ -5,15 +5,17 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import com.allsoftdroid.audiobook.services.audio.service.AudioService
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.store.*
+import org.koin.core.KoinComponent
+import org.koin.core.inject
+import timber.log.Timber
 
-class NotificationPlayerEventBroadcastReceiver : BroadcastReceiver(){
+class NotificationPlayerEventBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
-    private val eventStore : AudioPlayerEventStore by lazy {
-        AudioPlayerEventBus.getEventBusInstance()
-    }
+    private val eventStore : AudioPlayerEventStore by inject()
 
     override fun onReceive(context: Context?, intent: Intent?) {
         context?.let {ctx ->
@@ -28,7 +30,7 @@ class NotificationPlayerEventBroadcastReceiver : BroadcastReceiver(){
                             action_need = true
                         ))))
 
-                        Toast.makeText(ctx,AudioService.NEXT,Toast.LENGTH_SHORT).show()
+                        Timber.d("Action Next")
                     }
 
                     AudioService.PREVIOUS -> {
@@ -36,7 +38,7 @@ class NotificationPlayerEventBroadcastReceiver : BroadcastReceiver(){
                             playingItemIndex = intent.getIntExtra(ACTION_PREVIOUS_ITEM_INDEX,0),
                             action_need = true
                         ))))
-                        Toast.makeText(ctx,AudioService.PREVIOUS,Toast.LENGTH_SHORT).show()
+                        Timber.d("Action Previous")
                     }
 
                     AudioService.PLAY -> {
@@ -45,7 +47,7 @@ class NotificationPlayerEventBroadcastReceiver : BroadcastReceiver(){
                             action_need = true
                         ))))
 
-                        Toast.makeText(ctx,AudioService.PLAY,Toast.LENGTH_SHORT).show()
+                        Timber.d("Action Play")
                     }
 
                     AudioService.PAUSE -> {
@@ -54,7 +56,7 @@ class NotificationPlayerEventBroadcastReceiver : BroadcastReceiver(){
                             action_need = true
                         ))))
 
-                        Toast.makeText(ctx,AudioService.PAUSE,Toast.LENGTH_SHORT).show()
+                        Timber.d("Action Pause")
                     }
 
                     else -> Toast.makeText(ctx,"Unknown Intent action",Toast.LENGTH_SHORT).show()
