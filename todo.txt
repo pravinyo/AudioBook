@@ -31,3 +31,10 @@ TODO: fetching is happening even in backpress from book details [bug]
 TODO: bug found , when clicking first track and then fourth track app crashes.[Short notification vol 70]
 TODO: autoplay next event has some side effect as it causes crash of app. when playing 4th track and track crashes as it ,
 finishes play and about to play next event.
+
+
+To generate a dependency graph run below commands
+1. gradlew projectDependencyGraph
+2. open file in \build\reports\dependency-graph from parent folder
+3. Open URL (http://www.webgraphviz.com/) and past the data generated in dot file in step 2.
+4. Download  and you are done.
