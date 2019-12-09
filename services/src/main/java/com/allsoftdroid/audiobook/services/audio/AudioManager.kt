@@ -5,11 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import com.allsoftdroid.audiobook.services.audio.di.AudioServiceModule
+import com.allsoftdroid.audiobook.services.audio.service.AudioServiceBinder
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
 import com.allsoftdroid.common.base.utils.SingletonHolder
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import timber.log.Timber
 
-class AudioManager private constructor(context: Context){
+class AudioManager private constructor(context: Context):KoinComponent{
 
     companion object : SingletonHolder<AudioManager, Context>(creator = ::AudioManager)
 
@@ -35,11 +39,17 @@ class AudioManager private constructor(context: Context){
     // Bind background service with caller . Then this caller can use
     // background service's AudioServiceBinder instance to invoke related methods.
 
-    private val playIntent by lazy { Intent(appContext, AudioService::class.java) }
+    private val playIntent:Intent by inject()
 
     private val audioService by lazy {
         audioServiceBinder as AudioServiceBinder
     }
+
+
+    init {
+        AudioServiceModule.injectFeature()
+    }
+
 
     fun bindAudioService() {
         if (audioServiceBinder == null) {

@@ -12,7 +12,7 @@ import timber.log.Timber
  * It first clears old Books records  from the DB  and reload fresh content
  */
 
-class SaveBookListInDatabase(bookDao: AudioBookDao) : SaveInDatabase<AudioBookDao> {
+class SaveBookListInDatabase(bookDao: AudioBookDao) : SaveInDatabase<AudioBookDao,SaveBookListInDatabase> {
 
     override var mDao: AudioBookDao = bookDao
     private lateinit var bookList: List<AudioBookDataModel>

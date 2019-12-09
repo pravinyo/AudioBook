@@ -15,7 +15,7 @@ import timber.log.Timber
 class GetAudioBookListUsecase( private val audioBookRep: AudioBookRepository) :
     BaseUseCase<GetAudioBookListUsecase.RequestValues,GetAudioBookListUsecase.ResponseValues>(){
 
-    override suspend fun executeUseCase(requestValues: RequestValues?) {
+    public override suspend fun executeUseCase(requestValues: RequestValues?) {
 
         Timber.d("Request received data=${requestValues?.pageNumber?:-1}")
         val pageNumber = requestValues?.pageNumber?:1

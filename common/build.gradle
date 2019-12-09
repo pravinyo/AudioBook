@@ -83,4 +83,5 @@ dependencies {
     api(LibraryDependency.RX_KOTLIN)
     api(LibraryDependency.RX_RELAY)
 
+    api(LibraryDependency.KOIN)
 }

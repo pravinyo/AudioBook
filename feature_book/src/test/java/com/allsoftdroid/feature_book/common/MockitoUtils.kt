@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature_book.presentation.common
+package com.allsoftdroid.feature_book.common
 
 import org.mockito.Mockito
 import org.mockito.stubbing.OngoingStubbing

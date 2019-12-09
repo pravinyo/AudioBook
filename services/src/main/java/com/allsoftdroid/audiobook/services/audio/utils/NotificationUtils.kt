@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.services.audio
+package com.allsoftdroid.audiobook.services.audio.utils
 
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -13,6 +13,7 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.allsoftdroid.audiobook.services.R
+import com.allsoftdroid.audiobook.services.audio.service.AudioService
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.common.base.utils.ImageUtils
 import com.allsoftdroid.audiobook.services.audio.NotificationPlayerEventBroadcastReceiver.Companion as NotificationPlayerEventBroadcastReceiver1
@@ -27,7 +28,7 @@ class NotificationUtils {
         private const val NOTIFICATION_CHANNEL = "audio_book_music_player_channel"
 
         @SuppressLint("NewApi")
-        fun sendNotification(isAudioPlaying:Boolean,currentAudioPos:Int,service: AudioService,applicationContext: Context,trackTitle:String,bookId: String,bookName:String) {
+        fun sendNotification(isAudioPlaying:Boolean, currentAudioPos:Int, service: AudioService, applicationContext: Context, trackTitle:String, bookId: String, bookName:String) {
 
             val collapsedView = RemoteViews(applicationContext.packageName, R.layout.notification_mini_player_collapsed)
             val playPauseIcon = if (!isAudioPlaying) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
@@ -115,7 +116,11 @@ class NotificationUtils {
                 .setWhen(notifyWhen)
                 .setShowWhen(showWhen)
                 .setUsesChronometer(usesChronometer)
-                .setContentIntent(getContentIntent(applicationContext))
+                .setContentIntent(
+                    getContentIntent(
+                        applicationContext
+                    )
+                )
                 .setOngoing(ongoing)
                 .setChannelId(NOTIFICATION_CHANNEL)
                 .setCategory(Notification.CATEGORY_SERVICE)

@@ -6,53 +6,35 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.*
 import com.allsoftdroid.feature.book_details.R
-import com.allsoftdroid.feature.book_details.data.repository.BookDetailsSharedPreferencesRepositoryImpl
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
+import com.allsoftdroid.feature.book_details.di.BookDetailsModule
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.AudioBookTrackAdapter
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
-import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModelFactory
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import org.koin.android.ext.android.inject
+import org.koin.core.KoinComponent
 import timber.log.Timber
 
 
-class AudioBookDetailsFragment : BaseContainerFragment(){
+class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
 
 
     private lateinit var bookId : String
     /**
     Lazily initialize the view model
      */
-    private val bookDetailsViewModel: BookDetailsViewModel by lazy {
+    private val bookDetailsViewModel: BookDetailsViewModel by inject()
 
-        val activity = requireNotNull(this.activity) {
-            "You can only access the booksViewModel after onCreated()"
-        }
-
-        ViewModelProviders.of(this, BookDetailsViewModelFactory(activity.application,bookId))
-            .get(BookDetailsViewModel::class.java)
-    }
-
-    private val eventStore : AudioPlayerEventStore by lazy {
-        AudioPlayerEventBus.getEventBusInstance()
-    }
-
-//    private val sharedPreferences by lazy {
-//        val activity = requireNotNull(this.activity) {
-//            "You can only access the booksViewModel after onCreated()"
-//        }
-//
-//        BookDetailsSharedPreferencesRepositoryImpl.create(activity.application)
-//    }
+    private val eventStore : AudioPlayerEventStore by inject()
 
 
     private lateinit var disposable : Disposable
@@ -68,6 +50,9 @@ class AudioBookDetailsFragment : BaseContainerFragment(){
         val dataBinding : FragmentAudiobookDetailsBinding = inflateLayout(inflater,R.layout.fragment_audiobook_details,container)
 
         bookId = arguments?.getString("bookId")?:""
+
+        getKoin().setProperty(BookDetailsModule.PROPERTY_BOOK_ID,bookId)
+        BookDetailsModule.injectFeature()
 
         dataBinding.lifecycleOwner = viewLifecycleOwner
         dataBinding.audioBookDetailsViewModel = bookDetailsViewModel

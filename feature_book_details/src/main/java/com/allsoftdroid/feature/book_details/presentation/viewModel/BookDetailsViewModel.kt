@@ -23,7 +23,6 @@ import timber.log.Timber
 
 class BookDetailsViewModel(
     application : Application,
-    private val state : BookDetailsStateModel,
     private val useCaseHandler: UseCaseHandler,
     private val getMetadataUsecase:GetMetadataUsecase,
     private val getTrackListUsecase : GetTrackListUsecase) : AndroidViewModel(application){
@@ -43,7 +42,7 @@ class BookDetailsViewModel(
     get() = _networkResponse
 
 
-    private var currentPlayingTrack : Int = state.trackPlaying
+    private var currentPlayingTrack : Int = /*state.trackPlaying*/ 0
     //handle item click event
     private var _playItemClicked = MutableLiveData<Event<Int>>()
 
@@ -78,20 +77,22 @@ class BookDetailsViewModel(
             _audioBookTracks.value?.let {
 
                 val list = it
-                var currentPlaying = 0
+                if(list.size>=trackNumber){
+                    var currentPlaying = 0
 
-                _playItemClicked.value?.let {
-                    currentPlaying = it.peekContent()
+                    _playItemClicked.value?.let {event ->
+                        currentPlaying = event.peekContent()
+                    }
+
+                    list[currentPlaying].isPlaying = false
+                    list[trackNumber-1].isPlaying = true
+
+                    _audioBookTracks.value=list.toList()
+
+                    _playItemClicked.value = Event(trackNumber-1)
+                    Timber.d("Track List Updated with trackNo as $trackNumber")
                 }
-
-                list[currentPlaying].isPlaying = false
-                list[trackNumber-1].isPlaying = true
-
-                _audioBookTracks.value=list.toList()
             }
-
-            _playItemClicked.value = Event(trackNumber-1)
-            Timber.d("Track List Updated with trackNo as $trackNumber")
         }
 
         _audioBookTracks
@@ -147,9 +148,9 @@ class BookDetailsViewModel(
 
                     Timber.d("Track list fetch success")
 
-                    if(state.isPlaying){
-                        onPlayItemClicked(state.trackPlaying)
-                    }
+//                    if(state.isPlaying){
+//                        onPlayItemClicked(state.trackPlaying)
+//                    }
                 }
 
                 override suspend fun onError(t: Throwable) {
@@ -169,14 +170,20 @@ class BookDetailsViewModel(
     }
 
     fun updateNextTrackPlaying(){
-        val newTrack =  (currentPlayingTrack+1)%audioBookTracks.value!!.size
-        onPlayItemClicked(newTrack)
+        _audioBookTracks.value?.let {trackList ->
+            if(currentPlayingTrack<trackList.size){
+                val newTrack =  (currentPlayingTrack+1)%audioBookTracks.value!!.size
+                onPlayItemClicked(newTrack)
+            }
+        }
     }
 
     fun updatePreviousTrackPlaying(){
 
-        val newTrack =  if (currentPlayingTrack>1)(currentPlayingTrack-1)%audioBookTracks.value!!.size else 1
-        onPlayItemClicked(newTrack)
+        if(currentPlayingTrack>0){
+            val newTrack =  if (currentPlayingTrack>1)(currentPlayingTrack-1)%audioBookTracks.value!!.size else 1
+            onPlayItemClicked(newTrack)
+        }
     }
 
     /**

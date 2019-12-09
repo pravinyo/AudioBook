@@ -5,12 +5,14 @@ import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.network.Failure
 import com.allsoftdroid.common.base.network.Success
 import com.allsoftdroid.database.bookListDB.AudioBookDao
+import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.feature_book.data.databaseExtension.SaveBookListInDatabase
 import com.allsoftdroid.feature_book.data.databaseExtension.asBookDomainModel
 import com.allsoftdroid.feature_book.data.model.AudioBookDataModel
 import com.allsoftdroid.feature_book.data.network.Utils
 import com.allsoftdroid.feature_book.data.network.response.GetAudioBooksResponse
 import com.allsoftdroid.feature_book.data.network.service.ArchiveBooksApi
+import com.allsoftdroid.feature_book.data.network.service.ArchiveLibriVoxAudioBookService
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import com.allsoftdroid.feature_book.domain.repository.NetworkResponseListener
@@ -25,7 +27,10 @@ import retrofit2.Response
 import timber.log.Timber
 
 
-class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRepository {
+class AudioBookRepositoryImpl(
+    bookDao : AudioBookDao,
+    private val remoteBookService: ArchiveLibriVoxAudioBookService,
+    private val saveInDatabase: SaveInDatabase<AudioBookDao,SaveBookListInDatabase>) : AudioBookRepository {
 
     /**
      * Books type live data is fetched from the database and notify observer for any change in data.
@@ -64,13 +69,14 @@ class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRep
         withContext(Dispatchers.IO) {
             Timber.i("Starting network call")
 
-            ArchiveBooksApi.RETROFIT_SERVICE.getAudioBooks(
+            remoteBookService.getAudioBooks(
                 page = page,
                 rowCount = Utils.Books.DEFAULT_ROW_COUNT
             ).enqueue(object : Callback<String> {
                 override fun onFailure(call: Call<String>, t: Throwable) {
                     Timber.i("Failure occur")
 
+                    //TODO: better way?
                     GlobalScope.launch {
                         listener?.onResponse(Failure(Error(t)))
                     }
@@ -90,6 +96,7 @@ class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRep
                          * Since we have data, we can independently save it to database
                          * It uses entire application scope
                          */
+                        //TODO: better way?
                         GlobalScope.launch {
                             saveToDatabase(result.response.docs)
                             listener?.onResponse(Success(result = result.response.docs.size))
@@ -105,7 +112,7 @@ class AudioBookRepositoryImpl(private val bookDao : AudioBookDao) : AudioBookRep
         Timber.i("Saving to DB")
         if (list.isNotEmpty()){
             Timber.i("List is not empty saving to Database")
-            SaveBookListInDatabase.setup(bookDao)
+            saveInDatabase
                 .addData(data = list)
                 .execute()
         }else{

@@ -19,7 +19,7 @@ private val retrofit = Retrofit.Builder()
 /**
  * API to allow access of the following content type as a json string
  */
-internal interface ArchiveMetadataService{
+interface ArchiveMetadataService{
 
     @GET("${Utils.MetaData.PATH}{book_id}")
     fun getMetadata(@Path("book_id") bookId:String): Call<String>
