@@ -77,20 +77,22 @@ class BookDetailsViewModel(
             _audioBookTracks.value?.let {
 
                 val list = it
-                var currentPlaying = 0
+                if(list.size>=trackNumber){
+                    var currentPlaying = 0
 
-                _playItemClicked.value?.let {
-                    currentPlaying = it.peekContent()
+                    _playItemClicked.value?.let {event ->
+                        currentPlaying = event.peekContent()
+                    }
+
+                    list[currentPlaying].isPlaying = false
+                    list[trackNumber-1].isPlaying = true
+
+                    _audioBookTracks.value=list.toList()
+
+                    _playItemClicked.value = Event(trackNumber-1)
+                    Timber.d("Track List Updated with trackNo as $trackNumber")
                 }
-
-                list[currentPlaying].isPlaying = false
-                list[trackNumber-1].isPlaying = true
-
-                _audioBookTracks.value=list.toList()
             }
-
-            _playItemClicked.value = Event(trackNumber-1)
-            Timber.d("Track List Updated with trackNo as $trackNumber")
         }
 
         _audioBookTracks
@@ -168,14 +170,20 @@ class BookDetailsViewModel(
     }
 
     fun updateNextTrackPlaying(){
-        val newTrack =  (currentPlayingTrack+1)%audioBookTracks.value!!.size
-        onPlayItemClicked(newTrack)
+        _audioBookTracks.value?.let {trackList ->
+            if(currentPlayingTrack<trackList.size){
+                val newTrack =  (currentPlayingTrack+1)%audioBookTracks.value!!.size
+                onPlayItemClicked(newTrack)
+            }
+        }
     }
 
     fun updatePreviousTrackPlaying(){
 
-        val newTrack =  if (currentPlayingTrack>1)(currentPlayingTrack-1)%audioBookTracks.value!!.size else 1
-        onPlayItemClicked(newTrack)
+        if(currentPlayingTrack>0){
+            val newTrack =  if (currentPlayingTrack>1)(currentPlayingTrack-1)%audioBookTracks.value!!.size else 1
+            onPlayItemClicked(newTrack)
+        }
     }
 
     /**
