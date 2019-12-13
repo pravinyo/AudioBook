@@ -77,6 +77,14 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
             .subscribe {
                 handleEvent(it)
             }
+
+        mainActivityViewModel.stopServiceEvent.observeForever {
+            it.getContentIfNotHandled()?.let { stopEvent ->
+                if(stopEvent){
+                    stopAudioService()
+                }
+            }
+        }
     }
 
     private fun miniPlayerViewState(shouldShow: Boolean) {
@@ -191,10 +199,17 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
         ConnectivityReceiver.connectivityReceiverListener = this
     }
 
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(connectionListener)
+    }
+
+    private fun stopAudioService(){
+        audioManager.unBoundAudioService()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         disposable.dispose()
-        audioManager.unBoundAudioService()
-        unregisterReceiver(connectionListener)
     }
 }
