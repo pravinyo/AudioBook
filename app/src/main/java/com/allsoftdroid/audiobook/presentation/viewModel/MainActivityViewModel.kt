@@ -11,8 +11,20 @@ class MainActivityViewModel(application : Application) : AndroidViewModel(applic
     private val _showMiniPlayer = MutableLiveData<Event<Boolean>>()
     val showPlayer :LiveData<Event<Boolean>> = _showMiniPlayer
 
+    private var _stopService = MutableLiveData<Event<Boolean>>()
+    val stopServiceEvent : LiveData<Event<Boolean>> = _stopService
+
 
     fun playerStatus( showPlayer : Boolean){
         _showMiniPlayer.value = Event(showPlayer)
+    }
+
+    init {
+        _stopService.value = Event(false)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        _stopService.value = Event(true)
     }
 }
