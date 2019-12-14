@@ -64,7 +64,9 @@ class AudioBookListViewModel(
     init {
         viewModelScope.launch {
             Timber.i("Starting to fetch new content from Remote repository")
-            fetchBookList()
+            if(audioBooks.value==null){
+                fetchBookList()
+            }
         }
     }
 
