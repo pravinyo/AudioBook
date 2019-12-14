@@ -3,6 +3,7 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val LEAKY_CANARY = "2.0"
     const val EXOPLAYER = "2.10.8"
     const val RX_RELAY = "2.1.1"
     const val RX_JAVA = "2.2.10"
@@ -99,4 +100,6 @@ object LibraryDependency {
     const val RX_RELAY = "com.jakewharton.rxrelay2:rxrelay:${LibraryVersion.RX_RELAY}"
 
     const val EXOPLAYER = "com.google.android.exoplayer:exoplayer:${LibraryVersion.EXOPLAYER}"
+
+    const val LEAKY_CANARY = "com.squareup.leakcanary:leakcanary-android:${LibraryVersion.LEAKY_CANARY}"
 }
