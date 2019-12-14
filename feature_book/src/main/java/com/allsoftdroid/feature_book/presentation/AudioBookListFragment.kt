@@ -58,7 +58,7 @@ class AudioBookListFragment : BaseContainerFragment(){
             }
         })
 
-        booksViewModel.itemClicked.observe(this, Observer {
+        booksViewModel.itemClicked.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let { bookId ->
                 //Navigate to display page
                 val bundle = bundleOf("bookId" to bookId)
