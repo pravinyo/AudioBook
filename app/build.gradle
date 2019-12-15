@@ -78,4 +78,6 @@ dependencies {
 
     implementation(TestLibraryDependency.FRAGMENT_TEST)
     implementation(TestLibraryDependency.ANDROID_X_CORE)
+
+    debugImplementation(LibraryDependency.LEAKY_CANARY)
 }

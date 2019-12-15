@@ -13,10 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.feature_book.utils.NetworkState
 import com.allsoftdroid.feature_book.R
+import com.allsoftdroid.feature_book.data.network.Utils
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
 import com.allsoftdroid.feature_book.di.FeatureBookModule
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookAdapter
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookItemClickedListener
+import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.PaginationListener
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
 import org.koin.android.ext.android.inject
 
@@ -27,7 +29,6 @@ class AudioBookListFragment : BaseContainerFragment(){
      */
     private val booksViewModel: AudioBookListViewModel by inject()
     @VisibleForTesting var bundleShared: Bundle = Bundle.EMPTY
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
@@ -49,6 +50,18 @@ class AudioBookListFragment : BaseContainerFragment(){
         //recycler view layout manager
         binding.recyclerViewBooks.apply {
             layoutManager = LinearLayoutManager(context)
+            addOnScrollListener(object : PaginationListener(
+                layoutManager = layoutManager as LinearLayoutManager,
+                pageSize = Utils.Books.DEFAULT_ROW_COUNT){
+
+                override fun loadNext() {
+                    booksViewModel.loadNextData()
+                }
+
+                override fun isLoading(): Boolean {
+                    return booksViewModel.networkResponse.value?.peekContent() == NetworkState.LOADING
+                }
+            })
         }
 
         //Observe the books list and update the list as soon as we get the update
@@ -58,7 +71,7 @@ class AudioBookListFragment : BaseContainerFragment(){
             }
         })
 
-        booksViewModel.itemClicked.observe(this, Observer {
+        booksViewModel.itemClicked.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let { bookId ->
                 //Navigate to display page
                 val bundle = bundleOf("bookId" to bookId)
