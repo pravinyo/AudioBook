@@ -71,8 +71,10 @@ class AudioBookListViewModel(
     }
 
     fun loadNextData(){
-        viewModelScope.launch {
-            fetchBookList(isNext = true)
+        if(networkResponse.value?.peekContent() != NetworkState.LOADING){
+            viewModelScope.launch {
+                fetchBookList(isNext = true)
+            }
         }
     }
 
