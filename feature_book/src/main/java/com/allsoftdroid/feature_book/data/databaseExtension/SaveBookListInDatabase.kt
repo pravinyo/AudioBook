@@ -47,26 +47,8 @@ class SaveBookListInDatabase(bookDao: AudioBookDao) : SaveInDatabase<AudioBookDa
             bookList.add(book.toDatabaseModel())
         }
 
-        //remove already existing data
-        val deleted=  mDao.deleteAll()
-        Timber.i("data deleted $deleted")
-
-
         //Insert new Fresh data in the database
         mDao.insertAllList(bookList)
         Timber.i("data loaded ${bookList.size}")
-
-//
-//        val inserted = mDao.getBooks()
-//        val count = inserted.value?.size
-//        Timber.i("data fetching from DB: $count")
-//
-//        val entry = 10
-//        val sampleBook = mDao.getBookBy(bookList[entry].identifier)
-//        Timber.i("Data check for #$entry entry : ${sampleBook.title}")
-//
-//        val list = inserted.value?: emptyList()
-//
-//        Timber.d("Size is ${list.size}")
     }
 }
