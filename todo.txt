@@ -6,7 +6,6 @@ TODO: Save current playing
 TODO: resume last playing book feature
 TODO: local download/save book feature
 TODO: playing book screen
-TODO: Pagination on bookList
 TODO: auto resume after call, interruption
 
 
