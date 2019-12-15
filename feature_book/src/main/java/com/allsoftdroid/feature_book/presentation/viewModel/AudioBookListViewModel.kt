@@ -51,7 +51,7 @@ class AudioBookListViewModel(
         get() = _backArrowPressed
 
 
-    private val requestValues  = GetAudioBookListUsecase.RequestValues(pageNumber = 1)
+    private var requestValues  = GetAudioBookListUsecase.RequestValues(pageNumber = 1)
 
     //book list state change event
     private val listChangedEvent = MutableLiveData<Event<Any>>()
@@ -64,11 +64,25 @@ class AudioBookListViewModel(
     init {
         viewModelScope.launch {
             Timber.i("Starting to fetch new content from Remote repository")
-            fetchBookList()
+            if(audioBooks.value==null){
+                fetchBookList()
+            }
         }
     }
 
-    private suspend fun fetchBookList(){
+    fun loadNextData(){
+        if(networkResponse.value?.peekContent() != NetworkState.LOADING){
+            viewModelScope.launch {
+                fetchBookList(isNext = true)
+            }
+        }
+    }
+
+    private suspend fun fetchBookList(isNext:Boolean = false){
+
+        if(isNext){
+            requestValues = GetAudioBookListUsecase.RequestValues(pageNumber = requestValues.pageNumber.plus(1))
+        }
 
         _networkResponse.value = Event(NetworkState.LOADING)
 

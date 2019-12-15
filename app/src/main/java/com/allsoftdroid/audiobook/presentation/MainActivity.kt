@@ -36,20 +36,16 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
     }
 
     private val mainActivityViewModel : MainActivityViewModel by viewModel()
-
     private val eventStore : AudioPlayerEventStore by inject()
-
     private val audioManager : AudioManager by inject()
-
     private val connectionListener:ConnectivityReceiver by inject()
+    private lateinit var disposable : Disposable
 
-    private val snackbar by lazy {
+    private val snackBar by lazy {
         val sb = Snackbar.make(findViewById(R.id.navHostFragment), "You are offline", Snackbar.LENGTH_LONG) //Assume "rootLayout" as the root layout of every activity.
         sb.duration = BaseTransientBottomBar.LENGTH_INDEFINITE
         sb
     }
-
-    private lateinit var disposable : Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +73,14 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
             .subscribe {
                 handleEvent(it)
             }
+
+        mainActivityViewModel.stopServiceEvent.observeForever {
+            it.getContentIfNotHandled()?.let { stopEvent ->
+                if(stopEvent){
+                    stopAudioService()
+                }
+            }
+        }
     }
 
     private fun miniPlayerViewState(shouldShow: Boolean) {
@@ -180,9 +184,9 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
 
     private fun showNetworkMessage(isConnected: Boolean) {
         if (!isConnected) {
-            snackbar.show()
+            snackBar.show()
         } else {
-            snackbar.dismiss()
+            snackBar.dismiss()
         }
     }
 
@@ -191,10 +195,13 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
         ConnectivityReceiver.connectivityReceiverListener = this
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         disposable.dispose()
-        audioManager.unBoundAudioService()
         unregisterReceiver(connectionListener)
+    }
+
+    private fun stopAudioService(){
+        audioManager.unBoundAudioService()
     }
 }
