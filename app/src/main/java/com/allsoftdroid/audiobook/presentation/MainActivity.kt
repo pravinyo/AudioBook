@@ -25,6 +25,7 @@ import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
+import java.lang.Exception
 
 
 class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverListener {
@@ -202,6 +203,10 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
     }
 
     private fun stopAudioService(){
-        audioManager.unBoundAudioService()
+        try{
+            audioManager.unBoundAudioService()
+        }catch (exception: Exception){
+            Timber.d(exception.message)
+        }
     }
 }
