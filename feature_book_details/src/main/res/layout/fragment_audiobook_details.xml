@@ -8,86 +8,90 @@
             type="com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel"/>
     </data>
 
-    <androidx.core.widget.NestedScrollView
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/imgView_book_image"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/book_details_banner_image_height"
-                android:scaleType="centerCrop"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:bookImage="@{audioBookDetailsViewModel.audioBookMetadata}"
-                android:contentDescription="@string/banner_image_for_audio_book" />
+                android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/toolbar"
-                android:layout_width="0dp"
-                android:layout_height="?actionBarSize"
-                android:background="@drawable/background_gradient_top_bottom"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                <ImageView
+                    android:id="@+id/imgView_book_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/book_details_banner_image_height"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:bookImage="@{audioBookDetailsViewModel.audioBookMetadata}"
+                    android:contentDescription="@string/banner_image_for_audio_book" />
 
-                <ImageButton
-                    android:id="@+id/btn_toolbar_back_arrow"
+                <ProgressBar
+                    android:id="@+id/pb_content_loading"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@color/transparent"
-                    android:onClick="@{()->audioBookDetailsViewModel.onBackArrowPressed()}"
-                    android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
-                    android:contentDescription="@string/back_screen_button" />
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:goneIfNotNull="@{audioBookDetailsViewModel.audioBookMetadata}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/tv_toolbar_title"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    app:bookTitle="@{audioBookDetailsViewModel.audioBookMetadata}"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/white" />
-            </LinearLayout>
+                    android:id="@+id/textView_description"
+                    android:layout_margin="@dimen/track_item_margin_start"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:bookDescription="@{audioBookDetailsViewModel.audioBookMetadata}"
+                    app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imgView_book_image" />
 
-            <ProgressBar
-                android:id="@+id/pb_content_loading"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_marginBottom="@dimen/margin_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_description" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <LinearLayout
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:background="@drawable/background_gradient_top_bottom"
+            android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/btn_toolbar_back_arrow"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:goneIfNotNull="@{audioBookDetailsViewModel.audioBookMetadata}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="match_parent"
+                android:background="@color/transparent"
+                android:onClick="@{()->audioBookDetailsViewModel.onBackArrowPressed()}"
+                android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
+                android:contentDescription="@string/back_screen_button" />
 
             <TextView
-                android:id="@+id/textView_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:bookDescription="@{audioBookDetailsViewModel.audioBookMetadata}"
-                app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imgView_book_image" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView_description" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+                android:id="@+id/tv_toolbar_title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                app:bookTitle="@{audioBookDetailsViewModel.audioBookMetadata}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </RelativeLayout>
 
 </layout>
