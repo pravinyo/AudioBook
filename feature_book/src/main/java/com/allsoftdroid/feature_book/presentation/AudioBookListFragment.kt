@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.feature_book.utils.NetworkState
 import com.allsoftdroid.feature_book.R
+import com.allsoftdroid.feature_book.data.network.Utils
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
 import com.allsoftdroid.feature_book.di.FeatureBookModule
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookAdapter
@@ -51,7 +52,7 @@ class AudioBookListFragment : BaseContainerFragment(){
             layoutManager = LinearLayoutManager(context)
             addOnScrollListener(object : PaginationListener(
                 layoutManager = layoutManager as LinearLayoutManager,
-                pageSize = 25){
+                pageSize = Utils.Books.DEFAULT_ROW_COUNT){
 
                 override fun loadNext() {
                     booksViewModel.loadNextData()
