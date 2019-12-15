@@ -67,7 +67,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         val trackAdapter = AudioBookTrackAdapter(TrackItemClickedListener{ trackNumber,filename,title ->
             trackNumber?.let {
                 playSelectedTrackFile(it)
-
                 Timber.d("State change event sent")
             }
         })
@@ -81,7 +80,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         bookDetailsViewModel.audioBookTracks.observe(viewLifecycleOwner, Observer {
             it?.let {
                 Timber.d("list size received is ${it.size}")
-                trackAdapter.submitList(null)
                 trackAdapter.submitList(it)
             }
         })
@@ -94,13 +92,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             }
 
         dataBindingReference = dataBinding
-
-        //TODO: at this time tracks are not available that is why this change is not reflected
-//        if(sharedPreferences.isPlaying()){
-//            dataBindingReference.tvToolbarTitle.text = sharedPreferences.trackTitle()
-//            bookDetailsViewModel.onPlayItemClicked(sharedPreferences.trackPosition())
-//        }
-
         return dataBinding.root
     }
 
@@ -152,10 +143,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         bookDetailsViewModel.audioBookTracks.value?.let {
             Timber.d("Sending new event for play selected track by the user")
             eventStore.publish(Event(PlaySelectedTrack(trackList = it,bookId = bookId,position = currentPos)))
-
-//            sharedPreferences.saveTrackPosition(pos = currentPos)
-//            sharedPreferences.saveIsPlaying(true)
-//            sharedPreferences.saveTrackTitle(it[currentPos-1].title?:"")
             Timber.d("saving current state event of the track")
 
         }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
