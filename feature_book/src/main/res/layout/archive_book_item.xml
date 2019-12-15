@@ -26,11 +26,10 @@
 
             <ImageView
                 android:id="@+id/item_image"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:minHeight="@dimen/image_min_height"
+                android:layout_width="@dimen/bookList_image_height"
+                android:layout_height="@dimen/bookList_image_height"
                 android:adjustViewBounds="true"
+                android:background="@color/black"
                 app:bookImage="@{book}"
                 android:contentDescription="@string/thumbnail"/>
 
