@@ -61,8 +61,7 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
 
         Timber.d("Main Activity  start")
         mainActivityViewModel.showPlayer.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { shouldShow ->
-
+            it.peekContent().let { shouldShow ->
                 Timber.d("Player state event received from view model")
                 miniPlayerViewState(shouldShow)
             }
@@ -159,7 +158,7 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
 
             is PlaySelectedTrack -> {
 
-                audioManager.setPlayTrackList(event.trackList,event.bookId)
+                audioManager.setPlayTrackList(event.trackList,event.bookId,event.bookName)
                 audioManager.playTrackAtPosition(event.position)
 
                 eventStore.publish(Event(TrackDetails(

@@ -87,7 +87,7 @@ class AudioService : Service(),KoinComponent{
         sendNotification(
             trackTitle = audioServiceBinder.getCurrentTrackTitle(),
             bookId = audioServiceBinder.getBookId(),
-            bookName = audioServiceBinder.getBookId(),
+            bookName = audioServiceBinder.getBookName(),
             applicationContext = applicationContext,
             service = this,
             isAudioPlaying = if(isItFirst) true else audioServiceBinder.isPlaying(),

@@ -31,6 +31,7 @@ class AudioServiceBinder(application: Application) : Binder(){
 
     //id of playing audio book
     private lateinit var bookId:String
+    private lateinit var bookName:String
 
     companion object {
         //song list
@@ -215,8 +216,9 @@ class AudioServiceBinder(application: Application) : Binder(){
         }
     }
 
-    fun setBookId(id:String){
+    fun setBookDetails(id: String, name: String){
         bookId = id
+        bookName = name
         Timber.d("Book ID is $id")
     }
 
@@ -239,5 +241,6 @@ class AudioServiceBinder(application: Application) : Binder(){
     }
 
     fun getBookId() = bookId
+    fun getBookName() = bookName
 
 }

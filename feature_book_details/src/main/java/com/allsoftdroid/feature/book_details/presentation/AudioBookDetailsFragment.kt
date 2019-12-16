@@ -64,9 +64,9 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             }
         })
 
-        val trackAdapter = AudioBookTrackAdapter(TrackItemClickedListener{ trackNumber,filename,title ->
+        val trackAdapter = AudioBookTrackAdapter(TrackItemClickedListener{ trackNumber, _, _ ->
             trackNumber?.let {
-                playSelectedTrackFile(it)
+                playSelectedTrackFile(it,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
                 Timber.d("State change event sent")
             }
         })
@@ -139,10 +139,10 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         }
     }
 
-    private fun playSelectedTrackFile(currentPos:Int) {
+    private fun playSelectedTrackFile(currentPos:Int,bookName:String) {
         bookDetailsViewModel.audioBookTracks.value?.let {
             Timber.d("Sending new event for play selected track by the user")
-            eventStore.publish(Event(PlaySelectedTrack(trackList = it,bookId = bookId,position = currentPos)))
+            eventStore.publish(Event(PlaySelectedTrack(trackList = it,bookId = bookId,position = currentPos,bookName = bookName)))
             Timber.d("saving current state event of the track")
 
         }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()

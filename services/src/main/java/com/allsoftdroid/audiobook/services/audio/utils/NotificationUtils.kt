@@ -58,7 +58,7 @@ class NotificationUtils {
 
             val drawable = CreateImageOverlay
                 .with(applicationContext)
-                .buildOverlay(front = R.drawable.ic_book_play,back = R.drawable.gradiant_background)
+                .buildOverlay(front = R.mipmap.ic_launcher,back = R.drawable.gradiant_background)
 
             val roundImage  = ImageUtils.getCircleBitmap(drawable.toBitmap())
 
