@@ -39,6 +39,7 @@ class NotificationUtils {
                     collapsedView.setImageViewResource(R.id.image_notification_prev,R.drawable.ic_skip_previous_black_24dp)
                     collapsedView.setImageViewResource(R.id.image_notification_next,R.drawable.ic_skip_next_black_24dp)
                 } // Night mode is not active, we're using the light theme
+
                 Configuration.UI_MODE_NIGHT_YES -> {
 
                     playPauseIcon = if (!isAudioPlaying) R.drawable.ic_play_arrow_white_24dp else R.drawable.ic_pause_white_24dp
@@ -136,13 +137,6 @@ class NotificationUtils {
                 .setStyle(NotificationCompat.DecoratedCustomViewStyle())
 
             service.startForeground(NOTIFY_ID, notification.build())
-
-            // delay foreground state updating a bit, so the notification can be swiped away properly after initial display
-//            Handler(Looper.getMainLooper()).postDelayed({
-//                if (!audioServiceBinder.isPlaying()) {
-//                    service.stopForeground(false)
-//                }
-//            }, 200L)
         }
 
         private fun getContentIntent(applicationContext: Context): PendingIntent {
