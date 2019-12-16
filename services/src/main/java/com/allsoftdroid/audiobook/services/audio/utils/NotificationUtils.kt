@@ -31,13 +31,21 @@ class NotificationUtils {
         fun sendNotification(isAudioPlaying:Boolean, currentAudioPos:Int, service: AudioService, applicationContext: Context, trackTitle:String, bookId: String, bookName:String) {
 
             val collapsedView = RemoteViews(applicationContext.packageName, R.layout.notification_mini_player_collapsed)
-            val playPauseIcon = if (!isAudioPlaying) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
+            var playPauseIcon = 0
 
             when (applicationContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
                 Configuration.UI_MODE_NIGHT_NO -> {
-
+                    playPauseIcon = if (!isAudioPlaying) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
+                    collapsedView.setImageViewResource(R.id.image_notification_prev,R.drawable.ic_skip_previous_black_24dp)
+                    collapsedView.setImageViewResource(R.id.image_notification_next,R.drawable.ic_skip_next_black_24dp)
                 } // Night mode is not active, we're using the light theme
                 Configuration.UI_MODE_NIGHT_YES -> {
+
+                    playPauseIcon = if (!isAudioPlaying) R.drawable.ic_play_arrow_white_24dp else R.drawable.ic_pause_white_24dp
+
+                    collapsedView.setImageViewResource(R.id.image_notification_prev,R.drawable.ic_skip_previous_white_24dp)
+                    collapsedView.setImageViewResource(R.id.image_notification_next,R.drawable.ic_skip_next_white_24dp)
+
                     collapsedView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.white))
                     collapsedView.setTextColor(R.id.notification_book_name,applicationContext.getColor(R.color.white))
                 } // Night mode is active, we're using dark theme
