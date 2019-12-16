@@ -10,6 +10,7 @@ TODO: playing book screen
 TODO: libri Api (https://librivox.org/api/info)
 TODO: alternative to global scope in coroutine. starting new coroutine in suspend function error
 TODO: navigation drawer for downloads, listen later and help, licenses and analytics feature.
+TODO: search feature, pin feature
 
 //TODO: Optional
 TODO: alert to play book based on users daily commute time and activity.[Transition API]
