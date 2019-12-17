@@ -22,14 +22,6 @@ TODO: Analysis feature[hours played, books played, fav book, bookmark book,watch
 TODO: Advertisement  feature[Ads]
 TODO: save app data online [google drive apps folder and local]
 
-//TODO: BUGS:
-TODO: current playing icon changes on first click to before list gets updated [bug]
-TODO: bug found , when clicking first track and then fourth track app crashes.[Short notification vol 70]
-TODO: autoplay next event has some side effect as it causes crash of app. when playing 4th track and track crashes as it ,
-finishes play and about to play next event.
-TODO: tracks are not displayed in order some are missing
-TODO: Notification and mini player not in sync
-
 
 To generate a dependency graph run below commands
 1. gradlew projectDependencyGraph
