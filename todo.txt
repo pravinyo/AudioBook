@@ -11,6 +11,7 @@ TODO: libri Api (https://librivox.org/api/info)
 TODO: alternative to global scope in coroutine. starting new coroutine in suspend function error
 TODO: navigation drawer for downloads, listen later and help, licenses and analytics feature.
 TODO: search feature, pin feature
+TODO: Add total book hours to be played
 
 //TODO: Optional
 TODO: alert to play book based on users daily commute time and activity.[Transition API]
@@ -21,6 +22,7 @@ TODO: feature to support earphone button control
 TODO: Analysis feature[hours played, books played, fav book, bookmark book,watch later list][Analytics]
 TODO: Advertisement  feature[Ads]
 TODO: save app data online [google drive apps folder and local]
+
 
 
 To generate a dependency graph run below commands
