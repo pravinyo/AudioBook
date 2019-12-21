@@ -4,14 +4,16 @@ import android.app.Application
 import android.content.Context
 import android.os.Binder
 import androidx.core.net.toUri
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.audiobook.services.R
+import com.allsoftdroid.audiobook.services.audio.utils.Variable
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
-import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player.*
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -83,7 +85,7 @@ class AudioServiceBinder(application: Application) : Binder(){
                 Timber.d("Event ended audio about to start new")
                 if(trackPos != it.currentWindowIndex){
                     nextTrackEvent.value= Event(true)
-                    _trackTitle.value = trackList[it.currentWindowIndex].title
+                    _trackTitle.value = trackList[it.currentWindowIndex].title?:"NA"
                     trackPos = it.currentWindowIndex
                 }
             }
@@ -149,7 +151,7 @@ class AudioServiceBinder(application: Application) : Binder(){
                 this.playWhenReady = true
                 previous()
                 if(this.currentWindowIndex>=0){
-                    _trackTitle.value = trackList[this.currentWindowIndex].title
+                    _trackTitle.value = trackList[this.currentWindowIndex].title?:"NA"
                 }
                 Timber.d("Title: ${trackTitle.value}")
             } else {
@@ -167,7 +169,7 @@ class AudioServiceBinder(application: Application) : Binder(){
                 it.next()
                 if(it.currentWindowIndex< trackList.size)
                 {
-                    _trackTitle.value = trackList[it.currentWindowIndex].title
+                    _trackTitle.value = trackList[it.currentWindowIndex].title?:"NA"
                 }
                 Timber.d("Title: ${trackTitle.value}")
             }else{
@@ -188,14 +190,11 @@ class AudioServiceBinder(application: Application) : Binder(){
         }
     }
 
-    //TODO: Rx
-    private var _trackTitle = MutableLiveData<String>()
-    val trackTitle : LiveData<String>
+    private var _trackTitle = Variable("")
+    val trackTitle : Variable<String>
         get() = _trackTitle
 
-
-    //TODO: Rx
-    val nextTrackEvent = MutableLiveData<Event<Boolean>>()
+    val nextTrackEvent = Variable(Event(false))
 
     fun isPlaying() = exoPlayer?.isPlaying?:false
 
@@ -211,7 +210,7 @@ class AudioServiceBinder(application: Application) : Binder(){
             it.seekTo(pos, C.TIME_UNSET)
             Timber.d("Seek is set to $pos")
             it.playWhenReady = true
-            _trackTitle.value = trackList[it.currentWindowIndex].title
+            _trackTitle.value = trackList[it.currentWindowIndex].title?:"NA"
             Timber.d("Track title updated and soon will be played")
         }
     }
@@ -227,7 +226,7 @@ class AudioServiceBinder(application: Application) : Binder(){
         Timber.d("Track list set and it's size is ${tracks.size}")
     }
 
-    fun getCurrentTrackTitle(): String = trackTitle.value?:"UNKNOWN"
+    fun getCurrentTrackTitle(): String = trackTitle.value
 
     // Return current audio play position.
     fun getCurrentAudioPosition(): Int {
