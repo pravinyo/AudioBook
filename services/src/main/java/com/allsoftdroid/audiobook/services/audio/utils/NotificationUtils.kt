@@ -16,7 +16,7 @@ import com.allsoftdroid.audiobook.services.R
 import com.allsoftdroid.audiobook.services.audio.service.AudioService
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.common.base.utils.ImageUtils
-import com.allsoftdroid.audiobook.services.audio.NotificationPlayerEventBroadcastReceiver.Companion as NotificationPlayerEventBroadcastReceiver1
+import com.allsoftdroid.audiobook.services.audio.broadcastReceivers.NotificationPlayerEventBroadcastReceiver.Companion as NotificationPlayerEventBroadcastReceiver1
 
 
 class NotificationUtils {
