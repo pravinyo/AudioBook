@@ -60,10 +60,11 @@ dependencies {
 
     implementation(LibraryDependency.RECYCLER_VIEW)
     implementation(LibraryDependency.CARD_VIEW)
-
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
 
-//    testImplementation(TestLibraryDependency.JUNIT)
+    implementation(LibraryDependency.LOTTIE)
+
+
     testImplementation(TestLibraryDependency.MOCKITO_CORE)
 
     // AndroidX Test - JVM testing
