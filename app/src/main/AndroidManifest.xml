@@ -29,7 +29,7 @@
         <service
             android:name=".services.audio.service.AudioService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <receiver
             android:name="com.allsoftdroid.common.base.network.ConnectivityReceiver"
@@ -40,7 +40,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".services.audio.NotificationPlayerEventBroadcastReceiver"
+        <receiver android:name=".services.audio.broadcastReceivers.NotificationPlayerEventBroadcastReceiver"
             android:enabled="true"/>
 
     </application>
