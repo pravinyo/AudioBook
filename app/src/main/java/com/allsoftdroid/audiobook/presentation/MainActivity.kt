@@ -3,6 +3,7 @@ package com.allsoftdroid.audiobook.presentation
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.FragmentContainerView
@@ -25,7 +26,6 @@ import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
-import java.lang.Exception
 
 
 class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverListener {
@@ -37,10 +37,15 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
     }
 
     private val mainActivityViewModel : MainActivityViewModel by viewModel()
+
     private val eventStore : AudioPlayerEventStore by inject()
     private val audioManager : AudioManager by inject()
+
     private val connectionListener:ConnectivityReceiver by inject()
+
     private lateinit var disposable : Disposable
+
+
 
     private val snackBar by lazy {
         val sb = Snackbar.make(findViewById(R.id.navHostFragment), "You are offline", Snackbar.LENGTH_LONG) //Assume "rootLayout" as the root layout of every activity.
@@ -58,6 +63,7 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
 
         audioManager.bindAudioService()
         registerReceiver(connectionListener, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+
 
         Timber.d("Main Activity  start")
         mainActivityViewModel.showPlayer.observe(this, Observer {
@@ -207,5 +213,32 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
         }catch (exception: Exception){
             Timber.d(exception.message)
         }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+
+        event?.let {
+            when(event.keyCode){
+                KeyEvent.KEYCODE_HEADSETHOOK -> {
+                    if(audioManager.isPlayerCreated()){
+                        if(!audioManager.isPlaying()){
+                            Timber.d("Sending new play event")
+                            eventStore.publish(Event(Play(PlayingState(
+                                playingItemIndex = audioManager.currentPlayingIndex(),
+                                action_need = true
+                            ))))
+                        }else{
+                            Timber.d("Sending new pause event")
+                            eventStore.publish(Event(Pause(PlayingState(
+                                playingItemIndex = audioManager.currentPlayingIndex(),
+                                action_need = true
+                            ))))
+                        }
+                    }
+                }
+            }
+        }
+
+        return super.onKeyDown(keyCode, event)
     }
 }
