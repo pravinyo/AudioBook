@@ -93,7 +93,6 @@ class AudioBookMetadataRepositoryImpl(
 
                         /**
                          * Run with application scope
-                         * TODO: better way?
                          */
                         GlobalScope.launch {
                             saveInDatabase
