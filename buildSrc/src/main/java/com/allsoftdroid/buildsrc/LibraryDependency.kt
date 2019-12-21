@@ -31,7 +31,7 @@ private object LibraryVersion {
     const val LIFECYCLE_VIEW_MODEL_KTX = "2.2.0-alpha01"
     const val COIL = "0.6.1"
     const val K_ANDROID = "0.8.8@aar"
-    const val LOTTIE = "3.0.7"
+    const val LOTTIE = "3.3.1"
 }
 
 object LibraryDependency {
