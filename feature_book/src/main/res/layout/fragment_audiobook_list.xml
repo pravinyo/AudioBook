@@ -44,8 +44,22 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
         tools:listitem="@layout/archive_book_item" />
 
-    <ProgressBar
+    <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/loading_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/recycler_view_books"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/recycler_view_books"
+        app:lottie_rawRes="@raw/indefinite_progress"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -53,7 +67,10 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
         app:layout_constraintBottom_toBottomOf="@+id/recycler_view_books"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/recycler_view_books" />
+        app:layout_constraintTop_toTopOf="@+id/recycler_view_books"
+        app:lottie_rawRes="@raw/loading"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
