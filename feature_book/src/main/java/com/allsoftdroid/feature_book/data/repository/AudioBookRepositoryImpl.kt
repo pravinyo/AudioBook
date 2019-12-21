@@ -76,7 +76,6 @@ class AudioBookRepositoryImpl(
                 override fun onFailure(call: Call<String>, t: Throwable) {
                     Timber.i("Failure occur")
 
-                    //TODO: better way?
                     GlobalScope.launch {
                         listener?.onResponse(Failure(Error(t)))
                     }
@@ -96,7 +95,6 @@ class AudioBookRepositoryImpl(
                          * Since we have data, we can independently save it to database
                          * It uses entire application scope
                          */
-                        //TODO: better way?
                         GlobalScope.launch {
                             saveToDatabase(result.response.docs)
                             listener?.onResponse(Success(result = result.response.docs.size))
