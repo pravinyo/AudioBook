@@ -241,5 +241,6 @@ class AudioServiceBinder(application: Application) : Binder(){
 
     fun getBookId() = bookId
     fun getBookName() = bookName
+    fun isInitialized() = exoPlayer!=null
 
 }
