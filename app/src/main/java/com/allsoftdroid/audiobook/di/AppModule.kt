@@ -1,8 +1,9 @@
 package com.allsoftdroid.audiobook.di
 
+import android.content.Context
+import com.allsoftdroid.common.base.network.ConnectionLiveData
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.services.audio.AudioManager
-import com.allsoftdroid.common.base.network.ConnectivityReceiver
 import com.allsoftdroid.common.base.store.AudioPlayerEventBus
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
@@ -42,8 +43,10 @@ object AppModule {
     }
 
     private val connectivityModule : Module = module {
-        single {
-            ConnectivityReceiver()
+        factory {(context: Context) ->
+            ConnectionLiveData(
+                context
+            )
         }
     }
 }

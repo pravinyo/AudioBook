@@ -1,7 +1,5 @@
 package com.allsoftdroid.audiobook.presentation
 
-import android.content.IntentFilter
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -16,7 +14,7 @@ import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
-import com.allsoftdroid.common.base.network.ConnectivityReceiver
+import com.allsoftdroid.common.base.network.ConnectionLiveData
 import com.allsoftdroid.common.base.store.*
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -25,10 +23,11 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
 
-class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverListener {
+class MainActivity : BaseActivity() {
 
     override val layoutResId = R.layout.activity_main
 
@@ -41,7 +40,7 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
     private val eventStore : AudioPlayerEventStore by inject()
     private val audioManager : AudioManager by inject()
 
-    private val connectionListener:ConnectivityReceiver by inject()
+    private val connectionListener: ConnectionLiveData by inject{parametersOf(this)}
 
     private lateinit var disposable : Disposable
 
@@ -56,14 +55,23 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppModule.injectFeature()
+
+        disposable  = eventStore.observe()
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                handleEvent(it)
+            }
     }
 
     override fun onStart() {
         super.onStart()
 
         audioManager.bindAudioService()
-        registerReceiver(connectionListener, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
 
+        connectionListener.observe(this, Observer {isConnected ->
+            showNetworkMessage(isConnected)
+        })
 
         Timber.d("Main Activity  start")
         mainActivityViewModel.showPlayer.observe(this, Observer {
@@ -72,13 +80,6 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
                 miniPlayerViewState(shouldShow)
             }
         })
-
-        disposable  = eventStore.observe()
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                handleEvent(it)
-            }
 
         mainActivityViewModel.stopServiceEvent.observeForever {
             it.getContentIfNotHandled()?.let { stopEvent ->
@@ -184,10 +185,6 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
         }
     }
 
-    override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        showNetworkMessage(isConnected)
-    }
-
     private fun showNetworkMessage(isConnected: Boolean) {
         if (!isConnected) {
             snackBar.show()
@@ -196,22 +193,16 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        ConnectivityReceiver.connectivityReceiverListener = this
-    }
-
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         disposable.dispose()
-        unregisterReceiver(connectionListener)
     }
 
     private fun stopAudioService(){
         try{
             audioManager.unBoundAudioService()
         }catch (exception: Exception){
-            Timber.d(exception.message)
+            Timber.d(exception)
         }
     }
 
