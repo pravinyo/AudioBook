@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -135,11 +136,21 @@ private fun getCurrentLocale(context: Context): Locale {
     }
 }
 
-fun ImageView.setFormattedImageForAudioBookList(image : Bitmap,heightLimit:Int,defaultImageId:Int,defaultBackgroundId:Int){
-    if(image.height<250){
-        setImageResource(defaultImageId)
-        setBackgroundResource(defaultBackgroundId)
-    }else {
-        setImageBitmap(image)
+
+@BindingAdapter("toolbarItemVisibility")
+fun setToolbarItemVisibility(view: View, showDisplaySearch: Boolean){
+
+    if(showDisplaySearch){
+        if(view.id==R.id.toolbar_side_1){
+            view.visibility = View.GONE
+        }else if(view.id == R.id.toolbar_side_2){
+            view.visibility = View.VISIBLE
+        }
+    }else{
+        if(view.id==R.id.toolbar_side_2){
+            view.visibility = View.GONE
+        }else if(view.id == R.id.toolbar_side_1){
+            view.visibility = View.VISIBLE
+        }
     }
 }
