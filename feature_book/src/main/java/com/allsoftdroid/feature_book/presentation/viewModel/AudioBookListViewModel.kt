@@ -11,6 +11,7 @@ import com.allsoftdroid.feature_book.di.FeatureBookModule.SUPER_VISOR_JOB
 import com.allsoftdroid.feature_book.di.FeatureBookModule.VIEW_MODEL_SCOPE
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
+import com.allsoftdroid.feature_book.domain.usecase.GetSearchBookUsecase
 import com.allsoftdroid.feature_book.utils.NetworkState
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +23,8 @@ import timber.log.Timber
 
 class AudioBookListViewModel(
     private val useCaseHandler : UseCaseHandler,
-    private val getAlbumListUseCase:GetAudioBookListUsecase) : ViewModel(),KoinComponent {
+    private val getAlbumListUseCase:GetAudioBookListUsecase,
+    private val getSearchBookUsecase: GetSearchBookUsecase) : ViewModel(),KoinComponent {
     /**
      * cancelling this job cancels all the job started by this viewmodel
      */
@@ -51,7 +53,8 @@ class AudioBookListViewModel(
         get() = _backArrowPressed
 
 
-    private var requestValues  = GetAudioBookListUsecase.RequestValues(pageNumber = 1)
+    private var bookListRequestValues  = GetAudioBookListUsecase.RequestValues(pageNumber = 1)
+    private var searchBookRequestValues = GetSearchBookUsecase.RequestValues(query = "",pageNumber = 0)
 
     //book list state change event
     private val listChangedEvent = MutableLiveData<Event<Any>>()
@@ -60,6 +63,8 @@ class AudioBookListViewModel(
     val audioBooks:LiveData<List<AudioBookDomainModel>> = Transformations.switchMap(listChangedEvent){
         getAlbumListUseCase.getBookList()
     }
+
+    val searchBooks = MutableLiveData<List<AudioBookDomainModel>>()
 
     init {
         viewModelScope.launch {
@@ -81,17 +86,56 @@ class AudioBookListViewModel(
     private suspend fun fetchBookList(isNext:Boolean = false){
 
         if(isNext){
-            requestValues = GetAudioBookListUsecase.RequestValues(pageNumber = requestValues.pageNumber.plus(1))
+            bookListRequestValues = GetAudioBookListUsecase.RequestValues(pageNumber = bookListRequestValues.pageNumber.plus(1))
         }
 
         _networkResponse.value = Event(NetworkState.LOADING)
 
-        useCaseHandler.execute(getAlbumListUseCase,requestValues,
+        useCaseHandler.execute(getAlbumListUseCase,bookListRequestValues,
             object : BaseUseCase.UseCaseCallback<GetAudioBookListUsecase.ResponseValues>{
                 override suspend fun onSuccess(response: GetAudioBookListUsecase.ResponseValues) {
                     listChangedEvent.value = response.event
                     _networkResponse.value = Event(NetworkState.COMPLETED)
                     Timber.d("Data received in viewModel onSuccess")
+                }
+
+                override suspend fun onError(t: Throwable) {
+                    _networkResponse.value = Event(NetworkState.ERROR)
+                    listChangedEvent.value = Event(Unit)
+                    Timber.d("Data received in viewModel onError ${t.message}")
+                }
+            })
+    }
+
+    fun search(query:String,isNext: Boolean= false){
+        if(networkResponse.value?.peekContent() != NetworkState.LOADING){
+            viewModelScope.launch {
+                searchBook(searchQuery = query,isNext = isNext)
+            }
+        }
+    }
+
+    private suspend fun searchBook(searchQuery:String,isNext: Boolean){
+        searchBookRequestValues = if(isNext){
+            GetSearchBookUsecase.RequestValues(
+                query = searchQuery,
+                pageNumber = searchBookRequestValues.pageNumber.plus(1))
+        }else{
+            GetSearchBookUsecase.RequestValues(
+                query = searchQuery,
+                pageNumber = 1)
+        }
+
+        _networkResponse.value = Event(NetworkState.LOADING)
+
+        useCaseHandler.execute(getSearchBookUsecase,searchBookRequestValues,
+            object : BaseUseCase.UseCaseCallback<GetSearchBookUsecase.ResponseValues>{
+                override suspend fun onSuccess(response: GetSearchBookUsecase.ResponseValues) {
+                    listChangedEvent.value = response.event
+                    _networkResponse.value = Event(NetworkState.COMPLETED)
+                    Timber.d("Data received in viewModel onSuccess")
+
+                    searchBooks.value = getSearchBookUsecase.getSearchResults().value
                 }
 
                 override suspend fun onError(t: Throwable) {
