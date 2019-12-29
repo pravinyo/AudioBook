@@ -3,4 +3,7 @@
     <string name="audio_book_list_title">Latest Audio Books</string>
     <string name="thumbnail">AudioBook Thumbnail</string>
     <string name="audiobook_search">audiobook search</string>
+    <string name="type_here">search here</string>
+    <string name="press_to_clear_search">press to clear search</string>
+    <string name="web_search_icon">web search</string>
 </resources>
