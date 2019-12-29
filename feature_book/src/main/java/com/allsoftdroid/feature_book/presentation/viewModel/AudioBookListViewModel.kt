@@ -66,6 +66,10 @@ class AudioBookListViewModel(
 
     val searchBooks = MutableLiveData<List<AudioBookDomainModel>>()
 
+    private var _displaySearchView= MutableLiveData<Boolean>()
+    val displaySearch:LiveData<Boolean>
+    get() = _displaySearchView
+
     init {
         viewModelScope.launch {
             Timber.i("Starting to fetch new content from Remote repository")
@@ -73,6 +77,7 @@ class AudioBookListViewModel(
                 fetchBookList()
             }
         }
+        _displaySearchView.value = false
     }
 
     fun loadNextData(){
@@ -148,6 +153,14 @@ class AudioBookListViewModel(
 
     fun onBookItemClicked(bookId: String){
         _itemClicked.value = Event(bookId)
+    }
+
+    fun onSearchItemPressed(){
+        _displaySearchView.value = true
+    }
+
+    fun onSearchFinished(){
+        _displaySearchView.value = false
     }
 
     fun onBackArrowPressed(){
