@@ -23,6 +23,9 @@ interface ArchiveLibriVoxAudioBookService{
 
     @GET(Utils.Books.BOOKS_COLLECTION_PATH) //implement paging
     fun getAudioBooks(@Query(Utils.Books.QUERY_ROW) rowCount:Int, @Query(Utils.Books.QUERY_PAGE) page:Int): Call<String>
+
+    @GET(Utils.Books.BOOKS_SEARCH_PATH)
+    fun searchBooks(@Query(Utils.Books.QUERY_SEARCH) search:String,@Query(Utils.Books.QUERY_ROW) rowCount:Int, @Query(Utils.Books.QUERY_PAGE) page:Int): Call<String>
 }
 
 
