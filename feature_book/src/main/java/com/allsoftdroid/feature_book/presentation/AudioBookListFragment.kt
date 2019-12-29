@@ -21,6 +21,7 @@ import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBook
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.PaginationListener
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
 import org.koin.android.ext.android.inject
+import timber.log.Timber
 
 class AudioBookListFragment : BaseContainerFragment(){
 
@@ -101,6 +102,25 @@ class AudioBookListFragment : BaseContainerFragment(){
                     }
                 }
             }
+        })
+
+        binding.toolbarBookSearch.setOnClickListener{
+            Toast.makeText(activity,"Search in progress",Toast.LENGTH_SHORT).show()
+//            booksViewModel.search(query = "Fires")
+            booksViewModel.onSearchItemPressed()
+        }
+
+        binding.ivSearch.setOnClickListener {
+            booksViewModel.onSearchFinished()
+            binding.etToolbarSearch.text.clear()
+        }
+
+        booksViewModel.searchBooks.observe(this, Observer {
+            it.map {book ->
+                Timber.d("Fetched: ${book.mId}")
+            }
+            bookAdapter.submitList(null)
+            bookAdapter.submitList(it)
         })
 
         return binding.root
