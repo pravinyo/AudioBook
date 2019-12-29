@@ -10,6 +10,7 @@ import com.allsoftdroid.feature_book.data.network.service.ArchiveBooksApi
 import com.allsoftdroid.feature_book.data.repository.AudioBookRepositoryImpl
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
+import com.allsoftdroid.feature_book.domain.usecase.GetSearchBookUsecase
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +53,8 @@ object FeatureBookModule {
         viewModel {
             AudioBookListViewModel(
                 useCaseHandler = get(),
-                getAlbumListUseCase = get()
+                getAlbumListUseCase = get(),
+                getSearchBookUsecase = get()
             )
         }
     }
@@ -65,6 +67,10 @@ object FeatureBookModule {
 
         factory {
             GetAudioBookListUsecase(audioBookRep = get())
+        }
+
+        factory {
+            GetSearchBookUsecase(audioBookRep = get())
         }
     }
         @VisibleForTesting set
