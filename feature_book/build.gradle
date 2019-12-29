@@ -51,6 +51,7 @@ dependencies {
 
     implementation(project(path: ModuleDependency.LIBRARY_COMMON))
     implementation(project(path: ModuleDependency.DATABASE))
+    implementation(project(path: ModuleDependency.FEATURE_INSTANT_SEARCH))
 
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
