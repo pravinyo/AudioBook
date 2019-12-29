@@ -7,21 +7,18 @@ TODO: resume last playing book feature
 TODO: auto resume after call, interruption
 TODO: local download/save book feature
 TODO: playing book screen
-TODO: libri Api (https://librivox.org/api/info)
 TODO: navigation drawer for downloads, listen later and help, licenses and analytics feature.
-TODO: search feature, pin feature
-TODO: Add total book hours to be played
-TODO: headset event handling both wired and bluetooth
+TODO: search book feature, pin/readList/listenList feature
+TODO: Add total book hours to be played for each book in details screen
 
 
 //TODO: Optional
+TODO: libri Api (https://librivox.org/api/info)
 TODO: alert to play book based on users daily commute time and activity.[Transition API]
-TODO: Default image for book with constant size
 TODO: Japanese language support, english
 TODO: new book available alert[Service]
 TODO: feature to support earphone button control
 TODO: Analysis feature[hours played, books played, fav book, bookmark book,watch later list][Analytics]
-TODO: Advertisement  feature[Ads]
 TODO: save app data online [google drive apps folder and local]
 
 
