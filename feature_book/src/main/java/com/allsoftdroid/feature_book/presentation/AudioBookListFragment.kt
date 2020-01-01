@@ -5,13 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.annotation.VisibleForTesting
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
-import com.allsoftdroid.feature_book.utils.NetworkState
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.data.network.Utils
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
@@ -20,8 +21,10 @@ import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBook
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookItemClickedListener
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.PaginationListener
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
+import com.allsoftdroid.feature_book.utils.NetworkState
 import org.koin.android.ext.android.inject
 import timber.log.Timber
+
 
 class AudioBookListFragment : BaseContainerFragment(){
 
@@ -30,6 +33,8 @@ class AudioBookListFragment : BaseContainerFragment(){
      */
     private val booksViewModel: AudioBookListViewModel by inject()
     @VisibleForTesting var bundleShared: Bundle = Bundle.EMPTY
+
+    private lateinit var callback:OnBackPressedCallback
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
@@ -105,24 +110,55 @@ class AudioBookListFragment : BaseContainerFragment(){
         })
 
         binding.toolbarBookSearch.setOnClickListener{
-            Toast.makeText(activity,"Search in progress",Toast.LENGTH_SHORT).show()
-//            booksViewModel.search(query = "Fires")
+            binding.etToolbarSearch.text.clear()
             booksViewModel.onSearchItemPressed()
         }
 
         binding.ivSearch.setOnClickListener {
-            booksViewModel.onSearchFinished()
-            binding.etToolbarSearch.text.clear()
+            Toast.makeText(activity,"Search in progress",Toast.LENGTH_SHORT).show()
+            val searchText = binding.etToolbarSearch.text.trim().toString()
+
+            if(searchText.length>3){
+                booksViewModel.search(query = searchText)
+            }
         }
 
         booksViewModel.searchBooks.observe(this, Observer {
             it.map {book ->
                 Timber.d("Fetched: ${book.mId}")
             }
+
+            booksViewModel.onSearchFinished()
             bookAdapter.submitList(null)
             bookAdapter.submitList(it)
         })
 
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        callback = requireActivity().onBackPressedDispatcher.addCallback(this){
+            handleBackPressEvent()
+        }
+
+        callback.isEnabled = true
+    }
+
+    private fun handleBackPressEvent(){
+
+        Timber.d("backPress:Back pressed")
+        if (booksViewModel.isSearching) {
+
+            booksViewModel.apply {
+                cancelSearchRequest()
+                onSearchFinished()
+                loadRecentBookList()
+            }
+        }else{
+            callback.isEnabled = false
+            requireActivity().onBackPressed()
+        }
     }
 }
