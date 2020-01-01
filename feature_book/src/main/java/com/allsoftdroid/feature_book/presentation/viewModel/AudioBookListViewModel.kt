@@ -15,6 +15,7 @@ import com.allsoftdroid.feature_book.domain.usecase.GetSearchBookUsecase
 import com.allsoftdroid.feature_book.utils.NetworkState
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -70,14 +71,27 @@ class AudioBookListViewModel(
     val displaySearch:LiveData<Boolean>
     get() = _displaySearchView
 
+    private var _isSearching:Boolean = false
+    val isSearching
+    get() = _isSearching
+
+    var searchJob:Job? = null
+
     init {
-        viewModelScope.launch {
-            Timber.i("Starting to fetch new content from Remote repository")
-            if(audioBooks.value==null){
-                fetchBookList()
+        loadRecentBookList()
+        _displaySearchView.value = false
+    }
+
+    fun loadRecentBookList(){
+
+        if(networkResponse.value?.peekContent() != NetworkState.LOADING){
+            viewModelScope.launch {
+                Timber.i("Starting to fetch new content from Remote repository")
+                if(audioBooks.value==null){
+                    fetchBookList()
+                }
             }
         }
-        _displaySearchView.value = false
     }
 
     fun loadNextData(){
@@ -114,9 +128,11 @@ class AudioBookListViewModel(
 
     fun search(query:String,isNext: Boolean= false){
         if(networkResponse.value?.peekContent() != NetworkState.LOADING){
-            viewModelScope.launch {
-                searchBook(searchQuery = query,isNext = isNext)
-            }
+            cancelSearchRequest()
+        }
+
+        searchJob = viewModelScope.launch {
+            searchBook(searchQuery = query,isNext = isNext)
         }
     }
 
@@ -131,6 +147,8 @@ class AudioBookListViewModel(
                 pageNumber = 1)
         }
 
+        _isSearching = true
+
         _networkResponse.value = Event(NetworkState.LOADING)
 
         useCaseHandler.execute(getSearchBookUsecase,searchBookRequestValues,
@@ -141,14 +159,20 @@ class AudioBookListViewModel(
                     Timber.d("Data received in viewModel onSuccess")
 
                     searchBooks.value = getSearchBookUsecase.getSearchResults().value
+                    _isSearching = false
                 }
 
                 override suspend fun onError(t: Throwable) {
                     _networkResponse.value = Event(NetworkState.ERROR)
                     listChangedEvent.value = Event(Unit)
+                    _isSearching = false
                     Timber.d("Data received in viewModel onError ${t.message}")
                 }
             })
+    }
+
+    fun cancelSearchRequest(){
+        searchJob?.cancel()
     }
 
     fun onBookItemClicked(bookId: String){
