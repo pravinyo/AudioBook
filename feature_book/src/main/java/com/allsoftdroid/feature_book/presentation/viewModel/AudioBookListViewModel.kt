@@ -83,11 +83,11 @@ class AudioBookListViewModel(
     }
 
     fun loadRecentBookList(){
-
         if(networkResponse.value?.peekContent() != NetworkState.LOADING){
             viewModelScope.launch {
                 Timber.i("Starting to fetch new content from Remote repository")
-                if(audioBooks.value==null){
+                if(audioBooks.value==null || _isSearching){
+                    _isSearching = false
                     fetchBookList()
                 }
             }
@@ -127,6 +127,7 @@ class AudioBookListViewModel(
     }
 
     fun search(query:String,isNext: Boolean= false){
+        _isSearching = true
         if(networkResponse.value?.peekContent() != NetworkState.LOADING){
             cancelSearchRequest()
         }
@@ -147,8 +148,6 @@ class AudioBookListViewModel(
                 pageNumber = 1)
         }
 
-        _isSearching = true
-
         _networkResponse.value = Event(NetworkState.LOADING)
 
         useCaseHandler.execute(getSearchBookUsecase,searchBookRequestValues,
@@ -159,13 +158,11 @@ class AudioBookListViewModel(
                     Timber.d("Data received in viewModel onSuccess")
 
                     searchBooks.value = getSearchBookUsecase.getSearchResults().value
-                    _isSearching = false
                 }
 
                 override suspend fun onError(t: Throwable) {
                     _networkResponse.value = Event(NetworkState.ERROR)
                     listChangedEvent.value = Event(Unit)
-                    _isSearching = false
                     Timber.d("Data received in viewModel onError ${t.message}")
                 }
             })
