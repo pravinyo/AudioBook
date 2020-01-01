@@ -65,12 +65,24 @@ fun setImageUrl(imageView: ImageView, item: AudioBookDomainModel?) {
 fun TextView.setBookDescription(item: AudioBookDomainModel?){
     item?.let {
         text = getNormalizedText(
-            "- by ${it.creator},  ${convertDateToTime(
+            "- by ${formattedCreators(it.creator)},  ${convertDateToTime(
                 it.date,
                 this.context
             )}", 70
         )
     }
+}
+
+fun formattedCreators(creators: String?): String {
+
+    return if(creators!=null){
+        if(creators.contains("[")){
+            //multiple creator
+            creators.split(",")[0].substring(1)+",Multiple"
+        }else creators
+
+    }else "N/A"
+
 }
 
 /*
