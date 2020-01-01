@@ -64,6 +64,7 @@ dependencies {
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
 
     implementation(LibraryDependency.LOTTIE)
+    implementation(LibraryDependency.LOGGING_INTERCEPTOR)
 
 
     testImplementation(TestLibraryDependency.MOCKITO_CORE)
