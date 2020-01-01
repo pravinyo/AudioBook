@@ -16,7 +16,7 @@ private object LibraryVersion {
     const val GSON = "2.8.5"
     const val koin_version = "2.0.1"
     const val RETROFIT = "2.6.1"
-    const val LOGGING_INTERCEPTOR = "4.1.0"
+    const val LOGGING_INTERCEPTOR = "4.3.0"
     const val STETHO = "1.5.0"
     const val TIMBER = "4.7.1"
     const val PLAY_CORE = "1.6.1"
