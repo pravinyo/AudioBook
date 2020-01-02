@@ -8,13 +8,10 @@ import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
-import com.allsoftdroid.common.base.network.ArchiveUtils
-import com.allsoftdroid.feature.book_details.data.model.BookDetailsStateModel
+import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
-import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -102,7 +99,7 @@ class BookDetailsViewModel(
         viewModelScope.launch {
             Timber.i("Starting to fetch new content from Remote repository")
             fetchMetadata()
-            fetchTrackList()
+            fetchTrackList(format = TrackFormat.FormatBP128)
         }
     }
 
@@ -132,8 +129,8 @@ class BookDetailsViewModel(
     /**
      * Function which fetch track list for the book
      */
-    private suspend fun fetchTrackList(){
-        val requestValues  = GetTrackListUsecase.RequestValues(bookId = getMetadataUsecase.getBookIdentifier())
+    private suspend fun fetchTrackList(format: TrackFormat){
+        val requestValues  = GetTrackListUsecase.RequestValues(trackFormat = format)
 
         useCaseHandler.execute(
             useCase = getTrackListUsecase,
@@ -147,10 +144,6 @@ class BookDetailsViewModel(
                     }
 
                     Timber.d("Track list fetch success")
-
-//                    if(state.isPlaying){
-//                        onPlayItemClicked(state.trackPlaying)
-//                    }
                 }
 
                 override suspend fun onError(t: Throwable) {
