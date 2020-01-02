@@ -59,8 +59,9 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
 
         bookDetailsViewModel.backArrowPressed.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let {
-                this.findNavController()
-                    .navigate(R.id.action_AudioBookDetailsFragment_to_AudioBookListFragment)
+//                this.findNavController()
+//                    .navigate(R.id.action_AudioBookDetailsFragment_to_AudioBookListFragment)
+                this.activity?.onBackPressed()
             }
         })
 
