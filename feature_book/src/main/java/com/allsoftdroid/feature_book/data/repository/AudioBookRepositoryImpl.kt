@@ -127,7 +127,7 @@ class AudioBookRepositoryImpl(
             Timber.i("Starting network call")
 
             remoteBookService.searchBooks(
-                search = query,
+                search = Utils.Books.buildQuery(query),
                 page = page,
                 rowCount = Utils.Books.DEFAULT_ROW_COUNT
             ).enqueue(object : Callback<String> {
