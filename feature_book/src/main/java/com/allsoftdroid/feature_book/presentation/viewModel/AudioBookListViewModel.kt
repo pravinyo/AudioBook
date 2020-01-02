@@ -78,7 +78,8 @@ class AudioBookListViewModel(
     var searchJob:Job? = null
 
     init {
-        loadRecentBookList()
+        if(audioBooks.value==null) loadRecentBookList()
+
         _displaySearchView.value = false
     }
 
