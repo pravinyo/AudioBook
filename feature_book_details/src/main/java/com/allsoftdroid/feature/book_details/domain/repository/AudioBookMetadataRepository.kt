@@ -1,6 +1,7 @@
 package com.allsoftdroid.feature.book_details.domain.repository
 
 import androidx.lifecycle.LiveData
+import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 
@@ -11,6 +12,6 @@ interface AudioBookMetadataRepository {
     fun getBookId() : String
 
 
-    suspend fun loadTrackListData()
+    suspend fun loadTrackListData(format:TrackFormat)
     fun  getTrackList() : LiveData<List<AudioBookTrackDomainModel>>
 }
