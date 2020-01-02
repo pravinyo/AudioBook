@@ -12,10 +12,7 @@ import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import timber.log.Timber
 
 class BookDetailsViewModel(
@@ -95,11 +92,13 @@ class BookDetailsViewModel(
         _audioBookTracks
     }
 
+    private var job: Job? = null
+
     init {
         viewModelScope.launch {
             Timber.i("Starting to fetch new content from Remote repository")
             fetchMetadata()
-            fetchTrackList(format = TrackFormat.FormatBP128)
+            fetchTrackList(format = TrackFormat.FormatBP64)
         }
     }
 
@@ -126,6 +125,18 @@ class BookDetailsViewModel(
         )
     }
 
+
+    fun loadTrackWithFormat(index:Int){
+        job?.cancel()
+
+        job = viewModelScope.launch {
+            when(index){
+                0 -> fetchTrackList(format = TrackFormat.FormatBP64)
+                1 -> fetchTrackList(format = TrackFormat.FormatBP128)
+                else -> fetchTrackList(format = TrackFormat.FormatVBR)
+            }
+        }
+    }
     /**
      * Function which fetch track list for the book
      */
