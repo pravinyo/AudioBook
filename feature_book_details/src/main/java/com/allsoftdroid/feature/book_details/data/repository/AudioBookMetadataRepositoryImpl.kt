@@ -45,7 +45,7 @@ class AudioBookMetadataRepositoryImpl(
     private val audioBookMetadata : LiveData<AudioBookMetadataDomainModel>
         get() = _audioBookMetadata
 
-    private val trackLoadEvent = MutableLiveData<Event<Any>>()
+    private val trackLoadEvent = MutableLiveData<Event<TrackFormat>>()
 
     private var _audioBookTrackList : LiveData<List<AudioBookTrackDomainModel>>
             = Transformations.switchMap(trackLoadEvent){
@@ -56,8 +56,37 @@ class AudioBookMetadataRepositoryImpl(
         }
     }
 
+    private var _audioBookTrackList2 : LiveData<List<AudioBookTrackDomainModel>>
+            = Transformations.switchMap(trackLoadEvent){event ->
+        event.getContentIfNotHandled()?.let {format ->
+            when(format){
+                is TrackFormat.FormatBP64 -> {
+                    Transformations.map(
+                        metadataDao.getTrackDetails(bookId,formatContains = "64")
+                    ){
+                        it.asTrackDomainModel()
+                    }
+                }
+                is TrackFormat.FormatBP128 -> {
+                    Transformations.map(
+                        metadataDao.getTrackDetails(bookId,formatContains = "128")
+                    ){
+                        it.asTrackDomainModel()
+                    }
+                }
+                else ->{
+                    Transformations.map(
+                        metadataDao.getTrackDetailsVBR(bookId)
+                    ){
+                        it.asTrackDomainModel()
+                    }
+                }
+            }
+        }
+    }
+
     private val audioBookTrackList : LiveData<List<AudioBookTrackDomainModel>>
-    get() = _audioBookTrackList
+    get() = _audioBookTrackList2
 
 
     override fun getBookId() = bookId
@@ -107,9 +136,9 @@ class AudioBookMetadataRepositoryImpl(
 
     override fun getMetadata() = audioBookMetadata
 
-    override suspend fun loadTrackListData() {
-        trackLoadEvent.value = Event(Unit)
-        Timber.d("Metadata loaded check:${response.value}")
+    override suspend fun loadTrackListData(format: TrackFormat) {
+        trackLoadEvent.value = Event(format)
+        Timber.d("Track format :${format}")
     }
 
     override fun getTrackList() = audioBookTrackList
