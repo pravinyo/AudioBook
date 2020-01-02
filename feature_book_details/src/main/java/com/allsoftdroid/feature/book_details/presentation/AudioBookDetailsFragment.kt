@@ -93,6 +93,16 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             }
 
         dataBindingReference = dataBinding
+
+        dataBinding.mstbTrackFormat.apply {
+            setElements(R.array.track_format_array,0)
+
+            setOnValueChangedListener {
+                bookDetailsViewModel.loadTrackWithFormat(it)
+                Toast.makeText(activity,"Loading",Toast.LENGTH_SHORT).show()
+            }
+        }
+
         return dataBinding.root
     }
 
