@@ -3,6 +3,7 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val MULTISTAGE_TOGGLE_BTN = "0.2.2"
     const val LEAKY_CANARY = "2.0"
     const val EXOPLAYER = "2.10.8"
     const val RX_RELAY = "2.1.1"
@@ -102,4 +103,6 @@ object LibraryDependency {
     const val EXOPLAYER = "com.google.android.exoplayer:exoplayer:${LibraryVersion.EXOPLAYER}"
 
     const val LEAKY_CANARY = "com.squareup.leakcanary:leakcanary-android:${LibraryVersion.LEAKY_CANARY}"
+
+    const val MULTISTAGE_TOGGLE_BUTTON = "org.honorato.multistatetogglebutton:multistatetogglebutton:${LibraryVersion.MULTISTAGE_TOGGLE_BTN}"
 }
