@@ -1,9 +1,11 @@
 package com.allsoftdroid.feature_book.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
@@ -73,7 +75,9 @@ class AudioBookListFragment : BaseContainerFragment(){
         //Observe the books list and update the list as soon as we get the update
         booksViewModel.audioBooks.observe(viewLifecycleOwner, Observer {
             it?.let {
-                bookAdapter.submitList(it)
+                if(!booksViewModel.isSearching){
+                    bookAdapter.submitList(it)
+                }
             }
         })
 
@@ -115,8 +119,9 @@ class AudioBookListFragment : BaseContainerFragment(){
         }
 
         binding.ivSearch.setOnClickListener {
-            Toast.makeText(activity,"Search in progress",Toast.LENGTH_SHORT).show()
             val searchText = binding.etToolbarSearch.text.trim().toString()
+            binding.etToolbarSearch.clearFocus()
+            hideKeyboard()
 
             if(searchText.length>3){
                 booksViewModel.search(query = searchText)
@@ -128,12 +133,19 @@ class AudioBookListFragment : BaseContainerFragment(){
                 Timber.d("Fetched: ${book.mId}")
             }
 
-            booksViewModel.onSearchFinished()
             bookAdapter.submitList(null)
             bookAdapter.submitList(it)
         })
 
         return binding.root
+    }
+
+    private fun hideKeyboard() {
+        val view = this.view?.rootView
+        view?.let { v ->
+            val imm = this.context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.hideSoftInputFromWindow(v.windowToken, 0)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
