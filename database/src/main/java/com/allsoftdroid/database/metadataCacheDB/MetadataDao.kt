@@ -51,6 +51,15 @@ interface MetadataDao{
     fun getTrackDetails(metadata_id:String,formatContains:String):LiveData<List<DatabaseTrackEntity>>
 
     /**
+     * get list of  media VBR track files for the given album id . here album id is same as metadata id so we will
+     * use complex sql queries to get VBR files
+     * @param metadata_id unique id given to audio book
+     * @return list of {@link DatabaseTrackEntity} track
+     */
+    @Query("select * from ( select * from  MediaTrack_Table where track_album_id=:metadata_id and format not like '%64%' INTERSECT select * from  MediaTrack_Table where track_album_id=:metadata_id and format not like '%128%') order by trackNumber")
+    fun getTrackDetailsVBR(metadata_id:String):LiveData<List<DatabaseTrackEntity>>
+
+    /**
      * Insert individual book metadata in the database
      * @param metadataEntity entity
      */
