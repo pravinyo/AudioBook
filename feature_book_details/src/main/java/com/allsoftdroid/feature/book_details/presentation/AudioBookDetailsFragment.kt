@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
@@ -59,8 +58,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
 
         bookDetailsViewModel.backArrowPressed.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let {
-//                this.findNavController()
-//                    .navigate(R.id.action_AudioBookDetailsFragment_to_AudioBookListFragment)
                 this.activity?.onBackPressed()
             }
         })
@@ -102,6 +99,16 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
                 Toast.makeText(activity,"Loading",Toast.LENGTH_SHORT).show()
             }
         }
+
+        bookDetailsViewModel.networkResponse.observe(this, Observer {
+            it.getContentIfNotHandled()?.let { networkState ->
+                when(networkState){
+                    NetworkState.LOADING -> {Timber.d("Loading")}
+                    NetworkState.COMPLETED -> {Timber.d("Completed")}
+                    NetworkState.ERROR -> {Toast.makeText(activity,"Connection Error",Toast.LENGTH_SHORT).show()}
+                }
+            }
+        })
 
         return dataBinding.root
     }
