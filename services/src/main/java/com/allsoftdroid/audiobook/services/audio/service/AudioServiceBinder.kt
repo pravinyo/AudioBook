@@ -5,9 +5,9 @@ import android.content.Context
 import android.os.Binder
 import androidx.core.net.toUri
 import com.allsoftdroid.audiobook.services.R
-import com.allsoftdroid.audiobook.services.audio.utils.Variable
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.extension.Variable
 import com.allsoftdroid.common.base.network.ArchiveUtils
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlaybackException
