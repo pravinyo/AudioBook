@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.extension.Variable
 import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.feature.book_details.data.databaseExtension.SaveMetadataInDatabase
@@ -14,6 +15,7 @@ import com.allsoftdroid.feature.book_details.data.network.service.ArchiveMetadat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.AudioBookMetadataRepository
+import com.allsoftdroid.feature.book_details.presentation.NetworkState
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -95,18 +97,19 @@ class AudioBookMetadataRepositoryImpl(
      * track network response for  completion and started
      */
 
-    private var _response = MutableLiveData<String>()
-    val response: LiveData<String>
-        get() = _response
+    private var _networkResponse = Variable(Event(NetworkState.LOADING))
 
     override suspend fun loadMetadata() {
         withContext(Dispatchers.IO){
+            _networkResponse.value = Event(NetworkState.LOADING)
+
             Timber.i("Starting network call")
             Timber.i("Loading for id:$bookId")
+
             metadataDataSource.getMetadata(bookId).enqueue(object : Callback<String> {
                 override fun onFailure(call: Call<String>, t: Throwable) {
-                    Timber.i("Failure occur")
-                    _response.value="NULL"
+                    Timber.i("Failure occur:${t.message}")
+                    _networkResponse.value= Event(NetworkState.ERROR)
                 }
 
                 override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -116,7 +119,7 @@ class AudioBookMetadataRepositoryImpl(
                     result?.let {
 
                         Timber.i("Response file size: ${result.item_size}")
-                        _response.value = result.item_size
+                        _networkResponse.value = Event(NetworkState.COMPLETED)
 
                         Timber.i("Size:${result.metadata.title}")
 
@@ -142,4 +145,6 @@ class AudioBookMetadataRepositoryImpl(
     }
 
     override fun getTrackList() = audioBookTrackList
+
+    override fun networkResponse(): Variable<Event<NetworkState>> = _networkResponse
 }
