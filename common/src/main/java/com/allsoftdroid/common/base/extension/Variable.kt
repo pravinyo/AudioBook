@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.services.audio.utils
+package com.allsoftdroid.common.base.extension
 
 import io.reactivex.subjects.BehaviorSubject
 
