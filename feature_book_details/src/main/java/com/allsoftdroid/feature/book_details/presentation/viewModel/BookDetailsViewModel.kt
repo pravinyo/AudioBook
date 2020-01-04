@@ -12,6 +12,7 @@ import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
+import com.allsoftdroid.feature.book_details.presentation.NetworkState
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -31,8 +32,8 @@ class BookDetailsViewModel(
     private val viewModelScope = CoroutineScope(viewModelJob+ Dispatchers.Main)
 
     //track network response
-    private var _networkResponse = MutableLiveData<Int>()
-    val networkResponse : LiveData<Int>
+    private var _networkResponse = MutableLiveData<Event<NetworkState>>()
+    val networkResponse : LiveData<Event<NetworkState>>
     get() = _networkResponse
 
 
@@ -108,6 +109,7 @@ class BookDetailsViewModel(
     private suspend fun fetchMetadata() {
 
         val requestValues  = GetMetadataUsecase.RequestValues(bookId = getMetadataUsecase.getBookIdentifier())
+        _networkResponse.value = Event(NetworkState.LOADING)
 
         useCaseHandler.execute(
             useCase = getMetadataUsecase,
@@ -115,10 +117,11 @@ class BookDetailsViewModel(
             callback = object : BaseUseCase.UseCaseCallback<GetMetadataUsecase.ResponseValues> {
                 override suspend fun onSuccess(response: GetMetadataUsecase.ResponseValues) {
                     metadataStateChangeEvent.value = response.event
+                    _networkResponse.value = Event(NetworkState.COMPLETED)
                 }
 
                 override suspend fun onError(t: Throwable) {
-                    _networkResponse.value = 0
+                    _networkResponse.value = Event(NetworkState.ERROR)
                     metadataStateChangeEvent.value = Event(Unit)
                 }
             }
@@ -143,6 +146,8 @@ class BookDetailsViewModel(
     private suspend fun fetchTrackList(format: TrackFormat){
         val requestValues  = GetTrackListUsecase.RequestValues(trackFormat = format)
 
+        _networkResponse.value = Event(NetworkState.LOADING)
+
         useCaseHandler.execute(
             useCase = getTrackListUsecase,
             values = requestValues,
@@ -152,13 +157,14 @@ class BookDetailsViewModel(
                     getTrackListUsecase.getTrackListData().observeForever {
                         _audioBookTracks.value = it
                         _newTrackStateEvent.value = response.event
+                        _networkResponse.value = Event(NetworkState.COMPLETED)
                     }
 
                     Timber.d("Track list fetch success")
                 }
 
                 override suspend fun onError(t: Throwable) {
-                    _networkResponse.value = 0
+                    _networkResponse.value = Event(NetworkState.ERROR)
                     _newTrackStateEvent.value = Event(Unit)
                 }
             }
@@ -202,5 +208,6 @@ class BookDetailsViewModel(
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
+        getMetadataUsecase.dispose()
     }
 }
