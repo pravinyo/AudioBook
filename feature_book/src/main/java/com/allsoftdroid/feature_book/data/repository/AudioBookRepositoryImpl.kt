@@ -144,8 +144,6 @@ class AudioBookRepositoryImpl(
                     val result =
                         gson.fromJson(response.body(), GetAudioBooksResponse::class.java)
 
-                    Timber.i("Response got: ${result.response.docs[0].title}")
-
                     result?.response?.docs?.let {list->
                         Timber.i("Size:${result.response.docs.size}")
                         _searchResponse.value = list.map { it.toDomainModel() }
