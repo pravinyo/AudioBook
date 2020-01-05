@@ -27,6 +27,11 @@ fun goneIfNotNull(view: View, it: List<Any>?){
     view.visibility = if(it!=null && it.size>1) View.GONE else View.VISIBLE
 }
 
+@BindingAdapter("goneIfNotSearchError")
+fun goneIfNotSearchError(view: View, error: Boolean){
+    view.visibility = if(!error) View.GONE else View.VISIBLE
+}
+
 /*
 load images using glide library
 If content is not yet available to be displayed show loading animation
