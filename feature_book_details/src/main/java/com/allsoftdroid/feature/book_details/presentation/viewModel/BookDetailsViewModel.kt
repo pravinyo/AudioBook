@@ -157,14 +157,12 @@ class BookDetailsViewModel(
                     getTrackListUsecase.getTrackListData().observeForever {
                         _audioBookTracks.value = it
                         _newTrackStateEvent.value = response.event
-                        _networkResponse.value = Event(NetworkState.COMPLETED)
                     }
 
                     Timber.d("Track list fetch success")
                 }
 
                 override suspend fun onError(t: Throwable) {
-                    _networkResponse.value = Event(NetworkState.ERROR)
                     _newTrackStateEvent.value = Event(Unit)
                 }
             }
