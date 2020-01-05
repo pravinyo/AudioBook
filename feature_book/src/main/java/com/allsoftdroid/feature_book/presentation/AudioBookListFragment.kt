@@ -99,24 +99,19 @@ class AudioBookListFragment : BaseContainerFragment(){
                         Toast.makeText(context,"Loading",Toast.LENGTH_SHORT).show()
                         binding.loadingProgressbar.visibility = View.VISIBLE
                         binding.networkNoConnection.visibility = View.GONE
-                        binding.networkProgress.visibility = View.VISIBLE
                     }
 
                     NetworkState.COMPLETED -> {
                         Toast.makeText(context,"Success",Toast.LENGTH_SHORT).show()
                         binding.loadingProgressbar.visibility = View.GONE
                         binding.networkNoConnection.visibility = View.GONE
-                        binding.networkProgress.visibility = View.GONE
                     }
 
                     NetworkState.ERROR -> {
                         binding.loadingProgressbar.visibility = View.GONE
-                        binding.networkProgress.visibility = View.GONE
 
                         if(booksViewModel.audioBooks.value.isNullOrEmpty()){
                             binding.networkNoConnection.visibility = View.VISIBLE
-                        }else{
-                            //SnackBar for refresh
                         }
 
                         Toast.makeText(context,"Network Error",Toast.LENGTH_SHORT).show()
