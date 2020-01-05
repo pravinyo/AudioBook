@@ -79,10 +79,13 @@ class AudioBookListViewModel(
     private var mSearchQuery:String = ""
     private var searchJob:Job? = null
 
+    private var _searchError = MutableLiveData<Boolean>()
+    val searchError : LiveData<Boolean> = _searchError
+
     init {
         if(audioBooks.value==null) loadRecentBookList()
-
         _displaySearchView.value = false
+        _searchError.value = false
     }
 
     fun loadRecentBookList(){
@@ -132,6 +135,8 @@ class AudioBookListViewModel(
 
     fun search(query:String,isNext: Boolean= false){
         _isSearching = true
+        _searchError.value = false
+
         if(networkResponse.value?.peekContent() != NetworkState.LOADING){
             cancelSearchRequest()
         }
@@ -148,6 +153,7 @@ class AudioBookListViewModel(
                 pageNumber = searchBookRequestValues.pageNumber.plus(1))
         }else{
             mSearchQuery = searchQuery
+            searchBooks.value = emptyList()
 
             GetSearchBookUsecase.RequestValues(
                 query = searchQuery,
@@ -162,6 +168,10 @@ class AudioBookListViewModel(
                     listChangedEvent.value = response.event
                     _networkResponse.value = Event(NetworkState.COMPLETED)
                     Timber.d("Data received in viewModel onSuccess")
+
+                    if (getSearchBookUsecase.getSearchResults().value.isNullOrEmpty()){
+                        _searchError.value = true
+                    }
 
                     if(searchBooks.value.isNullOrEmpty()){
                         searchBooks.value = getSearchBookUsecase.getSearchResults().value
@@ -198,6 +208,7 @@ class AudioBookListViewModel(
 
     fun onSearchFinished(){
         _displaySearchView.value = false
+        _searchError.value = false
     }
 
     fun onBackArrowPressed(){
