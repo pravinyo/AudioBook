@@ -10,6 +10,7 @@ TODO: playing book screen
 TODO: navigation drawer for downloads, listen later and help, licenses and analytics feature.
 TODO: search book feature, pin/readList/listenList feature
 TODO: Add total book hours to be played for each book in details screen
+TODO: network connection error empty view and retry feature
 
 
 //TODO: Optional
