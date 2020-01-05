@@ -76,6 +76,7 @@ class AudioBookListFragment : BaseContainerFragment(){
         booksViewModel.audioBooks.observe(viewLifecycleOwner, Observer {
             it?.let {
                 if(!booksViewModel.isSearching){
+                    binding.networkNoConnection.visibility = View.GONE
                     bookAdapter.submitList(it)
                 }
             }
@@ -111,6 +112,8 @@ class AudioBookListFragment : BaseContainerFragment(){
                         binding.loadingProgressbar.visibility = View.GONE
 
                         if(booksViewModel.audioBooks.value.isNullOrEmpty()){
+                            binding.networkNoConnection.visibility = View.VISIBLE
+                        }else if(booksViewModel.searchBooks.value.isNullOrEmpty()){
                             binding.networkNoConnection.visibility = View.VISIBLE
                         }
 
