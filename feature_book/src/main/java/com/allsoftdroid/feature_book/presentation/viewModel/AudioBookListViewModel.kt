@@ -17,6 +17,7 @@ import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import okhttp3.internal.toImmutableList
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import org.koin.core.qualifier.named
@@ -75,7 +76,8 @@ class AudioBookListViewModel(
     val isSearching
     get() = _isSearching
 
-    var searchJob:Job? = null
+    private var mSearchQuery:String = ""
+    private var searchJob:Job? = null
 
     init {
         if(audioBooks.value==null) loadRecentBookList()
@@ -98,7 +100,8 @@ class AudioBookListViewModel(
     fun loadNextData(){
         if(networkResponse.value?.peekContent() != NetworkState.LOADING){
             viewModelScope.launch {
-                fetchBookList(isNext = true)
+                if(isSearching) searchBook(mSearchQuery,isNext = true)
+                else fetchBookList(isNext = true)
             }
         }
     }
@@ -144,6 +147,8 @@ class AudioBookListViewModel(
                 query = searchQuery,
                 pageNumber = searchBookRequestValues.pageNumber.plus(1))
         }else{
+            mSearchQuery = searchQuery
+
             GetSearchBookUsecase.RequestValues(
                 query = searchQuery,
                 pageNumber = 1)
@@ -158,7 +163,17 @@ class AudioBookListViewModel(
                     _networkResponse.value = Event(NetworkState.COMPLETED)
                     Timber.d("Data received in viewModel onSuccess")
 
-                    searchBooks.value = getSearchBookUsecase.getSearchResults().value
+                    if(searchBooks.value.isNullOrEmpty()){
+                        searchBooks.value = getSearchBookUsecase.getSearchResults().value
+                    }else{
+                        searchBooks.value?.let {prevList ->
+                            getSearchBookUsecase.getSearchResults().value?.let {response ->
+                                val temp = prevList.toMutableList()
+                                temp.addAll(response.asIterable())
+                                searchBooks.value = temp
+                            }
+                        }
+                    }
                 }
 
                 override suspend fun onError(t: Throwable) {
