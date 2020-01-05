@@ -79,6 +79,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             it?.let {
                 Timber.d("list size received is ${it.size}")
                 trackAdapter.submitList(it)
+                dataBinding.networkNoConnection.visibility = View.GONE
             }
         })
 
@@ -103,9 +104,18 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         bookDetailsViewModel.networkResponse.observe(this, Observer {
             it.getContentIfNotHandled()?.let { networkState ->
                 when(networkState){
-                    NetworkState.LOADING -> {Timber.d("Loading")}
-                    NetworkState.COMPLETED -> {Timber.d("Completed")}
-                    NetworkState.ERROR -> {Toast.makeText(activity,"Connection Error",Toast.LENGTH_SHORT).show()}
+                    NetworkState.LOADING -> {
+                        dataBinding.networkNoConnection.visibility = View.GONE
+                        dataBinding.pbContentLoading.visibility  = View.VISIBLE
+                        Timber.d("Loading")}
+                    NetworkState.COMPLETED -> {
+                        dataBinding.networkNoConnection.visibility = View.GONE
+                        dataBinding.pbContentLoading.visibility  = View.GONE
+                        Timber.d("Completed")}
+                    NetworkState.ERROR -> {
+                        dataBinding.networkNoConnection.visibility = View.VISIBLE
+                        dataBinding.pbContentLoading.visibility  = View.GONE
+                        Toast.makeText(activity,"Connection Error",Toast.LENGTH_SHORT).show()}
                 }
             }
         })
