@@ -130,6 +130,16 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
         app:lottie_loop="true"
         app:lottie_autoPlay="true" />
 
+    <include android:id="@+id/search_no_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:goneIfNotSearchError="@{audioBookListViewModel.searchError}"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        layout="@layout/layout_no_results_found"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
