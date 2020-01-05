@@ -7,5 +7,4 @@
     <string name="press_to_clear_search">press to clear search</string>
     <string name="web_search_icon">web search</string>
     <string name="no_results_found">No Results Found! Try rephrasing</string>
-    <string name="no_connection_found">No Internet Connection!</string>
 </resources>
