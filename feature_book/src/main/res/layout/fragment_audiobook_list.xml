@@ -117,7 +117,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
         app:lottie_autoPlay="true" />
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animation_view"
+        android:id="@+id/network_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -139,6 +139,15 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
         layout="@layout/layout_no_results_found"/>
+
+    <include android:id="@+id/network_no_connection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        layout="@layout/layout_no_connection"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
