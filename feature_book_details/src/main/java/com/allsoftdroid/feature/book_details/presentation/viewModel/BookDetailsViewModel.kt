@@ -146,7 +146,7 @@ class BookDetailsViewModel(
     private suspend fun fetchTrackList(format: TrackFormat){
         val requestValues  = GetTrackListUsecase.RequestValues(trackFormat = format)
 
-        _networkResponse.value = Event(NetworkState.LOADING)
+//        _networkResponse.value = Event(NetworkState.LOADING)
 
         useCaseHandler.execute(
             useCase = getTrackListUsecase,
