@@ -78,8 +78,10 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         bookDetailsViewModel.audioBookTracks.observe(viewLifecycleOwner, Observer {
             it?.let {
                 Timber.d("list size received is ${it.size}")
-                trackAdapter.submitList(it)
-                dataBinding.networkNoConnection.visibility = View.GONE
+                if(it.isNotEmpty()){
+                    trackAdapter.submitList(it)
+                    setVisibility(dataBinding.networkNoConnection,set = false)
+                }
             }
         })
 
@@ -105,16 +107,19 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             it.getContentIfNotHandled()?.let { networkState ->
                 when(networkState){
                     NetworkState.LOADING -> {
-                        dataBinding.networkNoConnection.visibility = View.GONE
-                        dataBinding.pbContentLoading.visibility  = View.VISIBLE
+                        setVisibility(dataBinding.pbContentLoading,set = true)
+                        setVisibility(dataBinding.networkNoConnection,set = false)
                         Timber.d("Loading")}
                     NetworkState.COMPLETED -> {
-                        dataBinding.networkNoConnection.visibility = View.GONE
-                        dataBinding.pbContentLoading.visibility  = View.GONE
+                        setVisibility(dataBinding.pbContentLoading,set = false)
+                        setVisibility(dataBinding.networkNoConnection,set = false)
                         Timber.d("Completed")}
                     NetworkState.ERROR -> {
-                        dataBinding.networkNoConnection.visibility = View.VISIBLE
-                        dataBinding.pbContentLoading.visibility  = View.GONE
+                        setVisibility(dataBinding.pbContentLoading,set = false)
+
+                        if(bookDetailsViewModel.audioBookTracks.value.isNullOrEmpty()){
+                            setVisibility(dataBinding.networkNoConnection,set = true)
+                        }
                         Toast.makeText(activity,"Connection Error",Toast.LENGTH_SHORT).show()}
                 }
             }
@@ -174,6 +179,10 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             Timber.d("saving current state event of the track")
 
         }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setVisibility(view:View,set:Boolean){
+         view.visibility = if (set) View.VISIBLE else View.GONE
     }
 
     override fun onDestroy() {
