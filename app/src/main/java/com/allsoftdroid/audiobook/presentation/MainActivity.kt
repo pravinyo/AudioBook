@@ -123,11 +123,8 @@ class MainActivity : BaseActivity() {
             Timber.d("Event is new and is being handled")
 
             connectionListener.value?.let { isConnected ->
-                if(isConnected){
-                    performAction(audioPlayerEvent)
-                }else{
-                    Toast.makeText(this,"Please Connect to Internet",Toast.LENGTH_SHORT).show()
-                }
+                if(!isConnected) Toast.makeText(this,"Please Connect to Internet",Toast.LENGTH_SHORT).show()
+                performAction(audioPlayerEvent)
             }
         }
     }
