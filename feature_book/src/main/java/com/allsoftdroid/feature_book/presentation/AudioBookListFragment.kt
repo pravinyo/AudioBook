@@ -76,7 +76,7 @@ class AudioBookListFragment : BaseContainerFragment(){
         booksViewModel.audioBooks.observe(viewLifecycleOwner, Observer {
             it?.let {
                 if(!booksViewModel.isSearching){
-                    binding.networkNoConnection.visibility = View.GONE
+                    setVisibility(binding.networkNoConnection,set=false)
                     bookAdapter.submitList(it)
                 }
             }
@@ -98,23 +98,23 @@ class AudioBookListFragment : BaseContainerFragment(){
                 when(networkState){
                     NetworkState.LOADING -> {
                         Toast.makeText(context,"Loading",Toast.LENGTH_SHORT).show()
-                        binding.loadingProgressbar.visibility = View.VISIBLE
-                        binding.networkNoConnection.visibility = View.GONE
+                        setVisibility(binding.loadingProgressbar,set = true)
+                        setVisibility(binding.networkNoConnection,set=false)
                     }
 
                     NetworkState.COMPLETED -> {
                         Toast.makeText(context,"Success",Toast.LENGTH_SHORT).show()
-                        binding.loadingProgressbar.visibility = View.GONE
-                        binding.networkNoConnection.visibility = View.GONE
+                        setVisibility(binding.loadingProgressbar,set=false)
+                        setVisibility(binding.networkNoConnection,set=false)
                     }
 
                     NetworkState.ERROR -> {
-                        binding.loadingProgressbar.visibility = View.GONE
+                        setVisibility(binding.loadingProgressbar,set=false)
 
                         if(booksViewModel.audioBooks.value.isNullOrEmpty()){
-                            binding.networkNoConnection.visibility = View.VISIBLE
+                            setVisibility(binding.networkNoConnection,set=true)
                         }else if(booksViewModel.searchBooks.value.isNullOrEmpty()){
-                            binding.networkNoConnection.visibility = View.VISIBLE
+                            setVisibility(binding.networkNoConnection,set=true)
                         }
 
                         Toast.makeText(context,"Network Error",Toast.LENGTH_SHORT).show()
@@ -149,10 +149,17 @@ class AudioBookListFragment : BaseContainerFragment(){
                 bookAdapter.submitList(it)
                 if (prev >0) binding.recyclerViewBooks.scrollToPosition(prev-1)
                 Timber.d("Adapter size: $prev and List size:${it.size} and scroll to : ${prev-1}")
+                setVisibility(binding.networkNoConnection,set=false)
+            }else{
+                setVisibility(binding.networkNoConnection,set=true)
             }
         })
 
         return binding.root
+    }
+
+    private fun setVisibility(view: View, set: Boolean) {
+        view.visibility = if(set) View.VISIBLE else View.GONE
     }
 
     private fun hideKeyboard() {
