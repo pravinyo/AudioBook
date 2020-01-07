@@ -82,13 +82,13 @@ class MainActivity : BaseActivity() {
             }
         })
 
-        mainActivityViewModel.stopServiceEvent.observeForever {
+        mainActivityViewModel.stopServiceEvent.observe(this, Observer {
             it.getContentIfNotHandled()?.let { stopEvent ->
                 if(stopEvent){
                     stopAudioService()
                 }
             }
-        }
+        })
     }
 
     private fun miniPlayerViewState(shouldShow: Boolean) {
@@ -119,11 +119,17 @@ class MainActivity : BaseActivity() {
 
     private fun handleEvent(event: Event<AudioPlayerEvent>) {
 
-        event.getContentIfNotHandled()?.let {
+        event.getContentIfNotHandled()?.let {audioPlayerEvent ->
             Timber.d("Event is new and is being handled")
-            performAction(it)
-        }
 
+            connectionListener.value?.let { isConnected ->
+                if(isConnected){
+                    performAction(audioPlayerEvent)
+                }else{
+                    Toast.makeText(this,"Please Connect to Internet",Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun performAction(event: AudioPlayerEvent){
