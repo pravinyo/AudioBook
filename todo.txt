@@ -30,6 +30,9 @@ TODO: Offline playing option for downloaded audio file.
                                       - else online stream
 TODO: Licenses and Attribution
 
+TODO:  bug
+TODO: notification and player button outoff sync in offline mode
+
 
 //TODO: Optional
 TODO: libri Api (https://librivox.org/api/info)
