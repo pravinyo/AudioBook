@@ -20,7 +20,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.KoinComponent
+import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
 
@@ -31,7 +33,9 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
     /**
     Lazily initialize the view model
      */
-    private val bookDetailsViewModel: BookDetailsViewModel by inject()
+    private val bookDetailsViewModel: BookDetailsViewModel by viewModel{
+        parametersOf(Bundle(), "vm1")
+    }
 
     private val eventStore : AudioPlayerEventStore by inject()
 
