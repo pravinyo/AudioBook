@@ -61,9 +61,6 @@ object FeatureBookModule {
         @VisibleForTesting set
 
     var usecaseModule : Module = module {
-        factory {
-            UseCaseHandler.getInstance()
-        }
 
         factory {
             GetAudioBookListUsecase(audioBookRep = get())
