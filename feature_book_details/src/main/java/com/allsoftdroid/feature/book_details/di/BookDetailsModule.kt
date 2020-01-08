@@ -1,5 +1,6 @@
 package com.allsoftdroid.feature.book_details.di
 
+import androidx.lifecycle.SavedStateHandle
 import com.allsoftdroid.database.common.AudioBookDatabase
 import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
@@ -32,8 +33,9 @@ object BookDetailsModule {
     private val bookDetailsViewModelModule : Module = module {
 
         viewModel {
+            (handle: SavedStateHandle) ->
             BookDetailsViewModel(
-                application = get(),
+                stateHandle = handle,
                 useCaseHandler = get(),
                 getTrackListUsecase = get(),
                 getMetadataUsecase = get()
