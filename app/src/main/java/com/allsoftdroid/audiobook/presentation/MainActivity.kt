@@ -139,7 +139,7 @@ class MainActivity : BaseActivity() {
                 eventStore.publish(Event(TrackDetails(
                     trackTitle = audioManager.getTrackTitle(),
                     bookId = audioManager.getBookId(),
-                    position = state.playingItemIndex)))
+                    position = audioManager.currentPlayingIndex()+1)))
 
                 Timber.d("Next event occurred")
             }
@@ -153,7 +153,7 @@ class MainActivity : BaseActivity() {
                 eventStore.publish(Event(TrackDetails(
                     trackTitle = audioManager.getTrackTitle(),
                     bookId = audioManager.getBookId(),
-                    position = state.playingItemIndex)))
+                    position = audioManager.currentPlayingIndex()+1)))
                 Timber.d("Previous event occur")
             }
 
