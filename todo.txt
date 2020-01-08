@@ -32,7 +32,9 @@ TODO: Licenses and Attribution
 
 TODO:  bug
 TODO: notification and player button outoff sync in offline mode
-
+TODO: Notification is not removing stuck
+TODO: when process dealth occurs notification not clearing and exoplayer gives connection error
+TODO: check what happended to audio player sevice when process death occured.
 
 //TODO: Optional
 TODO: libri Api (https://librivox.org/api/info)
