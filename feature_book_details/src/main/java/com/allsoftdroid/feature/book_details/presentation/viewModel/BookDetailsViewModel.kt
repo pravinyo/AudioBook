@@ -1,10 +1,6 @@
 package com.allsoftdroid.feature.book_details.presentation.viewModel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
@@ -17,10 +13,10 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 
 class BookDetailsViewModel(
-    application : Application,
+    private val stateHandle : SavedStateHandle,
     private val useCaseHandler: UseCaseHandler,
     private val getMetadataUsecase:GetMetadataUsecase,
-    private val getTrackListUsecase : GetTrackListUsecase) : AndroidViewModel(application){
+    private val getTrackListUsecase : GetTrackListUsecase) : ViewModel(){
     /**
      * cancelling this job cancels all the job started by this viewmodel
      */
@@ -38,8 +34,6 @@ class BookDetailsViewModel(
 
 
     private var currentPlayingTrack : Int = /*state.trackPlaying*/ 0
-    //handle item click event
-    private var _playItemClicked = MutableLiveData<Event<Int>>()
 
     // when back button is pressed in the UI
     private var _backArrowPressed = MutableLiveData<Event<Boolean>>()
@@ -73,18 +67,15 @@ class BookDetailsViewModel(
 
                 val list = it
                 if(list.size>=trackNumber){
-                    var currentPlaying = 0
+                    val currentPlaying = if(currentPlayingTrack>1) currentPlayingTrack else 1
 
-                    _playItemClicked.value?.let {event ->
-                        currentPlaying = event.peekContent()
-                    }
+                    Timber.d("Current Track is $currentPlayingTrack")
 
-                    list[currentPlaying].isPlaying = false
+                    list[currentPlaying-1].isPlaying = false
                     list[trackNumber-1].isPlaying = true
 
                     _audioBookTracks.value=list.toList()
 
-                    _playItemClicked.value = Event(trackNumber-1)
                     Timber.d("Track List Updated with trackNo as $trackNumber")
                 }
             }
@@ -99,7 +90,14 @@ class BookDetailsViewModel(
         viewModelScope.launch {
             Timber.i("Starting to fetch new content from Remote repository")
             fetchMetadata()
-            fetchTrackList(format = TrackFormat.FormatBP64)
+
+            if(stateHandle.contains(StateKey.CurrentTrackFormat.key)){
+                loadTrackWithFormat(index = stateHandle.get<Int>(StateKey.CurrentTrackFormat.key)?:0)
+            }else fetchTrackList(format = TrackFormat.FormatBP64)
+        }
+
+        if(stateHandle.contains(StateKey.CurrentPlayingTrack.key)){
+            currentPlayingTrack = stateHandle.get<Int>(StateKey.CurrentPlayingTrack.key)?:0
         }
     }
 
@@ -133,6 +131,7 @@ class BookDetailsViewModel(
         job?.cancel()
 
         job = viewModelScope.launch {
+            stateHandle.set(StateKey.CurrentTrackFormat.key,index)
             when(index){
                 0 -> fetchTrackList(format = TrackFormat.FormatBP64)
                 1 -> fetchTrackList(format = TrackFormat.FormatBP128)
@@ -145,8 +144,6 @@ class BookDetailsViewModel(
      */
     private suspend fun fetchTrackList(format: TrackFormat){
         val requestValues  = GetTrackListUsecase.RequestValues(trackFormat = format)
-
-//        _networkResponse.value = Event(NetworkState.LOADING)
 
         useCaseHandler.execute(
             useCase = getTrackListUsecase,
@@ -175,12 +172,14 @@ class BookDetailsViewModel(
     fun onPlayItemClicked(trackNumber: Int){
         _newTrackStateEvent.value = Event(trackNumber)
         currentPlayingTrack = trackNumber
+        stateHandle.set(StateKey.CurrentPlayingTrack.key,currentPlayingTrack)
     }
 
     fun updateNextTrackPlaying(){
         _audioBookTracks.value?.let {trackList ->
             if(currentPlayingTrack<trackList.size){
                 val newTrack =  (currentPlayingTrack+1)%audioBookTracks.value!!.size
+                Timber.d("New Track is $newTrack")
                 onPlayItemClicked(newTrack)
             }
         }
@@ -190,6 +189,7 @@ class BookDetailsViewModel(
 
         if(currentPlayingTrack>0){
             val newTrack =  if (currentPlayingTrack>1)(currentPlayingTrack-1)%audioBookTracks.value!!.size else 1
+            Timber.d("Previous Track is $newTrack")
             onPlayItemClicked(newTrack)
         }
     }
