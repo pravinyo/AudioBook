@@ -15,7 +15,7 @@ private object LibraryVersion {
     const val ROOM = "2.2.0-rc01"
     const val version_retrofit_coroutines_adapter = "0.9.2"
     const val GSON = "2.8.5"
-    const val koin_version = "2.1.0-alpha-8"
+    const val koin_version = "2.1.0-alpha-3"
     const val RETROFIT = "2.6.1"
     const val LOGGING_INTERCEPTOR = "4.3.0"
     const val STETHO = "1.5.0"
