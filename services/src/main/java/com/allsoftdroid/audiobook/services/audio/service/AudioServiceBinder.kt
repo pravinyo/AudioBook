@@ -43,6 +43,13 @@ class AudioServiceBinder(application: Application) : Binder(){
     //current position
     private var trackPos:Int = 0
 
+    private var _trackTitle = Variable("")
+    val trackTitle : Variable<String>
+        get() = _trackTitle
+
+    val nextTrackEvent = Variable(Event(false))
+    val errorEvent = Variable(Event(false))
+
     /**
      * EXO Code start
      */
@@ -59,6 +66,28 @@ class AudioServiceBinder(application: Application) : Binder(){
             if (exoPlayer?.playbackError != null) {
                 Timber.d("Error detected ")
 
+                exoPlayer?.playbackError?.let {
+                    when(it.type){
+                        ExoPlaybackException.TYPE_SOURCE->{
+                            Timber.d("Source Error detected :${it.message}")
+                        }
+                        ExoPlaybackException.TYPE_REMOTE->{
+                            Timber.d("Remote Error detected :${it.message}")
+                        }
+                        ExoPlaybackException.TYPE_OUT_OF_MEMORY->{
+                            Timber.d("Memory Error detected :${it.message}")
+                        }
+                        ExoPlaybackException.TYPE_RENDERER->{
+                            Timber.d("Renderer Error detected :${it.message}")
+                        }
+                        ExoPlaybackException.TYPE_UNEXPECTED->{
+                            Timber.d("Unexpected Error detected :${it.message}")
+                        }
+                    }
+                }
+
+                errorEvent.value = Event(true)
+                Timber.d("Is playing :${exoPlayer?.isPlaying}")
                 playerPrepared = false
                 return
             }
@@ -92,7 +121,8 @@ class AudioServiceBinder(application: Application) : Binder(){
         }
     }
 
-    private fun shouldPreparePlayerAgain(playWhenReady: Boolean, playbackState: Int) = playWhenReady && (playbackState == STATE_IDLE || playbackState == STATE_ENDED)
+    private fun shouldPreparePlayerAgain(playWhenReady: Boolean, playbackState: Int)
+            = playWhenReady && (playbackState == STATE_IDLE || playbackState == STATE_ENDED)
 
     private fun preparePlayer() {
         Timber.d("Preparing player")
@@ -186,15 +216,15 @@ class AudioServiceBinder(application: Application) : Binder(){
 
     fun resume(){
         exoPlayer?.apply {
-            this.playWhenReady = true
+            playWhenReady = true
+
+            if(playbackError!=null){
+                Timber.d("Retrying ")
+                playerPrepared = true
+                retry()
+            }
         }
     }
-
-    private var _trackTitle = Variable("")
-    val trackTitle : Variable<String>
-        get() = _trackTitle
-
-    val nextTrackEvent = Variable(Event(false))
 
     fun isPlaying() = exoPlayer?.isPlaying?:false
 
