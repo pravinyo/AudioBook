@@ -11,8 +11,6 @@ TODO: navigation drawer for downloads, listen later and help, licenses and analy
 TODO: pin/readList/listenList feature
 TODO: Add total book hours to be played for each book in details screen
 TODO:  Fragment UI state management
-TODO: Android bluetooth device control listener
-TODO:  When no network don't play the Audio in audio book details screen. show visual message for internet issue.Actively listen to net connection and let other knows when to call network operation.
 TODO:  LibriVox API integration
                                       - fetch data via api call
                                       - parse result
@@ -29,12 +27,6 @@ TODO: Offline playing option for downloaded audio file.
                                       - If downloaded play local file
                                       - else online stream
 TODO: Licenses and Attribution
-
-TODO:  bug
-TODO: notification and player button outoff sync in offline mode
-TODO: Notification is not removing stuck
-TODO: when process dealth occurs notification not clearing and exoplayer gives connection error
-TODO: check what happended to audio player sevice when process death occured.
 
 //TODO: Optional
 TODO: libri Api (https://librivox.org/api/info)
