@@ -58,6 +58,19 @@ class AudioService : Service(),KoinComponent{
             }
         })
 
+        disposable.add(audioServiceBinder.errorEvent.observable.subscribe {
+            it.getContentIfNotHandled()?.let {errorEvent ->
+                Timber.d("Received error event from AudioService binder")
+                if(errorEvent){
+                    Timber.d("Sending pause Event")
+                    eventStore.publish(Event(Pause( result = PlayingState(
+                        playingItemIndex = audioServiceBinder.getCurrentAudioPosition(),
+                        action_need = true
+                    ))))
+                }
+            }
+        })
+
         disposable.add(
             eventStore.observe()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -92,7 +105,8 @@ class AudioService : Service(),KoinComponent{
             applicationContext = applicationContext,
             service = this,
             isAudioPlaying = if(isItFirst) true else audioServiceBinder.isPlaying(),
-            currentAudioPos = audioServiceBinder.getCurrentAudioPosition())
+            currentAudioPos = audioServiceBinder.getCurrentAudioPosition()
+        )
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
