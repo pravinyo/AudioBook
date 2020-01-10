@@ -9,6 +9,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
@@ -95,11 +97,12 @@ class NotificationUtils {
             var notifyWhen = 0L
             var showWhen = false
             var usesChronometer = false
-            val ongoing = true
+            var ongoing = false
             if (isAudioPlaying) {
                 notifyWhen = System.currentTimeMillis() - (currentAudioPos)
                 showWhen = true
                 usesChronometer = true
+                ongoing = true
             }
 
             if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.O) {
@@ -136,7 +139,15 @@ class NotificationUtils {
                 .setCustomContentView(collapsedView)
                 .setStyle(NotificationCompat.DecoratedCustomViewStyle())
 
+            if(!isAudioPlaying) notification.setAutoCancel(true)
             service.startForeground(NOTIFY_ID, notification.build())
+
+             //delay foreground state updating a bit, so the notification can be swiped away properly after initial display
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (!isAudioPlaying) {
+                    service.stopForeground(false)
+                }
+            }, 200L)
         }
 
         private fun getContentIntent(applicationContext: Context): PendingIntent {
