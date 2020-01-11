@@ -81,14 +81,6 @@ class MainActivity : BaseActivity() {
                 miniPlayerViewState(shouldShow)
             }
         })
-
-        mainActivityViewModel.stopServiceEvent.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { stopEvent ->
-                if(stopEvent){
-                    stopAudioService()
-                }
-            }
-        })
     }
 
     private fun miniPlayerViewState(shouldShow: Boolean) {
@@ -200,6 +192,7 @@ class MainActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         disposable.dispose()
+        stopAudioService()
     }
 
     private fun stopAudioService(){
