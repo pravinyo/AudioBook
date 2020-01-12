@@ -3,7 +3,12 @@ package com.allsoftdroid.audiobook.presentation
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.marginBottom
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.di.AppModule
@@ -93,6 +98,14 @@ class MainActivity : BaseActivity() {
                     .add(R.id.miniPlayerContainer,MiniPlayerFragment(),MINI_PLAYER_TAG)
                     .commit()
                 findViewById<MovableFrameLayout>(R.id.miniPlayerContainer).visibility = View.VISIBLE
+
+                findViewById<View>(R.id.navHostFragment).apply {
+
+                    val layout = CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT)
+                    layout.bottomMargin = resources.getDimension(R.dimen.mini_player_height).toInt()
+
+                    layoutParams = layout
+                }
             }
 
         }else{
