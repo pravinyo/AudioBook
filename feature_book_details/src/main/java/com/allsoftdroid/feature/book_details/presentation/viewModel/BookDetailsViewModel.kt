@@ -67,7 +67,11 @@ class BookDetailsViewModel(
 
                 val list = it
                 if(list.size>=trackNumber){
-                    val currentPlaying = if(currentPlayingTrack>1) currentPlayingTrack else 1
+                    var currentPlaying = if(currentPlayingTrack>1) currentPlayingTrack else 1
+                    if(currentPlaying>list.size){
+                        currentPlaying = 1
+                        currentPlayingTrack = 1
+                    }
 
                     Timber.d("Current Track is $currentPlayingTrack")
 
@@ -96,8 +100,16 @@ class BookDetailsViewModel(
             }else fetchTrackList(format = TrackFormat.FormatBP64)
         }
 
-        if(stateHandle.contains(StateKey.CurrentPlayingTrack.key)){
-            currentPlayingTrack = stateHandle.get<Int>(StateKey.CurrentPlayingTrack.key)?:0
+        if(stateHandle.contains(StateKey.TrackId.key)){
+
+            if(stateHandle.get<String>(StateKey.TrackId.key) == getMetadataUsecase.getBookIdentifier())
+            {
+                if(stateHandle.contains(StateKey.CurrentPlayingTrack.key)){
+                    currentPlayingTrack = stateHandle.get<Int>(StateKey.CurrentPlayingTrack.key)?:0
+                }
+            }else{
+                stateHandle.set(StateKey.TrackId.key,getMetadataUsecase.getBookIdentifier())
+            }
         }
     }
 
@@ -177,7 +189,7 @@ class BookDetailsViewModel(
 
     fun updateNextTrackPlaying(){
         _audioBookTracks.value?.let {trackList ->
-            if(currentPlayingTrack<trackList.size){
+            if(currentPlayingTrack<=trackList.size){
                 val newTrack =  (currentPlayingTrack+1)%audioBookTracks.value!!.size
                 Timber.d("New Track is $newTrack")
                 onPlayItemClicked(newTrack)
@@ -186,6 +198,10 @@ class BookDetailsViewModel(
     }
 
     fun updatePreviousTrackPlaying(){
+
+        if(currentPlayingTrack>audioBookTracks.value!!.size){
+            currentPlayingTrack = audioBookTracks.value!!.size
+        }
 
         if(currentPlayingTrack>0){
             val newTrack =  if (currentPlayingTrack>1)(currentPlayingTrack-1)%audioBookTracks.value!!.size else 1
