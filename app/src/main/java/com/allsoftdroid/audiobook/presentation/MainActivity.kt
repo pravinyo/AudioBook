@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
-import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Observer
 import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.di.AppModule
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.services.audio.AudioManager
+import com.allsoftdroid.audiobook.utility.MovableFrameLayout
 import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
@@ -92,7 +92,7 @@ class MainActivity : BaseActivity() {
                 supportFragmentManager.beginTransaction()
                     .add(R.id.miniPlayerContainer,MiniPlayerFragment(),MINI_PLAYER_TAG)
                     .commit()
-                findViewById<FragmentContainerView>(R.id.miniPlayerContainer).visibility = View.VISIBLE
+                findViewById<MovableFrameLayout>(R.id.miniPlayerContainer).visibility = View.VISIBLE
             }
 
         }else{
