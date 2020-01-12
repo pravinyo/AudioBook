@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature_mini_player.presentation
+package com.allsoftdroid.audiobook.feature_mini_player.utils
 
 import android.widget.Button
 import android.widget.ImageView
@@ -16,7 +16,11 @@ import timber.log.Timber
 @BindingAdapter("trackTitle")
 fun TextView.setTrackTitle(item: String?){
     item?.let {
-        text = getNormalizedText(item, 30)
+        text =
+            getNormalizedText(
+                item,
+                30
+            )
     }
 }
 
