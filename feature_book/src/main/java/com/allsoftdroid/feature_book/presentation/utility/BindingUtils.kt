@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -24,6 +25,11 @@ Handle visibility of progress bar
 @BindingAdapter("goneIfNotNull")
 fun goneIfNotNull(view: View, it: List<Any>?){
     view.visibility = if(it!=null && it.size>1) View.GONE else View.VISIBLE
+}
+
+@BindingAdapter("goneIfNotSearchError")
+fun goneIfNotSearchError(view: View, error: Boolean){
+    view.visibility = if(!error) View.GONE else View.VISIBLE
 }
 
 /*
@@ -64,12 +70,24 @@ fun setImageUrl(imageView: ImageView, item: AudioBookDomainModel?) {
 fun TextView.setBookDescription(item: AudioBookDomainModel?){
     item?.let {
         text = getNormalizedText(
-            "- by ${it.creator},  ${convertDateToTime(
+            "- by ${formattedCreators(it.creator)},  ${convertDateToTime(
                 it.date,
                 this.context
             )}", 70
         )
     }
+}
+
+fun formattedCreators(creators: String?): String {
+
+    return if(creators!=null){
+        if(creators.contains("[")){
+            //multiple creator
+            creators.split(",")[0].substring(1)+",Multiple"
+        }else creators
+
+    }else "N/A"
+
 }
 
 /*
@@ -135,11 +153,21 @@ private fun getCurrentLocale(context: Context): Locale {
     }
 }
 
-fun ImageView.setFormattedImageForAudioBookList(image : Bitmap,heightLimit:Int,defaultImageId:Int,defaultBackgroundId:Int){
-    if(image.height<250){
-        setImageResource(defaultImageId)
-        setBackgroundResource(defaultBackgroundId)
-    }else {
-        setImageBitmap(image)
+
+@BindingAdapter("toolbarItemVisibility")
+fun setToolbarItemVisibility(view: View, showDisplaySearch: Boolean){
+
+    if(showDisplaySearch){
+        if(view.id==R.id.toolbar_side_1){
+            view.visibility = View.GONE
+        }else if(view.id == R.id.toolbar_side_2){
+            view.visibility = View.VISIBLE
+        }
+    }else{
+        if(view.id==R.id.toolbar_side_2){
+            view.visibility = View.GONE
+        }else if(view.id == R.id.toolbar_side_1){
+            view.visibility = View.VISIBLE
+        }
     }
 }

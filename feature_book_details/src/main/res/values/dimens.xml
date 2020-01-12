@@ -6,4 +6,5 @@
     <dimen name="track_item_margin_top">8dp</dimen>
     <dimen name="track_item_margin_start">8dp</dimen>
     <dimen name="track_item_margin_end">4dp</dimen>
+    <dimen name="margin_bottom">16dp</dimen>
 </resources>

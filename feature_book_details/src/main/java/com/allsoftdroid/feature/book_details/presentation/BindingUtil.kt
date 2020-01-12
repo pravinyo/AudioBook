@@ -50,6 +50,14 @@ fun goneIfNotNull(view: View, it: Any?){
 }
 
 /**
+Handle visibility of inverse of progress bar
+ */
+@BindingAdapter("goneIfNull")
+fun goneIfNull(view: View, it: Any?){
+    view.visibility = if(it==null) View.GONE else View.VISIBLE
+}
+
+/**
 load images using glide library
 If content is not yet available to be displayed show loading animation
 If content is not there show broken image

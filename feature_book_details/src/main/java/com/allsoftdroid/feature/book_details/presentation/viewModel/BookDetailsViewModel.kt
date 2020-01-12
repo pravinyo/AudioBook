@@ -1,31 +1,22 @@
 package com.allsoftdroid.feature.book_details.presentation.viewModel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
-import com.allsoftdroid.common.base.network.ArchiveUtils
-import com.allsoftdroid.feature.book_details.data.model.BookDetailsStateModel
+import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
-import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
-import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import com.allsoftdroid.feature.book_details.presentation.NetworkState
+import kotlinx.coroutines.*
 import timber.log.Timber
 
 class BookDetailsViewModel(
-    application : Application,
+    private val stateHandle : SavedStateHandle,
     private val useCaseHandler: UseCaseHandler,
     private val getMetadataUsecase:GetMetadataUsecase,
-    private val getTrackListUsecase : GetTrackListUsecase) : AndroidViewModel(application){
+    private val getTrackListUsecase : GetTrackListUsecase) : ViewModel(){
     /**
      * cancelling this job cancels all the job started by this viewmodel
      */
@@ -37,14 +28,12 @@ class BookDetailsViewModel(
     private val viewModelScope = CoroutineScope(viewModelJob+ Dispatchers.Main)
 
     //track network response
-    private var _networkResponse = MutableLiveData<Int>()
-    val networkResponse : LiveData<Int>
+    private var _networkResponse = MutableLiveData<Event<NetworkState>>()
+    val networkResponse : LiveData<Event<NetworkState>>
     get() = _networkResponse
 
 
     private var currentPlayingTrack : Int = /*state.trackPlaying*/ 0
-    //handle item click event
-    private var _playItemClicked = MutableLiveData<Event<Int>>()
 
     // when back button is pressed in the UI
     private var _backArrowPressed = MutableLiveData<Event<Boolean>>()
@@ -78,18 +67,19 @@ class BookDetailsViewModel(
 
                 val list = it
                 if(list.size>=trackNumber){
-                    var currentPlaying = 0
-
-                    _playItemClicked.value?.let {event ->
-                        currentPlaying = event.peekContent()
+                    var currentPlaying = if(currentPlayingTrack>1) currentPlayingTrack else 1
+                    if(currentPlaying>list.size){
+                        currentPlaying = 1
+                        currentPlayingTrack = 1
                     }
 
-                    list[currentPlaying].isPlaying = false
+                    Timber.d("Current Track is $currentPlayingTrack")
+
+                    list[currentPlaying-1].isPlaying = false
                     list[trackNumber-1].isPlaying = true
 
                     _audioBookTracks.value=list.toList()
 
-                    _playItemClicked.value = Event(trackNumber-1)
                     Timber.d("Track List Updated with trackNo as $trackNumber")
                 }
             }
@@ -98,11 +88,28 @@ class BookDetailsViewModel(
         _audioBookTracks
     }
 
+    private var job: Job? = null
+
     init {
         viewModelScope.launch {
             Timber.i("Starting to fetch new content from Remote repository")
             fetchMetadata()
-            fetchTrackList()
+
+            if(stateHandle.contains(StateKey.CurrentTrackFormat.key)){
+                loadTrackWithFormat(index = stateHandle.get<Int>(StateKey.CurrentTrackFormat.key)?:0)
+            }else fetchTrackList(format = TrackFormat.FormatBP64)
+        }
+
+        if(stateHandle.contains(StateKey.TrackId.key)){
+
+            if(stateHandle.get<String>(StateKey.TrackId.key) == getMetadataUsecase.getBookIdentifier())
+            {
+                if(stateHandle.contains(StateKey.CurrentPlayingTrack.key)){
+                    currentPlayingTrack = stateHandle.get<Int>(StateKey.CurrentPlayingTrack.key)?:0
+                }
+            }else{
+                stateHandle.set(StateKey.TrackId.key,getMetadataUsecase.getBookIdentifier())
+            }
         }
     }
 
@@ -112,6 +119,7 @@ class BookDetailsViewModel(
     private suspend fun fetchMetadata() {
 
         val requestValues  = GetMetadataUsecase.RequestValues(bookId = getMetadataUsecase.getBookIdentifier())
+        _networkResponse.value = Event(NetworkState.LOADING)
 
         useCaseHandler.execute(
             useCase = getMetadataUsecase,
@@ -119,21 +127,35 @@ class BookDetailsViewModel(
             callback = object : BaseUseCase.UseCaseCallback<GetMetadataUsecase.ResponseValues> {
                 override suspend fun onSuccess(response: GetMetadataUsecase.ResponseValues) {
                     metadataStateChangeEvent.value = response.event
+                    _networkResponse.value = Event(NetworkState.COMPLETED)
                 }
 
                 override suspend fun onError(t: Throwable) {
-                    _networkResponse.value = 0
+                    _networkResponse.value = Event(NetworkState.ERROR)
                     metadataStateChangeEvent.value = Event(Unit)
                 }
             }
         )
     }
 
+
+    fun loadTrackWithFormat(index:Int){
+        job?.cancel()
+
+        job = viewModelScope.launch {
+            stateHandle.set(StateKey.CurrentTrackFormat.key,index)
+            when(index){
+                0 -> fetchTrackList(format = TrackFormat.FormatBP64)
+                1 -> fetchTrackList(format = TrackFormat.FormatBP128)
+                else -> fetchTrackList(format = TrackFormat.FormatVBR)
+            }
+        }
+    }
     /**
      * Function which fetch track list for the book
      */
-    private suspend fun fetchTrackList(){
-        val requestValues  = GetTrackListUsecase.RequestValues(bookId = getMetadataUsecase.getBookIdentifier())
+    private suspend fun fetchTrackList(format: TrackFormat){
+        val requestValues  = GetTrackListUsecase.RequestValues(trackFormat = format)
 
         useCaseHandler.execute(
             useCase = getTrackListUsecase,
@@ -147,14 +169,9 @@ class BookDetailsViewModel(
                     }
 
                     Timber.d("Track list fetch success")
-
-//                    if(state.isPlaying){
-//                        onPlayItemClicked(state.trackPlaying)
-//                    }
                 }
 
                 override suspend fun onError(t: Throwable) {
-                    _networkResponse.value = 0
                     _newTrackStateEvent.value = Event(Unit)
                 }
             }
@@ -167,12 +184,14 @@ class BookDetailsViewModel(
     fun onPlayItemClicked(trackNumber: Int){
         _newTrackStateEvent.value = Event(trackNumber)
         currentPlayingTrack = trackNumber
+        stateHandle.set(StateKey.CurrentPlayingTrack.key,currentPlayingTrack)
     }
 
     fun updateNextTrackPlaying(){
         _audioBookTracks.value?.let {trackList ->
-            if(currentPlayingTrack<trackList.size){
+            if(currentPlayingTrack<=trackList.size){
                 val newTrack =  (currentPlayingTrack+1)%audioBookTracks.value!!.size
+                Timber.d("New Track is $newTrack")
                 onPlayItemClicked(newTrack)
             }
         }
@@ -180,8 +199,13 @@ class BookDetailsViewModel(
 
     fun updatePreviousTrackPlaying(){
 
+        if(currentPlayingTrack>audioBookTracks.value!!.size){
+            currentPlayingTrack = audioBookTracks.value!!.size
+        }
+
         if(currentPlayingTrack>0){
             val newTrack =  if (currentPlayingTrack>1)(currentPlayingTrack-1)%audioBookTracks.value!!.size else 1
+            Timber.d("Previous Track is $newTrack")
             onPlayItemClicked(newTrack)
         }
     }
@@ -198,5 +222,6 @@ class BookDetailsViewModel(
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
+        getMetadataUsecase.dispose()
     }
 }
