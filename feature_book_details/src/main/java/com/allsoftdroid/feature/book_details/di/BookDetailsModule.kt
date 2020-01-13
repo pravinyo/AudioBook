@@ -35,6 +35,7 @@ object BookDetailsModule {
         viewModel {
             (handle: SavedStateHandle) ->
             BookDetailsViewModel(
+                sharedPref = get(),
                 stateHandle = handle,
                 useCaseHandler = get(),
                 getTrackListUsecase = get(),
