@@ -1,9 +1,11 @@
 package com.allsoftdroid.feature.book_details.presentation.viewModel
 
+import android.app.Application
 import androidx.lifecycle.*
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
+import com.allsoftdroid.feature.book_details.data.repository.BookDetailsSharedPreferencesRepositoryImpl
 import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
@@ -13,6 +15,7 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 
 class BookDetailsViewModel(
+    application: Application,
     private val stateHandle : SavedStateHandle,
     private val useCaseHandler: UseCaseHandler,
     private val getMetadataUsecase:GetMetadataUsecase,
@@ -80,6 +83,10 @@ class BookDetailsViewModel(
 
                     _audioBookTracks.value=list.toList()
 
+                    sharedPref.saveTrackPosition(trackNumber)
+                    sharedPref.saveIsPlaying(true)
+                    sharedPref.saveTrackTitle(list[trackNumber-1].title?:"N/A")
+                    sharedPref.saveBookId(bookId = getMetadataUsecase.getBookIdentifier())
                     Timber.d("Track List Updated with trackNo as $trackNumber")
                 }
             }
@@ -90,27 +97,49 @@ class BookDetailsViewModel(
 
     private var job: Job? = null
 
+    private val  sharedPref = BookDetailsSharedPreferencesRepositoryImpl.create(application)
+
     init {
-        viewModelScope.launch {
-            Timber.i("Starting to fetch new content from Remote repository")
-            fetchMetadata()
+        initialLoad()
+        showPrefStat()
+    }
 
-            if(stateHandle.contains(StateKey.CurrentTrackFormat.key)){
-                loadTrackWithFormat(index = stateHandle.get<Int>(StateKey.CurrentTrackFormat.key)?:0)
-            }else fetchTrackList(format = TrackFormat.FormatBP64)
-        }
+    private fun initialLoad(){
+        if(_audioBookTracks.value.isNullOrEmpty()){
+            viewModelScope.launch {
+                Timber.i("Starting to fetch new content from Remote repository")
+                fetchMetadata()
 
-        if(stateHandle.contains(StateKey.TrackId.key)){
-
-            if(stateHandle.get<String>(StateKey.TrackId.key) == getMetadataUsecase.getBookIdentifier())
-            {
-                if(stateHandle.contains(StateKey.CurrentPlayingTrack.key)){
-                    currentPlayingTrack = stateHandle.get<Int>(StateKey.CurrentPlayingTrack.key)?:0
-                }
-            }else{
-                stateHandle.set(StateKey.TrackId.key,getMetadataUsecase.getBookIdentifier())
+                if(stateHandle.contains(StateKey.CurrentTrackFormat.key)){
+                    loadTrackWithFormat(index = sharedPref.trackFormatIndex())
+                }else fetchTrackList(format = TrackFormat.FormatBP64)
             }
         }
+    }
+
+    private fun showPrefStat() {
+        sharedPref.trackTitle().let {
+            if(it.isNotEmpty()){
+                Timber.d("Track title is $it")
+            }else{
+                Timber.d("Track title is empty")
+            }
+        }
+
+        sharedPref.trackPosition().let {
+            if(it>0){
+                Timber.d("Track pos is $it")
+            }else{
+                if(sharedPref.isPlaying()){
+                    Timber.d("Track is playing and pos id  is 0")
+                }else{
+                    Timber.d("Track pos is 0 and not playing")
+                }
+            }
+        }
+
+        Timber.d("Track Book ID is ${sharedPref.bookId()}")
+        Timber.d("Track format index is ${sharedPref.trackFormatIndex()}")
     }
 
     /**
@@ -139,7 +168,7 @@ class BookDetailsViewModel(
     }
 
 
-    fun loadTrackWithFormat(index:Int){
+    fun loadTrackWithFormat(index:Int=0){
         job?.cancel()
 
         job = viewModelScope.launch {
@@ -149,8 +178,18 @@ class BookDetailsViewModel(
                 1 -> fetchTrackList(format = TrackFormat.FormatBP128)
                 else -> fetchTrackList(format = TrackFormat.FormatVBR)
             }
+            sharedPref.saveTrackFormatIndex(index)
         }
     }
+
+    private fun restorePreviousStateIfAny(){
+        if(sharedPref.bookId() == getMetadataUsecase.getBookIdentifier()){
+            Timber.d("Book id is same restoring previous state")
+            currentPlayingTrack = sharedPref.trackPosition()
+            _newTrackStateEvent.value = Event(sharedPref.trackPosition())
+        }
+    }
+
     /**
      * Function which fetch track list for the book
      */
@@ -166,6 +205,7 @@ class BookDetailsViewModel(
                     getTrackListUsecase.getTrackListData().observeForever {
                         _audioBookTracks.value = it
                         _newTrackStateEvent.value = response.event
+                        restorePreviousStateIfAny()
                     }
 
                     Timber.d("Track list fetch success")
