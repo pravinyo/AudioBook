@@ -1,13 +1,12 @@
 package com.allsoftdroid.feature.book_details.presentation.viewModel
 
-import android.app.Application
 import androidx.lifecycle.*
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
-import com.allsoftdroid.feature.book_details.data.repository.BookDetailsSharedPreferencesRepositoryImpl
 import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
+import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
 import com.allsoftdroid.feature.book_details.presentation.NetworkState
@@ -15,7 +14,7 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 
 class BookDetailsViewModel(
-    application: Application,
+    private val sharedPref: BookDetailsSharedPreferenceRepository,
     private val stateHandle : SavedStateHandle,
     private val useCaseHandler: UseCaseHandler,
     private val getMetadataUsecase:GetMetadataUsecase,
@@ -96,8 +95,6 @@ class BookDetailsViewModel(
     }
 
     private var job: Job? = null
-
-    private val  sharedPref = BookDetailsSharedPreferencesRepositoryImpl.create(application)
 
     init {
         initialLoad()
