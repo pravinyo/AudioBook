@@ -1,5 +1,6 @@
 package com.allsoftdroid.feature.book_details.data.repository
 
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
@@ -12,7 +13,7 @@ class BookDetailsSharedPreferencesRepositoryImpl(private val preferences : Share
 
     companion object {
         @JvmStatic
-        fun create(context: Context): BookDetailsSharedPreferencesRepositoryImpl {
+        fun create(context: Application): BookDetailsSharedPreferencesRepositoryImpl {
             val preferences = context.getSharedPreferences("BookDetailsRxPrefs", Context.MODE_PRIVATE)
             return BookDetailsSharedPreferencesRepositoryImpl(preferences)
         }
@@ -31,12 +32,12 @@ class BookDetailsSharedPreferencesRepositoryImpl(private val preferences : Share
 
     override fun trackPosition():Int = preferences.getInt(KEY_NAME_TRACK_PLAYING_NUMBER,0)
 
-    fun saveIsPlaying(isPlaying: Boolean)=
+    override fun saveIsPlaying(isPlaying: Boolean)=
         preferences.editSharedPreferences {
             putBoolean(KEY_NAME_TRACK_IS_PLAYING,isPlaying)
         }
 
-    fun isPlaying():Boolean = preferences.getBoolean(KEY_NAME_TRACK_IS_PLAYING,false)
+    override fun isPlaying():Boolean = preferences.getBoolean(KEY_NAME_TRACK_IS_PLAYING,false)
 
     override fun saveTrackTitle(title: String) =
         preferences.editSharedPreferences {
