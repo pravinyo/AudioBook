@@ -1,7 +1,5 @@
 package com.allsoftdroid.feature.book_details.domain.repository
 
-import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
-
 /**
  * Interface for sharePreference for saving current state of the track Playing
  */
@@ -21,4 +19,7 @@ interface BookDetailsSharedPreferenceRepository {
     fun trackFormatIndex():Int
 
     fun clear()
+
+    fun saveIsPlaying(isPlaying: Boolean)
+    fun isPlaying(): Boolean
 }
