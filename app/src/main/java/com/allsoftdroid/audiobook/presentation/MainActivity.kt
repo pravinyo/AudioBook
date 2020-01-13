@@ -21,6 +21,7 @@ import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.network.ConnectionLiveData
 import com.allsoftdroid.common.base.store.*
+import com.allsoftdroid.feature.book_details.data.repository.BookDetailsSharedPreferencesRepositoryImpl
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -204,6 +205,7 @@ class MainActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        BookDetailsSharedPreferencesRepositoryImpl.create(application).clear()
         disposable.dispose()
         stopAudioService()
     }
