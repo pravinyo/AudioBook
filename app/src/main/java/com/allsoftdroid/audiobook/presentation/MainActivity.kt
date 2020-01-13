@@ -3,12 +3,8 @@ package com.allsoftdroid.audiobook.presentation
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
-import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.marginBottom
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.di.AppModule
@@ -21,7 +17,6 @@ import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.network.ConnectionLiveData
 import com.allsoftdroid.common.base.store.*
-import com.allsoftdroid.feature.book_details.data.repository.BookDetailsSharedPreferencesRepositoryImpl
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -205,8 +200,8 @@ class MainActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        BookDetailsSharedPreferencesRepositoryImpl.create(application).clear()
         disposable.dispose()
+        mainActivityViewModel.clearSharedPref()
         stopAudioService()
     }
 
