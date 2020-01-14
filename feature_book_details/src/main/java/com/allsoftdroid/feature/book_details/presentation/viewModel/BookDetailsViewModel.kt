@@ -96,6 +96,9 @@ class BookDetailsViewModel(
 
     private var job: Job? = null
 
+    val trackFormatIndex:Int
+    get() = sharedPref.trackFormatIndex()
+
     init {
         initialLoad()
         showPrefStat()
@@ -106,10 +109,9 @@ class BookDetailsViewModel(
             viewModelScope.launch {
                 Timber.i("Starting to fetch new content from Remote repository")
                 fetchMetadata()
-
-                if(stateHandle.contains(StateKey.CurrentTrackFormat.key)){
-                    loadTrackWithFormat(index = sharedPref.trackFormatIndex())
-                }else fetchTrackList(format = TrackFormat.FormatBP64)
+                loadTrackWithFormat(index =
+                    if(sharedPref.bookId() == getMetadataUsecase.getBookIdentifier()) sharedPref.trackFormatIndex()  else 0
+                )
             }
         }
     }
@@ -172,8 +174,8 @@ class BookDetailsViewModel(
             stateHandle.set(StateKey.CurrentTrackFormat.key,index)
             when(index){
                 0 -> fetchTrackList(format = TrackFormat.FormatBP64)
-                1 -> fetchTrackList(format = TrackFormat.FormatBP128)
-                else -> fetchTrackList(format = TrackFormat.FormatVBR)
+                1 -> fetchTrackList(format = TrackFormat.FormatVBR)
+                else -> fetchTrackList(format = TrackFormat.FormatBP128)
             }
             sharedPref.saveTrackFormatIndex(index)
         }
