@@ -1,9 +1,13 @@
 package com.allsoftdroid.audiobook.di
 
+import android.content.Context
+import com.allsoftdroid.common.base.network.ConnectionLiveData
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.services.audio.AudioManager
-import com.allsoftdroid.common.base.network.ConnectivityReceiver
 import com.allsoftdroid.common.base.store.AudioPlayerEventBus
+import com.allsoftdroid.common.base.usecase.UseCaseHandler
+import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
+import com.allsoftdroid.feature_book.domain.usecase.GetSearchBookUsecase
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
 import org.koin.core.module.Module
@@ -18,7 +22,8 @@ object AppModule {
             viewModelModule,
             audioManagerModule,
             audioPlayerEventBusModule,
-            connectivityModule
+            connectivityModule,
+            usecaseModule
         ))
     }
 
@@ -42,8 +47,16 @@ object AppModule {
     }
 
     private val connectivityModule : Module = module {
-        single {
-            ConnectivityReceiver()
+        factory {(context: Context) ->
+            ConnectionLiveData(
+                context
+            )
+        }
+    }
+
+    private val usecaseModule : Module = module {
+        factory {
+            UseCaseHandler.getInstance()
         }
     }
 }

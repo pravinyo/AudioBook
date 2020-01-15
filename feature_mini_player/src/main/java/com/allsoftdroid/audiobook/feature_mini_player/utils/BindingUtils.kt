@@ -1,25 +1,48 @@
-package com.allsoftdroid.audiobook.feature_mini_player.presentation
+package com.allsoftdroid.audiobook.feature_mini_player.utils
 
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import androidx.lifecycle.LiveData
 import com.allsoftdroid.audiobook.feature_mini_player.R
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
-import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import timber.log.Timber
+
+
+@BindingAdapter("trackTitle")
+fun TextView.setTrackTitle(item: String?){
+    item?.let {
+        text =
+            getNormalizedText(
+                item,
+                30
+            )
+    }
+}
+
+private fun getNormalizedText(text:String?,limit:Int):String{
+    if(text?.length?:0>limit){
+        return text?.substring(0,limit-3)+"..."
+    }
+
+    return text?:""
+}
 
 @BindingAdapter("controlIconPlayPause")
 fun setPlayPauseIcon(view: Button, shouldPlay: Boolean){
-    if(shouldPlay){
-        view.setBackgroundResource(R.drawable.pause_circle)
 
+    val currentIcon:Int = if(shouldPlay){
+        R.drawable.ic_pause_white_24dp
     }else{
-        view.setBackgroundResource(R.drawable.play_circle_outline)
+        R.drawable.ic_play_arrow_white_24dp
     }
+
+    view.setBackgroundResource(currentIcon)
+    Timber.d("Should it play is $shouldPlay")
 }
 
 @BindingAdapter("bookImage")

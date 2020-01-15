@@ -8,7 +8,7 @@ import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.store.*
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import org.koin.android.ext.android.inject
 import org.koin.core.KoinComponent
 import timber.log.Timber
@@ -32,7 +32,7 @@ class AudioService : Service(),KoinComponent{
 
     private val eventStore : AudioPlayerEventStore by inject()
 
-    private lateinit var disposable:Disposable
+    private var disposable:CompositeDisposable = CompositeDisposable()
 
     override fun onBind(p0: Intent?): IBinder? {
         return audioServiceBinder
@@ -40,13 +40,12 @@ class AudioService : Service(),KoinComponent{
 
     override fun onCreate() {
         super.onCreate()
-        audioServiceBinder.trackTitle.observeForever {
-            it?.let {
-                buildNotification(isItFirst = true)
-            }
-        }
 
-        audioServiceBinder.nextTrackEvent.observeForever {
+        disposable.add(audioServiceBinder.trackTitle.observable.subscribe {
+            if(it.isNotEmpty()) buildNotification(isItFirst = true)
+        })
+
+        disposable.add(audioServiceBinder.nextTrackEvent.observable.subscribe {
             it.getContentIfNotHandled()?.let {nextEvent ->
                 Timber.d("Received next event from AudioService binder")
                 if(nextEvent){
@@ -57,13 +56,28 @@ class AudioService : Service(),KoinComponent{
                     ))))
                 }
             }
-        }
+        })
 
-        disposable  = eventStore.observe()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                handleEvent(it)
+        disposable.add(audioServiceBinder.errorEvent.observable.subscribe {
+            it.getContentIfNotHandled()?.let {errorEvent ->
+                Timber.d("Received error event from AudioService binder")
+                if(errorEvent){
+                    Timber.d("Sending pause Event")
+                    eventStore.publish(Event(Pause( result = PlayingState(
+                        playingItemIndex = audioServiceBinder.getCurrentAudioPosition(),
+                        action_need = true
+                    ))))
+                }
             }
+        })
+
+        disposable.add(
+            eventStore.observe()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    handleEvent(it)
+                }
+        )
     }
 
     private fun handleEvent(event: Event<AudioPlayerEvent>?) {
@@ -87,11 +101,12 @@ class AudioService : Service(),KoinComponent{
         sendNotification(
             trackTitle = audioServiceBinder.getCurrentTrackTitle(),
             bookId = audioServiceBinder.getBookId(),
-            bookName = audioServiceBinder.getBookId(),
+            bookName = audioServiceBinder.getBookName(),
             applicationContext = applicationContext,
             service = this,
             isAudioPlaying = if(isItFirst) true else audioServiceBinder.isPlaying(),
-            currentAudioPos = audioServiceBinder.getCurrentAudioPosition())
+            currentAudioPos = audioServiceBinder.getCurrentAudioPosition()
+        )
     }
 
     override fun onUnbind(intent: Intent?): Boolean {

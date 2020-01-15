@@ -1,21 +1,25 @@
 package com.allsoftdroid.audiobook.presentation
 
-import android.content.IntentFilter
-import android.net.ConnectivityManager
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.fragment.app.FragmentContainerView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.marginBottom
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.di.AppModule
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.services.audio.AudioManager
+import com.allsoftdroid.audiobook.utility.MovableFrameLayout
 import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
-import com.allsoftdroid.common.base.network.ConnectivityReceiver
+import com.allsoftdroid.common.base.network.ConnectionLiveData
 import com.allsoftdroid.common.base.store.*
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -24,10 +28,11 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
 
-class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverListener {
+class MainActivity : BaseActivity() {
 
     override val layoutResId = R.layout.activity_main
 
@@ -36,10 +41,15 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
     }
 
     private val mainActivityViewModel : MainActivityViewModel by viewModel()
+
     private val eventStore : AudioPlayerEventStore by inject()
     private val audioManager : AudioManager by inject()
-    private val connectionListener:ConnectivityReceiver by inject()
+
+    private val connectionListener: ConnectionLiveData by inject{parametersOf(this)}
+
     private lateinit var disposable : Disposable
+
+
 
     private val snackBar by lazy {
         val sb = Snackbar.make(findViewById(R.id.navHostFragment), "You are offline", Snackbar.LENGTH_LONG) //Assume "rootLayout" as the root layout of every activity.
@@ -48,24 +58,9 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         AppModule.injectFeature()
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        audioManager.bindAudioService()
-        registerReceiver(connectionListener, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
-
-        Timber.d("Main Activity  start")
-        mainActivityViewModel.showPlayer.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { shouldShow ->
-
-                Timber.d("Player state event received from view model")
-                miniPlayerViewState(shouldShow)
-            }
-        })
 
         disposable  = eventStore.observe()
             .subscribeOn(Schedulers.computation())
@@ -73,14 +68,24 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
             .subscribe {
                 handleEvent(it)
             }
+    }
 
-        mainActivityViewModel.stopServiceEvent.observeForever {
-            it.getContentIfNotHandled()?.let { stopEvent ->
-                if(stopEvent){
-                    stopAudioService()
-                }
+    override fun onStart() {
+        super.onStart()
+
+        audioManager.bindAudioService()
+
+        connectionListener.observe(this, Observer {isConnected ->
+            showNetworkMessage(isConnected)
+        })
+
+        Timber.d("Main Activity  start")
+        mainActivityViewModel.showPlayer.observe(this, Observer {
+            it.peekContent().let { shouldShow ->
+                Timber.d("Player state event received from view model")
+                miniPlayerViewState(shouldShow)
             }
-        }
+        })
     }
 
     private fun miniPlayerViewState(shouldShow: Boolean) {
@@ -92,7 +97,15 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
                 supportFragmentManager.beginTransaction()
                     .add(R.id.miniPlayerContainer,MiniPlayerFragment(),MINI_PLAYER_TAG)
                     .commit()
-                findViewById<FragmentContainerView>(R.id.miniPlayerContainer).visibility = View.VISIBLE
+                findViewById<MovableFrameLayout>(R.id.miniPlayerContainer).visibility = View.VISIBLE
+
+                findViewById<View>(R.id.navHostFragment).apply {
+
+                    val layout = CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT)
+                    layout.bottomMargin = resources.getDimension(R.dimen.mini_player_height).toInt()
+
+                    layoutParams = layout
+                }
             }
 
         }else{
@@ -111,11 +124,14 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
 
     private fun handleEvent(event: Event<AudioPlayerEvent>) {
 
-        event.getContentIfNotHandled()?.let {
+        event.getContentIfNotHandled()?.let {audioPlayerEvent ->
             Timber.d("Event is new and is being handled")
-            performAction(it)
-        }
 
+            connectionListener.value?.let { isConnected ->
+                if(!isConnected) Toast.makeText(this,"Please Connect to Internet",Toast.LENGTH_SHORT).show()
+                performAction(audioPlayerEvent)
+            }
+        }
     }
 
     private fun performAction(event: AudioPlayerEvent){
@@ -128,7 +144,7 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
                 eventStore.publish(Event(TrackDetails(
                     trackTitle = audioManager.getTrackTitle(),
                     bookId = audioManager.getBookId(),
-                    position = state.playingItemIndex)))
+                    position = audioManager.currentPlayingIndex()+1)))
 
                 Timber.d("Next event occurred")
             }
@@ -142,7 +158,7 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
                 eventStore.publish(Event(TrackDetails(
                     trackTitle = audioManager.getTrackTitle(),
                     bookId = audioManager.getBookId(),
-                    position = state.playingItemIndex)))
+                    position = audioManager.currentPlayingIndex()+1)))
                 Timber.d("Previous event occur")
             }
 
@@ -158,7 +174,7 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
 
             is PlaySelectedTrack -> {
 
-                audioManager.setPlayTrackList(event.trackList,event.bookId)
+                audioManager.setPlayTrackList(event.trackList,event.bookId,event.bookName)
                 audioManager.playTrackAtPosition(event.position)
 
                 eventStore.publish(Event(TrackDetails(
@@ -178,10 +194,6 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
         }
     }
 
-    override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        showNetworkMessage(isConnected)
-    }
-
     private fun showNetworkMessage(isConnected: Boolean) {
         if (!isConnected) {
             snackBar.show()
@@ -190,18 +202,44 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        ConnectivityReceiver.connectivityReceiverListener = this
-    }
-
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         disposable.dispose()
-        unregisterReceiver(connectionListener)
+        stopAudioService()
     }
 
     private fun stopAudioService(){
-        audioManager.unBoundAudioService()
+        try{
+            audioManager.unBoundAudioService()
+        }catch (exception: Exception){
+            Timber.d(exception)
+        }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+
+        event?.let {
+            when(event.keyCode){
+                KeyEvent.KEYCODE_HEADSETHOOK -> {
+                    if(audioManager.isPlayerCreated()){
+                        if(!audioManager.isPlaying()){
+                            Timber.d("Sending new play event")
+                            eventStore.publish(Event(Play(PlayingState(
+                                playingItemIndex = audioManager.currentPlayingIndex(),
+                                action_need = true
+                            ))))
+                        }else{
+                            Timber.d("Sending new pause event")
+                            eventStore.publish(Event(Pause(PlayingState(
+                                playingItemIndex = audioManager.currentPlayingIndex(),
+                                action_need = true
+                            ))))
+                        }
+                    }
+                }
+            }
+        }
+
+        return super.onKeyDown(keyCode, event)
     }
 }

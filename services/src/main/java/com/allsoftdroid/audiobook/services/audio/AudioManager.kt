@@ -75,9 +75,9 @@ class AudioManager private constructor(context: Context):KoinComponent{
         }
     }
 
-    fun setPlayTrackList(playlist: List<AudioPlayListItem>,bookId: String){
+    fun setPlayTrackList(playlist: List<AudioPlayListItem>,bookId: String,bookName:String){
         audioService.setMultipleTracks(playlist)
-        audioService.setBookId(bookId)
+        audioService.setBookDetails(bookId,bookName)
     }
 
     private fun playSelectedTrackFile(currentPos:Int) {
@@ -106,6 +106,12 @@ class AudioManager private constructor(context: Context):KoinComponent{
             Timber.d("Resume pressed")
         }
     }
+
+    fun isPlaying() = audioService.isPlaying()
+
+    fun isPlayerCreated() = audioService.isInitialized()
+
+    fun currentPlayingIndex() = audioService.getCurrentAudioPosition()
 
     fun getTrackTitle() = audioService.getCurrentTrackTitle()
 

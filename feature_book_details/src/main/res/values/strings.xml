@@ -6,4 +6,10 @@
     <string name="previous">prev</string>
     <string name="playpause">pp</string>
     <string name="next">nex</string>
+
+    <string-array name="track_format_array">
+        <item>64Kbps</item>
+        <item>128Kbps</item>
+        <item>VBR</item>
+    </string-array>
 </resources>

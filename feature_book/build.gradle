@@ -51,6 +51,7 @@ dependencies {
 
     implementation(project(path: ModuleDependency.LIBRARY_COMMON))
     implementation(project(path: ModuleDependency.DATABASE))
+    implementation(project(path: ModuleDependency.FEATURE_INSTANT_SEARCH))
 
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -60,10 +61,12 @@ dependencies {
 
     implementation(LibraryDependency.RECYCLER_VIEW)
     implementation(LibraryDependency.CARD_VIEW)
-
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
 
-//    testImplementation(TestLibraryDependency.JUNIT)
+    implementation(LibraryDependency.LOTTIE)
+    implementation(LibraryDependency.LOGGING_INTERCEPTOR)
+
+
     testImplementation(TestLibraryDependency.MOCKITO_CORE)
 
     // AndroidX Test - JVM testing

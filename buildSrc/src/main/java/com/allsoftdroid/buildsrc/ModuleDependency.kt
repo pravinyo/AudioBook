@@ -12,6 +12,7 @@ object ModuleDependency {
     const val FEATURE_BOOK = ":feature_book"
     const val FEATURE_BOOK_DETAILS = ":feature_book_details"
     const val FEATURE_MINI_PLAYER=":feature_mini_player"
+    const val FEATURE_INSTANT_SEARCH=":feature_instant_search"
 
     const val LIBRARY_COMMON = ":common"
 

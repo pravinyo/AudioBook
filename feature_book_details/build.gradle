@@ -51,4 +51,5 @@ dependencies {
     annotationProcessor(LibraryDependency.GLIDE_COMPILER)
 
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
+    implementation(LibraryDependency.MULTISTAGE_TOGGLE_BUTTON)
 }

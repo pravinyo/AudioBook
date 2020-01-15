@@ -9,6 +9,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
@@ -16,7 +18,7 @@ import com.allsoftdroid.audiobook.services.R
 import com.allsoftdroid.audiobook.services.audio.service.AudioService
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.common.base.utils.ImageUtils
-import com.allsoftdroid.audiobook.services.audio.NotificationPlayerEventBroadcastReceiver.Companion as NotificationPlayerEventBroadcastReceiver1
+import com.allsoftdroid.audiobook.services.audio.broadcastReceivers.NotificationPlayerEventBroadcastReceiver.Companion as NotificationPlayerEventBroadcastReceiver1
 
 
 class NotificationUtils {
@@ -31,13 +33,22 @@ class NotificationUtils {
         fun sendNotification(isAudioPlaying:Boolean, currentAudioPos:Int, service: AudioService, applicationContext: Context, trackTitle:String, bookId: String, bookName:String) {
 
             val collapsedView = RemoteViews(applicationContext.packageName, R.layout.notification_mini_player_collapsed)
-            val playPauseIcon = if (!isAudioPlaying) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
+            var playPauseIcon = 0
 
             when (applicationContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
                 Configuration.UI_MODE_NIGHT_NO -> {
-
+                    playPauseIcon = if (!isAudioPlaying) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
+                    collapsedView.setImageViewResource(R.id.image_notification_prev,R.drawable.ic_skip_previous_black_24dp)
+                    collapsedView.setImageViewResource(R.id.image_notification_next,R.drawable.ic_skip_next_black_24dp)
                 } // Night mode is not active, we're using the light theme
+
                 Configuration.UI_MODE_NIGHT_YES -> {
+
+                    playPauseIcon = if (!isAudioPlaying) R.drawable.ic_play_arrow_white_24dp else R.drawable.ic_pause_white_24dp
+
+                    collapsedView.setImageViewResource(R.id.image_notification_prev,R.drawable.ic_skip_previous_white_24dp)
+                    collapsedView.setImageViewResource(R.id.image_notification_next,R.drawable.ic_skip_next_white_24dp)
+
                     collapsedView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.white))
                     collapsedView.setTextColor(R.id.notification_book_name,applicationContext.getColor(R.color.white))
                 } // Night mode is active, we're using dark theme
@@ -49,7 +60,7 @@ class NotificationUtils {
 
             val drawable = CreateImageOverlay
                 .with(applicationContext)
-                .buildOverlay(front = R.drawable.ic_book_play,back = R.drawable.gradiant_background)
+                .buildOverlay(front = R.mipmap.ic_launcher,back = R.drawable.gradiant_background)
 
             val roundImage  = ImageUtils.getCircleBitmap(drawable.toBitmap())
 
@@ -86,11 +97,12 @@ class NotificationUtils {
             var notifyWhen = 0L
             var showWhen = false
             var usesChronometer = false
-            val ongoing = true
+            var ongoing = false
             if (isAudioPlaying) {
                 notifyWhen = System.currentTimeMillis() - (currentAudioPos)
                 showWhen = true
                 usesChronometer = true
+                ongoing = true
             }
 
             if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.O) {
@@ -127,14 +139,15 @@ class NotificationUtils {
                 .setCustomContentView(collapsedView)
                 .setStyle(NotificationCompat.DecoratedCustomViewStyle())
 
+            if(!isAudioPlaying) notification.setAutoCancel(true)
             service.startForeground(NOTIFY_ID, notification.build())
 
-            // delay foreground state updating a bit, so the notification can be swiped away properly after initial display
-//            Handler(Looper.getMainLooper()).postDelayed({
-//                if (!audioServiceBinder.isPlaying()) {
-//                    service.stopForeground(false)
-//                }
-//            }, 200L)
+             //delay foreground state updating a bit, so the notification can be swiped away properly after initial display
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (!isAudioPlaying) {
+                    service.stopForeground(false)
+                }
+            }, 200L)
         }
 
         private fun getContentIntent(applicationContext: Context): PendingIntent {
