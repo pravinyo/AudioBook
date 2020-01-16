@@ -80,4 +80,6 @@ dependencies {
     implementation(TestLibraryDependency.ANDROID_X_CORE)
 
     debugImplementation(LibraryDependency.LEAKY_CANARY)
+
+    implementation(LibraryDependency.SUPPORT_V13)
 }
