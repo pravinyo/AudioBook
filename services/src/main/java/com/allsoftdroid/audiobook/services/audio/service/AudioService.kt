@@ -50,7 +50,7 @@ class AudioService : Service(),KoinComponent{
     private val mNoisyReceiver:BroadcastReceiver = object : BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             context?.let {
-                if(audioServiceBinder.isPlaying()){
+                if(audioServiceBinder.isInitialized() && audioServiceBinder.isPlaying()){
                     Timber.d("Pause Media due to noisy")
                     pauseEvent()
                     Toast.makeText(context,"Pause Media due to noisy",Toast.LENGTH_SHORT).show()
