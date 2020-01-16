@@ -5,8 +5,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 
-class MainActivityViewModel(application : Application) : AndroidViewModel(application){
+class MainActivityViewModel(
+    application : Application,
+    private val sharedPref: BookDetailsSharedPreferenceRepository) : AndroidViewModel(application){
 
     private val _showMiniPlayer = MutableLiveData<Event<Boolean>>()
     val showPlayer :LiveData<Event<Boolean>> = _showMiniPlayer
@@ -21,6 +24,10 @@ class MainActivityViewModel(application : Application) : AndroidViewModel(applic
 
     init {
         _stopService.value = Event(false)
+    }
+
+    fun clearSharedPref(){
+        sharedPref.clear()
     }
 
     override fun onCleared() {
