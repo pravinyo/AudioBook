@@ -99,7 +99,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         dataBindingReference = dataBinding
 
         dataBinding.mstbTrackFormat.apply {
-            setElements(R.array.track_format_array,0)
+            setElements(R.array.track_format_array,bookDetailsViewModel.trackFormatIndex)
 
             setOnValueChangedListener {
                 bookDetailsViewModel.loadTrackWithFormat(it)

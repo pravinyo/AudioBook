@@ -8,8 +8,8 @@
     <string name="next">nex</string>
 
     <string-array name="track_format_array">
-        <item>64Kbps</item>
-        <item>128Kbps</item>
-        <item>VBR</item>
+        <item>Good</item>
+        <item>Avg.</item>
+        <item>High</item>
     </string-array>
 </resources>
