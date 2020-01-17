@@ -1,8 +1,14 @@
 package com.allsoftdroid.audiobook.services.audio.service
 
+import android.app.PendingIntent
 import android.app.Service
-import android.content.Intent
+import android.content.*
+import android.media.AudioManager
 import android.os.IBinder
+import android.support.v4.media.session.MediaSessionCompat
+import android.view.KeyEvent
+import android.widget.Toast
+import androidx.media.session.MediaButtonReceiver
 import com.allsoftdroid.audiobook.services.audio.utils.NotificationUtils.Companion.sendNotification
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
@@ -38,6 +44,70 @@ class AudioService : Service(),KoinComponent{
         return audioServiceBinder
     }
 
+
+    private lateinit var mediaSessionCompat : MediaSessionCompat
+
+    private val mNoisyReceiver:BroadcastReceiver = object : BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            context?.let {
+                if(audioServiceBinder.isInitialized() && audioServiceBinder.isPlaying()){
+                    Timber.d("Pause Media due to noisy")
+                    pauseEvent()
+                    Toast.makeText(context,"Pause Media due to noisy",Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private val mediaSessionCallback:MediaSessionCompat.Callback = object : MediaSessionCompat.Callback(){
+
+        override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
+
+            mediaButtonEvent?.let { intent ->
+                if(intent.action == Intent.ACTION_MEDIA_BUTTON){
+                    intent.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT)?.let {
+                        keyEvent ->
+                        when(keyEvent.action){
+                            KeyEvent.ACTION_DOWN -> {
+                                Timber.d("Button Media Pressed")
+                                if(audioServiceBinder.isInitialized()){
+                                    if(audioServiceBinder.isPlaying())
+                                        pauseEvent()
+                                    else
+                                        playEvent()
+                                }
+
+                                Toast.makeText(applicationContext,"Button Media Pressed",Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                }
+            }
+            return super.onMediaButtonEvent(mediaButtonEvent)
+
+        }
+    }
+
+    private fun initNoisyReceiver(){
+        val filter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+        applicationContext.registerReceiver(mNoisyReceiver,filter)
+    }
+
+    private fun initMediaSession(){
+        val buttonReceiver = ComponentName(applicationContext,MediaButtonReceiver::class.java)
+        mediaSessionCompat = MediaSessionCompat(applicationContext,"TAG",buttonReceiver,null)
+
+        mediaSessionCompat.setCallback(mediaSessionCallback)
+        val flag  = MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
+        mediaSessionCompat.setFlags(flag)
+
+        val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+        mediaButtonIntent.setClass(this,MediaButtonReceiver::class.java)
+
+        val pendingIntent = PendingIntent.getBroadcast(this,0,mediaButtonIntent,0)
+        mediaSessionCompat.setMediaButtonReceiver(pendingIntent)
+    }
+
     override fun onCreate() {
         super.onCreate()
 
@@ -50,10 +120,7 @@ class AudioService : Service(),KoinComponent{
                 Timber.d("Received next event from AudioService binder")
                 if(nextEvent){
                     Timber.d("Sending next Event")
-                    eventStore.publish(Event(Next( result = PlayingState(
-                        playingItemIndex = audioServiceBinder.getCurrentAudioPosition()+1,
-                        action_need = false
-                    ))))
+                    playNextEvent()
                 }
             }
         })
@@ -63,10 +130,7 @@ class AudioService : Service(),KoinComponent{
                 Timber.d("Received error event from AudioService binder")
                 if(errorEvent){
                     Timber.d("Sending pause Event")
-                    eventStore.publish(Event(Pause( result = PlayingState(
-                        playingItemIndex = audioServiceBinder.getCurrentAudioPosition(),
-                        action_need = true
-                    ))))
+                    pauseEvent()
                 }
             }
         })
@@ -78,6 +142,22 @@ class AudioService : Service(),KoinComponent{
                     handleEvent(it)
                 }
         )
+
+        initMediaSession()
+        initNoisyReceiver()
+    }
+
+    private fun playNextEvent() {
+        eventStore.publish(Event(Next( result = PlayingState(
+            playingItemIndex = audioServiceBinder.getCurrentAudioPosition()+1,
+            action_need = false
+        ))))
+    }
+
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        MediaButtonReceiver.handleIntent(mediaSessionCompat,intent)
+        return super.onStartCommand(intent, flags, startId)
     }
 
     private fun handleEvent(event: Event<AudioPlayerEvent>?) {
@@ -94,6 +174,20 @@ class AudioService : Service(),KoinComponent{
                 }
             }
         }
+    }
+
+    private fun pauseEvent(){
+        eventStore.publish(Event(Pause( result = PlayingState(
+            playingItemIndex = audioServiceBinder.getCurrentAudioPosition(),
+            action_need = true
+        ))))
+    }
+
+    private fun playEvent(){
+        eventStore.publish(Event(Play( result = PlayingState(
+            playingItemIndex = audioServiceBinder.getCurrentAudioPosition(),
+            action_need = true
+        ))))
     }
 
 
@@ -117,6 +211,8 @@ class AudioService : Service(),KoinComponent{
     override fun onDestroy() {
         super.onDestroy()
         stopForeground(true)
+        applicationContext.unregisterReceiver(mNoisyReceiver)
+        mediaSessionCompat.release()
         disposable.dispose()
     }
 }
