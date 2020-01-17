@@ -23,6 +23,7 @@ class BookDetailsSharedPreferencesRepositoryImpl(private val preferences : Share
         private const val KEY_NAME_TRACK_IS_PLAYING = "Key_name_is_track_playing"
         private const val KEY_NAME_BOOK_ID="key_name_book_id"
         private const val KEY_NAME_TRACK_FORMAT = "key_name_track_format"
+        private const val KEY_NAME_BOOK_NAME = "key_name_book_name"
     }
 
     override fun saveTrackPosition(pos: Int)=
@@ -53,6 +54,14 @@ class BookDetailsSharedPreferencesRepositoryImpl(private val preferences : Share
     }
 
     override fun bookId(): String = preferences.getString(KEY_NAME_BOOK_ID,"")?:""
+
+    override fun saveBookName(name: String) {
+        preferences.editSharedPreferences {
+            putString(KEY_NAME_BOOK_NAME,name)
+        }
+    }
+
+    override fun bookName(): String = preferences.getString(KEY_NAME_BOOK_NAME,"N/A")?:"N/A"
 
     override fun saveTrackFormatIndex(formatIndex: Int) {
         preferences.editSharedPreferences {
