@@ -1,12 +1,15 @@
 package com.allsoftdroid.audiobook.presentation
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
 import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.di.AppModule
+import com.allsoftdroid.audiobook.domain.model.LastPlayedTrack
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.utility.MovableFrameLayout
@@ -46,6 +49,33 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         AppModule.injectFeature()
 
+        mainActivityViewModel.lastPlayed.observe(this, Observer {event ->
+            event.getContentIfNotHandled()?.let {
+                Timber.d("Last played : ${it.title}")
+
+                val dialog = alertDialog(it)
+                dialog.show()
+            }
+        })
+    }
+
+
+    private fun alertDialog(lastPlayedTrack: LastPlayedTrack):AlertDialog{
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("continue from where you left,")
+        builder.setMessage("Chapter : ${lastPlayedTrack.title}")
+
+        builder.setPositiveButton("Listen") { _, _ ->
+            Toast.makeText(this,"Playing",Toast.LENGTH_SHORT).show()
+            mainActivityViewModel.clearSharedPref()
+        }
+
+        builder.setNegativeButton("Dismiss"){
+            _,_ ->
+            mainActivityViewModel.clearSharedPref()
+        }
+
+        return builder.create()
     }
 
     override fun onStart() {
@@ -156,7 +186,6 @@ class MainActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         stopAudioService()
-        mainActivityViewModel.clearSharedPref()
     }
 
     private fun stopAudioService(){
