@@ -20,9 +20,6 @@ class MainActivityViewModel(application : Application,
     private val _showMiniPlayer = MutableLiveData<Event<Boolean>>()
     val showPlayer :LiveData<Event<Boolean>> = _showMiniPlayer
 
-    private var _stopService = MutableLiveData<Event<Boolean>>()
-    val stopServiceEvent : LiveData<Event<Boolean>> = _stopService
-
     private var disposable : Disposable
 
     private var _playerEvent  = MutableLiveData<Event<AudioPlayerEvent>>()
@@ -33,7 +30,6 @@ class MainActivityViewModel(application : Application,
     }
 
     init {
-        _stopService.value = Event(false)
 
         disposable  = eventStore.observe()
             .subscribeOn(Schedulers.computation())
@@ -70,7 +66,6 @@ class MainActivityViewModel(application : Application,
     }
 
     fun previousTrack(event:Previous){
-//        val state = event.result as PlayingState
 
         audioManager.playPrevious()
 
@@ -102,7 +97,6 @@ class MainActivityViewModel(application : Application,
 
     override fun onCleared() {
         super.onCleared()
-        _stopService.value = Event(true)
         disposable.dispose()
     }
 }
