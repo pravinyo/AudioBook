@@ -45,4 +45,5 @@ dependencies {
     annotationProcessor(LibraryDependency.GLIDE_COMPILER)
 
     implementation(LibraryDependency.EXOPLAYER)
+    implementation(LibraryDependency.SUPPORT_V13)
 }

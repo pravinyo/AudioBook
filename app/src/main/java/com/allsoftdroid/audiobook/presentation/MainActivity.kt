@@ -212,31 +212,4 @@ class MainActivity : BaseActivity() {
             Timber.d(exception)
         }
     }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-
-        event?.let {
-            when(event.keyCode){
-                KeyEvent.KEYCODE_HEADSETHOOK -> {
-                    if(audioManager.isPlayerCreated()){
-                        if(!audioManager.isPlaying()){
-                            Timber.d("Sending new play event")
-                            eventStore.publish(Event(Play(PlayingState(
-                                playingItemIndex = audioManager.currentPlayingIndex(),
-                                action_need = true
-                            ))))
-                        }else{
-                            Timber.d("Sending new pause event")
-                            eventStore.publish(Event(Pause(PlayingState(
-                                playingItemIndex = audioManager.currentPlayingIndex(),
-                                action_need = true
-                            ))))
-                        }
-                    }
-                }
-            }
-        }
-
-        return super.onKeyDown(keyCode, event)
-    }
 }
