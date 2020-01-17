@@ -55,6 +55,8 @@ class MainActivity : BaseActivity() {
                 Timber.d("Last played : ${it.title}")
 
                 val dialog = alertDialog(it)
+                dialog.setCancelable(false)
+                dialog.setCanceledOnTouchOutside(false)
                 dialog.show()
             }
         })
@@ -74,9 +76,15 @@ class MainActivity : BaseActivity() {
                 "title" to lastPlayedTrack.title,
                 "trackNumber" to lastPlayedTrack.position)
 
-            Navigation.findNavController(this,R.id.navHostFragment)
-                .navigate(com.allsoftdroid.feature_book.R.id.action_AudioBookListFragment_to_AudioBookDetailsFragment,bundle)
-            mainActivityViewModel.clearSharedPref()
+            connectionListener.value?.let { connected->
+                if(connected){
+                    Navigation.findNavController(this,R.id.navHostFragment)
+                        .navigate(com.allsoftdroid.feature_book.R.id.action_AudioBookListFragment_to_AudioBookDetailsFragment,bundle)
+                    mainActivityViewModel.clearSharedPref()
+                }else{
+                    Toast.makeText(this,"Please connect to internet",Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         builder.setNegativeButton("Dismiss"){
