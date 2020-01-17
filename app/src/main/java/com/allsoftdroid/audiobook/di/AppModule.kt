@@ -1,13 +1,13 @@
 package com.allsoftdroid.audiobook.di
 
 import android.content.Context
-import com.allsoftdroid.common.base.network.ConnectionLiveData
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.services.audio.AudioManager
+import com.allsoftdroid.common.base.network.ConnectionLiveData
 import com.allsoftdroid.common.base.store.AudioPlayerEventBus
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
-import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
-import com.allsoftdroid.feature_book.domain.usecase.GetSearchBookUsecase
+import com.allsoftdroid.feature.book_details.data.repository.BookDetailsSharedPreferencesRepositoryImpl
+import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
 import org.koin.core.module.Module
@@ -19,6 +19,7 @@ object AppModule {
 
     private val loadFeature by lazy {
         loadKoinModules(listOf(
+            dataModule,
             viewModelModule,
             audioManagerModule,
             audioPlayerEventBusModule,
@@ -29,9 +30,12 @@ object AppModule {
 
     private val viewModelModule: Module = module{
         viewModel {
-            MainActivityViewModel(application = get(),
-                eventStore = get(),
-                audioManager = get())
+            MainActivityViewModel(
+                application = get(),
+                sharedPref = get(),
+                audioManager = get(),
+                eventStore = get()
+            )
         }
     }
 
@@ -59,6 +63,12 @@ object AppModule {
     private val usecaseModule : Module = module {
         factory {
             UseCaseHandler.getInstance()
+        }
+    }
+
+    private val dataModule :Module = module {
+        single<BookDetailsSharedPreferenceRepository> {
+            BookDetailsSharedPreferencesRepositoryImpl.create(context = get())
         }
     }
 }
