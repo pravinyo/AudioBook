@@ -7,8 +7,8 @@ import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsShared
 class GetLastPlayedUsecase : BaseUseCase<GetLastPlayedUsecase.RequestValues, GetLastPlayedUsecase.ResponseValues>() {
 
     override suspend fun executeUseCase(requestValues: RequestValues?) {
-        requestValues?.let { requestValues ->
-            requestValues.sharedPref.let {
+        requestValues?.let { request ->
+            request.sharedPref.let {
                 if(it.bookId().isNotEmpty()){
                     useCaseCallback?.onSuccess(
                         ResponseValues(
@@ -16,7 +16,7 @@ class GetLastPlayedUsecase : BaseUseCase<GetLastPlayedUsecase.RequestValues, Get
                                 title = it.trackTitle(),
                                 position = it.trackPosition(),
                                 bookId = it.bookId(),
-                                formatIndex = it.trackFormatIndex()
+                                bookName = it.bookName()
                             )
                         )
                     )
