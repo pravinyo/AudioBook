@@ -42,12 +42,7 @@ class MainActivity : BaseActivity() {
 
     private val mainActivityViewModel : MainActivityViewModel by viewModel()
 
-    private val eventStore : AudioPlayerEventStore by inject()
-    private val audioManager : AudioManager by inject()
-
     private val connectionListener: ConnectionLiveData by inject{parametersOf(this)}
-
-    private lateinit var disposable : Disposable
 
 
 
@@ -62,18 +57,12 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         AppModule.injectFeature()
 
-        disposable  = eventStore.observe()
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                handleEvent(it)
-            }
     }
 
     override fun onStart() {
         super.onStart()
 
-        audioManager.bindAudioService()
+        mainActivityViewModel.bindAudioService()
 
         connectionListener.observe(this, Observer {isConnected ->
             showNetworkMessage(isConnected)
@@ -84,6 +73,17 @@ class MainActivity : BaseActivity() {
             it.peekContent().let { shouldShow ->
                 Timber.d("Player state event received from view model")
                 miniPlayerViewState(shouldShow)
+            }
+        })
+
+        mainActivityViewModel.playerEvent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {audioPlayerEvent ->
+                Timber.d("Event is new and is being handled")
+
+                connectionListener.value?.let { isConnected ->
+                    if(!isConnected) Toast.makeText(this,"Please Connect to Internet",Toast.LENGTH_SHORT).show()
+                    performAction(audioPlayerEvent)
+                }
             }
         })
     }
@@ -122,70 +122,32 @@ class MainActivity : BaseActivity() {
 
     }
 
-    private fun handleEvent(event: Event<AudioPlayerEvent>) {
-
-        event.getContentIfNotHandled()?.let {audioPlayerEvent ->
-            Timber.d("Event is new and is being handled")
-
-            connectionListener.value?.let { isConnected ->
-                if(!isConnected) Toast.makeText(this,"Please Connect to Internet",Toast.LENGTH_SHORT).show()
-                performAction(audioPlayerEvent)
-            }
-        }
-    }
-
     private fun performAction(event: AudioPlayerEvent){
         when(event){
             is Next -> {
-                val state = event.result as PlayingState
-
-                if(state.action_need) audioManager.playNext()
-
-                eventStore.publish(Event(TrackDetails(
-                    trackTitle = audioManager.getTrackTitle(),
-                    bookId = audioManager.getBookId(),
-                    position = audioManager.currentPlayingIndex()+1)))
-
-                Timber.d("Next event occurred")
+                mainActivityViewModel.nextTrack(event)
             }
 
             is Previous -> {
-
-                val state = event.result as PlayingState
-
-                audioManager.playPrevious()
-
-                eventStore.publish(Event(TrackDetails(
-                    trackTitle = audioManager.getTrackTitle(),
-                    bookId = audioManager.getBookId(),
-                    position = audioManager.currentPlayingIndex()+1)))
-                Timber.d("Previous event occur")
+                mainActivityViewModel.previousTrack(event)
             }
 
             is Play -> {
-                audioManager.resumeTrack()
-                Timber.d("Play/Resume track event")
+                mainActivityViewModel.resumeOrPlayTrack()
             }
 
             is Pause -> {
-                audioManager.pauseTrack()
-                Timber.d("pause event")
+                mainActivityViewModel.pauseTrack()
             }
 
             is PlaySelectedTrack -> {
 
-                audioManager.setPlayTrackList(event.trackList,event.bookId,event.bookName)
-                audioManager.playTrackAtPosition(event.position)
-
-                eventStore.publish(Event(TrackDetails(
-                    trackTitle = audioManager.getTrackTitle(),
-                    bookId = audioManager.getBookId(),
-                    position = event.position)))
-
-                mainActivityViewModel.playerStatus(true)
-
-                Timber.d("Play selected track event")
+                mainActivityViewModel.apply {
+                    playSelectedTrack(event)
+                    playerStatus(true)
+                }
             }
+
             else -> {
                 Timber.d("Unknown event received")
                 Timber.d("Unknown Event has message of type TrackDetails: "+(event is TrackDetails))
@@ -204,13 +166,12 @@ class MainActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        disposable.dispose()
         stopAudioService()
     }
 
     private fun stopAudioService(){
         try{
-            audioManager.unBoundAudioService()
+            mainActivityViewModel.unBoundAudioService()
         }catch (exception: Exception){
             Timber.d(exception)
         }
