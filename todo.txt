@@ -2,15 +2,39 @@ TODO: Write test scripts
 TODO: Static analysis tools
 TODO: Follow TDD Approach
 
+
+Expected
 TODO: Save current playing
 TODO: resume last playing book feature
 TODO: auto resume after call, interruption
-TODO: local download/save book feature
 TODO: playing book screen
+TODO: listen later feature
+TODO:  Download feature
+              - Download chapter wise and book wise
+TODO: local download/save book feature
+TODO: Offline playing option for downloaded audio file.
+                                      - Check whether file is downloaded or not.
+                                      - If downloaded play local file
+                                      - else online stream
 TODO: navigation drawer for downloads, listen later and help, licenses and analytics feature.
-TODO: pin/readList/listenList feature
-TODO: Add total book hours to be played for each book in details screen
-TODO:  Fragment UI state management
+TODO: Licenses and Attribution
+
+
+Optional
+TODO: libri Api (https://librivox.org/api/info)
+TODO: alert to play book based on users daily commute time and activity.[Transition API]
+TODO: Japanese language support, english
+TODO: new book available alert[Service]
+TODO: Analysis feature[hours played, books played, fav book, bookmark book,watch later list][Analytics]
+TODO: save app data online [google drive apps folder and local]
+TODO: Book Library management screen
+                                - If offline direct to here.
+                                - Show list of books downloaded
+                                - Show list of book book marked and show visual sign if it is downloaded to make it concise.
+                                - delete and redownload option
+                                - Take example of Podcast subscribed screen for example.
+                                - Master detail screen is good.
+
 TODO:  LibriVox API integration
                                       - fetch data via api call
                                       - parse result
@@ -18,40 +42,7 @@ TODO:  LibriVox API integration
                                       - save the results in DB for future reference.
                                       - don't call the LibriVox api if data is already present in the database.
                                       - use mediator livedata for RxJava for combining results.
-
-TODO:  Download feature
-              - Download chapter wise and book wise
-
-TODO: Offline playing option for downloaded audio file.
-                                      - Check whether file is downloaded or not.
-                                      - If downloaded play local file
-                                      - else online stream
-TODO: Licenses and Attribution
-
-//TODO: Optional
-TODO: libri Api (https://librivox.org/api/info)
-TODO: alert to play book based on users daily commute time and activity.[Transition API]
-TODO: Japanese language support, english
-TODO: new book available alert[Service]
-TODO: feature to support earphone button control
-TODO: Analysis feature[hours played, books played, fav book, bookmark book,watch later list][Analytics]
-TODO: save app data online [google drive apps folder and local]
-TODO: Book Library management screen
-
-                                - If offline direct to here.
-
-                                - Show list of books downloaded
-
-                                - Show list of book book marked and show visual sign if it is downloaded to make it concise.
-
-                                - delete and redownload option
-
-                                - Take example of Podcast subscribed screen for example.
-
-                                - Master detail screen is good.
-
-
-
+                                      - Add total book hours to be played for each book in details screen
 To generate a dependency graph run below commands
 1. gradlew projectDependencyGraph
 2. open file in \build\reports\dependency-graph from parent folder
