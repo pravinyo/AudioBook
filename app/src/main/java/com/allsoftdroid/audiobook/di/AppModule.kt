@@ -29,7 +29,9 @@ object AppModule {
 
     private val viewModelModule: Module = module{
         viewModel {
-            MainActivityViewModel(get())
+            MainActivityViewModel(application = get(),
+                eventStore = get(),
+                audioManager = get())
         }
     }
 
