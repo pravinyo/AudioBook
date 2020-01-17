@@ -8,12 +8,14 @@ import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.store.*
+import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 class MainActivityViewModel(application : Application,
+                            private val sharedPref: BookDetailsSharedPreferenceRepository,
                             private val eventStore : AudioPlayerEventStore,
                             private val audioManager : AudioManager) : AndroidViewModel(application){
 
@@ -94,6 +96,10 @@ class MainActivityViewModel(application : Application,
         audioManager.unBoundAudioService()
     }
 
+
+    fun clearSharedPref(){
+        sharedPref.clear()
+    }
 
     override fun onCleared() {
         super.onCleared()
