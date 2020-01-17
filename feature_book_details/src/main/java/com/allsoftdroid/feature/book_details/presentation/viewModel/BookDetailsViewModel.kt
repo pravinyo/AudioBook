@@ -86,6 +86,7 @@ class BookDetailsViewModel(
                     sharedPref.saveIsPlaying(true)
                     sharedPref.saveTrackTitle(list[trackNumber-1].title?:"N/A")
                     sharedPref.saveBookId(bookId = getMetadataUsecase.getBookIdentifier())
+                    sharedPref.saveBookName(audioBookMetadata.value?.title?:"")
                     Timber.d("Track List Updated with trackNo as $trackNumber")
                 }
             }
