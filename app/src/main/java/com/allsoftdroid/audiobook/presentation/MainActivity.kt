@@ -1,12 +1,13 @@
 package com.allsoftdroid.audiobook.presentation
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.di.AppModule
 import com.allsoftdroid.audiobook.domain.model.LastPlayedTrack
@@ -62,11 +63,19 @@ class MainActivity : BaseActivity() {
 
     private fun alertDialog(lastPlayedTrack: LastPlayedTrack):AlertDialog{
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("continue from where you left,")
+        builder.setTitle("continue ${lastPlayedTrack.bookName} from where you left,")
         builder.setMessage("Chapter : ${lastPlayedTrack.title}")
 
         builder.setPositiveButton("Listen") { _, _ ->
             Toast.makeText(this,"Playing",Toast.LENGTH_SHORT).show()
+            //Navigate to display page
+            val bundle = bundleOf(
+                "bookId" to lastPlayedTrack.bookId,
+                "title" to lastPlayedTrack.title,
+                "trackNumber" to lastPlayedTrack.position)
+
+            Navigation.findNavController(this,R.id.navHostFragment)
+                .navigate(com.allsoftdroid.feature_book.R.id.action_AudioBookListFragment_to_AudioBookDetailsFragment,bundle)
             mainActivityViewModel.clearSharedPref()
         }
 
