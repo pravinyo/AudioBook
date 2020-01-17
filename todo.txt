@@ -4,8 +4,6 @@ TODO: Follow TDD Approach
 
 
 Expected
-TODO: Save current playing
-TODO: resume last playing book feature
 TODO: auto resume after call, interruption
 TODO: playing book screen
 TODO: listen later feature
@@ -28,10 +26,10 @@ TODO: new book available alert[Service]
 TODO: Analysis feature[hours played, books played, fav book, bookmark book,watch later list][Analytics]
 TODO: save app data online [google drive apps folder and local]
 TODO: Book Library management screen
-                                - If offline direct to here.
+                                - If offline direct navigate to here.
                                 - Show list of books downloaded
                                 - Show list of book book marked and show visual sign if it is downloaded to make it concise.
-                                - delete and redownload option
+                                - delete and re-download option
                                 - Take example of Podcast subscribed screen for example.
                                 - Master detail screen is good.
 
