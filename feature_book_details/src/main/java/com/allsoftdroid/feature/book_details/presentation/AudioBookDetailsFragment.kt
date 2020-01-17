@@ -30,6 +30,9 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
 
 
     private lateinit var bookId : String
+    private lateinit var bookTitle :String
+    private var bookTrackNumber:Int = 0
+
     /**
     Lazily initialize the view model
      */
@@ -53,6 +56,8 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         val dataBinding : FragmentAudiobookDetailsBinding = inflateLayout(inflater,R.layout.fragment_audiobook_details,container)
 
         bookId = arguments?.getString("bookId")?:""
+        bookTitle = arguments?.getString("title")?:""
+        bookTrackNumber = arguments?.getInt("trackNumber")?:0
 
         getKoin().setProperty(BookDetailsModule.PROPERTY_BOOK_ID,bookId)
         BookDetailsModule.injectFeature()
@@ -85,6 +90,12 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
                 if(it.isNotEmpty()){
                     trackAdapter.submitList(it)
                     setVisibility(dataBinding.networkNoConnection,set = false)
+
+                    if(bookTrackNumber>0){
+                        playSelectedTrackFile(bookTrackNumber,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
+                        dataBinding.tvToolbarTitle.text = bookTitle
+                        bookTrackNumber=0
+                    }
                 }
             }
         })
