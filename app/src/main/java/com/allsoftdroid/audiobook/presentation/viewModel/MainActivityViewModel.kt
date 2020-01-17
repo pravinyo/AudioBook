@@ -4,14 +4,20 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.allsoftdroid.audiobook.domain.model.LastPlayedTrack
+import com.allsoftdroid.audiobook.domain.usecase.GetLastPlayedUsecase
 import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.store.*
+import com.allsoftdroid.common.base.usecase.BaseUseCase
+import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class MainActivityViewModel(application : Application,
@@ -27,6 +33,9 @@ class MainActivityViewModel(application : Application,
     private var _playerEvent  = MutableLiveData<Event<AudioPlayerEvent>>()
     val playerEvent : LiveData<Event<AudioPlayerEvent>> = _playerEvent
 
+    private var _lastPlayed = MutableLiveData<Event<LastPlayedTrack>>()
+    val lastPlayed :LiveData<Event<LastPlayedTrack>> = _lastPlayed
+
     fun playerStatus( showPlayer : Boolean){
         _showMiniPlayer.value = Event(showPlayer)
     }
@@ -39,6 +48,8 @@ class MainActivityViewModel(application : Application,
             .subscribe {
                 _playerEvent.value = it
             }
+
+        checkLastPlayed()
     }
 
     fun playSelectedTrack(event: PlaySelectedTrack){
@@ -99,10 +110,28 @@ class MainActivityViewModel(application : Application,
 
     fun clearSharedPref(){
         sharedPref.clear()
+        Timber.d("Cleared Shared Pref")
     }
 
     override fun onCleared() {
         super.onCleared()
         disposable.dispose()
+    }
+
+    private fun checkLastPlayed(){
+        val handler = UseCaseHandler.getInstance()
+        val request = GetLastPlayedUsecase.RequestValues(sharedPref = sharedPref)
+
+        viewModelScope.launch {
+            handler.execute(GetLastPlayedUsecase(),request,object : BaseUseCase.UseCaseCallback<GetLastPlayedUsecase.ResponseValues>{
+                override suspend fun onSuccess(response: GetLastPlayedUsecase.ResponseValues) {
+                    _lastPlayed.value = Event(response.lastPlayedTrack)
+                }
+
+                override suspend fun onError(t: Throwable) {
+
+                }
+            })
+        }
     }
 }
