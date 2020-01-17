@@ -75,7 +75,7 @@ class BookDetailsViewModel(
                         currentPlayingTrack = 1
                     }
 
-                    Timber.d("Current Track is $currentPlayingTrack")
+                    Timber.d("Current Track is $currentPlaying")
 
                     list[currentPlaying-1].isPlaying = false
                     list[trackNumber-1].isPlaying = true
@@ -230,7 +230,10 @@ class BookDetailsViewModel(
     fun updateNextTrackPlaying(){
         _audioBookTracks.value?.let {trackList ->
             if(currentPlayingTrack<=trackList.size){
-                val newTrack =  (currentPlayingTrack+1)%audioBookTracks.value!!.size
+                var newTrack =  (currentPlayingTrack+1)%audioBookTracks.value!!.size
+
+                if(newTrack==0) newTrack = audioBookTracks.value!!.size
+
                 Timber.d("New Track is $newTrack")
                 onPlayItemClicked(newTrack)
             }
