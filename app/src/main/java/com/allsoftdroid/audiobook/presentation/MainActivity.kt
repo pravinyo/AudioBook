@@ -156,6 +156,7 @@ class MainActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         stopAudioService()
+        mainActivityViewModel.clearSharedPref()
     }
 
     private fun stopAudioService(){
