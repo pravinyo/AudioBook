@@ -15,6 +15,9 @@ interface BookDetailsSharedPreferenceRepository {
     fun saveBookId(bookId:String)
     fun bookId():String
 
+    fun saveBookName(name:String)
+    fun bookName():String
+
     fun saveTrackFormatIndex(formatIndex:Int)
     fun trackFormatIndex():Int
 
