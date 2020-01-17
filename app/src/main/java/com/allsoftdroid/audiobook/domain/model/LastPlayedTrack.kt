@@ -4,5 +4,5 @@ data class LastPlayedTrack(
     val title : String,
     val position:Int,
     val bookId:String,
-    val formatIndex:Int
+    val bookName:String
 )
