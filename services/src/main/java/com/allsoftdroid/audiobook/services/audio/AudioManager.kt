@@ -71,6 +71,7 @@ class AudioManager private constructor(context: Context):KoinComponent{
         if (_currentTrack != trackNumber){
 
             _currentTrack = trackNumber?:1
+            Timber.d("Manager: Play track at position :$trackNumber")
             playSelectedTrackFile(_currentTrack.minus(1))
         }
     }
@@ -104,6 +105,8 @@ class AudioManager private constructor(context: Context):KoinComponent{
         if (!audioService.isPlaying()){
             audioService.resume()
             Timber.d("Resume pressed")
+        }else{
+            Timber.d("Resume pressed but track is already playing")
         }
     }
 
