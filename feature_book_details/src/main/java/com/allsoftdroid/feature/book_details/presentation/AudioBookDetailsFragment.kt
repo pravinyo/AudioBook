@@ -74,7 +74,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         val trackAdapter = AudioBookTrackAdapter(TrackItemClickedListener{ trackNumber, _, _ ->
             trackNumber?.let {
                 playSelectedTrackFile(it,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
-                Timber.d("State change event sent")
+                Timber.d("State change event sent: new pos:$it")
             }
         })
 
