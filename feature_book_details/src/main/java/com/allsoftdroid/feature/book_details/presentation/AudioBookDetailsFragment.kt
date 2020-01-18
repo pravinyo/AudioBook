@@ -75,7 +75,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             trackNumber?.let {
                 playSelectedTrackFile(it,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
                 Timber.d("State change event sent: new pos:$it")
-            }
+            }?:Timber.d("State change event sent: new pos:$trackNumber")
         })
 
         dataBinding.recyclerView.adapter = trackAdapter
@@ -92,6 +92,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
                     setVisibility(dataBinding.networkNoConnection,set = false)
 
                     if(bookTrackNumber>0){
+                        Timber.d("Book Track number is $bookTrackNumber")
                         playSelectedTrackFile(bookTrackNumber,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
                         dataBinding.tvToolbarTitle.text = bookTitle
                         bookTrackNumber=0
@@ -191,7 +192,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         bookDetailsViewModel.audioBookTracks.value?.let {
             Timber.d("Sending new event for play selected track by the user")
             eventStore.publish(Event(PlaySelectedTrack(trackList = it,bookId = bookId,position = currentPos,bookName = bookName)))
-            Timber.d("saving current state event of the track")
 
         }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
     }
