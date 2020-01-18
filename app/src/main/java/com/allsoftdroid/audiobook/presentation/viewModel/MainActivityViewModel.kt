@@ -62,7 +62,7 @@ class MainActivityViewModel(application : Application,
                 bookId = audioManager.getBookId(),
                 position = event.position)
         ))
-        Timber.d("Play selected track event")
+        Timber.d("Play selected track event:track item position:${event.position} and bookid:${event.bookId} and name:${event.bookName}")
     }
 
     fun nextTrack(event:Next){
