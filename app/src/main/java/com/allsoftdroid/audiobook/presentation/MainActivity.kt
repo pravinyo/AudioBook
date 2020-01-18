@@ -112,16 +112,16 @@ class MainActivity : BaseActivity() {
             }
         })
 
-        mainActivityViewModel.playerEvent.observe(this, Observer {
+        mainActivityViewModel.playerEvent.observeForever {
             it.getContentIfNotHandled()?.let {audioPlayerEvent ->
-                Timber.d("Event is new and is being handled")
-
                 connectionListener.value?.let { isConnected ->
+                    Timber.d("Event is new and is being handled")
                     if(!isConnected) Toast.makeText(this,"Please Connect to Internet",Toast.LENGTH_SHORT).show()
                     performAction(audioPlayerEvent)
                 }
             }
-        })
+        }
+
     }
 
     private fun miniPlayerViewState(shouldShow: Boolean) {
