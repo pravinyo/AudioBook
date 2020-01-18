@@ -129,6 +129,6 @@ class MiniPlayerFragment : BaseContainerFragment() {
         miniPlayerViewModel.setTrackTitle(title)
         miniPlayerViewModel.setBookId(bookId)
 
-        Timber.d("State change event sent")
+        Timber.d("State change event sent: title : $title and book id:$bookId")
     }
 }
