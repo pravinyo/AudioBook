@@ -54,7 +54,7 @@ class MainActivityViewModel(application : Application,
 
     fun playSelectedTrack(event: PlaySelectedTrack){
         audioManager.setPlayTrackList(event.trackList,event.bookId,event.bookName)
-        audioManager.playTrackAtPosition(event.position)
+        audioManager.playTrackAtPosition(trackNumber = event.position,bookId = event.bookId)
 
         eventStore.publish(Event(
             TrackDetails(
