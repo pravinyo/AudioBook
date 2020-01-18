@@ -19,6 +19,7 @@ class AudioManager private constructor(context: Context):KoinComponent{
 
     var audioServiceBinder : AudioServiceBinder? = null
     private var _currentTrack = 0
+    private var mBookId:String =""
     private val appContext : Context = context
 
     // This service connection object is the bridge between activity and background service.
@@ -67,12 +68,14 @@ class AudioManager private constructor(context: Context):KoinComponent{
         }
     }
 
-    fun playTrackAtPosition(trackNumber : Int?){
-        if (_currentTrack != trackNumber){
+    fun playTrackAtPosition(trackNumber : Int?,bookId: String){
+        if (_currentTrack != trackNumber || mBookId != bookId){
 
             _currentTrack = trackNumber?:1
             Timber.d("Manager: Play track at position :$trackNumber")
             playSelectedTrackFile(_currentTrack.minus(1))
+        }else{
+            Timber.d("Manager: Ignored Play track at position :$trackNumber")
         }
     }
 
