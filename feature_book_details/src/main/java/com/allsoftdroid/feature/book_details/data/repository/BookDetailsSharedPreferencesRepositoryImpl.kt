@@ -31,7 +31,7 @@ class BookDetailsSharedPreferencesRepositoryImpl(private val preferences : Share
             putInt(KEY_NAME_TRACK_PLAYING_NUMBER,pos)
             }
 
-    override fun trackPosition():Int = preferences.getInt(KEY_NAME_TRACK_PLAYING_NUMBER,0)
+    override fun trackPosition():Int = preferences.getInt(KEY_NAME_TRACK_PLAYING_NUMBER,1)
 
     override fun saveIsPlaying(isPlaying: Boolean)=
         preferences.editSharedPreferences {
