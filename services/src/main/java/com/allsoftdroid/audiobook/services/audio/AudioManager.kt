@@ -70,7 +70,7 @@ class AudioManager private constructor(context: Context):KoinComponent{
 
     fun playTrackAtPosition(trackNumber : Int?,bookId: String){
         if (_currentTrack != trackNumber || mBookId != bookId){
-
+            mBookId = bookId
             _currentTrack = trackNumber?:1
             Timber.d("Manager: Play track at position :$trackNumber")
             playSelectedTrackFile(_currentTrack.minus(1))
