@@ -107,12 +107,6 @@ class MainActivityViewModel(application : Application,
         audioManager.unBoundAudioService()
     }
 
-
-    fun clearSharedPref(){
-        sharedPref.clear()
-        Timber.d("Cleared Shared Pref")
-    }
-
     fun clearSharedPref(){
         sharedPref.clear()
     }
