@@ -35,6 +35,7 @@ object AppModule {
                 sharedPref = get(),
                 audioManager = get(),
                 eventStore = get()
+                sharedPref = get()
             )
         }
     }

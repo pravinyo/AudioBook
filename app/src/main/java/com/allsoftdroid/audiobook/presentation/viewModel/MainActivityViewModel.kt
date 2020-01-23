@@ -113,6 +113,10 @@ class MainActivityViewModel(application : Application,
         Timber.d("Cleared Shared Pref")
     }
 
+    fun clearSharedPref(){
+        sharedPref.clear()
+    }
+
     override fun onCleared() {
         super.onCleared()
         disposable.dispose()
