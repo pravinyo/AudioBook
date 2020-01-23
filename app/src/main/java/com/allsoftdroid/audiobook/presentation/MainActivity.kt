@@ -1,27 +1,24 @@
 package com.allsoftdroid.audiobook.presentation
 
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.di.AppModule
+import com.allsoftdroid.audiobook.domain.model.LastPlayedTrack
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
-import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.audiobook.utility.MovableFrameLayout
 import com.allsoftdroid.common.base.activity.BaseActivity
-import com.allsoftdroid.common.base.extension.Event
-import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.network.ConnectionLiveData
 import com.allsoftdroid.common.base.store.*
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -38,12 +35,7 @@ class MainActivity : BaseActivity() {
 
     private val mainActivityViewModel : MainActivityViewModel by viewModel()
 
-    private val eventStore : AudioPlayerEventStore by inject()
-    private val audioManager : AudioManager by inject()
-
     private val connectionListener: ConnectionLiveData by inject{parametersOf(this)}
-
-    private lateinit var disposable : Disposable
 
 
 
@@ -58,18 +50,55 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         AppModule.injectFeature()
 
-        disposable  = eventStore.observe()
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                handleEvent(it)
+        mainActivityViewModel.lastPlayed.observe(this, Observer {event ->
+            event.getContentIfNotHandled()?.let {
+                Timber.d("Last played : ${it.title}")
+
+                val dialog = alertDialog(it)
+                dialog.setCancelable(false)
+                dialog.setCanceledOnTouchOutside(false)
+                dialog.show()
             }
+        })
+    }
+
+
+    private fun alertDialog(lastPlayedTrack: LastPlayedTrack):AlertDialog{
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("continue ${lastPlayedTrack.bookName} from where you left,")
+        builder.setMessage("Chapter : ${lastPlayedTrack.title}")
+
+        builder.setPositiveButton("Listen") { _, _ ->
+            Toast.makeText(this,"Playing",Toast.LENGTH_SHORT).show()
+            //Navigate to display page
+            val bundle = bundleOf(
+                "bookId" to lastPlayedTrack.bookId,
+                "title" to lastPlayedTrack.title,
+                "trackNumber" to lastPlayedTrack.position)
+
+            connectionListener.value?.let { connected->
+                if(connected){
+                    Navigation.findNavController(this,R.id.navHostFragment)
+                        .navigate(com.allsoftdroid.feature_book.R.id.action_AudioBookListFragment_to_AudioBookDetailsFragment,bundle)
+                    mainActivityViewModel.clearSharedPref()
+                }else{
+                    Toast.makeText(this,"Please connect to internet",Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        builder.setNegativeButton("Dismiss"){
+            _,_ ->
+            mainActivityViewModel.clearSharedPref()
+        }
+
+        return builder.create()
     }
 
     override fun onStart() {
         super.onStart()
 
-        audioManager.bindAudioService()
+        mainActivityViewModel.bindAudioService()
 
         connectionListener.observe(this, Observer {isConnected ->
             showNetworkMessage(isConnected)
@@ -82,6 +111,17 @@ class MainActivity : BaseActivity() {
                 miniPlayerViewState(shouldShow)
             }
         })
+
+        mainActivityViewModel.playerEvent.observeForever {
+            it.getContentIfNotHandled()?.let {audioPlayerEvent ->
+                connectionListener.value?.let { isConnected ->
+                    Timber.d("Event is new and is being handled")
+                    if(!isConnected) Toast.makeText(this,"Please Connect to Internet",Toast.LENGTH_SHORT).show()
+                    performAction(audioPlayerEvent)
+                }
+            }
+        }
+
     }
 
     private fun miniPlayerViewState(shouldShow: Boolean) {
@@ -118,70 +158,32 @@ class MainActivity : BaseActivity() {
 
     }
 
-    private fun handleEvent(event: Event<AudioPlayerEvent>) {
-
-        event.getContentIfNotHandled()?.let {audioPlayerEvent ->
-            Timber.d("Event is new and is being handled")
-
-            connectionListener.value?.let { isConnected ->
-                if(!isConnected) Toast.makeText(this,"Please Connect to Internet",Toast.LENGTH_SHORT).show()
-                performAction(audioPlayerEvent)
-            }
-        }
-    }
-
     private fun performAction(event: AudioPlayerEvent){
         when(event){
             is Next -> {
-                val state = event.result as PlayingState
-
-                if(state.action_need) audioManager.playNext()
-
-                eventStore.publish(Event(TrackDetails(
-                    trackTitle = audioManager.getTrackTitle(),
-                    bookId = audioManager.getBookId(),
-                    position = audioManager.currentPlayingIndex()+1)))
-
-                Timber.d("Next event occurred")
+                mainActivityViewModel.nextTrack(event)
             }
 
             is Previous -> {
-
-                val state = event.result as PlayingState
-
-                audioManager.playPrevious()
-
-                eventStore.publish(Event(TrackDetails(
-                    trackTitle = audioManager.getTrackTitle(),
-                    bookId = audioManager.getBookId(),
-                    position = audioManager.currentPlayingIndex()+1)))
-                Timber.d("Previous event occur")
+                mainActivityViewModel.previousTrack(event)
             }
 
             is Play -> {
-                audioManager.resumeTrack()
-                Timber.d("Play/Resume track event")
+                mainActivityViewModel.resumeOrPlayTrack()
             }
 
             is Pause -> {
-                audioManager.pauseTrack()
-                Timber.d("pause event")
+                mainActivityViewModel.pauseTrack()
             }
 
             is PlaySelectedTrack -> {
 
-                audioManager.setPlayTrackList(event.trackList,event.bookId,event.bookName)
-                audioManager.playTrackAtPosition(event.position)
-
-                eventStore.publish(Event(TrackDetails(
-                    trackTitle = audioManager.getTrackTitle(),
-                    bookId = audioManager.getBookId(),
-                    position = event.position)))
-
-                mainActivityViewModel.playerStatus(true)
-
-                Timber.d("Play selected track event")
+                mainActivityViewModel.apply {
+                    playSelectedTrack(event)
+                    playerStatus(true)
+                }
             }
+
             else -> {
                 Timber.d("Unknown event received")
                 Timber.d("Unknown Event has message of type TrackDetails: "+(event is TrackDetails))
@@ -200,43 +202,14 @@ class MainActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        disposable.dispose()
-        mainActivityViewModel.clearSharedPref()
         stopAudioService()
     }
 
     private fun stopAudioService(){
         try{
-            audioManager.unBoundAudioService()
+            mainActivityViewModel.unBoundAudioService()
         }catch (exception: Exception){
             Timber.d(exception)
         }
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-
-        event?.let {
-            when(event.keyCode){
-                KeyEvent.KEYCODE_HEADSETHOOK -> {
-                    if(audioManager.isPlayerCreated()){
-                        if(!audioManager.isPlaying()){
-                            Timber.d("Sending new play event")
-                            eventStore.publish(Event(Play(PlayingState(
-                                playingItemIndex = audioManager.currentPlayingIndex(),
-                                action_need = true
-                            ))))
-                        }else{
-                            Timber.d("Sending new pause event")
-                            eventStore.publish(Event(Pause(PlayingState(
-                                playingItemIndex = audioManager.currentPlayingIndex(),
-                                action_need = true
-                            ))))
-                        }
-                    }
-                }
-            }
-        }
-
-        return super.onKeyDown(keyCode, event)
     }
 }

@@ -23,6 +23,12 @@
         <argument
             android:name="bookId"
             app:argType="string" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="trackNumber"
+            app:argType="integer" />
         <action
             android:id="@+id/action_AudioBookDetailsFragment_to_AudioBookListFragment"
             app:destination="@id/AudioBookListFragment"

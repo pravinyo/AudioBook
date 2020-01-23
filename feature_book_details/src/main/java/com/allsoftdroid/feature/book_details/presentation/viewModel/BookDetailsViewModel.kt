@@ -75,7 +75,7 @@ class BookDetailsViewModel(
                         currentPlayingTrack = 1
                     }
 
-                    Timber.d("Current Track is $currentPlayingTrack")
+                    Timber.d("Current Track is $currentPlaying")
 
                     list[currentPlaying-1].isPlaying = false
                     list[trackNumber-1].isPlaying = true
@@ -86,6 +86,7 @@ class BookDetailsViewModel(
                     sharedPref.saveIsPlaying(true)
                     sharedPref.saveTrackTitle(list[trackNumber-1].title?:"N/A")
                     sharedPref.saveBookId(bookId = getMetadataUsecase.getBookIdentifier())
+                    sharedPref.saveBookName(audioBookMetadata.value?.title?:"")
                     Timber.d("Track List Updated with trackNo as $trackNumber")
                 }
             }
@@ -221,6 +222,7 @@ class BookDetailsViewModel(
      * Creates a event when play item is clicked from the track list
      */
     fun onPlayItemClicked(trackNumber: Int){
+        Timber.d("Track number pressed for playing is :$trackNumber")
         _newTrackStateEvent.value = Event(trackNumber)
         currentPlayingTrack = trackNumber
         stateHandle.set(StateKey.CurrentPlayingTrack.key,currentPlayingTrack)
@@ -229,7 +231,10 @@ class BookDetailsViewModel(
     fun updateNextTrackPlaying(){
         _audioBookTracks.value?.let {trackList ->
             if(currentPlayingTrack<=trackList.size){
-                val newTrack =  (currentPlayingTrack+1)%audioBookTracks.value!!.size
+                var newTrack =  (currentPlayingTrack+1)%audioBookTracks.value!!.size
+
+                if(newTrack==0) newTrack = audioBookTracks.value!!.size
+
                 Timber.d("New Track is $newTrack")
                 onPlayItemClicked(newTrack)
             }

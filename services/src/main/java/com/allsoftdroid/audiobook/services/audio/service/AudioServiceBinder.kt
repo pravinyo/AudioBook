@@ -170,6 +170,7 @@ class AudioServiceBinder(application: Application) : Binder(){
             Timber.d("Player is not yet created. starting to create")
             onCreate()
         }
+        Timber.d("List size is: ${trackList.size} and play item at pos:$currentPos")
         setTrackPosition(currentPos)
         Timber.d("Track pos is set.")
     }

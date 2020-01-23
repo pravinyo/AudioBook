@@ -32,7 +32,9 @@ object AppModule {
         viewModel {
             MainActivityViewModel(
                 application = get(),
-                sharedPref = get()
+                sharedPref = get(),
+                audioManager = get(),
+                eventStore = get()
             )
         }
     }
