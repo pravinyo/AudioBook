@@ -11,14 +11,20 @@ import androidx.navigation.Navigation
 import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.di.AppModule
 import com.allsoftdroid.audiobook.domain.model.LastPlayedTrack
+import com.allsoftdroid.audiobook.feature_downloader.Downloader
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.utility.MovableFrameLayout
 import com.allsoftdroid.common.base.activity.BaseActivity
+import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ConnectionLiveData
 import com.allsoftdroid.common.base.store.audioPlayer.*
+import com.allsoftdroid.common.base.store.downloader.*
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -36,6 +42,12 @@ class MainActivity : BaseActivity() {
     private val mainActivityViewModel : MainActivityViewModel by viewModel()
 
     private val connectionListener: ConnectionLiveData by inject{parametersOf(this)}
+
+    private val downloadEventStore:DownloadEventStore by inject()
+
+    private val downloader: Downloader by inject{parametersOf(this)}
+
+    private lateinit var disposable:Disposable
 
 
 
@@ -122,6 +134,48 @@ class MainActivity : BaseActivity() {
             }
         }
 
+        disposable = downloadEventStore.observe()
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                handleDownloadEvent(it)
+            }
+    }
+
+    private fun handleDownloadEvent(event: Event<DownloadEvent>) {
+        event.getContentIfNotHandled()?.let {
+            when(it){
+                is Download -> {
+                    Timber.d("Download event received")
+                    downloadEventStore.publish(
+                        Event(
+                            Downloading(
+                                bookId = it.bookId,
+                                chapterIndex = it.chapterIndex,
+                                downloadId = 1
+                            )
+                        )
+                    )
+                }
+
+                is Downloading -> {
+                    Timber.d("Downloading event received")
+
+                    downloadEventStore.publish(
+                        Event(
+                            Downloaded(
+                                bookId = it.bookId,
+                                chapterIndex = it.chapterIndex
+                            )
+                        )
+                    )
+                }
+
+                is Downloaded ->{
+                    Timber.d("Downloaded event received")
+                }
+            }
+        }
     }
 
     private fun miniPlayerViewState(shouldShow: Boolean) {
@@ -203,6 +257,7 @@ class MainActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         stopAudioService()
+        disposable.dispose()
     }
 
     private fun stopAudioService(){
