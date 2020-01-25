@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
-import com.allsoftdroid.common.base.store.*
+import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
@@ -179,7 +179,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
                         Timber.d("Pause event received")
                     }
 
-                    is Initial -> {
+                    is EmptyEvent -> {
                         Timber.d("Initial event received")
                     }
                     else -> Toast.makeText(it.applicationContext,"Unknown Pressed Details Fragment",Toast.LENGTH_SHORT).show()
@@ -191,7 +191,14 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
     private fun playSelectedTrackFile(currentPos:Int,bookName:String) {
         bookDetailsViewModel.audioBookTracks.value?.let {
             Timber.d("Sending new event for play selected track by the user")
-            eventStore.publish(Event(PlaySelectedTrack(trackList = it,bookId = bookId,position = currentPos,bookName = bookName)))
+            eventStore.publish(Event(
+                PlaySelectedTrack(
+                    trackList = it,
+                    bookId = bookId,
+                    position = currentPos,
+                    bookName = bookName
+                )
+            ))
 
         }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
     }
