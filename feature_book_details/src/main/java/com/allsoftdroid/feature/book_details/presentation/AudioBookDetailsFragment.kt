@@ -16,6 +16,7 @@ import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.AudioBookTrackAdapter
+import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.DownloadItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 import com.allsoftdroid.feature.book_details.utils.NetworkState
@@ -75,12 +76,18 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             }
         })
 
-        val trackAdapter = AudioBookTrackAdapter(TrackItemClickedListener{ trackNumber, _, _ ->
-            trackNumber?.let {
-                playSelectedTrackFile(it,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
-                Timber.d("State change event sent: new pos:$it")
-            }?:Timber.d("State change event sent: new pos:$trackNumber")
-        })
+        val trackAdapter = AudioBookTrackAdapter(
+            TrackItemClickedListener{ trackNumber, _, _ ->
+                trackNumber?.let {
+                    playSelectedTrackFile(it,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
+                    Timber.d("State change event sent: new pos:$it")
+                }?:Timber.d("State change event sent: new pos:$trackNumber")
+                }
+            ,
+            DownloadItemClickedListener { trackId ->
+                Timber.d("Download Track with $trackId")
+            }
+        )
 
         dataBinding.recyclerView.adapter = trackAdapter
 
