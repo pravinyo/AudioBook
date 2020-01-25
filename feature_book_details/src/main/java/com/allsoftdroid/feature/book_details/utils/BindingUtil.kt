@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature.book_details.presentation
+package com.allsoftdroid.feature.book_details.utils
 
 import android.os.Build
 import android.text.Html
@@ -13,20 +13,34 @@ import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainMo
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-
+import timber.log.Timber
+import kotlin.time.ExperimentalTime
+import kotlin.time.seconds
 
 
 @BindingAdapter("trackTitle")
 fun TextView.setTrackTitle(item : AudioBookTrackDomainModel?){
     item?.let {
-        text = getNormalizedText(item.title,38)
+        item.title?.let { title->
+            text = getNormalizedText(
+                limit = 38,
+                text = title)
+        }
     }
 }
 
+@ExperimentalTime
 @BindingAdapter("trackLength")
 fun TextView.setTrackLength(item : AudioBookTrackDomainModel?){
     item?.let {
-        text = item.length
+        item.length?.let {length->
+            text = if(!length.contains(":")){
+                val timeInSec = length.toFloat().toInt().seconds
+                timeInSec.toComponents { minutes, seconds, _ ->
+                    "$minutes:$seconds"
+                }
+            } else length
+        }
     }
 }
 
@@ -66,7 +80,8 @@ If content is not there show broken image
 fun setImageUrl(imageView: ImageView, item: AudioBookMetadataDomainModel?) {
 
     item?.let {
-        val url = getThumbnail(item.identifier)
+        val url =
+            getThumbnail(item.identifier)
 
         Glide
             .with(imageView.context)
@@ -93,7 +108,8 @@ fun setImageUrl(imageView: ImageView, item: AudioBookMetadataDomainModel?) {
 @BindingAdapter("bookDescription")
 fun TextView.setBookDescription(item: AudioBookMetadataDomainModel?){
     item?.let {
-        text = convertHtmlToText(it.description)
+        text =
+            convertHtmlToText(it.description)
     }
 }
 
@@ -103,7 +119,10 @@ Binding adapter for updating the title in list items
 @BindingAdapter("bookTitle")
 fun TextView.setBookTitle(item: AudioBookMetadataDomainModel?){
     item?.let {
-        text = getNormalizedText(item.title, 30)
+        text = getNormalizedText(
+            item.title,
+            30
+        )
     }
 }
 
