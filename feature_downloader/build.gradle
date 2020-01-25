@@ -1,0 +1,48 @@
+import com.allsoftdroid.buildsrc.AndroidConfig
+import com.allsoftdroid.buildsrc.BuildTypeDebug
+import com.allsoftdroid.buildsrc.BuildTypeRelease
+import com.allsoftdroid.buildsrc.LibraryDependency
+import com.allsoftdroid.buildsrc.ModuleDependency
+
+apply plugin: GradlePluginId.ANDROID_LIBRARY
+apply plugin: GradlePluginId.KOTLIN_ANDROID
+apply plugin: GradlePluginId.KOTLIN_KAPT
+apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
+
+android {
+    compileSdkVersion(AndroidConfig.COMPILE_SDK_VERSION)
+    buildToolsVersion(AndroidConfig.BUILD_TOOLS_VERSION)
+
+
+
+    defaultConfig {
+        minSdkVersion(AndroidConfig.MIN_SDK_VERSION)
+        targetSdkVersion(AndroidConfig.TARGET_SDK_VERSION)
+        versionCode AndroidConfig.VERSION_CODE
+        versionName AndroidConfig.VERSION_NAME
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled BuildTypeRelease.isMinifyEnabled
+        }
+
+        debug {
+            minifyEnabled BuildTypeDebug.isMinifyEnabled
+        }
+    }
+
+
+}
+
+dependencies {
+
+    implementation(project(path: ModuleDependency.LIBRARY_COMMON))
+
+    implementation(LibraryDependency.APP_COMPACT)
+    implementation(LibraryDependency.SUPPORT_CONSTRAINT_LAYOUT)
+    implementation(LibraryDependency.TIMBER)
+
+    implementation(LibraryDependency.RECYCLER_VIEW)
+    implementation(LibraryDependency.CARD_VIEW)
+}

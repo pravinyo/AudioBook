@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="download_multiple">multiple download</string>
+    <string name="description_emotiocon_happy_Icon">happy icons</string>
+    <string name="emptyView_download_message">no download</string>
+    <string name="download_activity_clear_all_value">clear all downloaded</string>
+    <string name="description_file_Icon">file icon</string>
+    <string name="calculating">calculating</string>
+    <string name="description_download_cancel_Icon">cancel download</string>
+    <string name="description_delete_Icon">delete</string>
+    <string name="delete">DELETE</string>
+    <string name="cancel">CANCEL</string>
+    <string name="download_running_message">Downloading…</string>
+    <string name="don_t_show_this">Don\\\'t Show this</string>
+</resources>
