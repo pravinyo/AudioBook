@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.allsoftdroid.feature.book_details.databinding.BookMediaTrackItemBinding
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
+import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.DownloadItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 
 /**
@@ -13,9 +14,10 @@ import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.T
 class TrackItemViewHolder private constructor(private val binding : BookMediaTrackItemBinding) : RecyclerView.ViewHolder(binding.root){
 
     // bind the data to the view
-    fun bind(item: AudioBookTrackDomainModel,listener: TrackItemClickedListener){
+    fun bind(item: AudioBookTrackDomainModel,clickedListener: TrackItemClickedListener,downloadItemClickedListener: DownloadItemClickedListener){
         binding.track = item
-        binding.clickListener = listener
+        binding.clickListener = clickedListener
+        binding.downloadListener = downloadItemClickedListener
         binding.executePendingBindings()
     }
 
