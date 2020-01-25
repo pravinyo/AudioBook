@@ -4,7 +4,7 @@ import android.content.Context
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.network.ConnectionLiveData
-import com.allsoftdroid.common.base.store.AudioPlayerEventBus
+import com.allsoftdroid.common.base.store.audioPlayer.AudioPlayerEventBus
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature.book_details.data.repository.BookDetailsSharedPreferencesRepositoryImpl
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
