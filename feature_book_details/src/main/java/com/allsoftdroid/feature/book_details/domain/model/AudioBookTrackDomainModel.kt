@@ -10,5 +10,6 @@ data class AudioBookTrackDomainModel(
     val trackAlbum : String?,
     val length: String?,
     val format: String?,
-    val size : String?
+    val size : String?,
+    val trackId:String
 ) : AudioPlayListItem
