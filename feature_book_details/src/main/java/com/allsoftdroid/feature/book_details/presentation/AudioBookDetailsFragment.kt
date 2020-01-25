@@ -85,6 +85,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
                 }
             ,
             DownloadItemClickedListener { trackId ->
+                bookDetailsViewModel.downloadSelectedItemWith(trackId)
                 Timber.d("Download Track with $trackId")
             }
         )
