@@ -16,7 +16,7 @@ import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.utility.MovableFrameLayout
 import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.network.ConnectionLiveData
-import com.allsoftdroid.common.base.store.*
+import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import org.koin.android.ext.android.inject
@@ -187,7 +187,7 @@ class MainActivity : BaseActivity() {
             else -> {
                 Timber.d("Unknown event received")
                 Timber.d("Unknown Event has message of type TrackDetails: "+(event is TrackDetails))
-                Timber.d("Unknown Event has message of type Initial: "+(event is Initial))
+                Timber.d("Unknown Event has message of type Initial: "+(event is EmptyEvent))
             }
         }
     }
