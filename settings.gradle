@@ -6,5 +6,6 @@ include ':services'
 include ':feature_book'
 include ':feature_book_details'
 include ':feature_mini_player'
+include ':feature_downloader'
 
 rootProject.name='AudioBook'
