@@ -174,6 +174,34 @@ class BookDetailsViewModel(
         )
     }
 
+    fun downloadSelectedItemWith(trackId:String){
+        viewModelScope.launch{
+            withContext(Dispatchers.Main){
+                audioBookTracks.value?.let { trackList ->
+
+                    val track = trackList.find { it.trackId == trackId }
+
+                    track?.let {
+                        val album = it.trackAlbum?:getMetadataUsecase.getBookIdentifier()
+                        val desc  = "Downloading: chapter ${track.trackNumber} from $album"
+                        download(
+                            Download(
+                                bookId = getMetadataUsecase.getBookIdentifier(),
+                                url = ArchiveUtils.getRemoteFilePath(filename = track.filename,identifier = getMetadataUsecase.getBookIdentifier()),
+                                name = track.filename,
+                                chapter = track.title?:"",
+                                description = desc,
+                                subPath = album,
+                                chapterIndex = track.trackNumber?:0
+                            )
+                        )
+                        Timber.d(desc)
+                    }
+                }
+            }
+        }
+    }
+
     private suspend fun download(event:DownloadEvent){
         val requestValues = GetDownloadUsecase.RequestValues(event)
 
@@ -251,30 +279,6 @@ class BookDetailsViewModel(
         _newTrackStateEvent.value = Event(trackNumber)
         currentPlayingTrack = trackNumber
         stateHandle.set(StateKey.CurrentPlayingTrack.key,currentPlayingTrack)
-
-        viewModelScope.launch{
-            withContext(Dispatchers.Main){
-                audioBookTracks.value?.let { trackList ->
-
-                    val album = trackList[currentPlayingTrack].trackAlbum?:getMetadataUsecase.getBookIdentifier()
-                    val desc  = "Downloading: chapter $currentPlayingTrack from $album"
-                    download(
-                        Download(
-                            bookId = getMetadataUsecase.getBookIdentifier(),
-                            url = ArchiveUtils.getRemoteFilePath(filename = trackList[currentPlayingTrack].filename,identifier = getMetadataUsecase.getBookIdentifier()),
-                            name = trackList[currentPlayingTrack].filename,
-                            chapter = currentPlayingTrack.toString(),
-                            description = desc,
-                            subPath = album,
-                            chapterIndex = currentPlayingTrack
-                        )
-                    )
-
-                    onceDownloaded = true
-                    Timber.d(desc)
-                }
-            }
-        }
     }
 
     fun updateNextTrackPlaying(){
