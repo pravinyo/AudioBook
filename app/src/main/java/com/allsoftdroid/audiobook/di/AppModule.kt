@@ -1,10 +1,12 @@
 package com.allsoftdroid.audiobook.di
 
 import android.content.Context
+import com.allsoftdroid.audiobook.feature_downloader.Downloader
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.network.ConnectionLiveData
 import com.allsoftdroid.common.base.store.audioPlayer.AudioPlayerEventBus
+import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature.book_details.data.repository.BookDetailsSharedPreferencesRepositoryImpl
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
@@ -23,6 +25,7 @@ object AppModule {
             viewModelModule,
             audioManagerModule,
             audioPlayerEventBusModule,
+            downloaderModule,
             connectivityModule,
             usecaseModule
         ))
@@ -42,6 +45,16 @@ object AppModule {
     private val audioPlayerEventBusModule : Module = module {
         single {
             AudioPlayerEventBus.getEventBusInstance()
+        }
+    }
+
+    private val downloaderModule : Module = module {
+        single {
+            DownloaderEventBus.getEventBusInstance()
+        }
+
+        single {
+                (ctx:Context) -> Downloader(ctx)
         }
     }
 
