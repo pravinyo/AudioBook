@@ -9,6 +9,10 @@
         <variable
             name="clickListener"
             type="com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener" />
+
+        <variable
+            name="downloadListener"
+            type="com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.DownloadItemClickedListener" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -84,6 +88,10 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="@{()->downloadListener.onDownloadItemClicked(track)}"
                 android:contentDescription="@string/download_icon"
                 android:src="@drawable/download_outline" />
         </LinearLayout>
