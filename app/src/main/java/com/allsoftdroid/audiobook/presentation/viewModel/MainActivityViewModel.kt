@@ -10,7 +10,7 @@ import com.allsoftdroid.audiobook.domain.usecase.GetLastPlayedUsecase
 import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
-import com.allsoftdroid.common.base.store.*
+import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
@@ -60,32 +60,39 @@ class MainActivityViewModel(application : Application,
             TrackDetails(
                 trackTitle = audioManager.getTrackTitle(),
                 bookId = audioManager.getBookId(),
-                position = event.position)
+                position = event.position
+            )
         ))
         Timber.d("Play selected track event:track item position:${event.position} and bookid:${event.bookId} and name:${event.bookName}")
     }
 
-    fun nextTrack(event:Next){
+    fun nextTrack(event: Next){
         val state = event.result as PlayingState
 
         if(state.action_need) audioManager.playNext()
 
-        eventStore.publish(Event(TrackDetails(
-            trackTitle = audioManager.getTrackTitle(),
-            bookId = audioManager.getBookId(),
-            position = audioManager.currentPlayingIndex()+1)))
+        eventStore.publish(Event(
+            TrackDetails(
+                trackTitle = audioManager.getTrackTitle(),
+                bookId = audioManager.getBookId(),
+                position = audioManager.currentPlayingIndex() + 1
+            )
+        ))
 
         Timber.d("Next event occurred")
     }
 
-    fun previousTrack(event:Previous){
+    fun previousTrack(event: Previous){
 
         audioManager.playPrevious()
 
-        eventStore.publish(Event(TrackDetails(
-            trackTitle = audioManager.getTrackTitle(),
-            bookId = audioManager.getBookId(),
-            position = audioManager.currentPlayingIndex()+1)))
+        eventStore.publish(Event(
+            TrackDetails(
+                trackTitle = audioManager.getTrackTitle(),
+                bookId = audioManager.getBookId(),
+                position = audioManager.currentPlayingIndex() + 1
+            )
+        ))
         Timber.d("Previous event occur")
     }
 
