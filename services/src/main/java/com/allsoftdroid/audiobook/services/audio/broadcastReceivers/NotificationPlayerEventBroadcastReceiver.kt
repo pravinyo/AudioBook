@@ -8,7 +8,7 @@ import android.widget.Toast
 import com.allsoftdroid.audiobook.services.audio.service.AudioService
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
-import com.allsoftdroid.common.base.store.*
+import com.allsoftdroid.common.base.store.audioPlayer.*
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import timber.log.Timber
@@ -25,36 +25,64 @@ class NotificationPlayerEventBroadcastReceiver : BroadcastReceiver(), KoinCompon
                 when(intent.action){
                     AudioService.NEXT -> {
 
-                        eventStore.publish(Event(Next(PlayingState(
-                            playingItemIndex = intent.getIntExtra(ACTION_NEXT_ITEM_INDEX,0),
-                            action_need = true
-                        ))))
+                        eventStore.publish(Event(
+                            Next(
+                                PlayingState(
+                                    playingItemIndex = intent.getIntExtra(
+                                        ACTION_NEXT_ITEM_INDEX,
+                                        0
+                                    ),
+                                    action_need = true
+                                )
+                            )
+                        ))
 
                         Timber.d("Action Next")
                     }
 
                     AudioService.PREVIOUS -> {
-                        eventStore.publish(Event(Previous(PlayingState(
-                            playingItemIndex = intent.getIntExtra(ACTION_PREVIOUS_ITEM_INDEX,0),
-                            action_need = true
-                        ))))
+                        eventStore.publish(Event(
+                            Previous(
+                                PlayingState(
+                                    playingItemIndex = intent.getIntExtra(
+                                        ACTION_PREVIOUS_ITEM_INDEX,
+                                        0
+                                    ),
+                                    action_need = true
+                                )
+                            )
+                        ))
                         Timber.d("Action Previous")
                     }
 
                     AudioService.PLAY -> {
-                        eventStore.publish(Event(Play(PlayingState(
-                            playingItemIndex = intent.getIntExtra(ACTION_PLAY_ITEM_INDEX,0),
-                            action_need = true
-                        ))))
+                        eventStore.publish(Event(
+                            Play(
+                                PlayingState(
+                                    playingItemIndex = intent.getIntExtra(
+                                        ACTION_PLAY_ITEM_INDEX,
+                                        0
+                                    ),
+                                    action_need = true
+                                )
+                            )
+                        ))
 
                         Timber.d("Action Play")
                     }
 
                     AudioService.PAUSE -> {
-                        eventStore.publish(Event(Pause(PlayingState(
-                            playingItemIndex = intent.getIntExtra(ACTION_PAUSE_ITEM_INDEX,0),
-                            action_need = true
-                        ))))
+                        eventStore.publish(Event(
+                            Pause(
+                                PlayingState(
+                                    playingItemIndex = intent.getIntExtra(
+                                        ACTION_PAUSE_ITEM_INDEX,
+                                        0
+                                    ),
+                                    action_need = true
+                                )
+                            )
+                        ))
 
                         Timber.d("Action Pause")
                     }
