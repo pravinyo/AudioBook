@@ -10,14 +10,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
+import com.allsoftdroid.common.base.store.downloader.DownloadEvent
+import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.AudioBookTrackAdapter
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
+import com.allsoftdroid.feature.book_details.utils.NetworkState
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -41,9 +44,10 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
     }
 
     private val eventStore : AudioPlayerEventStore by inject()
+    private val downloadStore : DownloadEventStore by inject()
 
 
-    private lateinit var disposable : Disposable
+    private val disposable : CompositeDisposable = CompositeDisposable()
 
     private lateinit var dataBindingReference : FragmentAudiobookDetailsBinding
 
@@ -101,12 +105,22 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             }
         })
 
-        disposable  = eventStore.observe()
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                handleEvent(it)
-            }
+        disposable.add(
+            eventStore.observe()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    handleEvent(it)
+                }
+        )
+
+        disposable.add(
+            downloadStore.observe()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    handleDownloaderEvent(it)
+                }
+        )
 
         dataBindingReference = dataBinding
 
@@ -142,6 +156,12 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         })
 
         return dataBinding.root
+    }
+
+    private fun handleDownloaderEvent(event: Event<DownloadEvent>) {
+        event.peekContent().let {
+            Timber.d("Event is for book: ${it.bookId} - chapter:${it.chapterIndex}")
+        }
     }
 
     private fun handleEvent(event: Event<AudioPlayerEvent>) {
