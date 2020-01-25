@@ -2,14 +2,18 @@ package com.allsoftdroid.feature.book_details.presentation.viewModel
 
 import androidx.lifecycle.*
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.network.ArchiveUtils
+import com.allsoftdroid.common.base.store.downloader.Download
+import com.allsoftdroid.common.base.store.downloader.DownloadEvent
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
+import com.allsoftdroid.feature.book_details.domain.usecase.GetDownloadUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
-import com.allsoftdroid.feature.book_details.presentation.NetworkState
+import com.allsoftdroid.feature.book_details.utils.NetworkState
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -18,6 +22,7 @@ class BookDetailsViewModel(
     private val stateHandle : SavedStateHandle,
     private val useCaseHandler: UseCaseHandler,
     private val getMetadataUsecase:GetMetadataUsecase,
+    private val downloadUsecase: GetDownloadUsecase,
     private val getTrackListUsecase : GetTrackListUsecase) : ViewModel(){
     /**
      * cancelling this job cancels all the job started by this viewmodel
@@ -42,6 +47,8 @@ class BookDetailsViewModel(
     val backArrowPressed: LiveData<Event<Boolean>>
         get() = _backArrowPressed
 
+
+    private var onceDownloaded = false
 
     //book metadata state change event
     private val metadataStateChangeEvent = MutableLiveData<Event<Any>>()
@@ -167,6 +174,24 @@ class BookDetailsViewModel(
         )
     }
 
+    private suspend fun download(event:DownloadEvent){
+        val requestValues = GetDownloadUsecase.RequestValues(event)
+
+        useCaseHandler.execute(
+            useCase = downloadUsecase,
+            values = requestValues,
+            callback = object :BaseUseCase.UseCaseCallback<GetDownloadUsecase.ResponseValues>{
+                override suspend fun onSuccess(response: GetDownloadUsecase.ResponseValues) {
+                    Timber.d("Download Event sent")
+                }
+
+                override suspend fun onError(t: Throwable) {
+                    Timber.d("Download Event error")
+                }
+            }
+        )
+    }
+
 
     fun loadTrackWithFormat(index:Int=0){
         job?.cancel()
@@ -226,6 +251,30 @@ class BookDetailsViewModel(
         _newTrackStateEvent.value = Event(trackNumber)
         currentPlayingTrack = trackNumber
         stateHandle.set(StateKey.CurrentPlayingTrack.key,currentPlayingTrack)
+
+        viewModelScope.launch{
+            withContext(Dispatchers.Main){
+                audioBookTracks.value?.let { trackList ->
+
+                    val album = trackList[currentPlayingTrack].trackAlbum?:getMetadataUsecase.getBookIdentifier()
+                    val desc  = "Downloading: chapter $currentPlayingTrack from $album"
+                    download(
+                        Download(
+                            bookId = getMetadataUsecase.getBookIdentifier(),
+                            url = ArchiveUtils.getRemoteFilePath(filename = trackList[currentPlayingTrack].filename,identifier = getMetadataUsecase.getBookIdentifier()),
+                            name = trackList[currentPlayingTrack].filename,
+                            chapter = currentPlayingTrack.toString(),
+                            description = desc,
+                            subPath = album,
+                            chapterIndex = currentPlayingTrack
+                        )
+                    )
+
+                    onceDownloaded = true
+                    Timber.d(desc)
+                }
+            }
+        }
     }
 
     fun updateNextTrackPlaying(){
