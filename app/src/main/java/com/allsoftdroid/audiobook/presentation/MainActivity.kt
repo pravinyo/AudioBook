@@ -146,7 +146,7 @@ class MainActivity : BaseActivity() {
         event.getContentIfNotHandled()?.let {
             when(it){
                 is Download -> {
-                    Timber.d("Download event received")
+                    Timber.d("Download event received:${it}")
                     downloadEventStore.publish(
                         Event(
                             Downloading(
