@@ -160,19 +160,21 @@ class MainActivity : BaseActivity() {
                 is Downloading -> {
                     Timber.d("Downloading event received: $it")
 
-//                    downloadEventStore.publish(
-//                        Event(
-//                            Downloaded(
-//                                bookId = it.bookId,
-//                                chapterIndex = it.chapterIndex
-//                            )
-//                        )
-//                    )
+                    downloadEventStore.publish(
+                        Event(
+                            Downloaded(
+                                bookId = it.bookId,
+                                chapterIndex = it.chapterIndex
+                            )
+                        )
+                    )
+
                 }
 
                 is Downloaded ->{
                     Timber.d("Downloaded event received")
                 }
+                else -> Timber.d("Download event got: ${it::class.java.simpleName}")
             }
         }
     }
