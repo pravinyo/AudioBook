@@ -12,6 +12,7 @@ import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.allsoftdroid.common.base.store.downloader.DownloadEvent
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
+import com.allsoftdroid.common.base.store.downloader.Downloaded
 import com.allsoftdroid.common.base.store.downloader.Downloading
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
@@ -170,13 +171,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
     private fun handleDownloaderEvent(event: Event<DownloadEvent>) {
         event.peekContent().let {
             Timber.d("Event is for book: ${it.bookId} - chapter:${it.chapterIndex}")
-            when(it){
-                is Downloading -> {
-                    if(bookId == it.bookId){
-                        bookDetailsViewModel.updateDownloadingStatus(it)
-                    }
-                }
-            }
+            bookDetailsViewModel.updateDownloadStatus(it)
         }
     }
 
