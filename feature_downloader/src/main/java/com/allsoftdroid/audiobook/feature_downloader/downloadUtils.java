@@ -119,8 +119,7 @@ class downloadUtils {
         return statusAndReason;
     }
 
-    static long DownloadData(Context context,
-                             DownloadManager downloadManager,
+    static long DownloadData(DownloadManager downloadManager,
                              Uri uri,
                              String name,
                              String description,
