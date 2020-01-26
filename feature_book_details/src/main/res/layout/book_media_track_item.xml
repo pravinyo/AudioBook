@@ -93,7 +93,7 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:onClick="@{()->downloadListener.onDownloadItemClicked(track)}"
                 android:contentDescription="@string/download_icon"
-                android:src="@drawable/download_outline" />
+                app:trackDownloadStatus="@{track}" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
