@@ -46,7 +46,6 @@ public class Downloader {
             Uri uri = Uri.parse(URL);
             Timber.d("DownloaderLOG: =>%s", URL);
             downloadId = downloadUtils.DownloadData(
-                    mContext,
                     downloadManager,
                     uri,
                     name,
@@ -285,7 +284,7 @@ public class Downloader {
         return url;
     }
 
-    public long getDownloadStatusByURL(String url){
+    public long getDownloadIdByURL(String url){
         String[] projection = {
                 downloadEntry.COLUMN_DOWNLOAD_ID
         };
