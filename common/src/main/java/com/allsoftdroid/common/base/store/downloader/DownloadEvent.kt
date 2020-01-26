@@ -16,8 +16,7 @@ data class Download(
 
 data class Downloading(
     override val bookId: String,
-    override val chapterIndex: Int,
-    val downloadId:Long) : DownloadEvent()
+    override val chapterIndex: Int) : DownloadEvent()
 
 data class Downloaded(
     override val bookId: String,
@@ -31,6 +30,6 @@ data class Failed(
 data class Cancel(
     override val bookId: String,
     override val chapterIndex: Int,
-    val downloadId:Long) : DownloadEvent()
+    val fileUrl:String) : DownloadEvent()
 
 data class DownloadNothing(override val bookId: String="",override val chapterIndex: Int=-1) : DownloadEvent()
