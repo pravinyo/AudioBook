@@ -13,6 +13,7 @@ import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsShared
 import com.allsoftdroid.feature.book_details.domain.usecase.GetDownloadUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
+import com.allsoftdroid.feature.book_details.utils.DownloadStatusEvent
 import com.allsoftdroid.feature.book_details.utils.NetworkState
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -46,9 +47,6 @@ class BookDetailsViewModel(
     private var _backArrowPressed = MutableLiveData<Event<Boolean>>()
     val backArrowPressed: LiveData<Event<Boolean>>
         get() = _backArrowPressed
-
-
-    private var onceDownloaded = false
 
     //book metadata state change event
     private val metadataStateChangeEvent = MutableLiveData<Event<Any>>()
@@ -87,6 +85,7 @@ class BookDetailsViewModel(
                     list[currentPlaying-1].isPlaying = false
                     list[trackNumber-1].isPlaying = true
 
+
                     _audioBookTracks.value=list.toList()
 
                     sharedPref.saveTrackPosition(trackNumber)
@@ -97,8 +96,14 @@ class BookDetailsViewModel(
                     Timber.d("Track List Updated with trackNo as $trackNumber")
                 }
             }
+        }else{
+            _audioBookTracks.value?.let {
+                _audioBookTracks.value = it.toList()
+            }
         }
 
+
+        Timber.d("Track list updated")
         _audioBookTracks
     }
 
@@ -320,5 +325,16 @@ class BookDetailsViewModel(
         super.onCleared()
         viewModelJob.cancel()
         getMetadataUsecase.dispose()
+    }
+
+    fun updateDownloadingStatus(statusEvent:DownloadEvent) {
+        Timber.d("Update list download status")
+        _audioBookTracks.value?.let {tracks ->
+            tracks[statusEvent.chapterIndex-1].downloadStatus = DownloadStatusEvent.DOWNLOADING
+
+            _audioBookTracks.value = tracks
+        }
+
+        _newTrackStateEvent.value = Event(0)
     }
 }
