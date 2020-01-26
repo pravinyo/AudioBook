@@ -55,6 +55,20 @@ fun setTrackPlayingStatus(imageView: ImageView,item :AudioBookTrackDomainModel?)
     }
 }
 
+@BindingAdapter("trackDownloadStatus")
+fun setTrackDownloadStatus(imageView: ImageView,item :AudioBookTrackDomainModel?){
+    item?.let {
+        imageView.setImageResource(
+            when(item.downloadStatus){
+                DownloadStatusEvent.DOWNLOADING -> R.drawable.close_circle_outline
+                DownloadStatusEvent.DOWNLOADED -> R.drawable.download_check
+                DownloadStatusEvent.NOTHING -> R.drawable.download_outline
+            }
+        )
+    }
+    Timber.d("Download image icon updated")
+}
+
 /**
 Handle visibility of progress bar
  */
