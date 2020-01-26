@@ -151,24 +151,23 @@ class MainActivity : BaseActivity() {
                         Event(
                             Downloading(
                                 bookId = it.bookId,
-                                chapterIndex = it.chapterIndex,
-                                downloadId = 1
+                                chapterIndex = it.chapterIndex
                             )
                         )
                     )
                 }
 
                 is Downloading -> {
-                    Timber.d("Downloading event received")
+                    Timber.d("Downloading event received: $it")
 
-                    downloadEventStore.publish(
-                        Event(
-                            Downloaded(
-                                bookId = it.bookId,
-                                chapterIndex = it.chapterIndex
-                            )
-                        )
-                    )
+//                    downloadEventStore.publish(
+//                        Event(
+//                            Downloaded(
+//                                bookId = it.bookId,
+//                                chapterIndex = it.chapterIndex
+//                            )
+//                        )
+//                    )
                 }
 
                 is Downloaded ->{
