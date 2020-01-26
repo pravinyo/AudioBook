@@ -5,6 +5,8 @@ import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
 import com.allsoftdroid.common.base.store.downloader.Download
 import com.allsoftdroid.common.base.store.downloader.DownloadEvent
+import com.allsoftdroid.common.base.store.downloader.Downloaded
+import com.allsoftdroid.common.base.store.downloader.Downloading
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
@@ -327,14 +329,27 @@ class BookDetailsViewModel(
         getMetadataUsecase.dispose()
     }
 
-    fun updateDownloadingStatus(statusEvent:DownloadEvent) {
-        Timber.d("Update list download status")
+    fun updateDownloadStatus(statusEvent:DownloadEvent) {
         _audioBookTracks.value?.let {tracks ->
-            tracks[statusEvent.chapterIndex-1].downloadStatus = DownloadStatusEvent.DOWNLOADING
+
+            tracks[statusEvent.chapterIndex-1].downloadStatus = when(statusEvent){
+                is Downloading -> {
+                    Timber.d("Update list downloading tracks")
+                     DownloadStatusEvent.DOWNLOADING
+                }
+
+                is Downloaded -> {
+                    Timber.d("Update list for downloaded tracks")
+                    DownloadStatusEvent.DOWNLOADED
+                }
+
+                else -> DownloadStatusEvent.NOTHING
+            }
 
             _audioBookTracks.value = tracks
         }
 
         _newTrackStateEvent.value = Event(0)
     }
+
 }
