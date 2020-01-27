@@ -228,6 +228,7 @@ class MainActivity : BaseActivity() {
         super.onDestroy()
         stopAudioService()
         disposable.dispose()
+        downloader.Destroy()
     }
 
     private fun stopAudioService(){
