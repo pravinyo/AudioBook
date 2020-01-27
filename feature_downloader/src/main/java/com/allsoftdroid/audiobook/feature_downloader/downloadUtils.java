@@ -100,7 +100,7 @@ class downloadUtils {
         return new String[]{statusText,reasonText};
     }
 
-    public static String[] Check_Status(DownloadManager downloadManager,long downloadId) {
+    static String[] Check_Status(DownloadManager downloadManager, long downloadId) {
 
         String[] statusAndReason = new String[0];
         DownloadManager.Query downloadQuery = new DownloadManager.Query();
@@ -142,6 +142,9 @@ class downloadUtils {
             //request.setDestinationInExternalFilesDir(context,parentDirectoryPath,name);
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,subPath+name);
 
+            //Show notification visibility
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
             //Enqueue download and save into referenceId
             downloadReference = downloadManager.enqueue(request);
         }catch (Exception e){
@@ -178,8 +181,8 @@ class downloadUtils {
         return 0;
     }
 
-    public static ArrayList<Long> bulkDownload(Context context,DownloadManager downloadManager,
-                                               String[] urls,String[] names,String subPath,String title){
+    static ArrayList<Long> bulkDownload(Context context, DownloadManager downloadManager,
+                                        String[] urls, String[] names, String subPath, String title){
         ArrayList<Long> ids=new ArrayList<>();
 
         for(int i=0;i<urls.length;i++){
@@ -197,7 +200,7 @@ class downloadUtils {
     }
 
 
-    public static MatrixCursor getCustomCursor(Context context){
+    static MatrixCursor getCustomCursor(Context context){
         MatrixCursor customCursor;
 
         customCursor = new MatrixCursor(new String[]{
@@ -265,7 +268,7 @@ class downloadUtils {
         return customCursor;
     }
 
-    public static void LogAllLocalData(String tag, Context context){
+    static void LogAllLocalData(String tag, Context context){
 
         String[] projection = {
                 downloadContract.downloadEntry._ID,
