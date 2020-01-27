@@ -133,7 +133,7 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
             return true;
         }else if(id==R.id.download_activity_clear_all){
             mDownloader.clearAllDownloadedEntry();
-            mDownloader.LogallLocalData(TAG);
+            mDownloader.LogAllLocalData(TAG);
             ReloadAdapter();
             return true;
         }
