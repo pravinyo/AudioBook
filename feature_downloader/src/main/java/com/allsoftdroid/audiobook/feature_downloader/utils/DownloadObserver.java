@@ -1,76 +1,71 @@
 package com.allsoftdroid.audiobook.feature_downloader.utils;
 
-import android.os.FileObserver;
+import android.os.Handler;
 
-import androidx.annotation.Nullable;
-
+import com.allsoftdroid.audiobook.feature_downloader.Downloader;
 import com.allsoftdroid.common.base.extension.Event;
 import com.allsoftdroid.common.base.store.downloader.DownloadEvent;
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore;
+import com.allsoftdroid.common.base.store.downloader.Downloaded;
 import com.allsoftdroid.common.base.store.downloader.Downloading;
-import com.allsoftdroid.common.base.store.downloader.Failed;
 
 import timber.log.Timber;
 
-public class DownloadObserver extends FileObserver {
-
-    private static final int flags =
-            FileObserver.CLOSE_WRITE
-                    | FileObserver.OPEN
-                    | FileObserver.MODIFY
-                    | FileObserver.DELETE
-                    | FileObserver.MOVED_FROM;
+public class DownloadObserver{
 
     private DownloadEventStore mDownloaderEventStore;
     private long mCurrentTime = 0L;
     private final String mBookId;
     private final int mChapterIndex;
     private final String mUrl;
+    private Handler handler;
+    private Downloader mDownloader;
+    private final long downloadId;
 
-    public DownloadObserver(String path,DownloadEventStore store,String bookId,int chapterIndex,String url){
-        super(path,flags);
+    public DownloadObserver(Downloader downloader, String path, DownloadEventStore store, String bookId, int chapterIndex, String url){
         mDownloaderEventStore = store;
         mBookId = bookId;
         mChapterIndex = chapterIndex;
         mUrl = url;
+        mDownloader = downloader;
+        Timber.d("File path:"+path);
+
+        downloadId= mDownloader.getDownloadIdByURL(mUrl);
     }
 
-    @Override
-    public void onEvent(int event, @Nullable String path) {
-        Timber.d("onEvent(" + event + "," + path + ")");
-        if(path==null) return;
+    public void startWatching(){
+        handler = new Handler();
+        final int delay = 600; //milliseconds
 
-        switch (event){
-            case FileObserver.CLOSE_WRITE:
-                // Download complete, or paused when wifi is disconnected. Possibly reported more than once in a row.
-                // Useful for noticing when a download has been paused. For completions, register a receiver for
-                // DownloadManager.ACTION_DOWNLOAD_COMPLETE.
-                break;
-            case FileObserver.OPEN:
-                mDownloaderEventStore.publish(
-                        new Event<DownloadEvent>(new Downloading(mUrl,mBookId,mChapterIndex))
-                );
-                break;
-            case FileObserver.DELETE:
-            case FileObserver.MOVED_FROM:
-                mDownloaderEventStore.publish(
-                        new Event<DownloadEvent>(new Failed(mBookId,mChapterIndex,"File is missing"))
-                );
-                break;
-            case FileObserver.MODIFY:
-                if(System.currentTimeMillis()-mCurrentTime>1000){
-                    mCurrentTime = System.currentTimeMillis();
-                    mDownloaderEventStore.publish(
-                            new Event<DownloadEvent>(new Downloading(mUrl,mBookId,mChapterIndex))
-                    );
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if(mDownloader.getStatusByDownloadId(downloadId).length>0){
+                    long[] progress = mDownloader.getProgress(downloadId);
+                    if (progress[1]>progress[2]){
+                        Timber.d("\nFile URL:"+mUrl+"\nProgress :"+(int)progress[0]);
+                        if(System.currentTimeMillis()-mCurrentTime>1000){
+                            mCurrentTime = System.currentTimeMillis();
+                            mDownloaderEventStore.publish(
+                                    new Event<DownloadEvent>(new Downloading(mUrl,mBookId,mChapterIndex))
+                            );
+                        }
+                        handler.postDelayed(this, delay);
+                    }else {
+                        Timber.d("\nFile URL:"+mUrl+"\nDownloaded");
+                        mDownloaderEventStore.publish(
+                                new Event<DownloadEvent>(new Downloaded(mUrl,mBookId,mChapterIndex))
+                        );
+                    }
                 }
-                break;
-        }
+            }
+        }, delay);
+
     }
 
-    @Override
     public void stopWatching() {
-        super.stopWatching();
         mDownloaderEventStore = null;
+        handler = null;
+        mDownloader = null;
+        Timber.d("Tracker removed for fileUrl: "+mUrl);
     }
 }
