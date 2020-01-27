@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.allsoftdroid.audiobook.feature_downloader.recycleviewAdapter.InternetArchiveAdapter;
+import com.allsoftdroid.audiobook.feature_downloader.utils.IDownloaderRefresh;
+import com.allsoftdroid.audiobook.feature_downloader.utils.downloadUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
