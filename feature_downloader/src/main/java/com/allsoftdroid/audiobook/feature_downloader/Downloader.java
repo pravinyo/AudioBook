@@ -10,38 +10,139 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
-import androidx.core.content.FileProvider;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.core.content.FileProvider;
+
 import com.allsoftdroid.audiobook.feature_downloader.database.downloadContract.downloadEntry;
+import com.allsoftdroid.audiobook.feature_downloader.utils.DownloadObserver;
+import com.allsoftdroid.audiobook.feature_downloader.utils.downloadUtils;
+import com.allsoftdroid.common.base.extension.Event;
+import com.allsoftdroid.common.base.store.downloader.Cancel;
+import com.allsoftdroid.common.base.store.downloader.Download;
+import com.allsoftdroid.common.base.store.downloader.DownloadEvent;
+import com.allsoftdroid.common.base.store.downloader.DownloadEventStore;
+import com.allsoftdroid.common.base.store.downloader.Downloaded;
+import com.allsoftdroid.common.base.store.downloader.Downloading;
+import com.allsoftdroid.common.base.store.downloader.Progress;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
-import static com.allsoftdroid.audiobook.feature_downloader.Utility.STATUS_SUCCESS;
+import static com.allsoftdroid.audiobook.feature_downloader.utils.Utility.STATUS_SUCCESS;
 
 public class Downloader {
 
     private Context mContext;
     private DownloadManager downloadManager;
+    private DownloadEventStore mDownloadEventStore;
     private static HashMap<String,Integer> keyStrokeCount = new HashMap<>();
+    private static HashMap<String, DownloadObserver> progressTrackser = new HashMap<>();
 
-    public Downloader(Context context){
+    public Downloader(Context context) {
         mContext = context;
         downloadManager = (DownloadManager) mContext.getSystemService(DOWNLOAD_SERVICE);
     }
 
-    public long download(String URL,String name,String description, String subPath){
+    public Downloader(Context context, DownloadEventStore eventStore){
+        mContext = context;
+        downloadManager = (DownloadManager) mContext.getSystemService(DOWNLOAD_SERVICE);
+        mDownloadEventStore = eventStore;
+
+        mDownloadEventStore.observe()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        new Observer<Event<? extends DownloadEvent>>() {
+                            @Override
+                            public void onSubscribe(Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onNext(Event<? extends DownloadEvent> event) {
+                                handleDownloadEvent(event);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        }
+                );
+    }
+
+    private void handleDownloadEvent(Event<? extends DownloadEvent> event) {
+        DownloadEvent downloadEvent = event.getContentIfNotHandled();
+
+        if(downloadEvent == null) return;
+
+        if(downloadEvent instanceof Downloading){
+            Downloading downloading = (Downloading) downloadEvent;
+
+            long percent = getProgress(getDownloadIdByURL(downloading.getUrl()))[0];
+            mDownloadEventStore.publish(
+                    new Event<DownloadEvent>(
+                            new Progress(downloading.getUrl(),downloading.getBookId(),downloading.getChapterIndex(),percent)
+                    )
+            );
+        }else if (downloadEvent instanceof Cancel){
+            Cancel cancel = (Cancel) downloadEvent;
+
+            long downloadId = getDownloadIdByURL(cancel.getFileUrl());
+            cancelDownload(downloadId);
+
+            if(progressTrackser.containsKey(cancel.getFileUrl())){
+                progressTrackser.remove(cancel.getFileUrl()).stopWatching();
+            }
+
+        }else if(downloadEvent instanceof Download){
+            Download download1 = (Download) downloadEvent;
+            download(download1.getUrl(),download1.getName(),download1.getDescription(),download1.getSubPath());
+
+            File file = new File(Environment.DIRECTORY_DOWNLOADS,download1.getSubPath()+download1.getName());
+            progressTrackser.put(download1.getUrl(),new DownloadObserver(
+                    file.getAbsolutePath(),
+                    mDownloadEventStore,
+                    download1.getBookId(),
+                    download1.getChapterIndex(),
+                    download1.getUrl()));
+
+            file = null;
+            mDownloadEventStore.publish(
+                    new Event<DownloadEvent>(new Downloading(download1.getUrl(),download1.getBookId(),download1.getChapterIndex()))
+            );
+        }
+        else if(downloadEvent instanceof Downloaded){
+            Downloaded downloaded = (Downloaded) downloadEvent;
+
+            if(progressTrackser.containsKey(downloaded.getUrl())){
+                progressTrackser.remove(downloaded.getUrl()).stopWatching();
+            }
+        }
+        else{
+            Timber.d("Unexpected value: " + downloadEvent);
+        }
+    }
+
+    long download(String URL, String name, String description, String subPath){
 
         //store downloadId to database for own reference
-        long downloadId=downloadUtils.isDownloading(mContext,URL);
+        long downloadId= downloadUtils.isDownloading(mContext,URL);
         if(downloadId==0){
             Uri uri = Uri.parse(URL);
             Timber.d("DownloaderLOG: =>%s", URL);
@@ -112,7 +213,7 @@ public class Downloader {
             int downloadedIndex = cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
             long size = cursor.getLong(sizeIndex);
             long downloaded = cursor.getLong(downloadedIndex);
-            long progress=0l;
+            long progress=0L;
             if (size>0) progress = downloaded*100/size;
             // At this point you have the progress as a percentage.
 
@@ -230,7 +331,7 @@ public class Downloader {
         Log.i(tag,data);
     }
 
-    public void clearAllDownloadedEntry(){
+    void clearAllDownloadedEntry(){
         String[] projection = {
                 downloadEntry.COLUMN_DOWNLOAD_ID
         };
@@ -284,7 +385,7 @@ public class Downloader {
         return url;
     }
 
-    public long getDownloadIdByURL(String url){
+    private long getDownloadIdByURL(String url){
         String[] projection = {
                 downloadEntry.COLUMN_DOWNLOAD_ID
         };
