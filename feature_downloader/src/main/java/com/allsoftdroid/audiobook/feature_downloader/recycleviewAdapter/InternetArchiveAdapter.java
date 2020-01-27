@@ -20,9 +20,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.allsoftdroid.audiobook.feature_downloader.DownloadManagementActivity;
 import com.allsoftdroid.audiobook.feature_downloader.Downloader;
-import com.allsoftdroid.audiobook.feature_downloader.IDownloaderRefresh;
+import com.allsoftdroid.audiobook.feature_downloader.utils.IDownloaderRefresh;
 import com.allsoftdroid.audiobook.feature_downloader.R;
-import com.allsoftdroid.audiobook.feature_downloader.Utility;
+import com.allsoftdroid.audiobook.feature_downloader.utils.Utility;
 
 import static android.content.Context.MODE_PRIVATE;
 
