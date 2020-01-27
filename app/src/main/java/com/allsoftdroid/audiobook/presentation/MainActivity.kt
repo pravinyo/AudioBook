@@ -144,38 +144,7 @@ class MainActivity : BaseActivity() {
 
     private fun handleDownloadEvent(event: Event<DownloadEvent>) {
         event.getContentIfNotHandled()?.let {
-            when(it){
-                is Download -> {
-                    Timber.d("Download event received:${it}")
-                    downloadEventStore.publish(
-                        Event(
-                            Downloading(
-                                bookId = it.bookId,
-                                chapterIndex = it.chapterIndex
-                            )
-                        )
-                    )
-                }
-
-                is Downloading -> {
-                    Timber.d("Downloading event received: $it")
-
-                    downloadEventStore.publish(
-                        Event(
-                            Downloaded(
-                                bookId = it.bookId,
-                                chapterIndex = it.chapterIndex
-                            )
-                        )
-                    )
-
-                }
-
-                is Downloaded ->{
-                    Timber.d("Downloaded event received")
-                }
-                else -> Timber.d("Download event got: ${it::class.java.simpleName}")
-            }
+            downloader.handleDownloadEvent(it)
         }
     }
 
