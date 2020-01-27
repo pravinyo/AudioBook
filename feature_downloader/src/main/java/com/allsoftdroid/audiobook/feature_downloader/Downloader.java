@@ -91,7 +91,7 @@ public class Downloader {
         }
     }
 
-    public Cursor query(long downloadId){
+    private Cursor query(long downloadId){
         DownloadManager.Query query = new DownloadManager.Query();
         query.setFilterById(downloadId);
         return downloadManager.query(query);
@@ -112,8 +112,8 @@ public class Downloader {
             int downloadedIndex = cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
             long size = cursor.getLong(sizeIndex);
             long downloaded = cursor.getLong(downloadedIndex);
-            Long progress=0l;
-            if (size != -1 && size>0) progress = downloaded*100/size;
+            long progress=0l;
+            if (size>0) progress = downloaded*100/size;
             // At this point you have the progress as a percentage.
 
             cursor.close();
