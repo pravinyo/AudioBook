@@ -33,9 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
@@ -58,38 +55,10 @@ public class Downloader {
         mContext = context;
         downloadManager = (DownloadManager) mContext.getSystemService(DOWNLOAD_SERVICE);
         mDownloadEventStore = eventStore;
-
-        mDownloadEventStore.observe()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        new Observer<Event<? extends DownloadEvent>>() {
-                            @Override
-                            public void onSubscribe(Disposable d) {
-
-                            }
-
-                            @Override
-                            public void onNext(Event<? extends DownloadEvent> event) {
-                                handleDownloadEvent(event);
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-
-                            }
-
-                            @Override
-                            public void onComplete() {
-
-                            }
-                        }
-                );
     }
 
-    private void handleDownloadEvent(Event<? extends DownloadEvent> event) {
-        DownloadEvent downloadEvent = event.getContentIfNotHandled();
-
-        if(downloadEvent == null) return;
+    public void handleDownloadEvent(DownloadEvent downloadEvent) {
+        Timber.d("Download event received");
 
         if(downloadEvent instanceof Downloading){
             Downloading downloading = (Downloading) downloadEvent;
@@ -139,7 +108,7 @@ public class Downloader {
         }
     }
 
-    long download(String URL, String name, String description, String subPath){
+    private void download(String URL, String name, String description, String subPath){
 
         //store downloadId to database for own reference
         long downloadId= downloadUtils.isDownloading(mContext,URL);
@@ -171,13 +140,12 @@ public class Downloader {
                     keyStrokeCount.put(URL,count+1);
                 }
 
-                return downloadUtils.DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
+                return;
             }
         }else {
-            return -99;
+            return;
         }
         Timber.d("Downloader2: =>%s",URL);
-        return downloadId;
     }
 
     public String[] getStatusByDownloadId(long downloadId){
@@ -438,5 +406,11 @@ public class Downloader {
 
         Intent open = Intent.createChooser(myIntent, "Choose an application to open with:");
         context.startActivity(open);
+    }
+
+    public void Destroy(){
+        mContext = null;
+        mDownloadEventStore = null;
+        downloadManager = null;
     }
 }
