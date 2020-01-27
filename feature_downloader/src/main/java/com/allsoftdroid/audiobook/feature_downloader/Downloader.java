@@ -121,6 +121,7 @@ public class Downloader {
         Timber.d("File path:"+file.getAbsolutePath());
 
         mDownloadObserver = new DownloadObserver(
+                this,
                 file.getAbsolutePath(),
                 mDownloadEventStore,
                 download1.getBookId(),
@@ -343,7 +344,7 @@ public class Downloader {
         return url;
     }
 
-    private long getDownloadIdByURL(String url){
+    public long getDownloadIdByURL(String url){
         String[] projection = {
                 downloadEntry.COLUMN_DOWNLOAD_ID
         };
