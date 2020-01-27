@@ -15,10 +15,18 @@ data class Download(
     override val chapterIndex:Int):DownloadEvent()
 
 data class Downloading(
+    val url:String,
     override val bookId: String,
     override val chapterIndex: Int) : DownloadEvent()
 
+data class Progress(
+    val url:String,
+    override val bookId: String,
+    override val chapterIndex: Int,
+    val percent: Long) : DownloadEvent()
+
 data class Downloaded(
+    val url:String,
     override val bookId: String,
     override val chapterIndex: Int) : DownloadEvent()
 
