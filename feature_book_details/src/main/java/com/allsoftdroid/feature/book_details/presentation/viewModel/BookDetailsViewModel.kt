@@ -3,10 +3,7 @@ package com.allsoftdroid.feature.book_details.presentation.viewModel
 import androidx.lifecycle.*
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
-import com.allsoftdroid.common.base.store.downloader.Download
-import com.allsoftdroid.common.base.store.downloader.DownloadEvent
-import com.allsoftdroid.common.base.store.downloader.Downloaded
-import com.allsoftdroid.common.base.store.downloader.Downloading
+import com.allsoftdroid.common.base.store.downloader.*
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
@@ -198,7 +195,7 @@ class BookDetailsViewModel(
                                 name = track.filename,
                                 chapter = track.title?:"",
                                 description = desc,
-                                subPath = album,
+                                subPath = ArchiveUtils.getLocalSavePath(album),
                                 chapterIndex = track.trackNumber?:0
                             )
                         )
@@ -330,10 +327,11 @@ class BookDetailsViewModel(
     }
 
     fun updateDownloadStatus(statusEvent:DownloadEvent) {
+        Timber.d(" download event received")
         _audioBookTracks.value?.let {tracks ->
 
             tracks[statusEvent.chapterIndex-1].downloadStatus = when(statusEvent){
-                is Downloading -> {
+                is Downloading, is Progress -> {
                     Timber.d("Update list downloading tracks")
                      DownloadStatusEvent.DOWNLOADING
                 }
