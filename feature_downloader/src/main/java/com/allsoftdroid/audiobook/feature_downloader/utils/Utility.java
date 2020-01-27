@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature_downloader;
+package com.allsoftdroid.audiobook.feature_downloader.utils;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
