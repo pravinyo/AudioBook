@@ -330,18 +330,27 @@ class BookDetailsViewModel(
         Timber.d(" download event received")
         _audioBookTracks.value?.let {tracks ->
 
+            Timber.d("List is non null and ready to update")
+
             tracks[statusEvent.chapterIndex-1].downloadStatus = when(statusEvent){
                 is Downloading, is Progress -> {
-                    Timber.d("Update list downloading tracks")
+                    Timber.d("Event is of type Downloading:${statusEvent is Downloading}")
+                    Timber.d("Event is of type Progress:${statusEvent is Progress}")
                      DownloadStatusEvent.DOWNLOADING
                 }
 
                 is Downloaded -> {
-                    Timber.d("Update list for downloaded tracks")
+                    Timber.d("Event is of type Downloaded")
                     DownloadStatusEvent.DOWNLOADED
                 }
 
-                else -> DownloadStatusEvent.NOTHING
+                else -> {
+                    Timber.d("Event is of type Download:${statusEvent is Download}")
+                    Timber.d("Event is of type Failed:${statusEvent is Failed}")
+                    Timber.d("Event is of type Cancel:${statusEvent is Cancel}")
+                    Timber.d("Event is of type DownloadNothing:${statusEvent is DownloadNothing}")
+                    DownloadStatusEvent.NOTHING
+                }
             }
 
             _audioBookTracks.value = tracks
