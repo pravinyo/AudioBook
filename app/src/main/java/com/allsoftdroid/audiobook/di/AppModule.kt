@@ -54,7 +54,7 @@ object AppModule {
         }
 
         single {
-                (ctx:Context) -> Downloader(ctx)
+                (ctx:Context) -> Downloader(ctx,get())
         }
     }
 
