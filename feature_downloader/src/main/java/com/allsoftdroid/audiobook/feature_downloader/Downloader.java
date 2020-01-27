@@ -31,6 +31,7 @@ import com.allsoftdroid.common.base.store.downloader.Progress;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Objects;
 
 import timber.log.Timber;
@@ -44,7 +45,8 @@ public class Downloader {
     private DownloadManager downloadManager;
     private DownloadEventStore mDownloadEventStore;
     private static HashMap<String,Integer> keyStrokeCount = new HashMap<>();
-    private static HashMap<String, DownloadObserver> progressTrackser = new HashMap<>();
+    private DownloadObserver mDownloadObserver = null;
+    private LinkedHashMap<String,Download> mDownloadQueue = new LinkedHashMap<>();
 
     public Downloader(Context context) {
         mContext = context;
@@ -63,49 +65,70 @@ public class Downloader {
         if(downloadEvent instanceof Downloading){
             Downloading downloading = (Downloading) downloadEvent;
 
-            long percent = getProgress(getDownloadIdByURL(downloading.getUrl()))[0];
-            mDownloadEventStore.publish(
-                    new Event<DownloadEvent>(
-                            new Progress(downloading.getUrl(),downloading.getBookId(),downloading.getChapterIndex(),percent)
-                    )
-            );
+            long[] status = getProgress(getDownloadIdByURL(downloading.getUrl()));
+            if(status!=null){
+                long percent = status[0];
+                mDownloadEventStore.publish(
+                        new Event<DownloadEvent>(
+                                new Progress(downloading.getUrl(),downloading.getBookId(),downloading.getChapterIndex(),percent)
+                        )
+                );
+            }
         }else if (downloadEvent instanceof Cancel){
-            Cancel cancel = (Cancel) downloadEvent;
+            final Cancel cancel = (Cancel) downloadEvent;
 
             long downloadId = getDownloadIdByURL(cancel.getFileUrl());
             cancelDownload(downloadId);
 
-            if(progressTrackser.containsKey(cancel.getFileUrl())){
-                progressTrackser.remove(cancel.getFileUrl()).stopWatching();
-            }
+            mDownloadQueue.remove(cancel.getFileUrl());
 
         }else if(downloadEvent instanceof Download){
-            Download download1 = (Download) downloadEvent;
-            download(download1.getUrl(),download1.getName(),download1.getDescription(),download1.getSubPath());
+            Download temp = (Download) downloadEvent;
+            mDownloadQueue.put(temp.getUrl(),temp);
 
-            File file = new File(Environment.DIRECTORY_DOWNLOADS,download1.getSubPath()+download1.getName());
-            progressTrackser.put(download1.getUrl(),new DownloadObserver(
-                    file.getAbsolutePath(),
-                    mDownloadEventStore,
-                    download1.getBookId(),
-                    download1.getChapterIndex(),
-                    download1.getUrl()));
+            if(mDownloadQueue.size()==1){
+                downloadOldestRequest();
+            }
 
-            file = null;
             mDownloadEventStore.publish(
-                    new Event<DownloadEvent>(new Downloading(download1.getUrl(),download1.getBookId(),download1.getChapterIndex()))
+                    new Event<DownloadEvent>(new Downloading(temp.getUrl(),temp.getBookId(),temp.getChapterIndex()))
             );
+            Timber.d("Downloading  event sent for "+temp.toString());
         }
         else if(downloadEvent instanceof Downloaded){
             Downloaded downloaded = (Downloaded) downloadEvent;
+            mDownloadQueue.remove(mDownloadQueue.entrySet().iterator().next().getKey());
+            mDownloadObserver.stopWatching();
+            Timber.d("Downloaded  event received for "+downloaded.toString());
 
-            if(progressTrackser.containsKey(downloaded.getUrl())){
-                progressTrackser.remove(downloaded.getUrl()).stopWatching();
+
+            if(mDownloadQueue.size()>0){
+                downloadOldestRequest();
             }
+
         }
         else{
             Timber.d("Unexpected value: " + downloadEvent);
         }
+    }
+
+    private void downloadOldestRequest() {
+        Download download1 = mDownloadQueue.entrySet().iterator().next().getValue();
+        Timber.d("New Download event received: "+download1.toString());
+        download(download1.getUrl(),download1.getName(),download1.getDescription(),download1.getSubPath());
+
+        File file = new File(Environment.DIRECTORY_DOWNLOADS,download1.getSubPath()+download1.getName());
+        Timber.d("File path:"+file.getAbsolutePath());
+
+        mDownloadObserver = new DownloadObserver(
+                file.getAbsolutePath(),
+                mDownloadEventStore,
+                download1.getBookId(),
+                download1.getChapterIndex(),
+                download1.getUrl());
+        mDownloadObserver.startWatching();
+        Timber.d("File tracker attached for New Download: "+download1.toString());
+        file = null;
     }
 
     private void download(String URL, String name, String description, String subPath){
@@ -192,14 +215,6 @@ public class Downloader {
         return null;
     }
 
-    public String getActionDownloadCompleted() {
-        return DownloadManager.ACTION_DOWNLOAD_COMPLETE;
-    }
-
-    public String getExtraDownloadId() {
-        return DownloadManager.EXTRA_DOWNLOAD_ID;
-    }
-
     private void insertDownloadDatabase(long downloadId,String name){
         String downloadIdString=""+downloadId;
 
@@ -244,32 +259,7 @@ public class Downloader {
         }
     }
 
-    public String dummy(Cursor cursor){
-
-        String data="";
-
-        if(cursor!=null && cursor.moveToFirst()){
-            int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES);
-            data +="Total size:=>" + cursor.getString(columnIndex);
-
-            columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME);
-            data += "local filename =>" + cursor.getString(columnIndex);
-
-            columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_DESCRIPTION);
-            data += "description =>" + cursor.getString(columnIndex);
-
-            columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TITLE);
-            data += "Title =>" + cursor.getString(columnIndex);
-
-            columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_MEDIA_TYPE);
-            data += "mediaType =>" + cursor.getString(columnIndex);
-        }
-
-        if(cursor!=null) cursor.close();
-        return data;
-    }
-
-    public void LogallLocalData(String tag){
+    void LogAllLocalData(String tag){
 
         String[] projection = {
                 downloadEntry._ID,
@@ -412,5 +402,10 @@ public class Downloader {
         mContext = null;
         mDownloadEventStore = null;
         downloadManager = null;
+        mDownloadObserver = null;
+//        for (Map.Entry<String,DownloadObserver> tracker : progressTracker.entrySet()){
+//            tracker.getValue().stopWatching();
+//            progressTracker.remove(tracker.getKey());
+//        }
     }
 }
