@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature_downloader;
+package com.allsoftdroid.audiobook.feature_downloader.utils;
 
 import android.app.DownloadManager;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import com.allsoftdroid.audiobook.feature_downloader.DownloadManagementActivity;
 import com.allsoftdroid.audiobook.feature_downloader.database.downloadContract;
 
 import java.util.ArrayList;
@@ -16,8 +17,8 @@ import timber.log.Timber;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
 
-class downloadUtils {
-    static final long DOWNLOADER_PROTOCOL_NOT_SUPPORTED=-444;
+public class downloadUtils {
+    public static final long DOWNLOADER_PROTOCOL_NOT_SUPPORTED=-444;
 
     private static String[] DownloadStatus(Cursor cursor){
 
@@ -100,7 +101,7 @@ class downloadUtils {
         return new String[]{statusText,reasonText};
     }
 
-    static String[] Check_Status(DownloadManager downloadManager, long downloadId) {
+    public static String[] Check_Status(DownloadManager downloadManager, long downloadId) {
 
         String[] statusAndReason = new String[0];
         DownloadManager.Query downloadQuery = new DownloadManager.Query();
@@ -119,11 +120,11 @@ class downloadUtils {
         return statusAndReason;
     }
 
-    static long DownloadData(DownloadManager downloadManager,
-                             Uri uri,
-                             String name,
-                             String description,
-                             String subPath) {
+    public static long DownloadData(DownloadManager downloadManager,
+                                    Uri uri,
+                                    String name,
+                                    String description,
+                                    String subPath) {
 
         long downloadReference;
 
@@ -154,7 +155,7 @@ class downloadUtils {
         return downloadReference;
     }
 
-    static long isDownloading(Context context, String URL){
+    public static long isDownloading(Context context, String URL){
         String[] projection = {
                 downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID
         };
@@ -181,8 +182,8 @@ class downloadUtils {
         return 0;
     }
 
-    static ArrayList<Long> bulkDownload(Context context, DownloadManager downloadManager,
-                                        String[] urls, String[] names, String subPath, String title){
+    public static ArrayList<Long> bulkDownload(Context context, DownloadManager downloadManager,
+                                               String[] urls, String[] names, String subPath, String title){
         ArrayList<Long> ids=new ArrayList<>();
 
         for(int i=0;i<urls.length;i++){
@@ -200,7 +201,7 @@ class downloadUtils {
     }
 
 
-    static MatrixCursor getCustomCursor(Context context){
+    public static MatrixCursor getCustomCursor(Context context){
         MatrixCursor customCursor;
 
         customCursor = new MatrixCursor(new String[]{
@@ -239,7 +240,7 @@ class downloadUtils {
                 if (downloadManager != null) {
                     Cursor c = downloadManager.query(query);
                     if (c!=null && c.moveToFirst()) {
-                        Timber.d("%s => %s",DownloadManagementActivity.class.getSimpleName(), "size of c: " + c.getCount() +
+                        Timber.d("%s => %s", DownloadManagementActivity.class.getSimpleName(), "size of c: " + c.getCount() +
                                 "\ncolumn count:" + c.getColumnCount() + "\nColumn name at 0: " + c.getColumnName(0) +
                                 "\nColumn value at 0: " + c.getString(0)
                         );
@@ -268,7 +269,7 @@ class downloadUtils {
         return customCursor;
     }
 
-    static void LogAllLocalData(String tag, Context context){
+    public static void LogAllLocalData(String tag, Context context){
 
         String[] projection = {
                 downloadContract.downloadEntry._ID,
