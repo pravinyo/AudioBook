@@ -19,6 +19,7 @@ TODO: Licenses and Attribution
 
 
 Optional
+TODO: Palette API to render color based on dormant color in image
 TODO: libri Api (https://librivox.org/api/info)
 TODO: alert to play book based on users daily commute time and activity.[Transition API]
 TODO: Japanese language support, english
