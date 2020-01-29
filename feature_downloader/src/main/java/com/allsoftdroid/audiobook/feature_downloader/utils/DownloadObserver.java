@@ -3,11 +3,7 @@ package com.allsoftdroid.audiobook.feature_downloader.utils;
 import android.os.Handler;
 
 import com.allsoftdroid.audiobook.feature_downloader.Downloader;
-import com.allsoftdroid.common.base.extension.Event;
-import com.allsoftdroid.common.base.store.downloader.DownloadEvent;
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore;
-import com.allsoftdroid.common.base.store.downloader.Downloaded;
-import com.allsoftdroid.common.base.store.downloader.Downloading;
 
 import timber.log.Timber;
 
@@ -35,37 +31,62 @@ public class DownloadObserver{
 
     public void startWatching(){
         handler = new Handler();
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    if(mDownloader.getStatusByDownloadId(downloadId)[0].equals(Utility.STATUS_SUCCESS)){
+                        downloadRunning();
+                    }
+                    else if(mDownloader.getStatusByDownloadId(downloadId)[0].equals(Utility.STATUS_RUNNING)){
+                        long[] progress = mDownloader.getProgress(downloadId);
+                        if (progress[1]>progress[2]) {
+                            handler.removeCallbacks(this);
+                            Timber.d("Removing current callback");
+                            Timber.d("Running main download progress checker");
+                            downloadRunning();
+                        }else handler.postDelayed(this,1000);
+                    }else {
+                        Timber.d("It seems like download is yet not started");
+                        handler.postDelayed(this,1000);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        },1000);
+    }
+
+    private void downloadRunning(){
+        handler = new Handler();
         final int delay = 600; //milliseconds
 
         handler.postDelayed(new Runnable() {
             public void run() {
+                Timber.d("Handler is running");
                 if(mDownloader.getStatusByDownloadId(downloadId).length>0){
                     long[] progress = mDownloader.getProgress(downloadId);
                     if (progress[1]>progress[2]){
                         Timber.d("\nFile URL:"+mUrl+"\nProgress :"+(int)progress[0]);
-                        if(System.currentTimeMillis()-mCurrentTime>1000){
-                            mCurrentTime = System.currentTimeMillis();
-                            mDownloaderEventStore.publish(
-                                    new Event<DownloadEvent>(new Downloading(mUrl,mBookId,mChapterIndex))
-                            );
-                        }
+                        mDownloader.updateProgress(mUrl,mBookId,mChapterIndex,progress[0]);
+                        Timber.d("Download: "+progress[2]+"/"+progress[1]);
                         handler.postDelayed(this, delay);
-                    }else {
-                        Timber.d("\nFile URL:"+mUrl+"\nDownloaded");
-                        mDownloaderEventStore.publish(
-                                new Event<DownloadEvent>(new Downloaded(mUrl,mBookId,mChapterIndex))
-                        );
+                    }else if(mDownloader.getStatusByDownloadId(downloadId)[0].equals("STATUS_SUCCESSFUL")){
+                        mDownloader.updateDownloaded(mUrl,mBookId,mChapterIndex);
+                        Timber.d("Download-: "+progress[2]+"/"+progress[1]);
                     }
+                }else{
+                    Timber.d("Download status is empty");
                 }
             }
         }, delay);
-
     }
 
     public void stopWatching() {
-        mDownloaderEventStore = null;
+//        mDownloaderEventStore = null;
         handler = null;
-        mDownloader = null;
+//        mDownloader = null;
         Timber.d("Tracker removed for fileUrl: "+mUrl);
     }
 }
