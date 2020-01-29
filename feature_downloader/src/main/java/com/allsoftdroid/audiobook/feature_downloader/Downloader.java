@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -46,6 +47,7 @@ public class Downloader {
     private DownloadEventStore mDownloadEventStore;
     private static HashMap<String,Integer> keyStrokeCount = new HashMap<>();
     private DownloadObserver mDownloadObserver = null;
+    private boolean isDownloading = false;
     private LinkedHashMap<String,Download> mDownloadQueue = new LinkedHashMap<>();
 
     public Downloader(Context context) {
@@ -65,15 +67,6 @@ public class Downloader {
         if(downloadEvent instanceof Downloading){
             Downloading downloading = (Downloading) downloadEvent;
 
-            long[] status = getProgress(getDownloadIdByURL(downloading.getUrl()));
-            if(status!=null){
-                long percent = status[0];
-                mDownloadEventStore.publish(
-                        new Event<DownloadEvent>(
-                                new Progress(downloading.getUrl(),downloading.getBookId(),downloading.getChapterIndex(),percent)
-                        )
-                );
-            }
         }else if (downloadEvent instanceof Cancel){
             final Cancel cancel = (Cancel) downloadEvent;
 
@@ -97,8 +90,9 @@ public class Downloader {
         }
         else if(downloadEvent instanceof Downloaded){
             Downloaded downloaded = (Downloaded) downloadEvent;
-            mDownloadQueue.remove(mDownloadQueue.entrySet().iterator().next().getKey());
+            mDownloadQueue.remove(downloaded.getUrl());
             mDownloadObserver.stopWatching();
+            isDownloading = false;
             Timber.d("Downloaded  event received for "+downloaded.toString());
 
 
@@ -113,6 +107,8 @@ public class Downloader {
     }
 
     private void downloadOldestRequest() {
+        if(isDownloading) return;
+
         Download download1 = mDownloadQueue.entrySet().iterator().next().getValue();
         Timber.d("New Download event received: "+download1.toString());
         download(download1.getUrl(),download1.getName(),download1.getDescription(),download1.getSubPath());
@@ -128,8 +124,23 @@ public class Downloader {
                 download1.getChapterIndex(),
                 download1.getUrl());
         mDownloadObserver.startWatching();
+
         Timber.d("File tracker attached for New Download: "+download1.toString());
         file = null;
+    }
+
+    public void updateDownloaded(String mUrl,String mBookId,int mChapterIndex) {
+        Timber.d("\nFile URL:"+mUrl+"\nDownloaded");
+        mDownloadEventStore.publish(
+                new Event<DownloadEvent>(new Downloaded(mUrl,mBookId,mChapterIndex))
+        );
+    }
+
+    public void updateProgress(String mUrl,String mBookId,int mChapterIndex,long progress) {
+        Timber.d("\nFile URL:"+mUrl+"\nProgress :"+progress);
+        mDownloadEventStore.publish(
+                new Event<DownloadEvent>(new Progress(mUrl,mBookId,mChapterIndex,progress))
+        );
     }
 
     private void download(String URL, String name, String description, String subPath){
