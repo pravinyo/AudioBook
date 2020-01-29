@@ -31,6 +31,10 @@ android {
             minifyEnabled BuildTypeDebug.isMinifyEnabled
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 
 
 }
