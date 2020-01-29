@@ -119,7 +119,6 @@ public class Downloader {
         mDownloadObserver = new DownloadObserver(
                 this,
                 file.getAbsolutePath(),
-                mDownloadEventStore,
                 download1.getBookId(),
                 download1.getChapterIndex(),
                 download1.getUrl());
