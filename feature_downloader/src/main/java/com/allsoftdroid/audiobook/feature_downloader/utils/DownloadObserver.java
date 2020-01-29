@@ -3,14 +3,11 @@ package com.allsoftdroid.audiobook.feature_downloader.utils;
 import android.os.Handler;
 
 import com.allsoftdroid.audiobook.feature_downloader.Downloader;
-import com.allsoftdroid.common.base.store.downloader.DownloadEventStore;
 
 import timber.log.Timber;
 
 public class DownloadObserver{
 
-    private DownloadEventStore mDownloaderEventStore;
-    private long mCurrentTime = 0L;
     private final String mBookId;
     private final int mChapterIndex;
     private final String mUrl;
@@ -18,8 +15,7 @@ public class DownloadObserver{
     private Downloader mDownloader;
     private final long downloadId;
 
-    public DownloadObserver(Downloader downloader, String path, DownloadEventStore store, String bookId, int chapterIndex, String url){
-        mDownloaderEventStore = store;
+    public DownloadObserver(Downloader downloader, String path, String bookId, int chapterIndex, String url){
         mBookId = bookId;
         mChapterIndex = chapterIndex;
         mUrl = url;
@@ -84,9 +80,9 @@ public class DownloadObserver{
     }
 
     public void stopWatching() {
-//        mDownloaderEventStore = null;
+        handler.removeCallbacksAndMessages(null);
         handler = null;
-//        mDownloader = null;
+        mDownloader = null;
         Timber.d("Tracker removed for fileUrl: "+mUrl);
     }
 }
