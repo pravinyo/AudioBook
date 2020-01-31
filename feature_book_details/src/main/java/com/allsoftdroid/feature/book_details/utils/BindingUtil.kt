@@ -4,6 +4,7 @@ import android.os.Build
 import android.text.Html
 import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
@@ -58,15 +59,42 @@ fun setTrackPlayingStatus(imageView: ImageView,item :AudioBookTrackDomainModel?)
 @BindingAdapter("trackDownloadStatus")
 fun setTrackDownloadStatus(imageView: ImageView,item :AudioBookTrackDomainModel?){
     item?.let {
-        imageView.setImageResource(
-            when(item.downloadStatus){
-                DownloadStatusEvent.DOWNLOADING -> R.drawable.close_circle_outline
-                DownloadStatusEvent.DOWNLOADED -> R.drawable.download_check
-                DownloadStatusEvent.NOTHING -> R.drawable.download_outline
-            }
-        )
+        if(item.downloadStatus !is PROGRESS){
+            imageView.setImageResource(
+                when(item.downloadStatus){
+                    is DOWNLOADING -> R.drawable.close_circle_outline
+                    is DOWNLOADED, is PROGRESS -> R.drawable.download_check
+                    is NOTHING -> R.drawable.download_outline
+                }
+            )
+        }
+
+        if(item.downloadStatus is PROGRESS){
+            imageView.visibility = View.GONE
+        }else if(item.downloadStatus is DOWNLOADED){
+            imageView.visibility = View.VISIBLE
+        }
     }
     Timber.d("Download image icon updated")
+}
+
+@BindingAdapter("trackDownloadProgress")
+fun setTrackDownloadProgress(view: ProgressBar, track: AudioBookTrackDomainModel?){
+    track?.let {
+        when(val status = track.downloadStatus){
+            is PROGRESS -> {
+                view.visibility = View.VISIBLE
+                view.progress = status.percent.toInt()
+                Timber.d("Progress event received")
+            }
+
+            is DOWNLOADED -> {
+                view.visibility = View.GONE
+                Timber.d("Downloaded event received")
+            }
+        }
+    }
+    Timber.d("Progress event received")
 }
 
 /**
