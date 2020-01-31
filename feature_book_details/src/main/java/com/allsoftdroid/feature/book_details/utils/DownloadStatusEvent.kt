@@ -1,7 +1,8 @@
 package com.allsoftdroid.feature.book_details.utils
 
-enum class DownloadStatusEvent {
-    DOWNLOADING,
-    DOWNLOADED,
-    NOTHING
-}
+sealed class DownloadStatusEvent
+
+object DOWNLOADING : DownloadStatusEvent()
+object DOWNLOADED: DownloadStatusEvent()
+object NOTHING: DownloadStatusEvent()
+data class PROGRESS(val percent:Float) : DownloadStatusEvent()
