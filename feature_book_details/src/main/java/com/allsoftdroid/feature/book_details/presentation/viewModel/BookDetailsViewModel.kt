@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
 import com.allsoftdroid.common.base.store.downloader.*
+import com.allsoftdroid.common.base.store.downloader.Progress
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
@@ -12,8 +13,7 @@ import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsShared
 import com.allsoftdroid.feature.book_details.domain.usecase.GetDownloadUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
-import com.allsoftdroid.feature.book_details.utils.DownloadStatusEvent
-import com.allsoftdroid.feature.book_details.utils.NetworkState
+import com.allsoftdroid.feature.book_details.utils.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -335,13 +335,17 @@ class BookDetailsViewModel(
             tracks[statusEvent.chapterIndex-1].downloadStatus = when(statusEvent){
                 is Downloading -> {
                     Timber.d("Event is of type Downloading:${statusEvent is Downloading}")
-                    Timber.d("Event is of type Progress:${statusEvent is Progress}")
-                     DownloadStatusEvent.DOWNLOADING
+                     DOWNLOADING
                 }
 
                 is Downloaded -> {
                     Timber.d("Event is of type Downloaded")
-                    DownloadStatusEvent.DOWNLOADED
+                    DOWNLOADED
+                }
+
+                is Progress -> {
+                    Timber.d("Event is of type Progress:${statusEvent is Progress}")
+                    PROGRESS(percent = statusEvent.percent.toFloat())
                 }
 
                 else -> {
@@ -349,17 +353,14 @@ class BookDetailsViewModel(
                     Timber.d("Event is of type Failed:${statusEvent is Failed}")
                     Timber.d("Event is of type Cancel:${statusEvent is Cancel}")
                     Timber.d("Event is of type DownloadNothing:${statusEvent is DownloadNothing}")
-                    Timber.d("Event is of type Progress:${statusEvent is Progress}")
-                    DownloadStatusEvent.NOTHING
+                    NOTHING
                 }
             }
 
             _audioBookTracks.value = tracks
         }
 
-        if(statusEvent !is Progress){
-            _newTrackStateEvent.value = Event(0)
-        }
+        _newTrackStateEvent.value = Event(0)
     }
 
 }
