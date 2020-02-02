@@ -16,7 +16,11 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
+import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
+import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus
+import com.allsoftdroid.common.base.store.downloader.OpenDownloadActivity
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.data.network.Utils
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
@@ -39,6 +43,8 @@ class AudioBookListFragment : BaseContainerFragment(){
     @VisibleForTesting var bundleShared: Bundle = Bundle.EMPTY
 
     private lateinit var callback:OnBackPressedCallback
+
+    private val downloadEventStore: DownloadEventStore  = DownloaderEventBus.getEventBusInstance()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
@@ -178,7 +184,17 @@ class AudioBookListFragment : BaseContainerFragment(){
             }
         })
 
+        binding.toolbarDownloads.setOnClickListener {
+            navigateToDownloadsActivity()
+        }
+
         return binding.root
+    }
+
+    private fun navigateToDownloadsActivity() {
+        downloadEventStore.publish(
+            Event(OpenDownloadActivity())
+        )
     }
 
     private fun setVisibility(view: View, set: Boolean) {
