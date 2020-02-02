@@ -334,17 +334,17 @@ class BookDetailsViewModel(
 
             tracks[statusEvent.chapterIndex-1].downloadStatus = when(statusEvent){
                 is Downloading -> {
-                    Timber.d("Event is of type Downloading:${statusEvent is Downloading}")
+                    Timber.d("Event is of type Downloading:$statusEvent")
                      DOWNLOADING
                 }
 
                 is Downloaded -> {
-                    Timber.d("Event is of type Downloaded")
+                    Timber.d("Event is of type Downloaded:$statusEvent")
                     DOWNLOADED
                 }
 
                 is Progress -> {
-                    Timber.d("Event is of type Progress:${statusEvent is Progress}")
+                    Timber.d("Event is of type Progress:${statusEvent}")
                     PROGRESS(percent = statusEvent.percent.toFloat())
                 }
 
