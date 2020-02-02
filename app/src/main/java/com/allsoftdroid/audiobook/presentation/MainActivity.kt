@@ -1,5 +1,6 @@
 package com.allsoftdroid.audiobook.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -11,6 +12,7 @@ import androidx.navigation.Navigation
 import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.di.AppModule
 import com.allsoftdroid.audiobook.domain.model.LastPlayedTrack
+import com.allsoftdroid.audiobook.feature_downloader.DownloadManagementActivity
 import com.allsoftdroid.audiobook.feature_downloader.Downloader
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
@@ -144,8 +146,18 @@ class MainActivity : BaseActivity() {
 
     private fun handleDownloadEvent(event: Event<DownloadEvent>) {
         event.getContentIfNotHandled()?.let {
-            downloader.handleDownloadEvent(it)
+            when(it){
+                is OpenDownloadActivity -> {
+                    navigateToDownloadManagementActivity()
+                }
+                else -> downloader.handleDownloadEvent(it)
+            }
         }
+    }
+
+    private fun navigateToDownloadManagementActivity() {
+        val intent = Intent(this,DownloadManagementActivity::class.java)
+        startActivity(intent)
     }
 
     private fun miniPlayerViewState(shouldShow: Boolean) {
