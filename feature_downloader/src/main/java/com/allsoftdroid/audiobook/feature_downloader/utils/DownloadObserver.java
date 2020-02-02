@@ -81,7 +81,6 @@ public class DownloadObserver{
 
     public void stopWatching() {
         handler.removeCallbacksAndMessages(null);
-        handler = null;
         mDownloader = null;
         Timber.d("Tracker removed for fileUrl: "+mUrl);
     }
