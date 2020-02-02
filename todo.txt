@@ -4,10 +4,9 @@ TODO: Follow TDD Approach
 
 
 Expected
-TODO: auto resume after call, interruption
 TODO: playing book screen
 TODO: listen later feature
-TODO:  Download feature
+TODO: Download feature
               - Download chapter wise and book wise
 TODO: local download/save book feature
 TODO: Offline playing option for downloaded audio file.
