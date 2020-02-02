@@ -1,10 +1,8 @@
-package com.allsoftdroid.feature_book.presentation.utility
+package com.allsoftdroid.feature_book.utils
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.os.Build
 import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -22,9 +20,20 @@ import java.util.*
 /**
 Handle visibility of progress bar
  */
-@BindingAdapter("goneIfNotNull")
-fun goneIfNotNull(view: View, it: List<Any>?){
-    view.visibility = if(it!=null && it.size>1) View.GONE else View.VISIBLE
+@BindingAdapter("searchOrClose")
+fun searchOrClose(view: ImageView, isSearchBtn:Boolean){
+
+   view.visibility =  when(view.id){
+        R.id.iv_search -> {
+            if(isSearchBtn) View.VISIBLE else View.GONE
+        }
+
+        R.id.iv_search_cancel -> {
+            if(isSearchBtn) View.GONE else View.VISIBLE
+        }
+
+       else -> View.GONE
+   }
 }
 
 @BindingAdapter("goneIfNotSearchError")
@@ -96,7 +105,8 @@ Binding adapter for updating the title in list items
 @BindingAdapter("bookTitle")
 fun TextView.setBookTitle(item: AudioBookDomainModel?){
     item?.let {
-        text = getNormalizedText(item.title, 30)
+        text =
+            getNormalizedText(item.title, 30)
     }
 }
 
