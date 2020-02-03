@@ -32,7 +32,6 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
     private MenuItem clearAllBtn;
     private Downloader mDownloader;
 
-    private long downloadID=0l;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,16 +144,6 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
         finish();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-//        String url ="https://images.unsplash.com/photo-1575119830728-edca597e2811?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80";
-//        String name="photo bin";
-//        String desc="test file from unsplash";
-//        String subpath="/audiobooks/"+name+"/";
-//        downloadID = mDownloader.download(url,name,desc,subpath);
-    }
 
     @Override
     protected void onDestroy() {
