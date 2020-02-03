@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".feature_downloader.DownloadManagementActivity">
+        <activity android:name=".feature_downloader.presentation.DownloadManagementActivity">
 <!--                        <intent-filter>-->
 <!--                            <action android:name="android.intent.action.MAIN" />-->
 <!--                            <action android:name="android.intent.action.VIEW"/>-->
