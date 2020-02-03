@@ -2,7 +2,7 @@ package com.allsoftdroid.audiobook.feature_downloader.utils;
 
 import android.os.Handler;
 
-import com.allsoftdroid.audiobook.feature_downloader.Downloader;
+import com.allsoftdroid.audiobook.feature_downloader.data.Downloader;
 
 import timber.log.Timber;
 
