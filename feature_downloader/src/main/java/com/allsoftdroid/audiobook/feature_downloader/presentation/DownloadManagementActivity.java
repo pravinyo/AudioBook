@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.allsoftdroid.audiobook.feature_downloader.data.Downloader;
 import com.allsoftdroid.audiobook.feature_downloader.R;
 import com.allsoftdroid.audiobook.feature_downloader.presentation.recycleviewAdapter.DownloaderAdapter;
-import com.allsoftdroid.audiobook.feature_downloader.utils.IDownloaderRefresh;
+import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloaderRefresh;
 
 import java.util.Objects;
 
