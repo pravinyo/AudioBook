@@ -227,7 +227,6 @@ public class Downloader {
 
     private void insertDownloadDatabase(long downloadId,String name){
         String downloadIdString=""+downloadId;
-
         ContentValues values = new ContentValues();
         values.put(downloadEntry.COLUMN_DOWNLOAD_NAME,name);
         values.put(downloadEntry.COLUMN_DOWNLOAD_ID,downloadIdString);
@@ -413,9 +412,5 @@ public class Downloader {
         mDownloadEventStore = null;
         downloadManager = null;
         mDownloadObserver = null;
-//        for (Map.Entry<String,DownloadObserver> tracker : progressTracker.entrySet()){
-//            tracker.getValue().stopWatching();
-//            progressTracker.remove(tracker.getKey());
-//        }
     }
 }
