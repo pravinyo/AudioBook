@@ -12,8 +12,8 @@ import androidx.navigation.Navigation
 import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.di.AppModule
 import com.allsoftdroid.audiobook.domain.model.LastPlayedTrack
-import com.allsoftdroid.audiobook.feature_downloader.DownloadManagementActivity
-import com.allsoftdroid.audiobook.feature_downloader.Downloader
+import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManagementActivity
+import com.allsoftdroid.audiobook.feature_downloader.data.Downloader
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.utility.MovableFrameLayout
@@ -156,7 +156,8 @@ class MainActivity : BaseActivity() {
     }
 
     private fun navigateToDownloadManagementActivity() {
-        val intent = Intent(this,DownloadManagementActivity::class.java)
+        val intent = Intent(this,
+            DownloadManagementActivity::class.java)
         startActivity(intent)
     }
 
