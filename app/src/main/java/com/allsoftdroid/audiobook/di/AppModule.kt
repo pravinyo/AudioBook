@@ -1,7 +1,7 @@
 package com.allsoftdroid.audiobook.di
 
 import android.content.Context
-import com.allsoftdroid.audiobook.feature_downloader.Downloader
+import com.allsoftdroid.audiobook.feature_downloader.data.Downloader
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.network.ConnectionLiveData
@@ -54,7 +54,11 @@ object AppModule {
         }
 
         single {
-                (ctx:Context) -> Downloader(ctx,get())
+                (ctx:Context) ->
+            Downloader(
+                ctx,
+                get()
+            )
         }
     }
 
