@@ -8,7 +8,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
-import com.allsoftdroid.audiobook.feature_downloader.DownloadManagementActivity;
+import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManagementActivity;
 import com.allsoftdroid.audiobook.feature_downloader.database.downloadContract;
 
 import java.util.ArrayList;
