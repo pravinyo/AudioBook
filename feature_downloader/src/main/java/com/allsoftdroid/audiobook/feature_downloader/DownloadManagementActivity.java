@@ -1,7 +1,6 @@
 package com.allsoftdroid.audiobook.feature_downloader;
 
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,14 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.allsoftdroid.audiobook.feature_downloader.recycleviewAdapter.DownloaderAdapter;
 import com.allsoftdroid.audiobook.feature_downloader.utils.IDownloaderRefresh;
-import com.allsoftdroid.audiobook.feature_downloader.utils.downloadUtils;
 
-import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 public class DownloadManagementActivity extends AppCompatActivity implements IDownloaderRefresh {
-
-    private static final String TAG = DownloadManagementActivity.class.getSimpleName();
 
     //recyclerView declaration
     private RecyclerView mRecyclerView;
@@ -31,6 +26,8 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
     private LinearLayout mEmptyView;
     private MenuItem clearAllBtn;
     private Downloader mDownloader;
+
+    private DownloadViewModel downloadViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,57 +48,39 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
         mEmptyView = findViewById(R.id.download_emptyView);
 
         mDownloader = new Downloader(this);
+
+        downloadViewModel = new DownloadViewModel();
+
+        downloadViewModel.getDownloadingList().observe(this, cursorEvent -> {
+            Cursor cursor = cursorEvent.getContentIfNotHandled();
+
+            if(cursor!=null && cursor.getCount()>0){
+                mAdapter = new DownloaderAdapter(DownloadManagementActivity.this,cursor,mRecyclerView);
+                mRecyclerView.setAdapter(mAdapter);
+
+                mAdapter.notifyDataSetChanged();
+                showList();
+                enableClearAll();
+            }else {
+                hideList();
+                disableClearAll();
+            }
+        });
     }
 
     @Override
     public void ReloadAdapter() {
-        new LoadDatabaseCursor(this).execute();
+        downloadViewModel.refresh(this);
     }
 
-    private static class LoadDatabaseCursor extends AsyncTask<Void,Void,Cursor> {
+    private void showList(){
+        mEmptyView.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
 
-        private WeakReference<DownloadManagementActivity> activityWeakReference;
-
-        LoadDatabaseCursor(DownloadManagementActivity context){
-            activityWeakReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected void onPostExecute(Cursor cursor) {
-            DownloadManagementActivity activity = activityWeakReference.get();
-            if(activity==null || activity.isFinishing()) return;
-
-            activityWeakReference.get().mAdapter = new DownloaderAdapter(
-                    activityWeakReference.get(),
-                    cursor,
-                    activityWeakReference.get().mRecyclerView);
-
-            if(activityWeakReference.get().mAdapter.getItemCount()>0){
-
-                activityWeakReference.get().mEmptyView.setVisibility(View.GONE);
-                activityWeakReference.get().mRecyclerView.setVisibility(View.VISIBLE);
-
-                activityWeakReference.get().mRecyclerView.setAdapter(activityWeakReference.get().mAdapter);
-                activityWeakReference.get().mAdapter.notifyDataSetChanged();
-                activityWeakReference.get().enableClearAll();
-            }else {
-                activityWeakReference.get().mRecyclerView.setVisibility(View.GONE);
-                activityWeakReference.get().mEmptyView.setVisibility(View.VISIBLE);
-                activityWeakReference.get().disableClearAll();
-            }
-
-        }
-
-        @Override
-        protected Cursor doInBackground(Void... voids) {
-
-            DownloadManagementActivity activity = activityWeakReference.get();
-            if(activity==null || activity.isFinishing()) return null;
-
-            downloadUtils.LogAllLocalData(TAG,
-                    activityWeakReference.get().getBaseContext());
-            return downloadUtils.getCustomCursor(activityWeakReference.get().getBaseContext());
-        }
+    private void hideList(){
+        mRecyclerView.setVisibility(View.GONE);
+        mEmptyView.setVisibility(View.VISIBLE);
     }
 
     private void enableClearAll(){
@@ -132,7 +111,7 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
             return true;
         }else if(id==R.id.download_activity_clear_all){
             mDownloader.clearAllDownloadedEntry();
-            mDownloader.LogAllLocalData(TAG);
+            mDownloader.LogAllLocalData();
             ReloadAdapter();
             return true;
         }
