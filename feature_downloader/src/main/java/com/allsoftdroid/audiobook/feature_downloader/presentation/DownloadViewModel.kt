@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature_downloader
+package com.allsoftdroid.audiobook.feature_downloader.presentation
 
 import android.content.Context
 import android.database.Cursor

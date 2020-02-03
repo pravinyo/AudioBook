@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature_downloader.recycleviewAdapter;
+package com.allsoftdroid.audiobook.feature_downloader.presentation.recycleviewAdapter;
 
 import android.app.DownloadManager;
 import android.content.Context;
@@ -16,8 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.allsoftdroid.audiobook.feature_downloader.DownloadManagementActivity;
-import com.allsoftdroid.audiobook.feature_downloader.Downloader;
+import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManagementActivity;
+import com.allsoftdroid.audiobook.feature_downloader.data.Downloader;
 import com.allsoftdroid.audiobook.feature_downloader.R;
 import com.allsoftdroid.audiobook.feature_downloader.utils.IDownloaderRefresh;
 import com.allsoftdroid.audiobook.feature_downloader.utils.Utility;

@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature_downloader.recycleviewAdapter;
+package com.allsoftdroid.audiobook.feature_downloader.presentation.recycleviewAdapter;
 
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;

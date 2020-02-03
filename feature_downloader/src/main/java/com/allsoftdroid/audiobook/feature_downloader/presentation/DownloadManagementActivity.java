@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature_downloader;
+package com.allsoftdroid.audiobook.feature_downloader.presentation;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,7 +12,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.allsoftdroid.audiobook.feature_downloader.recycleviewAdapter.DownloaderAdapter;
+import com.allsoftdroid.audiobook.feature_downloader.data.Downloader;
+import com.allsoftdroid.audiobook.feature_downloader.R;
+import com.allsoftdroid.audiobook.feature_downloader.presentation.recycleviewAdapter.DownloaderAdapter;
 import com.allsoftdroid.audiobook.feature_downloader.utils.IDownloaderRefresh;
 
 import java.util.Objects;
