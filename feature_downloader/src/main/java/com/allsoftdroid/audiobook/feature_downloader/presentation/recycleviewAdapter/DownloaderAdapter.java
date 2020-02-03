@@ -21,6 +21,9 @@ import com.allsoftdroid.audiobook.feature_downloader.data.Downloader;
 import com.allsoftdroid.audiobook.feature_downloader.R;
 import com.allsoftdroid.audiobook.feature_downloader.utils.IDownloaderRefresh;
 import com.allsoftdroid.audiobook.feature_downloader.utils.Utility;
+import com.allsoftdroid.common.base.network.ArchiveUtils;
+
+import java.util.Objects;
 
 import timber.log.Timber;
 
@@ -204,13 +207,12 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private String getSubPathFolder(String mIdentifier) {
-        return "/Open Resources/"+mIdentifier+"/";
+        return ArchiveUtils.Companion.getLocalSavePath(mIdentifier);
     }
 
     private void updateProgressBar(final ProgressBar mProgressBar, final TextView mProgressDetails, final long downloadId) {
 
         final Handler handler = new Handler();
-
 
         final int delay = 600; //milliseconds
 
@@ -224,7 +226,9 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         handler.postDelayed(this, delay);
                     }else {
                         mProgressBar.setProgress(mProgressBar.getMax());
-                        mRecyclerView.getAdapter().notifyDataSetChanged();
+                        Objects.requireNonNull(mRecyclerView.getAdapter()).notifyDataSetChanged();
+
+                        handler.removeCallbacks(this);
                     }
                 }
             }
