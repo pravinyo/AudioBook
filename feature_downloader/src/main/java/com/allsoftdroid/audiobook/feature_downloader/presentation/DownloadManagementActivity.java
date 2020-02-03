@@ -12,12 +12,19 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.allsoftdroid.audiobook.feature_downloader.data.Downloader;
 import com.allsoftdroid.audiobook.feature_downloader.R;
-import com.allsoftdroid.audiobook.feature_downloader.presentation.recycleviewAdapter.DownloaderAdapter;
+import com.allsoftdroid.audiobook.feature_downloader.data.Downloader;
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloaderRefresh;
+import com.allsoftdroid.audiobook.feature_downloader.presentation.recycleviewAdapter.DownloaderAdapter;
+import com.allsoftdroid.common.base.store.downloader.DownloadEvent;
+import com.allsoftdroid.common.base.store.downloader.DownloadEventStore;
+import com.allsoftdroid.common.base.store.downloader.Downloaded;
+import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus;
+import com.allsoftdroid.common.base.store.downloader.Downloading;
 
 import java.util.Objects;
+
+import io.reactivex.disposables.Disposable;
 
 public class DownloadManagementActivity extends AppCompatActivity implements IDownloaderRefresh {
 
@@ -30,6 +37,10 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
     private Downloader mDownloader;
 
     private DownloadViewModel downloadViewModel;
+
+    private DownloadEventStore mDownloadEventStore = DownloaderEventBus.Companion.getEventBusInstance();
+
+    private Disposable mDisposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +79,19 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
                 disableClearAll();
             }
         });
+
+        mDisposable = mDownloadEventStore
+                .observe()
+                .subscribe(event -> {
+
+                    DownloadEvent downloadEvent = event.peekContent();
+
+                    if (downloadEvent !=null){
+                        if (downloadEvent instanceof Downloading || downloadEvent instanceof Downloaded){
+                            ReloadAdapter();
+                        }
+                    }
+                });
     }
 
     @Override
@@ -129,5 +153,6 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mDisposable.dispose();
     }
 }
