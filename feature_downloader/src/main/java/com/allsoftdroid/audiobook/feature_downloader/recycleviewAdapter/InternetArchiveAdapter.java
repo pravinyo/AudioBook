@@ -24,6 +24,8 @@ import com.allsoftdroid.audiobook.feature_downloader.utils.IDownloaderRefresh;
 import com.allsoftdroid.audiobook.feature_downloader.R;
 import com.allsoftdroid.audiobook.feature_downloader.utils.Utility;
 
+import timber.log.Timber;
+
 import static android.content.Context.MODE_PRIVATE;
 
 public class InternetArchiveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -84,34 +86,31 @@ public class InternetArchiveAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         //Here cancel button act as restart button
         holder.mCancelButton.setImageResource(R.drawable.ic_restart);
         holder.mDeleteButton.setVisibility(View.VISIBLE);
-        holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Downloader downloader = new Downloader(mContext);
-                DeleteFileHandler(downloader,holder.downloadId);
-            }
+        holder.mDeleteButton.setOnClickListener(view -> {
+            Downloader downloader = new Downloader(mContext);
+            DeleteFileHandler(downloader,holder.downloadId);
         });
 
-        holder.mCancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                holder.mProgressDetails.setText(message);
-                holder.mDeleteButton.setVisibility(View.INVISIBLE);
+        holder.mCancelButton.setOnClickListener(view -> {
+            holder.mProgressDetails.setText(message);
+            holder.mDeleteButton.setVisibility(View.INVISIBLE);
 
-                Downloader downloader = new Downloader(mContext);
+            Downloader downloader = new Downloader(mContext);
 
-                String url = downloader.findURLbyDownloadId(holder.downloadId);
-                downloader.removeFromDownloadDatabase(holder.downloadId);
+            String url = downloader.findURLbyDownloadId(holder.downloadId);
+            downloader.removeFromDownloadDatabase(holder.downloadId);
 
-//                holder.downloadId = downloader.download(
-//                        url,
-//                        holder.mFileName.getText().toString(),
-//                        "open resources",
-//                        getSubPathFolder(mIdentifier)
-//                );
-//
-//                downloadRunning(holder);
-            }
+            String mIdentifier = url.split("/")[4];
+
+            Timber.d("I don't know why it is here:"+url);
+            holder.downloadId = downloader.download(
+                    url,
+                    holder.mFileName.getText().toString(),
+                    "open resources",
+                    getSubPathFolder(mIdentifier)
+            );
+
+            downloadRunning(holder);
         });
 
         holder.mProgressBar.setVisibility(View.INVISIBLE);
@@ -145,20 +144,10 @@ public class InternetArchiveAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         holder.mCancelButton.setVisibility(View.GONE);
         holder.mDeleteButton.setVisibility(View.VISIBLE);
-        holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DeleteFileHandler(downloader,holder.downloadId);
-            }
-        });
+        holder.mDeleteButton.setOnClickListener(view -> DeleteFileHandler(downloader,holder.downloadId));
         holder.mProgressBar.setVisibility(View.GONE);
         holder.mProgressDetails.setText(Utility.bytes2String(downloader.getProgress(holder.downloadId)[1]));
-        holder.mFileName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                downloader.openDownloadedFile(mContext,holder.downloadId);
-            }
-        });
+        holder.mFileName.setOnClickListener(view -> downloader.openDownloadedFile(mContext,holder.downloadId));
     }
 
     private void DeleteFileHandler(final Downloader downloader, final long downloadId) {
@@ -167,31 +156,21 @@ public class InternetArchiveAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (!isChecked) {
             View checkBoxView = View.inflate(mContext, R.layout.layout_checkbox, null);
             CheckBox checkBox = checkBoxView.findViewById(R.id.checkbox);
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    SharedPreferences.Editor editor = mContext.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-                    editor.putBoolean(Utility.LOCAL_FILE_KEY, isChecked);
-                    editor.apply();
-                }
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked1) -> {
+                SharedPreferences.Editor editor = mContext.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+                editor.putBoolean(Utility.LOCAL_FILE_KEY, isChecked1);
+                editor.apply();
             });
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             builder.setMessage(" Are you sure? ");
             builder.setView(checkBoxView);
-            builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User clicked OK button
-                    downloader.removeFromDownloadDatabase(downloadId);
-                    mDownloaderRefresh.ReloadAdapter();
-                }
+            builder.setPositiveButton(R.string.delete, (dialog, id) -> {
+                // User clicked OK button
+                downloader.removeFromDownloadDatabase(downloadId);
+                mDownloaderRefresh.ReloadAdapter();
             });
-            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            });
+            builder.setNegativeButton(R.string.cancel, (dialog, id) -> dialog.cancel());
 
             // Create the AlertDialog
             AlertDialog dialog = builder.create();
@@ -210,15 +189,12 @@ public class InternetArchiveAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         holder.mDeleteButton.setVisibility(View.GONE);
 
         holder.mCancelButton.setImageResource(R.drawable.ic_close_circle);
-        holder.mCancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Downloader downloader = new Downloader(mContext);
+        holder.mCancelButton.setOnClickListener(view -> {
+            Downloader downloader = new Downloader(mContext);
 
-                //remove from local database and downloader database
-                downloader.cancelDownload(holder.downloadId);
-                downloadInterrupted(holder);
-            }
+            //remove from local database and downloader database
+            downloader.cancelDownload(holder.downloadId);
+            downloadInterrupted(holder);
         });
 
         updateProgressBar(holder.mProgressBar,holder.mProgressDetails,holder.downloadId);
