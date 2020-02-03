@@ -2,7 +2,6 @@ package com.allsoftdroid.audiobook.feature_downloader.recycleviewAdapter;
 
 import android.app.DownloadManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Handler;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -20,17 +18,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.allsoftdroid.audiobook.feature_downloader.DownloadManagementActivity;
 import com.allsoftdroid.audiobook.feature_downloader.Downloader;
-import com.allsoftdroid.audiobook.feature_downloader.utils.IDownloaderRefresh;
 import com.allsoftdroid.audiobook.feature_downloader.R;
+import com.allsoftdroid.audiobook.feature_downloader.utils.IDownloaderRefresh;
 import com.allsoftdroid.audiobook.feature_downloader.utils.Utility;
 
 import timber.log.Timber;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class InternetArchiveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final String LOG_TAG = InternetArchiveAdapter.class.getSimpleName();
     private static final String MY_PREFS_NAME = "local_file_download_pref";
 
     private Context mContext;
@@ -41,7 +38,7 @@ public class InternetArchiveAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private Cursor mCursor;
 
-    public InternetArchiveAdapter(@NonNull DownloadManagementActivity context, @NonNull Cursor cursor, @NonNull RecyclerView recyclerView){
+    public DownloaderAdapter(@NonNull DownloadManagementActivity context, @NonNull Cursor cursor, @NonNull RecyclerView recyclerView){
         this.mContext = context;
         this.mCursor = cursor;
         this.mRecyclerView = recyclerView;

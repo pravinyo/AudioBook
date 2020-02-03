@@ -13,7 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.allsoftdroid.audiobook.feature_downloader.recycleviewAdapter.InternetArchiveAdapter;
+import com.allsoftdroid.audiobook.feature_downloader.recycleviewAdapter.DownloaderAdapter;
 import com.allsoftdroid.audiobook.feature_downloader.utils.IDownloaderRefresh;
 import com.allsoftdroid.audiobook.feature_downloader.utils.downloadUtils;
 
@@ -26,7 +26,7 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
 
     //recyclerView declaration
     private RecyclerView mRecyclerView;
-    private InternetArchiveAdapter mAdapter;
+    private DownloaderAdapter mAdapter;
 
     private LinearLayout mEmptyView;
     private MenuItem clearAllBtn;
@@ -71,7 +71,7 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
             DownloadManagementActivity activity = activityWeakReference.get();
             if(activity==null || activity.isFinishing()) return;
 
-            activityWeakReference.get().mAdapter = new InternetArchiveAdapter(
+            activityWeakReference.get().mAdapter = new DownloaderAdapter(
                     activityWeakReference.get(),
                     cursor,
                     activityWeakReference.get().mRecyclerView);
