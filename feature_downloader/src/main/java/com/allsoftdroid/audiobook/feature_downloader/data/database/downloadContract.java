@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature_downloader.database;
+package com.allsoftdroid.audiobook.feature_downloader.data.database;
 
 import android.content.ContentResolver;
 import android.net.Uri;

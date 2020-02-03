@@ -11,13 +11,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 
-import com.allsoftdroid.audiobook.feature_downloader.database.downloadContract.downloadEntry;
+import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract.downloadEntry;
 import com.allsoftdroid.audiobook.feature_downloader.utils.DownloadObserver;
 import com.allsoftdroid.audiobook.feature_downloader.utils.downloadUtils;
 import com.allsoftdroid.common.base.extension.Event;

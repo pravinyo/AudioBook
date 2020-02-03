@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature_downloader.database;
+package com.allsoftdroid.audiobook.feature_downloader.data.database;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -11,7 +11,7 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.allsoftdroid.audiobook.feature_downloader.database.downloadContract.downloadEntry;
+import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract.downloadEntry;
 
 import java.util.Objects;
 

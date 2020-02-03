@@ -1,10 +1,10 @@
-package com.allsoftdroid.audiobook.feature_downloader.database;
+package com.allsoftdroid.audiobook.feature_downloader.data.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.allsoftdroid.audiobook.feature_downloader.database.downloadContract.downloadEntry;
+import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract.downloadEntry;
 
 public class DBHelper extends SQLiteOpenHelper {
 
