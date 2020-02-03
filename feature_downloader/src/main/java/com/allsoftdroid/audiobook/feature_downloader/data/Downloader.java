@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature_downloader;
+package com.allsoftdroid.audiobook.feature_downloader.data;
 
 import android.app.DownloadManager;
 import android.content.ClipData;
@@ -271,7 +271,7 @@ public class Downloader {
         }
     }
 
-    void LogAllLocalData(){
+    public void LogAllLocalData(){
 
         String[] projection = {
                 downloadEntry._ID,
@@ -301,7 +301,7 @@ public class Downloader {
         Timber.d("Data:"+data);
     }
 
-    void clearAllDownloadedEntry(){
+    public void clearAllDownloadedEntry(){
         String[] projection = {
                 downloadEntry.COLUMN_DOWNLOAD_ID
         };
