@@ -2,7 +2,7 @@
 <resources>
     <string name="download_multiple">multiple download</string>
     <string name="description_emotiocon_happy_Icon">happy icons</string>
-    <string name="emptyView_download_message">no download</string>
+    <string name="emptyView_download_message">No Downloads…</string>
     <string name="download_activity_clear_all_value">clear all downloaded</string>
     <string name="description_file_Icon">file icon</string>
     <string name="calculating">calculating</string>
