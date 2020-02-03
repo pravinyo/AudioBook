@@ -269,7 +269,7 @@ public class downloadUtils {
         return customCursor;
     }
 
-    public static void LogAllLocalData(String tag, Context context){
+    public static void LogAllLocalData(Context context){
 
         String[] projection = {
                 downloadContract.downloadEntry._ID,
@@ -296,6 +296,6 @@ public class downloadUtils {
 
         if(cursor!=null) cursor.close();
 
-        Log.i(tag,data);
+        Timber.d("data:"+data);
     }
 }
