@@ -142,7 +142,7 @@ public class Downloader {
         );
     }
 
-    private void download(String URL, String name, String description, String subPath){
+    public long download(String URL, String name, String description, String subPath){
 
         //store downloadId to database for own reference
         long downloadId= downloadUtils.isDownloading(mContext,URL);
@@ -174,12 +174,13 @@ public class Downloader {
                     keyStrokeCount.put(URL,count+1);
                 }
 
-                return;
+                return downloadId;
             }
         }else {
-            return;
+            return downloadId;
         }
         Timber.d("Downloader2: =>%s",URL);
+        return downloadId;
     }
 
     public String[] getStatusByDownloadId(long downloadId){
