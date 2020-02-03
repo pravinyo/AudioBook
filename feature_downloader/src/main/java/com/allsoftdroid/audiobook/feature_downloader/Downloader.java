@@ -271,7 +271,7 @@ public class Downloader {
         }
     }
 
-    void LogAllLocalData(String tag){
+    void LogAllLocalData(){
 
         String[] projection = {
                 downloadEntry._ID,
@@ -298,7 +298,7 @@ public class Downloader {
 
         if(cursor!=null) cursor.close();
 
-        Log.i(tag,data);
+        Timber.d("Data:"+data);
     }
 
     void clearAllDownloadedEntry(){
