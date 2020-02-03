@@ -61,7 +61,7 @@
             android:enabled="true"/>
 
         <provider
-            android:name=".feature_downloader.database.downloadProvider"
+            android:name=".feature_downloader.data.database.downloadProvider"
             android:authorities="com.allsoftdroid.audiobook"
             android:exported="false"
             tools:ignore="InnerclassSeparator" />
