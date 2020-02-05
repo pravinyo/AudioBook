@@ -12,8 +12,6 @@ import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.allsoftdroid.common.base.store.downloader.DownloadEvent
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
-import com.allsoftdroid.common.base.store.downloader.Downloaded
-import com.allsoftdroid.common.base.store.downloader.Downloading
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
@@ -79,6 +77,8 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         })
 
         val trackAdapter = AudioBookTrackAdapter(
+            downloadStore,
+            bookId,
             TrackItemClickedListener{ trackNumber, _, _ ->
                 trackNumber?.let {
                     playSelectedTrackFile(it,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
