@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.views.TrackItemViewHolder
 
@@ -14,6 +15,8 @@ import com.allsoftdroid.feature.book_details.presentation.recyclerView.views.Tra
  */
 
 class AudioBookTrackAdapter(
+    private val downloadEventStore: DownloadEventStore,
+    private val bookId:String,
     private val clickedListener: TrackItemClickedListener,
     private val downloadItemClickedListener: DownloadItemClickedListener): ListAdapter<AudioBookTrackDomainModel, RecyclerView.ViewHolder>(TrackDiffCallback()) {
 
@@ -31,7 +34,7 @@ class AudioBookTrackAdapter(
         when(holder){
             is TrackItemViewHolder ->{
                 val dataItem = getItem(position)
-                holder.bind(dataItem,clickedListener,downloadItemClickedListener)
+                holder.bind(downloadEventStore,bookId,dataItem,clickedListener,downloadItemClickedListener)
             }
 
             else -> throw Exception("View Holder type is unknown:$holder")
@@ -51,7 +54,7 @@ class TrackDiffCallback : DiffUtil.ItemCallback<AudioBookTrackDomainModel>(){
      * Compare items based on name field as it is unique among track
      */
     override fun areItemsTheSame(oldItem: AudioBookTrackDomainModel, newItem: AudioBookTrackDomainModel): Boolean {
-        return oldItem.filename==newItem.filename && oldItem.isPlaying != newItem.isPlaying && oldItem.downloadStatus == newItem.downloadStatus
+        return oldItem.filename==newItem.filename && oldItem.isPlaying != newItem.isPlaying && oldItem.downloadStatus != newItem.downloadStatus
     }
 
     /**
