@@ -11,6 +11,7 @@ import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
+import com.allsoftdroid.feature.book_details.presentation.recyclerView.views.TrackItemViewHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -80,27 +81,11 @@ fun setTrackDownloadStatus(imageView: ImageView,item :AudioBookTrackDomainModel?
 }
 
 @BindingAdapter("trackDownloadProgress")
-fun setTrackDownloadProgress(view: ProgressBar, track: AudioBookTrackDomainModel?){
-    track?.let {
-        when(val status = track.downloadStatus){
-            is PROGRESS -> {
-                view.visibility = View.VISIBLE
-                view.progress = status.percent.toInt()
-                Timber.d("Progress event received for $track")
-            }
+fun setTrackDownloadProgress(view: ProgressBar, holder:TrackItemViewHolder?){
 
-            is DOWNLOADED -> {
-                view.visibility = View.GONE
-                Timber.d("Downloaded event received")
-            }
-
-            else -> {
-                view.visibility = View.GONE
-                Timber.d("Download event:$status received for $track")
-            }
-        }
+    holder?.let {
+        Timber.d("Download event received with progress for $holder")
     }
-    Timber.d("Progress event received")
 }
 
 /**
