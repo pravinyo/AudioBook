@@ -13,6 +13,7 @@
         <variable
             name="downloadListener"
             type="com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.DownloadItemClickedListener" />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -90,10 +91,10 @@
                 android:layout_gravity="center_vertical"
                 android:clickable="true"
                 android:focusable="true"
+                android:src="@drawable/download_outline"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:onClick="@{()->downloadListener.onDownloadItemClicked(track)}"
-                android:contentDescription="@string/download_icon"
-                app:trackDownloadStatus="@{track}" />
+                android:contentDescription="@string/download_icon"/>
 
             <ProgressBar
                 android:id="@+id/download_progress"
@@ -107,8 +108,7 @@
                 android:progressDrawable="@drawable/circular_progressbar"
                 android:background="@drawable/circle_shape"
                 style="?android:attr/progressBarStyleHorizontal"
-                android:max="100"
-                app:trackDownloadProgress="@{track}" />
+                android:max="100" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
