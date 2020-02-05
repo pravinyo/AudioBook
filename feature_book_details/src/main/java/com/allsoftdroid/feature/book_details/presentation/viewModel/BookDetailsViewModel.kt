@@ -360,7 +360,7 @@ class BookDetailsViewModel(
             _audioBookTracks.value = tracks
         }
 
-        _newTrackStateEvent.value = Event(0)
+//        _newTrackStateEvent.value = Event(0)
     }
 
 }
