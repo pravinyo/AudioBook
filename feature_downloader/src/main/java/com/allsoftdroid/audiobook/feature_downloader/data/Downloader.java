@@ -78,6 +78,7 @@ public class Downloader {
             mDownloadQueue.put(temp.getUrl(),temp);
 
             if(mDownloadQueue.size()==1){
+                Timber.d("Downloading as it is first request");
                 downloadOldestRequest();
             }
 
@@ -172,10 +173,10 @@ public class Downloader {
                     keyStrokeCount.put(URL,count+1);
                 }
 
-                return downloadId;
+                return downloadUtils.DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
             }
         }else {
-            return downloadId;
+            return -99;
         }
         Timber.d("Downloader2: =>%s",URL);
         return downloadId;
