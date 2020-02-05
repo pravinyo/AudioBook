@@ -96,7 +96,7 @@ fun setTrackDownloadProgress(view: ProgressBar, track: AudioBookTrackDomainModel
 
             else -> {
                 view.visibility = View.GONE
-                Timber.d("Downloaded event received for $track")
+                Timber.d("Download event:$status received for $track")
             }
         }
     }
