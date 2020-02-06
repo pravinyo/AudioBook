@@ -11,18 +11,19 @@ public class DownloadObserver{
     private final String mBookId;
     private final int mChapterIndex;
     private final String mUrl;
+    private final long mDownloadId;
     private Handler handler;
     private Downloader mDownloader;
-    private final long downloadId;
+    private final int progress_delay_time = 600; //milliseconds
+    private final int checker_delay_time = 1500; //milliseconds
 
-    public DownloadObserver(Downloader downloader, String path, String bookId, int chapterIndex, String url){
+    public DownloadObserver(Downloader downloader, String path, String bookId, int chapterIndex, String url,long download_id){
         mBookId = bookId;
         mChapterIndex = chapterIndex;
         mUrl = url;
+        mDownloadId = download_id;
         mDownloader = downloader;
         Timber.d("File path:"+path);
-
-        downloadId= mDownloader.getDownloadIdByURL(mUrl);
     }
 
     public void startWatching(){
@@ -32,43 +33,50 @@ public class DownloadObserver{
             @Override
             public void run() {
                 try{
-                    if(mDownloader.getStatusByDownloadId(downloadId)[0].equals(Utility.STATUS_SUCCESS)){
+
+                    String[] response = mDownloader.getStatusByDownloadId(mDownloadId);
+
+                    if (response==null || response.length==0){
+                        Timber.d("No response for this downloadId:"+mDownloader);
+                        if(mDownloader.getProgress(mDownloadId)!=null){
+                            downloadRunning();
+                        }else handler.postDelayed(this,checker_delay_time);
+                    }else if(response[0].equals(Utility.STATUS_SUCCESS)){
                         downloadRunning();
                     }
-                    else if(mDownloader.getStatusByDownloadId(downloadId)[0].equals(Utility.STATUS_RUNNING)){
-                        long[] progress = mDownloader.getProgress(downloadId);
+                    else if(response[0].equals(Utility.STATUS_RUNNING)){
+                        long[] progress = mDownloader.getProgress(mDownloadId);
                         if (progress[1]>progress[2]) {
                             handler.removeCallbacks(this);
                             Timber.d("Removing current callback");
                             Timber.d("Running main download progress checker");
                             downloadRunning();
-                        }else handler.postDelayed(this,1000);
+                        }else handler.postDelayed(this,checker_delay_time);
                     }else {
                         Timber.d("It seems like download is yet not started");
-                        handler.postDelayed(this,1000);
+                        handler.postDelayed(this,checker_delay_time);
                     }
                 }catch (Exception e){
                     e.printStackTrace();
                 }
             }
-        },1000);
+        },checker_delay_time);
     }
 
     private void downloadRunning(){
         handler = new Handler();
-        final int delay = 600; //milliseconds
 
         handler.postDelayed(new Runnable() {
             public void run() {
                 Timber.d("Handler is running");
-                if(mDownloader.getStatusByDownloadId(downloadId).length>0){
-                    long[] progress = mDownloader.getProgress(downloadId);
+                if(mDownloader.getStatusByDownloadId(mDownloadId).length>0){
+                    long[] progress = mDownloader.getProgress(mDownloadId);
                     if (progress[1]>progress[2]){
                         Timber.d("\nFile URL:"+mUrl+"\nProgress :"+(int)progress[0]);
                         mDownloader.updateProgress(mUrl,mBookId,mChapterIndex,progress[0]);
                         Timber.d("Download: "+progress[2]+"/"+progress[1]);
-                        handler.postDelayed(this, delay);
-                    }else if(mDownloader.getStatusByDownloadId(downloadId)[0].equals("STATUS_SUCCESSFUL")){
+                        handler.postDelayed(this, progress_delay_time);
+                    }else if(mDownloader.getStatusByDownloadId(mDownloadId)[0].equals("STATUS_SUCCESSFUL")){
                         mDownloader.updateDownloaded(mUrl,mBookId,mChapterIndex);
                         Timber.d("Download-: "+progress[2]+"/"+progress[1]);
                     }
@@ -76,7 +84,7 @@ public class DownloadObserver{
                     Timber.d("Download status is empty");
                 }
             }
-        }, delay);
+        }, progress_delay_time);
     }
 
     public void stopWatching() {
