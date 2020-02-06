@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 
+import com.allsoftdroid.audiobook.feature_downloader.data.config.ProviderConfig;
 import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract.downloadEntry;
 import com.allsoftdroid.audiobook.feature_downloader.utils.DownloadObserver;
 import com.allsoftdroid.audiobook.feature_downloader.utils.downloadUtils;
@@ -62,10 +63,7 @@ public class Downloader {
     public void handleDownloadEvent(DownloadEvent downloadEvent) {
         Timber.d("Download event received");
 
-        if(downloadEvent instanceof Downloading){
-            Downloading downloading = (Downloading) downloadEvent;
-
-        }else if (downloadEvent instanceof Cancel){
+        if (downloadEvent instanceof Cancel){
             final Cancel cancel = (Cancel) downloadEvent;
 
             long downloadId = getDownloadIdByURL(cancel.getFileUrl());
@@ -80,6 +78,8 @@ public class Downloader {
             if(mDownloadQueue.size()==1){
                 Timber.d("Downloading as it is first request");
                 downloadOldestRequest();
+            }else{
+                Timber.d("Added to download queue");
             }
 
             mDownloadEventStore.publish(
@@ -101,7 +101,7 @@ public class Downloader {
 
         }
         else{
-            Timber.d("Unexpected value: " + downloadEvent);
+            Timber.d("Download event value: " + downloadEvent);
         }
     }
 
@@ -110,7 +110,7 @@ public class Downloader {
 
         Download download1 = mDownloadQueue.entrySet().iterator().next().getValue();
         Timber.d("New Download event received: "+download1.toString());
-        download(download1.getUrl(),download1.getName(),download1.getDescription(),download1.getSubPath());
+        long downloadId = download(download1.getUrl(),download1.getName(),download1.getDescription(),download1.getSubPath());
 
         File file = new File(Environment.DIRECTORY_DOWNLOADS,download1.getSubPath()+download1.getName());
         Timber.d("File path:"+file.getAbsolutePath());
@@ -120,7 +120,7 @@ public class Downloader {
                 file.getAbsolutePath(),
                 download1.getBookId(),
                 download1.getChapterIndex(),
-                download1.getUrl());
+                download1.getUrl(),downloadId);
         mDownloadObserver.startWatching();
 
         Timber.d("File tracker attached for New Download: "+download1.toString());
@@ -145,7 +145,7 @@ public class Downloader {
 
         //store downloadId to database for own reference
         long downloadId= downloadUtils.isDownloading(mContext,URL);
-        if(downloadId==0){
+        if(downloadId==downloadUtils.DOWNLOADER_NOT_DOWNLOADING){
             Uri uri = Uri.parse(URL);
             Timber.d("DownloaderLOG: =>%s", URL);
             downloadId = downloadUtils.DownloadData(
@@ -158,7 +158,7 @@ public class Downloader {
 
 
             if(downloadId !=downloadUtils.DOWNLOADER_PROTOCOL_NOT_SUPPORTED){
-                insertDownloadDatabase(downloadId,URL);
+                insertDownloadDatabase(downloadId,name,URL);
             }else {
 
                 //TODO: way to clear database items
@@ -200,14 +200,6 @@ public class Downloader {
         return downloadManager.query(query);
     }
 
-    public String getTitle(){
-        return DownloadManager.COLUMN_TITLE;
-    }
-
-    public String getDescription(){
-        return DownloadManager.COLUMN_DESCRIPTION;
-    }
-
     public long[] getProgress(long downloadId){
         Cursor cursor = query(downloadId);
         if (cursor!=null && cursor.moveToFirst()) {
@@ -226,7 +218,7 @@ public class Downloader {
         return null;
     }
 
-    private void insertDownloadDatabase(long downloadId,String name){
+    private void insertDownloadDatabase(long downloadId,String name,String url){
         String downloadIdString=""+downloadId;
         ContentValues values = new ContentValues();
         values.put(downloadEntry.COLUMN_DOWNLOAD_NAME,name);
@@ -265,7 +257,7 @@ public class Downloader {
 
         ArrayList<Long> ids = downloadUtils.bulkDownload(mContext,downloadManager,urls,names,subPath,title);
         for(int i=0;i<ids.size();i++){
-            insertDownloadDatabase(ids.get(i),urls[i]);
+            insertDownloadDatabase(ids.get(i),names[i],urls[i]);
         }
     }
 
@@ -397,7 +389,7 @@ public class Downloader {
         Intent myIntent = new Intent(Intent.ACTION_VIEW);
         if(Build.VERSION.SDK_INT>=24){
             File newFile = new File(Objects.requireNonNull(item.getPath()));
-            Uri contentUri = FileProvider.getUriForFile(context, "com.allsoftdroid.audiobook.provider", newFile);
+            Uri contentUri = FileProvider.getUriForFile(context, ProviderConfig.PROVIDER_AUTHORITY, newFile);
             myIntent.setDataAndType(contentUri, mimeType);
             myIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }else {
