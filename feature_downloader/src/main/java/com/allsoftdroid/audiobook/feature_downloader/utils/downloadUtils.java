@@ -19,6 +19,7 @@ import static android.content.Context.DOWNLOAD_SERVICE;
 
 public class downloadUtils {
     public static final long DOWNLOADER_PROTOCOL_NOT_SUPPORTED=-444;
+    public static final long DOWNLOADER_NOT_DOWNLOADING=-145;
 
     private static String[] DownloadStatus(Cursor cursor){
 
@@ -179,7 +180,7 @@ public class downloadUtils {
 
         if(cursor!=null) cursor.close();
 
-        return 0;
+        return DOWNLOADER_NOT_DOWNLOADING;
     }
 
     public static ArrayList<Long> bulkDownload(Context context, DownloadManager downloadManager,
