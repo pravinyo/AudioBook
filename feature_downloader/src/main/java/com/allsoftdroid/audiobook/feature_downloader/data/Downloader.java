@@ -79,6 +79,7 @@ public class Downloader {
                 Timber.d("Downloading as it is first request");
                 downloadOldestRequest();
             }else{
+                insertDownloadDatabase(downloadUtils.DOWNLOADER_PENDING_ID,temp.getName(),temp.getUrl());
                 Timber.d("Added to download queue");
             }
 
@@ -222,9 +223,37 @@ public class Downloader {
         String downloadIdString=""+downloadId;
         ContentValues values = new ContentValues();
         values.put(downloadEntry.COLUMN_DOWNLOAD_NAME,name);
+        values.put(downloadEntry.COLUMN_DOWNLOAD_URL,url);
         values.put(downloadEntry.COLUMN_DOWNLOAD_ID,downloadIdString);
 
-        Uri newUri = mContext.getContentResolver().insert(downloadEntry.CONTENT_URI,values);
+        //Find if there any already inserted intry in DB
+        String[] projection = {
+                downloadEntry._ID
+        };
+
+        String selection= downloadEntry.COLUMN_DOWNLOAD_URL+" = ?";
+        String[] selectionArgs={url};
+        Cursor cursor = mContext.getContentResolver().query(
+                downloadEntry.CONTENT_URI,
+                projection,
+                selection,
+                selectionArgs,
+                null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            //We found the entry, so just have to update the row with new values
+            String id = cursor.getString(cursor.getColumnIndex(downloadEntry._ID));
+            Uri currentDownloadUri = ContentUris.withAppendedId(downloadEntry.CONTENT_URI, Long.parseLong(id));
+            mContext.getContentResolver().update(currentDownloadUri,values,selection,selectionArgs);
+            Timber.d("Updated  at:"+currentDownloadUri.toString());
+            cursor.close();
+        }else {
+            //It is new entry and we will add new in table
+            Uri newUri = mContext.getContentResolver().insert(downloadEntry.CONTENT_URI,values);
+            if(newUri!=null){
+                Timber.d("Inserted at:"+newUri.toString());
+            }
+        }
     }
 
     public void removeFromDownloadDatabase(long downloadId){
