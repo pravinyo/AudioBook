@@ -20,6 +20,7 @@ import static android.content.Context.DOWNLOAD_SERVICE;
 public class downloadUtils {
     public static final long DOWNLOADER_PROTOCOL_NOT_SUPPORTED=-444;
     public static final long DOWNLOADER_NOT_DOWNLOADING=-145;
+    public static final long DOWNLOADER_PENDING_ID = 0;
 
     private static String[] DownloadStatus(Cursor cursor){
 
