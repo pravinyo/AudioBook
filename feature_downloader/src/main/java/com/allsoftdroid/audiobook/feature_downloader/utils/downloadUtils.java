@@ -219,7 +219,10 @@ public class downloadUtils {
 
 
         String[] projection = {
-                downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID
+                downloadContract.downloadEntry._ID,
+                downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID,
+                downloadContract.downloadEntry.COLUMN_DOWNLOAD_NAME,
+                downloadContract.downloadEntry.COLUMN_DOWNLOAD_URL
         };
 
         String order = downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID + " DESC";
@@ -238,29 +241,44 @@ public class downloadUtils {
             while (cursor.moveToNext()) {
                 long downloadId = cursor.getLong(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID));
 
-                query.setFilterById(downloadId);
-                if (downloadManager != null) {
-                    Cursor c = downloadManager.query(query);
-                    if (c!=null && c.moveToFirst()) {
-                        Timber.d("%s => %s", DownloadManagementActivity.class.getSimpleName(), "size of c: " + c.getCount() +
-                                "\ncolumn count:" + c.getColumnCount() + "\nColumn name at 0: " + c.getColumnName(0) +
-                                "\nColumn value at 0: " + c.getString(0)
-                        );
+                if(downloadId!=downloadUtils.DOWNLOADER_PENDING_ID){
+                    query.setFilterById(downloadId);
+                    if (downloadManager != null) {
+                        Cursor c = downloadManager.query(query);
+                        if (c!=null && c.moveToFirst()) {
+                            Timber.d("%s => %s", DownloadManagementActivity.class.getSimpleName(), "size of c: " + c.getCount() +
+                                    "\ncolumn count:" + c.getColumnCount() + "\nColumn name at 0: " + c.getColumnName(0) +
+                                    "\nColumn value at 0: " + c.getString(0)
+                            );
 
-                        customCursor.addRow(new Object[]{
-                                c.getLong(c.getColumnIndex(DownloadManager.COLUMN_ID)),
-                                c.getString(c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)),
-                                c.getString(c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)),
-                                c.getString(c.getColumnIndex(DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP)),
-                                c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)),
-                                c.getString(c.getColumnIndex(DownloadManager.COLUMN_MEDIA_TYPE)),
-                                c.getString(c.getColumnIndex(DownloadManager.COLUMN_STATUS)),
-                                c.getString(c.getColumnIndex(DownloadManager.COLUMN_URI)),
-                                c.getString(c.getColumnIndex(DownloadManager.COLUMN_TITLE))
-                        });
+                            customCursor.addRow(new Object[]{
+                                    c.getLong(c.getColumnIndex(DownloadManager.COLUMN_ID)),
+                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)),
+                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)),
+                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP)),
+                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)),
+                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_MEDIA_TYPE)),
+                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_STATUS)),
+                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_URI)),
+                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_TITLE))
+                            });
 
-                        c.close();
+                            c.close();
+                        }
                     }
+                }else{
+                    //It is pending download Id and there is no records with DownloadManager
+                    customCursor.addRow(new Object[]{
+                            cursor.getLong(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID)),
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            cursor.getString(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_URL)),
+                            cursor.getString(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_NAME))
+                    });
                 }
             }
             cursor.close();
