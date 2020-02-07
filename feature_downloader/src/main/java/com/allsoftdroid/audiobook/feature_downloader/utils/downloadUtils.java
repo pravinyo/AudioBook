@@ -246,9 +246,10 @@ public class downloadUtils {
                     if (downloadManager != null) {
                         Cursor c = downloadManager.query(query);
                         if (c!=null && c.moveToFirst()) {
-                            Timber.d("%s => %s", DownloadManagementActivity.class.getSimpleName(), "size of c: " + c.getCount() +
+                            Timber.d("%s => %s", downloadUtils.class.getSimpleName(), "size of c: " + c.getCount() +
                                     "\ncolumn count:" + c.getColumnCount() + "\nColumn name at 0: " + c.getColumnName(0) +
-                                    "\nColumn value at 0: " + c.getString(0)
+                                    "\nColumn value at 0: " + c.getString(0)+
+                                    "column uri is "+c.getString(c.getColumnIndex(DownloadManager.COLUMN_URI))
                             );
 
                             customCursor.addRow(new Object[]{
