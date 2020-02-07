@@ -170,13 +170,8 @@ public class downloadProvider extends ContentProvider{
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case DOWNLOADS:
-                return updateDownload(uri, contentValues, selection, selectionArgs);
             case download_ID:
-                // For the PET_ID code, extract out the ID from the URI,
-                // so we know which row to update. Selection will be "_id=?" and selection
-                // arguments will be a String array containing the actual ID.
-                selection = downloadEntry.COLUMN_DOWNLOAD_ID + "=?";
-                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+
                 return updateDownload(uri, contentValues, selection, selectionArgs);
             default:
                 throw new IllegalArgumentException("Update is not supported for " + uri);
@@ -190,6 +185,14 @@ public class downloadProvider extends ContentProvider{
         if (values.size() == 0) {
             return 0;
         }
+
+        if (values.containsKey(downloadEntry.COLUMN_DOWNLOAD_URL)) {
+            String url = values.getAsString(downloadEntry.COLUMN_DOWNLOAD_URL);
+            if (url == null) {
+                throw new IllegalArgumentException("download requires a valid url");
+            }
+        }
+
         if (values.containsKey(downloadEntry.COLUMN_DOWNLOAD_NAME)) {
             String name = values.getAsString(downloadEntry.COLUMN_DOWNLOAD_NAME);
             if (name == null) {
