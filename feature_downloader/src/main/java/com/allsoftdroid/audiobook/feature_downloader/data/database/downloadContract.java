@@ -18,6 +18,7 @@ public final class downloadContract {
         final static String TABLE_NAME="downloads";
         public final static String _ID=BaseColumns._ID;
         public final static String COLUMN_DOWNLOAD_NAME="name";
+        public final static String COLUMN_DOWNLOAD_URL="url";
         public final static String COLUMN_DOWNLOAD_ID="downloadId";
 
 
