@@ -2,6 +2,10 @@ TODO: Write test scripts
 TODO: Static analysis tools
 TODO: Follow TDD Approach
 
+BUG
+TODO: App is getting crash when opening The Complete poetical works by edgar Allan Poe [crash screenshot is available]
+TODO: Downloader show check if file is already downloaded no need to add for pending downloads
+TODO: Modify download progress indicator to be reactive
 
 Expected
 TODO: Permission checker
