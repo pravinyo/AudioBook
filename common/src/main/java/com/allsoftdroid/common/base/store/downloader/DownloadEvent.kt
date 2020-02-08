@@ -14,6 +14,15 @@ data class Download(
     val chapter:String,
     override val chapterIndex:Int):DownloadEvent()
 
+data class Restart(
+    val url:String,
+    val name:String,
+    val description:String,
+    val subPath:String,
+    override val bookId:String,
+    val chapter:String,
+    override val chapterIndex:Int):DownloadEvent()
+
 data class Downloading(
     val url:String,
     override val bookId: String,
