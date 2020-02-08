@@ -68,7 +68,7 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
             Cursor cursor = cursorEvent.getContentIfNotHandled();
 
             if(cursor!=null && cursor.getCount()>0){
-                mAdapter = new DownloaderAdapter(DownloadManagementActivity.this,cursor,mRecyclerView);
+                mAdapter = new DownloaderAdapter(DownloadManagementActivity.this,cursor,mDownloadEventStore);
                 mRecyclerView.setAdapter(mAdapter);
 
                 mAdapter.notifyDataSetChanged();
@@ -88,7 +88,11 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
 
                     if (downloadEvent !=null){
                         if (downloadEvent instanceof Downloading || downloadEvent instanceof Downloaded){
-                            ReloadAdapter();
+                            if(mRecyclerView.getAdapter()!=null){
+                                mRecyclerView.getAdapter().notifyDataSetChanged();
+                            }else {
+                                ReloadAdapter();
+                            }
                         }
                     }
                 });
