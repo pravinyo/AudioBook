@@ -40,6 +40,11 @@ data class Cancel(
     override val chapterIndex: Int,
     val fileUrl:String) : DownloadEvent()
 
+data class Cancelled(
+    override val bookId: String,
+    override val chapterIndex: Int,
+    val fileUrl:String) : DownloadEvent()
+
 data class DownloadNothing(override val bookId: String="",override val chapterIndex: Int=-1) : DownloadEvent()
 
 data class OpenDownloadActivity(override val bookId: String="",override val chapterIndex: Int=-1) : DownloadEvent()
