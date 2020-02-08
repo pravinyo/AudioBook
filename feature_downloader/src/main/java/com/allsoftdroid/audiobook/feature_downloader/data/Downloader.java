@@ -350,7 +350,7 @@ public class Downloader {
 
     public String findURLbyDownloadId(long downloadId){
         String[] projection = {
-                downloadEntry.COLUMN_DOWNLOAD_NAME
+                downloadEntry.COLUMN_DOWNLOAD_URL
         };
 
         String selection=downloadEntry.COLUMN_DOWNLOAD_ID+" = ?";
@@ -365,7 +365,7 @@ public class Downloader {
 
         String url="";
         if (cursor!=null && cursor.getCount()>0 && cursor.moveToFirst()){
-            url = cursor.getString(cursor.getColumnIndex(downloadEntry.COLUMN_DOWNLOAD_NAME));
+            url = cursor.getString(cursor.getColumnIndex(downloadEntry.COLUMN_DOWNLOAD_URL));
             cursor.close();
         }
 
@@ -379,7 +379,7 @@ public class Downloader {
                 downloadEntry.COLUMN_DOWNLOAD_ID
         };
 
-        String selection=downloadEntry.COLUMN_DOWNLOAD_NAME+" = ?";
+        String selection=downloadEntry.COLUMN_DOWNLOAD_URL+" = ?";
         String[] selectionArgs={url};
 
         Cursor cursor = mContext.getContentResolver().query(
