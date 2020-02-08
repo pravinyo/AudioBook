@@ -4,19 +4,17 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.allsoftdroid.audiobook.feature_downloader.R;
-import com.allsoftdroid.audiobook.feature_downloader.data.Downloader;
+import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloader;
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloaderRefresh;
 import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManagementActivity;
 import com.allsoftdroid.audiobook.feature_downloader.utils.Utility;
@@ -41,7 +39,7 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private Context mContext;
 
-    private Downloader downloader;
+    private IDownloader mDownloader;
     private IDownloaderRefresh mDownloaderRefresh;
     private final DownloadEventStore downloadEventStore;
     private CompositeDisposable compositeDisposable;
@@ -50,10 +48,11 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public DownloaderAdapter(@NonNull DownloadManagementActivity context,
                              @NonNull Cursor cursor,
+                             @NonNull IDownloader downloader,
                              @NonNull DownloadEventStore eventStore){
         this.mContext = context;
         this.mCursor = cursor;
-        downloader = new Downloader(mContext);
+        mDownloader = downloader;
         downloadEventStore = eventStore;
         mDownloaderRefresh = (IDownloaderRefresh) mContext;
         compositeDisposable = new CompositeDisposable();
@@ -97,7 +96,7 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             }else if (downloadEvent instanceof Downloaded){
                                 Downloaded downloaded = (Downloaded)downloadEvent;
                                 if (downloaded.getUrl().equals(uri)){
-                                    downloadCompleted(holder,downloader.getDownloadIdByURL(downloaded.getUrl()));
+                                    downloadCompleted(holder,mDownloader.getDownloadIdByURL(downloaded.getUrl()));
                                 }
 
                             }else if (downloadEvent instanceof Progress){
@@ -106,7 +105,7 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                     holder.mProgressBar.setProgress((int)progress.getPercent());
                                     holder.chapterIndex = progress.getChapterIndex();
 
-                                    long[] progressStat = downloader.getProgress(downloader.getDownloadIdByURL(progress.getUrl()));
+                                    long[] progressStat = mDownloader.getProgress(mDownloader.getDownloadIdByURL(progress.getUrl()));
                                     if (progressStat!=null && progressStat.length>0 && progressStat[1]>progressStat[2]){
                                         holder.mProgressBar.setProgress((int)progressStat[0]);
                                         holder.mProgressDetails.setText(getFormattedUpdates(progressStat[2],progressStat[1]));
@@ -123,13 +122,13 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
 
-        if(downloader.getStatusByDownloadId(holder.downloadId)==null){
+        if(mDownloader.getStatusByDownloadId(holder.downloadId)==null){
             downloadInterrupted(holder);
-        }else if(downloader.getStatusByDownloadId(holder.downloadId).length>0 &&
-                downloader.getStatusByDownloadId(holder.downloadId)[0].equals(Utility.STATUS_RUNNING)){
+        }else if(mDownloader.getStatusByDownloadId(holder.downloadId).length>0 &&
+                mDownloader.getStatusByDownloadId(holder.downloadId)[0].equals(Utility.STATUS_RUNNING)){
             downloadRunning(holder);
-        }else if(downloader.getStatusByDownloadId(holder.downloadId).length>0 &&
-                downloader.getStatusByDownloadId(holder.downloadId)[0].equals(Utility.STATUS_SUCCESS)){
+        }else if(mDownloader.getStatusByDownloadId(holder.downloadId).length>0 &&
+                mDownloader.getStatusByDownloadId(holder.downloadId)[0].equals(Utility.STATUS_SUCCESS)){
             downloadCompleted(holder,holder.downloadId);
         }
     }
@@ -139,14 +138,14 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         //Here cancel button act as restart button
         holder.mCancelButton.setImageResource(R.drawable.ic_restart);
         holder.mDeleteButton.setVisibility(View.VISIBLE);
-        holder.mDeleteButton.setOnClickListener(view -> DeleteFileHandler(downloader,holder.downloadId));
+        holder.mDeleteButton.setOnClickListener(view -> DeleteFileHandler(mDownloader,holder.downloadId));
 
         holder.mCancelButton.setOnClickListener(view -> {
             holder.mProgressDetails.setText(message);
             holder.mDeleteButton.setVisibility(View.INVISIBLE);
 
-            String url = downloader.findURLbyDownloadId(holder.downloadId);
-            downloader.removeFromDownloadDatabase(holder.downloadId);
+            String url = mDownloader.findURLbyDownloadId(holder.downloadId);
+            mDownloader.removeFromDownloadDatabase(holder.downloadId);
 
             Timber.d("Old Download URL:"+url);
             String mIdentifier = url.split("/")[4];
@@ -170,13 +169,13 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void downloadCompleted(final ViewHolderDownloadCursor holder,long downloadId) {
         holder.mCancelButton.setVisibility(View.GONE);
         holder.mDeleteButton.setVisibility(View.VISIBLE);
-        holder.mDeleteButton.setOnClickListener(view -> DeleteFileHandler(downloader,holder.downloadId));
+        holder.mDeleteButton.setOnClickListener(view -> DeleteFileHandler(mDownloader,holder.downloadId));
         holder.mProgressBar.setVisibility(View.GONE);
-        holder.mProgressDetails.setText(Utility.bytes2String(downloader.getProgress(downloadId)[1]));
-        holder.mFileName.setOnClickListener(view -> downloader.openDownloadedFile(mContext,holder.downloadId));
+        holder.mProgressDetails.setText(Utility.bytes2String(mDownloader.getProgress(downloadId)[1]));
+        holder.mFileName.setOnClickListener(view -> mDownloader.openDownloadedFile(mContext,holder.downloadId));
     }
 
-    private void DeleteFileHandler(final Downloader downloader, final long downloadId) {
+    private void DeleteFileHandler(final IDownloader downloader, final long downloadId) {
         SharedPreferences prefs = mContext.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
         boolean isChecked = prefs.getBoolean(Utility.LOCAL_FILE_KEY, false);
         if (!isChecked) {
@@ -221,7 +220,7 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             Timber.d("Holder download Id: "+holder.downloadId);
 
-            String url = downloader.findURLbyDownloadId(holder.downloadId);
+            String url = mDownloader.findURLbyDownloadId(holder.downloadId);
             String mIdentifier = url.split("/")[4];
             downloadEventStore.publish(
                     new Event<>(new Cancel(mIdentifier, holder.chapterIndex, url))
