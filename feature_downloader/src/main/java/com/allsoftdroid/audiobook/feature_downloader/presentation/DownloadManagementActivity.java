@@ -70,7 +70,7 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
             Cursor cursor = cursorEvent.getContentIfNotHandled();
 
             if(cursor!=null && cursor.getCount()>0){
-                mAdapter = new DownloaderAdapter(DownloadManagementActivity.this,cursor,mDownloadEventStore);
+                mAdapter = new DownloaderAdapter(DownloadManagementActivity.this,cursor,downloader,mDownloadEventStore);
                 mRecyclerView.setAdapter(mAdapter);
 
                 mAdapter.notifyDataSetChanged();
