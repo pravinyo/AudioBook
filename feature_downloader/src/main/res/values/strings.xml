@@ -11,5 +11,5 @@
     <string name="delete">DELETE</string>
     <string name="cancel">CANCEL</string>
     <string name="download_running_message">Downloading…</string>
-    <string name="don_t_show_this">Don\\\'t Show this</string>
+    <string name="don_t_show_this">Don\'t Show this</string>
 </resources>
