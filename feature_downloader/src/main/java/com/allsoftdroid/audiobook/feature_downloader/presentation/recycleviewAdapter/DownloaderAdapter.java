@@ -27,6 +27,7 @@ import com.allsoftdroid.common.base.store.downloader.DownloadEvent;
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore;
 import com.allsoftdroid.common.base.store.downloader.Downloaded;
 import com.allsoftdroid.common.base.store.downloader.Progress;
+import com.allsoftdroid.common.base.store.downloader.Restart;
 
 import io.reactivex.disposables.CompositeDisposable;
 import timber.log.Timber;
@@ -116,6 +117,14 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 if(cancelled.getFileUrl().equals(uri)){
                                     downloadInterrupted(holder);
                                 }
+                            }else if (downloadEvent instanceof Restart){
+                                Restart download = (Restart)downloadEvent;
+                                if (download.getUrl().equals(uri)){
+                                    Timber.d("Restart running for "+download.getUrl());
+                                    downloadRunning(holder);
+                                    holder.chapterIndex = download.getChapterIndex();
+                                    mDownloaderRefresh.notifyItemChangedAtPosition(holder.getAdapterPosition());
+                                }
                             }
                         })
                 );
@@ -145,14 +154,13 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.mDeleteButton.setVisibility(View.INVISIBLE);
 
             String url = mDownloader.findURLbyDownloadId(holder.downloadId);
-            mDownloader.removeFromDownloadDatabase(holder.downloadId);
 
             Timber.d("Old Download URL:"+url);
             String mIdentifier = url.split("/")[4];
 
             String fileName = holder.mFileName.getText().toString();
             downloadEventStore.publish(
-                    new Event<>(new Download(
+                    new Event<>(new Restart(
                             url,
                             fileName,
                             "Downloading "+fileName,
@@ -167,6 +175,7 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private void downloadCompleted(final ViewHolderDownloadCursor holder,long downloadId) {
+        Timber.d("Download completed for Id:"+holder.mFileName.getText());
         holder.mCancelButton.setVisibility(View.GONE);
         holder.mDeleteButton.setVisibility(View.VISIBLE);
         holder.mDeleteButton.setOnClickListener(view -> DeleteFileHandler(mDownloader,holder.downloadId));
@@ -205,7 +214,7 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private void downloadRunning(final ViewHolderDownloadCursor holder) {
-        Timber.d("Downloading running for "+holder.mFileName);
+        Timber.d("Downloading running for "+holder.mFileName.getText());
         holder.mProgressDetails.setText(mContext.getResources().getString(R.string.download_running_message));
         holder.mProgressBar.setIndeterminate(false);
         holder.mProgressBar.setMax(100);
