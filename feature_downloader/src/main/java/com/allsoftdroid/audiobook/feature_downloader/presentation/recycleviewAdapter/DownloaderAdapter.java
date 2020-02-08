@@ -9,22 +9,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManagementActivity;
-import com.allsoftdroid.audiobook.feature_downloader.data.Downloader;
 import com.allsoftdroid.audiobook.feature_downloader.R;
+import com.allsoftdroid.audiobook.feature_downloader.data.Downloader;
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloaderRefresh;
+import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManagementActivity;
 import com.allsoftdroid.audiobook.feature_downloader.utils.Utility;
+import com.allsoftdroid.common.base.extension.Event;
 import com.allsoftdroid.common.base.network.ArchiveUtils;
+import com.allsoftdroid.common.base.store.downloader.Download;
+import com.allsoftdroid.common.base.store.downloader.DownloadEvent;
+import com.allsoftdroid.common.base.store.downloader.DownloadEventStore;
+import com.allsoftdroid.common.base.store.downloader.Downloaded;
+import com.allsoftdroid.common.base.store.downloader.Progress;
 
-import java.util.Objects;
-
+import io.reactivex.disposables.CompositeDisposable;
 import timber.log.Timber;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -35,18 +39,22 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private Context mContext;
 
-    private RecyclerView mRecyclerView;
     private Downloader downloader;
     private IDownloaderRefresh mDownloaderRefresh;
+    private final DownloadEventStore downloadEventStore;
+    private CompositeDisposable compositeDisposable;
 
     private Cursor mCursor;
 
-    public DownloaderAdapter(@NonNull DownloadManagementActivity context, @NonNull Cursor cursor, @NonNull RecyclerView recyclerView){
+    public DownloaderAdapter(@NonNull DownloadManagementActivity context,
+                             @NonNull Cursor cursor,
+                             @NonNull DownloadEventStore eventStore){
         this.mContext = context;
         this.mCursor = cursor;
-        this.mRecyclerView = recyclerView;
         downloader = new Downloader(mContext);
+        downloadEventStore = eventStore;
         mDownloaderRefresh = (IDownloaderRefresh) mContext;
+        compositeDisposable = new CompositeDisposable();
     }
 
     @NonNull
@@ -70,12 +78,48 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         holder.downloadId = mCursor.getLong(mCursor.getColumnIndex(DownloadManager.COLUMN_ID));
         holder.mCancelButton.setClickable(true);
 
+        String uri = mCursor.getString(mCursor.getColumnIndex(DownloadManager.COLUMN_URI));
+
+        compositeDisposable.add(
+                downloadEventStore
+                        .observe()
+                        .subscribe(event -> {
+                            DownloadEvent downloadEvent = event.peekContent();
+                            if (downloadEvent instanceof Download){
+                                Download download = (Download)downloadEvent;
+                                if (download.getUrl().equals(uri)){
+                                    Timber.d("Downloading running for "+download.getUrl());
+                                    downloadRunning(holder);
+                                }
+                            }else if (downloadEvent instanceof Downloaded){
+                                Downloaded downloaded = (Downloaded)downloadEvent;
+                                if (downloaded.getUrl().equals(uri)){
+                                    downloadCompleted(holder,downloader.getDownloadIdByURL(downloaded.getUrl()));
+                                }
+
+                            }else if (downloadEvent instanceof Progress){
+                                Progress progress = (Progress)downloadEvent;
+                                if (progress.getUrl().equals(uri)){
+                                    holder.mProgressBar.setProgress((int)progress.getPercent());
+
+                                    long[] progressStat = downloader.getProgress(downloader.getDownloadIdByURL(progress.getUrl()));
+                                    if (progressStat!=null && progressStat.length>0 && progressStat[1]>progressStat[2]){
+                                        holder.mProgressBar.setProgress((int)progressStat[0]);
+                                        holder.mProgressDetails.setText(getFormattedUpdates(progressStat[2],progressStat[1]));
+                                    }
+                                }
+                            }
+                        })
+                );
+
+
+
         if(downloader.getStatusByDownloadId(holder.downloadId).length>0 &&
                 downloader.getStatusByDownloadId(holder.downloadId)[0].equals(Utility.STATUS_RUNNING)){
             downloadRunning(holder);
         }else if(downloader.getStatusByDownloadId(holder.downloadId).length>0 &&
                 downloader.getStatusByDownloadId(holder.downloadId)[0].equals(Utility.STATUS_SUCCESS)){
-            downloadCompleted(holder);
+            downloadCompleted(holder,holder.downloadId);
         }else if(downloader.getStatusByDownloadId(holder.downloadId).length>0){
             downloadInterrupted(holder);
         }
@@ -86,67 +130,34 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         //Here cancel button act as restart button
         holder.mCancelButton.setImageResource(R.drawable.ic_restart);
         holder.mDeleteButton.setVisibility(View.VISIBLE);
-        holder.mDeleteButton.setOnClickListener(view -> {
-            Downloader downloader = new Downloader(mContext);
-            DeleteFileHandler(downloader,holder.downloadId);
-        });
+        holder.mDeleteButton.setOnClickListener(view -> DeleteFileHandler(downloader,holder.downloadId));
 
         holder.mCancelButton.setOnClickListener(view -> {
             holder.mProgressDetails.setText(message);
             holder.mDeleteButton.setVisibility(View.INVISIBLE);
 
-            Downloader downloader = new Downloader(mContext);
-
             String url = downloader.findURLbyDownloadId(holder.downloadId);
             downloader.removeFromDownloadDatabase(holder.downloadId);
 
+            Timber.d("Old Download URL:"+url);
             String mIdentifier = url.split("/")[4];
-
-            Timber.d("I don't know why it is here:"+url);
             holder.downloadId = downloader.download(
                     url,
                     holder.mFileName.getText().toString(),
-                    "open resources",
+                    "Downloading "+holder.mFileName,
                     getSubPathFolder(mIdentifier)
             );
-
-            downloadRunning(holder);
         });
 
         holder.mProgressBar.setVisibility(View.INVISIBLE);
-        if(downloader.getStatusByDownloadId(holder.downloadId).length>0){
-            holder.mProgressDetails.setText(downloader.getStatusByDownloadId(holder.downloadId)[1]);
-
-            if(downloader.getStatusByDownloadId(holder.downloadId)[0].equals(Utility.STATUS_RUNNING)){
-                downloadRunning(holder);
-            }else{
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        try{
-                            if(downloader.getStatusByDownloadId(holder.downloadId)[0].equals(Utility.STATUS_RUNNING)){
-                                downloadRunning(holder);
-                            }else {
-                                handler.postDelayed(this,1000);
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                },1000);
-            }
-        }
     }
 
-    private void downloadCompleted(final ViewHolderDownloadCursor holder) {
-        final Downloader downloader = new Downloader(mContext);
-
+    private void downloadCompleted(final ViewHolderDownloadCursor holder,long downloadId) {
         holder.mCancelButton.setVisibility(View.GONE);
         holder.mDeleteButton.setVisibility(View.VISIBLE);
         holder.mDeleteButton.setOnClickListener(view -> DeleteFileHandler(downloader,holder.downloadId));
         holder.mProgressBar.setVisibility(View.GONE);
-        holder.mProgressDetails.setText(Utility.bytes2String(downloader.getProgress(holder.downloadId)[1]));
+        holder.mProgressDetails.setText(Utility.bytes2String(downloader.getProgress(downloadId)[1]));
         holder.mFileName.setOnClickListener(view -> downloader.openDownloadedFile(mContext,holder.downloadId));
     }
 
@@ -180,6 +191,7 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private void downloadRunning(final ViewHolderDownloadCursor holder) {
+        Timber.d("Downloading running for "+holder.mFileName);
         holder.mProgressDetails.setText(mContext.getResources().getString(R.string.download_running_message));
         holder.mProgressBar.setIndeterminate(false);
         holder.mProgressBar.setMax(100);
@@ -190,52 +202,20 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         holder.mCancelButton.setImageResource(R.drawable.ic_close_circle);
         holder.mCancelButton.setOnClickListener(view -> {
-            Downloader downloader = new Downloader(mContext);
-
             //remove from local database and downloader database
+            Timber.d("Holder download Id: "+holder.downloadId);
+//            Toast.makeText(mContext,"Cancel clicked",Toast.LENGTH_SHORT).show();
             downloader.cancelDownload(holder.downloadId);
             downloadInterrupted(holder);
         });
-
-        updateProgressBar(holder.mProgressBar,holder.mProgressDetails,holder.downloadId);
-
-        if(downloader.getStatusByDownloadId(holder.downloadId).length>0
-                && downloader.getStatusByDownloadId(holder.downloadId)[0].equals(Utility.STATUS_SUCCESS)){
-            holder.mProgressBar.setProgress(100);
-            downloadCompleted(holder);
-        }
     }
 
     private String getSubPathFolder(String mIdentifier) {
         return ArchiveUtils.Companion.getLocalSavePath(mIdentifier);
     }
 
-    private void updateProgressBar(final ProgressBar mProgressBar, final TextView mProgressDetails, final long downloadId) {
-
-        final Handler handler = new Handler();
-
-        final int delay = 600; //milliseconds
-
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                if(downloader.getStatusByDownloadId(downloadId).length>0){
-                    long[] progress = downloader.getProgress(downloadId);
-                    if (progress[1]>progress[2]){
-                        mProgressBar.setProgress((int)progress[0]);
-                        mProgressDetails.setText(getFormattedUpdates(progress[2],progress[1]));
-                        handler.postDelayed(this, delay);
-                    }else {
-                        mProgressBar.setProgress(mProgressBar.getMax());
-                        Objects.requireNonNull(mRecyclerView.getAdapter()).notifyDataSetChanged();
-
-                        handler.removeCallbacks(this);
-                    }
-                }
-            }
-        }, delay);
-    }
-
     private int getAppropriateFileIconFromFormat(String format) {
+        Timber.d("Format is "+format);
         return R.drawable.ic_file_music;
     }
 
@@ -247,5 +227,11 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static String getFormattedUpdates(long downloadedSize, long fileSize) {
         //format: 625KB/s - 998KB of 112MB, 31 mins left
         return Utility.bytes2String(downloadedSize)+ " of "+Utility.bytes2String(fileSize);
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        compositeDisposable.dispose();
     }
 }
