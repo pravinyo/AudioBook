@@ -21,6 +21,4 @@ public interface IDownloader extends IDownloaderCore {
     String[] getStatusByDownloadId(long downloadId);
 
     void openDownloadedFile(Context context, long downloadId);
-
-    void Destroy();
 }
