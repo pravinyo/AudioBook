@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.allsoftdroid.audiobook.feature_downloader.R;
 import com.allsoftdroid.audiobook.feature_downloader.data.Downloader;
+import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloader;
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloaderRefresh;
 import com.allsoftdroid.audiobook.feature_downloader.presentation.recycleviewAdapter.DownloaderAdapter;
 import com.allsoftdroid.common.base.store.downloader.Cancelled;
@@ -35,7 +36,7 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
 
     private LinearLayout mEmptyView;
     private MenuItem clearAllBtn;
-    private Downloader mDownloader;
+    private IDownloader downloader;
 
     private DownloadViewModel downloadViewModel;
 
@@ -61,7 +62,7 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
 
         mEmptyView = findViewById(R.id.download_emptyView);
 
-        mDownloader = new Downloader(this);
+        downloader = new Downloader(this);
 
         downloadViewModel = new DownloadViewModel();
 
@@ -141,8 +142,8 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
             onBackPressed();
             return true;
         }else if(id==R.id.download_activity_clear_all){
-            mDownloader.clearAllDownloadedEntry();
-            mDownloader.LogAllLocalData();
+            downloader.clearAllDownloadedEntry();
+            downloader.LogAllLocalData();
             ReloadAdapter();
             return true;
         }
