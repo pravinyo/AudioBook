@@ -69,19 +69,23 @@ public class DownloadObserver{
         handler.postDelayed(new Runnable() {
             public void run() {
                 Timber.d("Handler is running");
-                if(mDownloader.getStatusByDownloadId(mDownloadId).length>0){
-                    long[] progress = mDownloader.getProgress(mDownloadId);
-                    if (progress[1]>progress[2]){
-                        Timber.d("\nFile URL:"+mUrl+"\nProgress :"+(int)progress[0]);
-                        mDownloader.updateProgress(mUrl,mBookId,mChapterIndex,progress[0]);
-                        Timber.d("Download: "+progress[2]+"/"+progress[1]);
-                        handler.postDelayed(this, progress_delay_time);
-                    }else if(mDownloader.getStatusByDownloadId(mDownloadId)[0].equals("STATUS_SUCCESSFUL")){
-                        mDownloader.updateDownloaded(mUrl,mBookId,mChapterIndex);
-                        Timber.d("Download-: "+progress[2]+"/"+progress[1]);
+                try{
+                    if(mDownloader.getStatusByDownloadId(mDownloadId).length>0){
+                        long[] progress = mDownloader.getProgress(mDownloadId);
+                        if (progress[1]>progress[2]){
+                            Timber.d("\nFile URL:"+mUrl+"\nProgress :"+(int)progress[0]);
+                            mDownloader.updateProgress(mUrl,mBookId,mChapterIndex,progress[0]);
+                            Timber.d("Download: "+progress[2]+"/"+progress[1]);
+                            handler.postDelayed(this, progress_delay_time);
+                        }else if(mDownloader.getStatusByDownloadId(mDownloadId)[0].equals("STATUS_SUCCESSFUL")){
+                            mDownloader.updateDownloaded(mUrl,mBookId,mChapterIndex);
+                            Timber.d("Download-: "+progress[2]+"/"+progress[1]);
+                        }
+                    }else{
+                        Timber.d("Download status is empty");
                     }
-                }else{
-                    Timber.d("Download status is empty");
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
             }
         }, progress_delay_time);
