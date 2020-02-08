@@ -16,6 +16,7 @@ import com.allsoftdroid.audiobook.feature_downloader.R;
 import com.allsoftdroid.audiobook.feature_downloader.data.Downloader;
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloaderRefresh;
 import com.allsoftdroid.audiobook.feature_downloader.presentation.recycleviewAdapter.DownloaderAdapter;
+import com.allsoftdroid.common.base.store.downloader.Cancelled;
 import com.allsoftdroid.common.base.store.downloader.DownloadEvent;
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore;
 import com.allsoftdroid.common.base.store.downloader.Downloaded;
@@ -87,7 +88,7 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
                     DownloadEvent downloadEvent = event.peekContent();
 
                     if (downloadEvent !=null){
-                        if (downloadEvent instanceof Downloading || downloadEvent instanceof Downloaded){
+                        if (downloadEvent instanceof Downloading || downloadEvent instanceof Downloaded || downloadEvent instanceof Cancelled){
                             if(mRecyclerView.getAdapter()!=null){
                                 mRecyclerView.getAdapter().notifyDataSetChanged();
                             }else {
