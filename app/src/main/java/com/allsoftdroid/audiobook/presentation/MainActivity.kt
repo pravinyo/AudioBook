@@ -12,8 +12,8 @@ import androidx.navigation.Navigation
 import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.di.AppModule
 import com.allsoftdroid.audiobook.domain.model.LastPlayedTrack
+import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloaderCore
 import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManagementActivity
-import com.allsoftdroid.audiobook.feature_downloader.data.Downloader
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.utility.MovableFrameLayout
@@ -21,7 +21,9 @@ import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ConnectionLiveData
 import com.allsoftdroid.common.base.store.audioPlayer.*
-import com.allsoftdroid.common.base.store.downloader.*
+import com.allsoftdroid.common.base.store.downloader.DownloadEvent
+import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
+import com.allsoftdroid.common.base.store.downloader.OpenDownloadActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -47,7 +49,7 @@ class MainActivity : BaseActivity() {
 
     private val downloadEventStore:DownloadEventStore by inject()
 
-    private val downloader: Downloader by inject{parametersOf(this)}
+    private val downloader: IDownloaderCore by inject{parametersOf(this)}
 
     private lateinit var disposable:Disposable
 
