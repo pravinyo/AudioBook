@@ -105,6 +105,11 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
         downloadViewModel.refresh(this);
     }
 
+    @Override
+    public void notifyItemChangedAtPosition(int position) {
+        ReloadAdapter();
+    }
+
     private void showList(){
         mEmptyView.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
