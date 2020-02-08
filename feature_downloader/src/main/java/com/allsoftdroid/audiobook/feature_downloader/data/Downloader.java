@@ -29,6 +29,7 @@ import com.allsoftdroid.common.base.store.downloader.DownloadEventStore;
 import com.allsoftdroid.common.base.store.downloader.Downloaded;
 import com.allsoftdroid.common.base.store.downloader.Downloading;
 import com.allsoftdroid.common.base.store.downloader.Progress;
+import com.allsoftdroid.common.base.store.downloader.Restart;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,7 +67,21 @@ public class Downloader implements IDownloader {
     public void handleDownloadEvent(DownloadEvent downloadEvent) {
         Timber.d("Download event received");
 
-        if (downloadEvent instanceof Cancel){
+        if(downloadEvent instanceof Restart){
+            Restart restart = (Restart)downloadEvent;
+            removeFromDownloadDatabase(getDownloadIdByURL(restart.getUrl()));
+
+            addToDownloadQueueRequest(new Download(
+                    restart.getUrl(),
+                    restart.getName(),
+                    restart.getDescription(),
+                    restart.getSubPath(),
+                    restart.getBookId(),
+                    restart.getChapter(),
+                    restart.getChapterIndex()
+            ));
+
+        }else if (downloadEvent instanceof Cancel){
             final Cancel cancel = (Cancel) downloadEvent;
 
             downloadNext(cancel.getFileUrl());
@@ -81,19 +96,8 @@ public class Downloader implements IDownloader {
 
         }else if(downloadEvent instanceof Download){
             Download temp = (Download) downloadEvent;
-            mDownloadQueue.put(temp.getUrl(),temp);
+            addToDownloadQueueRequest(temp);
 
-            if(mDownloadQueue.size()==1){
-                Timber.d("Downloading as it is first request");
-                downloadOldestRequest();
-            }else{
-                insertDownloadDatabase(downloadUtils.DOWNLOADER_PENDING_ID,temp.getName(),temp.getUrl());
-                Timber.d("Added to download queue");
-            }
-
-            mDownloadEventStore.publish(
-                    new Event<DownloadEvent>(new Downloading(temp.getUrl(),temp.getBookId(),temp.getChapterIndex()))
-            );
             Timber.d("Downloading  event sent for "+temp.toString());
         }
         else if(downloadEvent instanceof Downloaded){
@@ -105,6 +109,22 @@ public class Downloader implements IDownloader {
         else{
             Timber.d("Download event value: " + downloadEvent);
         }
+    }
+
+    private void addToDownloadQueueRequest(Download obj) {
+        mDownloadQueue.put(obj.getUrl(),obj);
+
+        if(mDownloadQueue.size()==1){
+            Timber.d("Downloading as it is first request");
+            downloadOldestRequest();
+        }else{
+            insertDownloadDatabase(downloadUtils.DOWNLOADER_PENDING_ID,obj.getName(),obj.getUrl());
+            Timber.d("Added to download queue");
+        }
+
+        mDownloadEventStore.publish(
+                new Event<DownloadEvent>(new Downloading(obj.getUrl(),obj.getBookId(),obj.getChapterIndex()))
+        );
     }
 
     private void downloadNext(String removeUrl) {
