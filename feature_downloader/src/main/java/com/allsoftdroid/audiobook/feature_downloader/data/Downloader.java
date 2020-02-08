@@ -21,6 +21,7 @@ import com.allsoftdroid.audiobook.feature_downloader.utils.DownloadObserver;
 import com.allsoftdroid.audiobook.feature_downloader.utils.downloadUtils;
 import com.allsoftdroid.common.base.extension.Event;
 import com.allsoftdroid.common.base.store.downloader.Cancel;
+import com.allsoftdroid.common.base.store.downloader.Cancelled;
 import com.allsoftdroid.common.base.store.downloader.Download;
 import com.allsoftdroid.common.base.store.downloader.DownloadEvent;
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore;
@@ -66,10 +67,15 @@ public class Downloader {
         if (downloadEvent instanceof Cancel){
             final Cancel cancel = (Cancel) downloadEvent;
 
+            downloadNext(cancel.getFileUrl());
+
             long downloadId = getDownloadIdByURL(cancel.getFileUrl());
             cancelDownload(downloadId);
 
-            mDownloadQueue.remove(cancel.getFileUrl());
+            mDownloadEventStore.publish(
+                    new Event<>(new Cancelled(cancel.getBookId(), cancel.getChapterIndex(), cancel.getFileUrl()))
+            );
+            Timber.d("Cancelled  event sent for "+cancel.toString());
 
         }else if(downloadEvent instanceof Download){
             Download temp = (Download) downloadEvent;
@@ -90,20 +96,25 @@ public class Downloader {
         }
         else if(downloadEvent instanceof Downloaded){
             Downloaded downloaded = (Downloaded) downloadEvent;
-            mDownloadQueue.remove(downloaded.getUrl());
-            mDownloadObserver.stopWatching();
-            isDownloading = false;
             Timber.d("Downloaded  event received for "+downloaded.toString());
-
-
-            if(mDownloadQueue.size()>0){
-                downloadOldestRequest();
-            }
+            downloadNext(downloaded.getUrl());
 
         }
         else{
             Timber.d("Download event value: " + downloadEvent);
         }
+    }
+
+    private void downloadNext(String removeUrl) {
+        mDownloadQueue.remove(removeUrl);
+        mDownloadObserver.stopWatching();
+        isDownloading = false;
+
+        if(mDownloadQueue.size()>0){
+            downloadOldestRequest();
+        }
+
+        Timber.d("Staring new Download, Removing URL:"+removeUrl);
     }
 
     private void downloadOldestRequest() {
@@ -142,7 +153,7 @@ public class Downloader {
         );
     }
 
-    public long download(String URL, String name, String description, String subPath){
+    private long download(String URL, String name, String description, String subPath){
 
         //store downloadId to database for own reference
         long downloadId= downloadUtils.isDownloading(mContext,URL);
@@ -187,7 +198,7 @@ public class Downloader {
         return downloadUtils.Check_Status(downloadManager,downloadId);
     }
 
-    public void cancelDownload(long downloadId){
+    private void cancelDownload(long downloadId){
         try{
             downloadManager.remove(downloadId);
         }catch (Exception UnsupportedOperationException){
@@ -336,7 +347,7 @@ public class Downloader {
             while (cursor.moveToNext()){
                 long downloadId = cursor.getLong(cursor.getColumnIndex(downloadEntry.COLUMN_DOWNLOAD_ID));
                 String[] status = getStatusByDownloadId(downloadId);
-                if(status.length>0){
+                if(status!=null && status.length>0){
                     if(status[0].equals(STATUS_SUCCESS)){
                         removeFromDownloadDatabase(downloadId);
                     }
