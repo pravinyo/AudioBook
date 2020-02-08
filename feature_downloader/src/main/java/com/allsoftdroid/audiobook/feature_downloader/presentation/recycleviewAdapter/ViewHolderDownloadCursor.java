@@ -17,6 +17,7 @@ class ViewHolderDownloadCursor extends RecyclerView.ViewHolder {
     ImageView mCancelButton;
     long downloadId;
     ImageView mDeleteButton;
+    int chapterIndex=-1;
 
     ViewHolderDownloadCursor(View itemView) {
         super(itemView);
