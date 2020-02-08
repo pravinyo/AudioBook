@@ -17,6 +17,7 @@ import androidx.core.content.FileProvider;
 
 import com.allsoftdroid.audiobook.feature_downloader.data.config.ProviderConfig;
 import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract.downloadEntry;
+import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloader;
 import com.allsoftdroid.audiobook.feature_downloader.utils.DownloadObserver;
 import com.allsoftdroid.audiobook.feature_downloader.utils.downloadUtils;
 import com.allsoftdroid.common.base.extension.Event;
@@ -40,7 +41,7 @@ import timber.log.Timber;
 import static android.content.Context.DOWNLOAD_SERVICE;
 import static com.allsoftdroid.audiobook.feature_downloader.utils.Utility.STATUS_SUCCESS;
 
-public class Downloader {
+public class Downloader implements IDownloader {
 
     private Context mContext;
     private DownloadManager downloadManager;
@@ -61,6 +62,7 @@ public class Downloader {
         mDownloadEventStore = eventStore;
     }
 
+    @Override
     public void handleDownloadEvent(DownloadEvent downloadEvent) {
         Timber.d("Download event received");
 
@@ -139,6 +141,7 @@ public class Downloader {
         file = null;
     }
 
+    @Override
     public void updateDownloaded(String mUrl,String mBookId,int mChapterIndex) {
         Timber.d("\nFile URL:"+mUrl+"\nDownloaded");
         mDownloadEventStore.publish(
@@ -146,6 +149,7 @@ public class Downloader {
         );
     }
 
+    @Override
     public void updateProgress(String mUrl,String mBookId,int mChapterIndex,long progress) {
         Timber.d("\nFile URL:"+mUrl+"\nProgress :"+progress);
         mDownloadEventStore.publish(
@@ -194,6 +198,7 @@ public class Downloader {
         return downloadId;
     }
 
+    @Override
     public String[] getStatusByDownloadId(long downloadId){
         return downloadUtils.Check_Status(downloadManager,downloadId);
     }
@@ -212,6 +217,7 @@ public class Downloader {
         return downloadManager.query(query);
     }
 
+    @Override
     public long[] getProgress(long downloadId){
         Cursor cursor = query(downloadId);
         if (cursor!=null && cursor.moveToFirst()) {
@@ -267,6 +273,7 @@ public class Downloader {
         }
     }
 
+    @Override
     public void removeFromDownloadDatabase(long downloadId){
 
         String[] projection = {
@@ -293,6 +300,7 @@ public class Downloader {
         if(cursor!=null) cursor.close();
     }
 
+    @Override
     public void bulkDownload(String[] urls, String[] names, String subPath, String title){
 
         ArrayList<Long> ids = downloadUtils.bulkDownload(mContext,downloadManager,urls,names,subPath,title);
@@ -301,6 +309,7 @@ public class Downloader {
         }
     }
 
+    @Override
     public void LogAllLocalData(){
 
         String[] projection = {
@@ -331,6 +340,7 @@ public class Downloader {
         Timber.d("Data:"+data);
     }
 
+    @Override
     public void clearAllDownloadedEntry(){
         String[] projection = {
                 downloadEntry.COLUMN_DOWNLOAD_ID
@@ -359,6 +369,7 @@ public class Downloader {
         if(cursor!=null) cursor.close();
     }
 
+    @Override
     public String findURLbyDownloadId(long downloadId){
         String[] projection = {
                 downloadEntry.COLUMN_DOWNLOAD_URL
@@ -385,6 +396,7 @@ public class Downloader {
         return url;
     }
 
+    @Override
     public long getDownloadIdByURL(String url){
         String[] projection = {
                 downloadEntry.COLUMN_DOWNLOAD_ID
@@ -409,6 +421,7 @@ public class Downloader {
         return 0;
     }
 
+    @Override
     public void openDownloadedFile(Context context, long downloadId) {
 
         DownloadManager.Query query = new DownloadManager.Query();
@@ -440,6 +453,7 @@ public class Downloader {
         context.startActivity(open);
     }
 
+    @Override
     public void Destroy(){
         mContext = null;
         mDownloadEventStore = null;
