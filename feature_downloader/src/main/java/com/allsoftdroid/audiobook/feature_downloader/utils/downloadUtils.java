@@ -115,9 +115,9 @@ public class downloadUtils {
         if(cursor!=null && cursor.moveToFirst()){
             statusAndReason=DownloadStatus(cursor);
             cursor.close();
+        }else{
+            return null;
         }
-
-        if(cursor!=null) cursor.close();
 
         return statusAndReason;
     }
