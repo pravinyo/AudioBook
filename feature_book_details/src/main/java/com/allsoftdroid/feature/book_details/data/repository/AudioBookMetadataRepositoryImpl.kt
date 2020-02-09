@@ -15,7 +15,7 @@ import com.allsoftdroid.feature.book_details.data.network.service.ArchiveMetadat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.AudioBookMetadataRepository
-import com.allsoftdroid.feature.book_details.presentation.NetworkState
+import com.allsoftdroid.feature.book_details.utils.NetworkState
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

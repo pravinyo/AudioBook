@@ -12,7 +12,7 @@ import com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel.Min
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
-import com.allsoftdroid.common.base.store.*
+import com.allsoftdroid.common.base.store.audioPlayer.*
 import io.reactivex.disposables.Disposable
 import org.koin.android.ext.android.inject
 import timber.log.Timber
@@ -48,10 +48,14 @@ class MiniPlayerFragment : BaseContainerFragment() {
             it.getContentIfNotHandled()?.let { nextClicked ->
                 if(nextClicked){
                     Timber.d("Sending new next event")
-                    eventStore.publish(Event(Next(PlayingState(
-                        playingItemIndex = currentPlayingIndex+1,
-                        action_need = true
-                    ))))
+                    eventStore.publish(Event(
+                        Next(
+                            PlayingState(
+                                playingItemIndex = currentPlayingIndex + 1,
+                                action_need = true
+                            )
+                        )
+                    ))
                 }
             }
         })
@@ -62,10 +66,14 @@ class MiniPlayerFragment : BaseContainerFragment() {
 
                 if(previousClicked){
                     Timber.d("Sending new Previous event")
-                    eventStore.publish(Event(Previous(PlayingState(
-                        playingItemIndex = currentPlayingIndex-1,
-                        action_need = true
-                    ))))
+                    eventStore.publish(Event(
+                        Previous(
+                            PlayingState(
+                                playingItemIndex = currentPlayingIndex - 1,
+                                action_need = true
+                            )
+                        )
+                    ))
                 }
             }
         })
@@ -78,16 +86,24 @@ class MiniPlayerFragment : BaseContainerFragment() {
 
                 if(shouldPlay){
                     Timber.d("Sending new play event")
-                    eventStore.publish(Event(Play(PlayingState(
-                        playingItemIndex = currentPlayingIndex,
-                        action_need = true
-                    ))))
+                    eventStore.publish(Event(
+                        Play(
+                            PlayingState(
+                                playingItemIndex = currentPlayingIndex,
+                                action_need = true
+                            )
+                        )
+                    ))
                 }else{
                     Timber.d("Sending new pause event")
-                    eventStore.publish(Event(Pause(PlayingState(
-                        playingItemIndex = currentPlayingIndex,
-                        action_need = true
-                    ))))
+                    eventStore.publish(Event(
+                        Pause(
+                            PlayingState(
+                                playingItemIndex = currentPlayingIndex,
+                                action_need = true
+                            )
+                        )
+                    ))
                 }
             }
         })

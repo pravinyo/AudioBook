@@ -3,7 +3,7 @@ package com.allsoftdroid.feature.book_details.domain.usecase
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.feature.book_details.domain.repository.AudioBookMetadataRepository
-import com.allsoftdroid.feature.book_details.presentation.NetworkState
+import com.allsoftdroid.feature.book_details.utils.NetworkState
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

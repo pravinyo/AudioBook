@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="download_multiple_length">100dp</dimen>
+    <dimen name="margin_standard">16dp</dimen>
+    <dimen name="emoticon_size">36dp</dimen>
+    <dimen name="padding_standard">16dp</dimen>
+    <dimen name="download_item_file_icon_size">32dp</dimen>
+    <dimen name="download_item_action_btn_size">30dp</dimen>
+    <dimen name="margin_min">4dp</dimen>
+</resources>

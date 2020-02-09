@@ -1,6 +1,7 @@
-package com.allsoftdroid.common.base.store
+package com.allsoftdroid.common.base.store.audioPlayer
 
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.store.Store
 import com.allsoftdroid.common.base.utils.SingletonHolder
 
 class AudioPlayerEventStore private constructor(defaultValue: Event<AudioPlayerEvent>)

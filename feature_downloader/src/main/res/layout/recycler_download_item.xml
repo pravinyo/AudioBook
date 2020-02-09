@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_standard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textView_download_file_name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="0dp"
+            android:textColor="@color/colorItem"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+        <ImageView
+            android:id="@+id/imageView_download_file_icon"
+            android:contentDescription="@string/description_file_Icon"
+            android:src="@drawable/ic_file_music"
+            android:layout_width="@dimen/download_item_file_icon_size"
+            android:layout_height="@dimen/download_item_file_icon_size" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:paddingTop="@dimen/padding_standard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/textView_download_progress_details"
+            android:textColor="@color/colorItem"
+            android:text="@string/calculating"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:paddingTop="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ProgressBar
+                android:id="@+id/progressbar_download_progress"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="0dp"
+                android:paddingEnd="@dimen/padding_standard"
+                android:layout_weight="3"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:gravity="end"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/imageView_download_cancel_button"
+                    android:src="@drawable/ic_close_circle"
+                    android:contentDescription="@string/description_download_cancel_Icon"
+                    android:layout_width="@dimen/download_item_action_btn_size"
+                    android:layout_height="@dimen/download_item_action_btn_size"
+                    />
+
+                <ImageView
+                    android:id="@+id/imageView_download_delete_button"
+                    android:src="@drawable/ic_delete"
+                    android:layout_width="@dimen/download_item_action_btn_size"
+                    android:contentDescription="@string/description_delete_Icon"
+                    android:layout_marginStart="@dimen/margin_standard"
+                    android:visibility="invisible"
+                    android:layout_height="@dimen/download_item_action_btn_size" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

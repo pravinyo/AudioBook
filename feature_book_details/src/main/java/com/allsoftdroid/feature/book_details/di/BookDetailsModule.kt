@@ -1,6 +1,7 @@
 package com.allsoftdroid.feature.book_details.di
 
 import androidx.lifecycle.SavedStateHandle
+import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus
 import com.allsoftdroid.database.common.AudioBookDatabase
 import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
@@ -8,6 +9,7 @@ import com.allsoftdroid.feature.book_details.data.databaseExtension.SaveMetadata
 import com.allsoftdroid.feature.book_details.data.network.service.ArchiveMetadataApi
 import com.allsoftdroid.feature.book_details.data.repository.AudioBookMetadataRepositoryImpl
 import com.allsoftdroid.feature.book_details.domain.repository.AudioBookMetadataRepository
+import com.allsoftdroid.feature.book_details.domain.usecase.GetDownloadUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
@@ -39,7 +41,8 @@ object BookDetailsModule {
                 stateHandle = handle,
                 useCaseHandler = get(),
                 getTrackListUsecase = get(),
-                getMetadataUsecase = get()
+                getMetadataUsecase = get(),
+                downloadUsecase = get()
             )
         }
     }
@@ -51,6 +54,10 @@ object BookDetailsModule {
 
         factory {
             GetTrackListUsecase(metadataRepository = get())
+        }
+
+        factory {
+            GetDownloadUsecase(downloadEventStore = get())
         }
     }
 

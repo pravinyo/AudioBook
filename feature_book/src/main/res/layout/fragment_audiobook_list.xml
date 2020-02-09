@@ -47,6 +47,19 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/book_search_outline"
                 android:contentDescription="@string/audiobook_search" />
+
+
+            <ImageView
+                android:id="@+id/toolbar_downloads"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginEnd="16dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/arrow_collapse_down"
+                android:contentDescription="@string/audiobook_download" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -83,6 +96,19 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:src="@drawable/ic_arrow_chevron_right"
+                android:layout_gravity="center_vertical"
+                app:searchOrClose="@{audioBookListViewModel.searchOrClose}"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@string/press_to_clear_search" />
+
+            <ImageView
+                android:id="@+id/iv_search_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/close"
+                app:searchOrClose="@{audioBookListViewModel.searchOrClose}"
                 android:layout_gravity="center_vertical"
                 android:clickable="true"
                 android:focusable="true"

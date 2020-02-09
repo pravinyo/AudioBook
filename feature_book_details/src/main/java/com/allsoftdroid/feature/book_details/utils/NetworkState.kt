@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature.book_details.presentation
+package com.allsoftdroid.feature.book_details.utils
 
 enum class NetworkState {
     ERROR,
