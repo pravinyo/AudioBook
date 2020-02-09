@@ -6,9 +6,10 @@ import com.allsoftdroid.buildsrc.ModuleDependency
 
 apply plugin: GradlePluginId.ANDROID_LIBRARY
 apply plugin: GradlePluginId.KOTLIN_ANDROID
-apply plugin: GradlePluginId.KOTLIN_KAPT
 apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
+
 android {
+
     compileSdkVersion AndroidConfig.COMPILE_SDK_VERSION
 
     defaultConfig {
@@ -16,28 +17,24 @@ android {
         targetSdkVersion(AndroidConfig.TARGET_SDK_VERSION)
         versionCode AndroidConfig.VERSION_CODE
         versionName AndroidConfig.VERSION_NAME
-
-        testInstrumentationRunner(AndroidConfig.TEST_INSTRUMENTATION_RUNNER)
     }
 
     buildTypes {
         release {
             minifyEnabled BuildTypeRelease.isMinifyEnabled
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         debug {
             minifyEnabled BuildTypeDebug.isMinifyEnabled
         }
+
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
 
 }
 
@@ -45,4 +42,5 @@ dependencies {
     implementation(project(path: ModuleDependency.LIBRARY_COMMON))
 
     implementation(LibraryDependency.JSOUP)
+    implementation(LibraryDependency.LOGGING_INTERCEPTOR)
 }
