@@ -4,7 +4,7 @@ import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.Chapter
 import org.jsoup.Jsoup
 
-class BookDetailsParsingFromNetworkResponseRespository {
+class BookDetailsParsingFromNetworkResponse {
     companion object{
         lateinit var bookDetails: BookDetails
         fun loadDetails(url:String):BookDetails{
