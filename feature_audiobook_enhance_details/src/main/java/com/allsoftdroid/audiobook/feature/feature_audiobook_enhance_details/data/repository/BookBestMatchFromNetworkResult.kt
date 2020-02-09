@@ -2,50 +2,33 @@ package com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.dat
 
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.WebDocument
 import org.jsoup.Jsoup
+import timber.log.Timber
 
-class BookBestMatchFromNetworkResultRepository {
+class BookBestMatchFromNetworkResult {
     companion object{
         lateinit var rank : List<Pair<Int,WebDocument>>
 
         fun getList(htmlResponse: String):List<WebDocument>{
-            val list =
-                getPageContent(
-                    htmlResponse
-                )
+            val list = getPageContent(htmlResponse)
 
             if(list.isEmpty()){
-                println("Empty list item")
+                Timber.d("Empty list item")
                 return emptyList()
             }
 
             val title =
-                formattedFilter(
-                    "Selected poems by Thomas Chatterton (in Library of the World's Best Literature, Ancient and Modern, volume 9)"
+                formattedFilter("Selected poems by Thomas Chatterton (in Library of the World's Best Literature, Ancient and Modern, volume 9)"
                 )
-            val titles =
-                formattedList(
-                    title
-                )
-            println(titles)
+            val titles = formattedList(title)
+            Timber.d(titles.toString())
 
             val author =
-                formattedFilter(
-                    "VARIOUS ( - )"
-                )
-            val names =
-                formattedList(
-                    author
-                )
-            println(names)
+                formattedFilter("VARIOUS ( - )")
+            val names =  formattedList(author)
+            Timber.d(names.toString())
 
             val newlist = list.filter {
-                hasWordInList(
-                    it.title.toLowerCase(),
-                    titles
-                ) && hasWordInList(
-                    it.author.toLowerCase(),
-                    names
-                )
+                hasWordInList(it.title.toLowerCase(),titles) && hasWordInList(it.author.toLowerCase(),names)
             }.toSet()
 
             rank = getRankOfListItem(
@@ -57,12 +40,12 @@ class BookBestMatchFromNetworkResultRepository {
 
 
             rank.forEach {
-                println("Rank:${it.first}")
-                println("Title: ${it.second.title}")
-                println("Author: ${it.second.author}")
+                Timber.d("Rank:${it.first}")
+                Timber.d("Title: ${it.second.title}")
+                Timber.d("Author: ${it.second.author}")
             }
 
-            println("Best match is: ${rank[0]}")
+            Timber.d("Best match is: ${rank[0]}")
 
             return list
         }
