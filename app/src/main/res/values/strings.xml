@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">AudioBook</string>
     <string name="title_feature_book">Feature Book</string>
+    <string name="title_feature_downloader">Download Feature</string>
 </resources>

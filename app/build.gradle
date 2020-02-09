@@ -45,12 +45,16 @@ android {
         jvmTarget = '1.8'
     }
 
-    dataBinding{
+    dataBinding {
         enabled = DataBinding.IS_ENABLED
     }
 
 //    dynamicFeatures = [":feature_book", ":feature_book_details"]
 
+
+
+
+//    dynamicFeatures = [":feature_downloader"]
 }
 
 dependencies {
@@ -60,6 +64,7 @@ dependencies {
     implementation(project(path: ModuleDependency.FEATURE_BOOK))
     implementation(project(path: ModuleDependency.FEATURE_BOOK_DETAILS))
     implementation(project(path: ModuleDependency.FEATURE_MINI_PLAYER))
+    implementation(project(path: ModuleDependency.FEATURE_DOWNLOADER))
 
     implementation(project(path: ModuleDependency.SERVICES))
 

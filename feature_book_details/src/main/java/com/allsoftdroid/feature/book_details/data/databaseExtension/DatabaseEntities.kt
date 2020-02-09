@@ -28,7 +28,8 @@ fun List<DatabaseTrackEntity>.asTrackDomainModel():List<AudioBookTrackDomainMode
             trackNumber = it.trackNumber,
             length = it.length,
             format = it.format,
-            size = it.size
+            size = it.size,
+            trackId = it.track_id
         )
     }
 }

@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.views.TrackItemViewHolder
 
@@ -13,7 +14,11 @@ import com.allsoftdroid.feature.book_details.presentation.recyclerView.views.Tra
  * It uses DiffUtils for efficient management of the recycler view list item
  */
 
-class AudioBookTrackAdapter(private val listener: TrackItemClickedListener): ListAdapter<AudioBookTrackDomainModel, RecyclerView.ViewHolder>(TrackDiffCallback()) {
+class AudioBookTrackAdapter(
+    private val downloadEventStore: DownloadEventStore,
+    private val bookId:String,
+    private val clickedListener: TrackItemClickedListener,
+    private val downloadItemClickedListener: DownloadItemClickedListener): ListAdapter<AudioBookTrackDomainModel, RecyclerView.ViewHolder>(TrackDiffCallback()) {
 
     /**
      * Create view Holder of type BookViewHolder
@@ -29,7 +34,7 @@ class AudioBookTrackAdapter(private val listener: TrackItemClickedListener): Lis
         when(holder){
             is TrackItemViewHolder ->{
                 val dataItem = getItem(position)
-                holder.bind(dataItem,listener)
+                holder.bind(downloadEventStore,bookId,dataItem,clickedListener,downloadItemClickedListener)
             }
 
             else -> throw Exception("View Holder type is unknown:$holder")
@@ -49,7 +54,7 @@ class TrackDiffCallback : DiffUtil.ItemCallback<AudioBookTrackDomainModel>(){
      * Compare items based on name field as it is unique among track
      */
     override fun areItemsTheSame(oldItem: AudioBookTrackDomainModel, newItem: AudioBookTrackDomainModel): Boolean {
-        return oldItem.filename==newItem.filename && oldItem.isPlaying != newItem.isPlaying
+        return oldItem.filename==newItem.filename && oldItem.isPlaying != newItem.isPlaying && oldItem.downloadStatus != newItem.downloadStatus
     }
 
     /**
@@ -70,4 +75,8 @@ listener to check for the click event
  */
 class TrackItemClickedListener(val clickListener : (trackNumber : Int?,filename:String,trackTitle:String?)->Unit){
     fun onTrackItemClicked(track : AudioBookTrackDomainModel) = clickListener(track.trackNumber,track.filename,track.title)
+}
+
+class DownloadItemClickedListener(val clickListener : (trackId : String)->Unit){
+    fun onDownloadItemClicked(track : AudioBookTrackDomainModel) = clickListener(track.trackId)
 }

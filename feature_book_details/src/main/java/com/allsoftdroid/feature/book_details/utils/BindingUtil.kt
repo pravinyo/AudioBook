@@ -1,32 +1,48 @@
-package com.allsoftdroid.feature.book_details.presentation
+package com.allsoftdroid.feature.book_details.utils
 
 import android.os.Build
 import android.text.Html
 import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
+import com.allsoftdroid.feature.book_details.presentation.recyclerView.views.TrackItemViewHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-
+import timber.log.Timber
+import kotlin.time.ExperimentalTime
+import kotlin.time.seconds
 
 
 @BindingAdapter("trackTitle")
 fun TextView.setTrackTitle(item : AudioBookTrackDomainModel?){
     item?.let {
-        text = getNormalizedText(item.title,38)
+        item.title?.let { title->
+            text = getNormalizedText(
+                limit = 38,
+                text = title)
+        }
     }
 }
 
+@ExperimentalTime
 @BindingAdapter("trackLength")
 fun TextView.setTrackLength(item : AudioBookTrackDomainModel?){
     item?.let {
-        text = item.length
+        item.length?.let {length->
+            text = if(!length.contains(":")){
+                val timeInSec = length.toFloat().toInt().seconds
+                timeInSec.toComponents { minutes, seconds, _ ->
+                    "$minutes:$seconds"
+                }
+            } else length
+        }
     }
 }
 
@@ -38,6 +54,37 @@ fun setTrackPlayingStatus(imageView: ImageView,item :AudioBookTrackDomainModel?)
         }else{
             imageView.setImageResource(R.drawable.play_circle_outline)
         }
+    }
+}
+
+@BindingAdapter("trackDownloadStatus")
+fun setTrackDownloadStatus(imageView: ImageView,item :AudioBookTrackDomainModel?){
+    item?.let {
+        when (item.downloadStatus) {
+            is PROGRESS -> {
+                imageView.visibility = View.GONE
+            }
+
+            else -> {
+                imageView.setImageResource(
+                    when(item.downloadStatus){
+                        is DOWNLOADING -> R.drawable.close_circle_outline
+                        is DOWNLOADED, is PROGRESS -> R.drawable.download_check
+                        is NOTHING -> R.drawable.download_outline
+                    }
+                )
+                imageView.visibility = View.VISIBLE
+            }
+        }
+    }
+    Timber.d("Download image icon updated")
+}
+
+@BindingAdapter("trackDownloadProgress")
+fun setTrackDownloadProgress(view: ProgressBar, holder:TrackItemViewHolder?){
+
+    holder?.let {
+        Timber.d("Download event received with progress for $holder")
     }
 }
 
@@ -66,7 +113,8 @@ If content is not there show broken image
 fun setImageUrl(imageView: ImageView, item: AudioBookMetadataDomainModel?) {
 
     item?.let {
-        val url = getThumbnail(item.identifier)
+        val url =
+            getThumbnail(item.identifier)
 
         Glide
             .with(imageView.context)
@@ -93,7 +141,8 @@ fun setImageUrl(imageView: ImageView, item: AudioBookMetadataDomainModel?) {
 @BindingAdapter("bookDescription")
 fun TextView.setBookDescription(item: AudioBookMetadataDomainModel?){
     item?.let {
-        text = convertHtmlToText(it.description)
+        text =
+            convertHtmlToText(it.description)
     }
 }
 
@@ -103,7 +152,10 @@ Binding adapter for updating the title in list items
 @BindingAdapter("bookTitle")
 fun TextView.setBookTitle(item: AudioBookMetadataDomainModel?){
     item?.let {
-        text = getNormalizedText(item.title, 30)
+        text = getNormalizedText(
+            item.title,
+            30
+        )
     }
 }
 

@@ -2,14 +2,18 @@ package com.allsoftdroid.feature.book_details.presentation.viewModel
 
 import androidx.lifecycle.*
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.network.ArchiveUtils
+import com.allsoftdroid.common.base.store.downloader.*
+import com.allsoftdroid.common.base.store.downloader.Progress
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
+import com.allsoftdroid.feature.book_details.domain.usecase.GetDownloadUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
-import com.allsoftdroid.feature.book_details.presentation.NetworkState
+import com.allsoftdroid.feature.book_details.utils.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -18,6 +22,7 @@ class BookDetailsViewModel(
     private val stateHandle : SavedStateHandle,
     private val useCaseHandler: UseCaseHandler,
     private val getMetadataUsecase:GetMetadataUsecase,
+    private val downloadUsecase: GetDownloadUsecase,
     private val getTrackListUsecase : GetTrackListUsecase) : ViewModel(){
     /**
      * cancelling this job cancels all the job started by this viewmodel
@@ -41,7 +46,6 @@ class BookDetailsViewModel(
     private var _backArrowPressed = MutableLiveData<Event<Boolean>>()
     val backArrowPressed: LiveData<Event<Boolean>>
         get() = _backArrowPressed
-
 
     //book metadata state change event
     private val metadataStateChangeEvent = MutableLiveData<Event<Any>>()
@@ -80,6 +84,7 @@ class BookDetailsViewModel(
                     list[currentPlaying-1].isPlaying = false
                     list[trackNumber-1].isPlaying = true
 
+
                     _audioBookTracks.value=list.toList()
 
                     sharedPref.saveTrackPosition(trackNumber)
@@ -90,8 +95,14 @@ class BookDetailsViewModel(
                     Timber.d("Track List Updated with trackNo as $trackNumber")
                 }
             }
+        }else{
+            _audioBookTracks.value?.let {
+                _audioBookTracks.value = it.toList()
+            }
         }
 
+
+        Timber.d("Track list updated")
         _audioBookTracks
     }
 
@@ -162,6 +173,52 @@ class BookDetailsViewModel(
                 override suspend fun onError(t: Throwable) {
                     _networkResponse.value = Event(NetworkState.ERROR)
                     metadataStateChangeEvent.value = Event(Unit)
+                }
+            }
+        )
+    }
+
+    fun downloadSelectedItemWith(trackId:String){
+        viewModelScope.launch{
+            withContext(Dispatchers.Main){
+                audioBookTracks.value?.let { trackList ->
+
+                    val track = trackList.find { it.trackId == trackId }
+
+                    track?.let {
+                        val album = it.trackAlbum?:getMetadataUsecase.getBookIdentifier()
+                        val desc  = "Downloading: chapter ${track.trackNumber} from $album"
+                        download(
+                            Download(
+                                bookId = getMetadataUsecase.getBookIdentifier(),
+                                url = ArchiveUtils.getRemoteFilePath(filename = track.filename,identifier = getMetadataUsecase.getBookIdentifier()),
+                                name = track.filename,
+                                chapter = track.title?:"",
+                                description = desc,
+                                subPath = ArchiveUtils.getLocalSavePath(album),
+                                chapterIndex = track.trackNumber?:0
+                            )
+                        )
+                        Timber.d(desc)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun download(event:DownloadEvent){
+        val requestValues = GetDownloadUsecase.RequestValues(event)
+
+        useCaseHandler.execute(
+            useCase = downloadUsecase,
+            values = requestValues,
+            callback = object :BaseUseCase.UseCaseCallback<GetDownloadUsecase.ResponseValues>{
+                override suspend fun onSuccess(response: GetDownloadUsecase.ResponseValues) {
+                    Timber.d("Download Event sent")
+                }
+
+                override suspend fun onError(t: Throwable) {
+                    Timber.d("Download Event error")
                 }
             }
         )
@@ -268,4 +325,42 @@ class BookDetailsViewModel(
         viewModelJob.cancel()
         getMetadataUsecase.dispose()
     }
+
+    fun updateDownloadStatus(statusEvent:DownloadEvent) {
+        Timber.d(" download event received")
+        _audioBookTracks.value?.let {tracks ->
+
+            Timber.d("List is non null and ready to update")
+
+            tracks[statusEvent.chapterIndex-1].downloadStatus = when(statusEvent){
+                is Downloading -> {
+                    Timber.d("Event is of type Downloading:$statusEvent")
+                     DOWNLOADING
+                }
+
+                is Downloaded -> {
+                    Timber.d("Event is of type Downloaded:$statusEvent")
+                    DOWNLOADED
+                }
+
+                is Progress -> {
+                    Timber.d("Event is of type Progress:${statusEvent}")
+                    PROGRESS(percent = statusEvent.percent.toFloat())
+                }
+
+                else -> {
+                    Timber.d("Event is of type Download:${statusEvent is Download}")
+                    Timber.d("Event is of type Failed:${statusEvent is Failed}")
+                    Timber.d("Event is of type Cancel:${statusEvent is Cancel}")
+                    Timber.d("Event is of type DownloadNothing:${statusEvent is DownloadNothing}")
+                    NOTHING
+                }
+            }
+
+            _audioBookTracks.value = tracks
+        }
+
+//        _newTrackStateEvent.value = Event(0)
+    }
+
 }

@@ -16,5 +16,7 @@ class ArchiveUtils {
         }
 
         fun getThumbnail(imageId: String?) = "$BASE_IMAGE_URL/$imageId/"
+
+        fun getLocalSavePath(path:String) = "/AudioBooks/$path/"
     }
 }

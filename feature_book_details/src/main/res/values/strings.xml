@@ -6,6 +6,7 @@
     <string name="previous">prev</string>
     <string name="playpause">pp</string>
     <string name="next">nex</string>
+    <string name="download_icon">download icon</string>
 
     <string-array name="track_format_array">
         <item>Good</item>

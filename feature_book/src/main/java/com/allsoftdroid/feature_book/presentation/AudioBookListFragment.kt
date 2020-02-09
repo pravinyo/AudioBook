@@ -2,6 +2,8 @@ package com.allsoftdroid.feature_book.presentation
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +16,11 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
+import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
+import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus
+import com.allsoftdroid.common.base.store.downloader.OpenDownloadActivity
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.data.network.Utils
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
@@ -37,6 +43,8 @@ class AudioBookListFragment : BaseContainerFragment(){
     @VisibleForTesting var bundleShared: Bundle = Bundle.EMPTY
 
     private lateinit var callback:OnBackPressedCallback
+
+    private val downloadEventStore: DownloadEventStore  = DownloaderEventBus.getEventBusInstance()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
@@ -128,6 +136,27 @@ class AudioBookListFragment : BaseContainerFragment(){
             booksViewModel.onSearchItemPressed()
         }
 
+        binding.etToolbarSearch.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                s?.let {
+                    booksViewModel.setSearchOrClose(isSearchBtn = it.isNotEmpty() && it.length>3)
+                }
+            }
+        })
+
+        binding.ivSearchCancel.setOnClickListener {
+            binding.etToolbarSearch.clearFocus()
+            hideKeyboard()
+
+            booksViewModel.onSearchFinished()
+        }
+
         binding.ivSearch.setOnClickListener {
             val searchText = binding.etToolbarSearch.text.trim().toString()
             binding.etToolbarSearch.clearFocus()
@@ -155,7 +184,17 @@ class AudioBookListFragment : BaseContainerFragment(){
             }
         })
 
+        binding.toolbarDownloads.setOnClickListener {
+            navigateToDownloadsActivity()
+        }
+
         return binding.root
+    }
+
+    private fun navigateToDownloadsActivity() {
+        downloadEventStore.publish(
+            Event(OpenDownloadActivity())
+        )
     }
 
     private fun setVisibility(view: View, set: Boolean) {

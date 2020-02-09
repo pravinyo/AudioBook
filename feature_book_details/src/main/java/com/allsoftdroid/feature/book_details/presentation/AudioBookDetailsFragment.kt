@@ -9,15 +9,19 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
-import com.allsoftdroid.common.base.store.*
+import com.allsoftdroid.common.base.store.audioPlayer.*
+import com.allsoftdroid.common.base.store.downloader.DownloadEvent
+import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.AudioBookTrackAdapter
+import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.DownloadItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
+import com.allsoftdroid.feature.book_details.utils.NetworkState
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -41,9 +45,10 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
     }
 
     private val eventStore : AudioPlayerEventStore by inject()
+    private val downloadStore : DownloadEventStore by inject()
 
 
-    private lateinit var disposable : Disposable
+    private val disposable : CompositeDisposable = CompositeDisposable()
 
     private lateinit var dataBindingReference : FragmentAudiobookDetailsBinding
 
@@ -71,12 +76,21 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             }
         })
 
-        val trackAdapter = AudioBookTrackAdapter(TrackItemClickedListener{ trackNumber, _, _ ->
-            trackNumber?.let {
-                playSelectedTrackFile(it,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
-                Timber.d("State change event sent: new pos:$it")
-            }?:Timber.d("State change event sent: new pos:$trackNumber")
-        })
+        val trackAdapter = AudioBookTrackAdapter(
+            downloadStore,
+            bookId,
+            TrackItemClickedListener{ trackNumber, _, _ ->
+                trackNumber?.let {
+                    playSelectedTrackFile(it,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
+                    Timber.d("State change event sent: new pos:$it")
+                }?:Timber.d("State change event sent: new pos:$trackNumber")
+                }
+            ,
+            DownloadItemClickedListener { trackId ->
+                bookDetailsViewModel.downloadSelectedItemWith(trackId)
+                Timber.d("Download Track with $trackId")
+            }
+        )
 
         dataBinding.recyclerView.adapter = trackAdapter
 
@@ -101,12 +115,22 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             }
         })
 
-        disposable  = eventStore.observe()
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                handleEvent(it)
-            }
+        disposable.add(
+            eventStore.observe()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    handleEvent(it)
+                }
+        )
+
+        disposable.add(
+            downloadStore.observe()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    handleDownloaderEvent(it)
+                }
+        )
 
         dataBindingReference = dataBinding
 
@@ -144,6 +168,13 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         return dataBinding.root
     }
 
+    private fun handleDownloaderEvent(event: Event<DownloadEvent>) {
+        event.peekContent().let {
+            Timber.d("Event is for book: ${it.bookId} - chapter:${it.chapterIndex}")
+            bookDetailsViewModel.updateDownloadStatus(it)
+        }
+    }
+
     private fun handleEvent(event: Event<AudioPlayerEvent>) {
         activity?.let {
             Timber.d("Peeking content by default")
@@ -179,7 +210,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
                         Timber.d("Pause event received")
                     }
 
-                    is Initial -> {
+                    is EmptyEvent -> {
                         Timber.d("Initial event received")
                     }
                     else -> Toast.makeText(it.applicationContext,"Unknown Pressed Details Fragment",Toast.LENGTH_SHORT).show()
@@ -191,7 +222,14 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
     private fun playSelectedTrackFile(currentPos:Int,bookName:String) {
         bookDetailsViewModel.audioBookTracks.value?.let {
             Timber.d("Sending new event for play selected track by the user")
-            eventStore.publish(Event(PlaySelectedTrack(trackList = it,bookId = bookId,position = currentPos,bookName = bookName)))
+            eventStore.publish(Event(
+                PlaySelectedTrack(
+                    trackList = it,
+                    bookId = bookId,
+                    position = currentPos,
+                    bookName = bookName
+                )
+            ))
 
         }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
     }

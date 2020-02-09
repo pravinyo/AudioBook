@@ -42,6 +42,12 @@ class AudioBookListViewModel(
     get() = _networkResponse
 
 
+    //close or search btn
+    private var _searchOrClose = MutableLiveData<Boolean>().apply {
+        value = false
+    }
+    val searchOrClose : LiveData<Boolean> = _searchOrClose
+
     //handle item click event
     private var _itemClicked = MutableLiveData<Event<String>>()
     val itemClicked: LiveData<Event<String>>
@@ -208,6 +214,12 @@ class AudioBookListViewModel(
     fun onSearchFinished(){
         _displaySearchView.value = false
         _searchError.value = false
+    }
+
+    fun setSearchOrClose(isSearchBtn:Boolean){
+        if (_searchOrClose.value != isSearchBtn){
+            _searchOrClose.value = isSearchBtn
+        }
     }
 
     fun onBackArrowPressed(){

@@ -12,7 +12,7 @@ import androidx.media.session.MediaButtonReceiver
 import com.allsoftdroid.audiobook.services.audio.utils.NotificationUtils.Companion.sendNotification
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
-import com.allsoftdroid.common.base.store.*
+import com.allsoftdroid.common.base.store.audioPlayer.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.koin.android.ext.android.inject
@@ -148,10 +148,14 @@ class AudioService : Service(),KoinComponent{
     }
 
     private fun playNextEvent() {
-        eventStore.publish(Event(Next( result = PlayingState(
-            playingItemIndex = audioServiceBinder.getCurrentAudioPosition()+1,
-            action_need = false
-        ))))
+        eventStore.publish(Event(
+            Next(
+                result = PlayingState(
+                    playingItemIndex = audioServiceBinder.getCurrentAudioPosition() + 1,
+                    action_need = false
+                )
+            )
+        ))
     }
 
 
@@ -177,17 +181,25 @@ class AudioService : Service(),KoinComponent{
     }
 
     private fun pauseEvent(){
-        eventStore.publish(Event(Pause( result = PlayingState(
-            playingItemIndex = audioServiceBinder.getCurrentAudioPosition(),
-            action_need = true
-        ))))
+        eventStore.publish(Event(
+            Pause(
+                result = PlayingState(
+                    playingItemIndex = audioServiceBinder.getCurrentAudioPosition(),
+                    action_need = true
+                )
+            )
+        ))
     }
 
     private fun playEvent(){
-        eventStore.publish(Event(Play( result = PlayingState(
-            playingItemIndex = audioServiceBinder.getCurrentAudioPosition(),
-            action_need = true
-        ))))
+        eventStore.publish(Event(
+            Play(
+                result = PlayingState(
+                    playingItemIndex = audioServiceBinder.getCurrentAudioPosition(),
+                    action_need = true
+                )
+            )
+        ))
     }
 
 

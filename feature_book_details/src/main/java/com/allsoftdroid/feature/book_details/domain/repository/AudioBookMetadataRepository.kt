@@ -6,7 +6,7 @@ import com.allsoftdroid.common.base.extension.Variable
 import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
-import com.allsoftdroid.feature.book_details.presentation.NetworkState
+import com.allsoftdroid.feature.book_details.utils.NetworkState
 
 interface AudioBookMetadataRepository {
 
