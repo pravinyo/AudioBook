@@ -3,10 +3,12 @@ package com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.dat
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.WebDocument
 import org.jsoup.Jsoup
 import timber.log.Timber
+import java.lang.IllegalArgumentException
 
 class BookBestMatchFromNetworkResult {
     companion object{
-        lateinit var rank : List<Pair<Int,WebDocument>>
+        private var rank : List<Pair<Int,WebDocument>> = emptyList()
+        lateinit var titleKeyWords: List<String>
 
         fun getList(htmlResponse: String):List<WebDocument>{
             val list = getPageContent(htmlResponse)
@@ -14,30 +16,35 @@ class BookBestMatchFromNetworkResult {
             if(list.isEmpty()){
                 Timber.d("Empty list item")
                 return emptyList()
+            }else{
+                Timber.d("List is not empty: size -> ${list.size}")
             }
 
-            val title =
-                formattedFilter("Selected poems by Thomas Chatterton (in Library of the World's Best Literature, Ancient and Modern, volume 9)"
-                )
-            val titles = formattedList(title)
-            Timber.d(titles.toString())
+            return list
+        }
 
-            val author =
-                formattedFilter("VARIOUS ( - )")
+        fun getListWithRanks(list: List<WebDocument>,bookTitle:String,bookAuthor:String):List<Pair<Int,WebDocument>>{
+
+            if (list.isEmpty()) throw IllegalArgumentException("List cannot be empty")
+
+            val title = formattedFilter(bookTitle)
+            titleKeyWords = formattedList(title)
+            Timber.d("Title keys=>$titleKeyWords")
+
+            val author = formattedFilter(bookAuthor)
             val names =  formattedList(author)
-            Timber.d(names.toString())
+            Timber.d("Author name keys=> $names")
 
-            val newlist = list.filter {
-                hasWordInList(it.title.toLowerCase(),titles) && hasWordInList(it.author.toLowerCase(),names)
+            val newList = list.filter {
+                hasWordInList(it.title.toLowerCase(), titleKeyWords) && hasWordInList(it.author.toLowerCase(),names)
             }.toSet()
 
             rank = getRankOfListItem(
-                newlist,
-                titles
+                newList,
+                titleKeyWords
             ).sortedByDescending {
                 it.first
             }
-
 
             rank.forEach {
                 Timber.d("Rank:${it.first}")
@@ -45,9 +52,7 @@ class BookBestMatchFromNetworkResult {
                 Timber.d("Author: ${it.second.author}")
             }
 
-            Timber.d("Best match is: ${rank[0]}")
-
-            return list
+            return rank
         }
 
         private fun hasWordInList(word:String, list:List<String>):Boolean{
