@@ -12,7 +12,7 @@ import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.GetDownloadUsecase
-import com.allsoftdroid.feature.book_details.domain.usecase.GetEnhanceDetailsUsecase
+import com.allsoftdroid.feature.book_details.domain.usecase.SearchBookDetailsUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
 import com.allsoftdroid.feature.book_details.utils.*
@@ -143,8 +143,8 @@ class BookDetailsViewModel(
     private suspend fun fetchEnhanceDetails(title:String,author:String) {
 
         Timber.d("Fetching enhanced details for title:$title and author:$author")
-        val getEnhanceDetailsUsecase = GetEnhanceDetailsUsecase(enhanceDetailsRepository = EnhanceDetailsRepositoryImpl())
-        val requestValues  = GetEnhanceDetailsUsecase.RequestValues(searchTitle =title,author = author)
+        val getEnhanceDetailsUsecase = SearchBookDetailsUsecase(enhanceDetailsRepository = EnhanceDetailsRepositoryImpl())
+        val requestValues  = SearchBookDetailsUsecase.RequestValues(searchTitle =title,author = author)
 
         getEnhanceDetailsUsecase.getSearchBookList().observeForever {
             Timber.d("List is => $it")
@@ -152,13 +152,16 @@ class BookDetailsViewModel(
 
         getEnhanceDetailsUsecase.getBooksWithRanks(title,author).observeForever {
             Timber.d("Ranks is => $it")
+            Timber.d("Selecting top item in list as best match")
+
+
         }
 
         useCaseHandler.execute(
             useCase = getEnhanceDetailsUsecase,
             values = requestValues,
-            callback = object : BaseUseCase.UseCaseCallback<GetEnhanceDetailsUsecase.ResponseValues> {
-                override suspend fun onSuccess(response: GetEnhanceDetailsUsecase.ResponseValues) {
+            callback = object : BaseUseCase.UseCaseCallback<SearchBookDetailsUsecase.ResponseValues> {
+                override suspend fun onSuccess(response: SearchBookDetailsUsecase.ResponseValues) {
                     Timber.d("Result received : $response")
                 }
 
