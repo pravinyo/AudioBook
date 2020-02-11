@@ -2,7 +2,7 @@ package com.allsoftdroid.feature.book_details.domain.usecase
 
 import androidx.lifecycle.LiveData
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.WebDocument
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.EnhanceDetailsRepository
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.ISearchBookDetailsRepository
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.NetworkResponseListener
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.Failure
@@ -14,13 +14,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-class SearchBookDetailsUsecase(private val enhanceDetailsRepository: EnhanceDetailsRepository) :
+class SearchBookDetailsUsecase(private val ISearchBookDetailsRepository: ISearchBookDetailsRepository) :
     BaseUseCase<SearchBookDetailsUsecase.RequestValues, SearchBookDetailsUsecase.ResponseValues>() {
 
     override suspend fun executeUseCase(requestValues: RequestValues?) {
         requestValues?.let {
 
-            enhanceDetailsRepository.registerNetworkResponse(listener = object : NetworkResponseListener {
+            ISearchBookDetailsRepository.registerNetworkResponse(listener = object : NetworkResponseListener {
 
                 override suspend fun onResponse(result: NetworkResult) {
                     withContext(Dispatchers.Main){
@@ -30,21 +30,21 @@ class SearchBookDetailsUsecase(private val enhanceDetailsRepository: EnhanceDeta
                             is Loading -> Timber.d("Currently it is loading")
                         }
                     }
-                    enhanceDetailsRepository.unRegisterNetworkResponse()
+                    ISearchBookDetailsRepository.unRegisterNetworkResponse()
                 }
             })
 
-            enhanceDetailsRepository.searchBookDetailsInRemoteRepository(searchTitle = it.searchTitle,page = it.page,author = it.author)
+            ISearchBookDetailsRepository.searchBookDetailsInRemoteRepository(searchTitle = it.searchTitle,page = it.page,author = it.author)
 
         }?:useCaseCallback?.onError(Error("Request is null"))
     }
 
     fun getSearchBookList():LiveData<List<WebDocument>>{
-        return enhanceDetailsRepository.getSearchBooksList()
+        return ISearchBookDetailsRepository.getSearchBooksList()
     }
 
     fun getBooksWithRanks(bookTitle:String,bookAuthor:String):LiveData<List<Pair<Int,WebDocument>>>{
-        return enhanceDetailsRepository.getBookListWithRanks(bookTitle,bookAuthor)
+        return ISearchBookDetailsRepository.getBookListWithRanks(bookTitle,bookAuthor)
     }
 
     class RequestValues(val searchTitle: String,val author:String="",val page:Int=1) : BaseUseCase.RequestValues
