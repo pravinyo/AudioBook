@@ -2,15 +2,13 @@ package com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.dat
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.BookDetails
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.WebDocument
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.network.LibriVoxApi
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.network.NetworkResponse
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.EnhanceDetailsRepository
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.ISearchBookDetailsRepository
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.NetworkResponseListener
 import com.allsoftdroid.common.base.network.Failure
 import com.allsoftdroid.common.base.network.Loading
-import com.allsoftdroid.common.base.network.NetworkResult
 import com.allsoftdroid.common.base.network.Success
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +20,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
 
-class EnhanceDetailsRepositoryImpl : EnhanceDetailsRepository {
+class SearchBookDetailsRepositoryImpl : ISearchBookDetailsRepository {
 
     /***
      * hold stories related to politics
@@ -31,14 +29,7 @@ class EnhanceDetailsRepositoryImpl : EnhanceDetailsRepository {
 
     private var _listOfItem  = MutableLiveData<List<WebDocument>>()
 
-    private var _bookDetails = MutableLiveData<BookDetails>()
-
     private var _bestMatch  = MutableLiveData<List<Pair<Int, WebDocument>>>()
-
-    /***
-     * track network repsonse for  completion and started
-     */
-    private lateinit var _networkResult:NetworkResult
 
     private var listener: NetworkResponseListener? = null
 
@@ -100,17 +91,4 @@ class EnhanceDetailsRepositoryImpl : EnhanceDetailsRepository {
     override fun getBookListWithRanks(bookTitle:String,bookAuthor:String): LiveData<List<Pair<Int, WebDocument>>> {
         return _bestMatch
     }
-
-    override fun networkStatus(): NetworkResult = _networkResult
-
-    override suspend fun fetchBookDetails(bookUrl:String){
-        withContext(Dispatchers.IO){
-            val details = BookDetailsParsingFromNetworkResponse.loadDetails(bookUrl)
-            withContext(Dispatchers.Main){
-                _bookDetails.value = details
-            }
-        }
-    }
-
-    override fun getBookDetails(): LiveData<BookDetails> = _bookDetails
 }
