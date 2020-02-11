@@ -1,6 +1,7 @@
 package com.allsoftdroid.feature.book_details.presentation.viewModel
 
 import androidx.lifecycle.*
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.EnhanceDetailsRepositoryImpl
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
 import com.allsoftdroid.common.base.store.downloader.*
@@ -11,6 +12,7 @@ import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.GetDownloadUsecase
+import com.allsoftdroid.feature.book_details.domain.usecase.GetEnhanceDetailsUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
 import com.allsoftdroid.feature.book_details.utils.*
@@ -107,6 +109,7 @@ class BookDetailsViewModel(
     }
 
     private var job: Job? = null
+    private var enhanceDetailsJob:Job?= null
 
     val trackFormatIndex:Int
     get() = sharedPref.trackFormatIndex()
@@ -124,8 +127,46 @@ class BookDetailsViewModel(
                 loadTrackWithFormat(index =
                     if(sharedPref.bookId() == getMetadataUsecase.getBookIdentifier()) sharedPref.trackFormatIndex()  else 0
                 )
+
+                audioBookMetadata.observeForever {
+                    Timber.d("Metadata is available, fetching enhance details")
+                    if(enhanceDetailsJob==null){
+                        enhanceDetailsJob = viewModelScope.launch {
+                            fetchEnhanceDetails(title = it.title,author = it.creator)
+                        }
+                    }
+                }
             }
         }
+    }
+
+    private suspend fun fetchEnhanceDetails(title:String,author:String) {
+
+        Timber.d("Fetching enhanced details for title:$title and author:$author")
+        val getEnhanceDetailsUsecase = GetEnhanceDetailsUsecase(enhanceDetailsRepository = EnhanceDetailsRepositoryImpl())
+        val requestValues  = GetEnhanceDetailsUsecase.RequestValues(searchTitle =title,author = author)
+
+        getEnhanceDetailsUsecase.getSearchBookList().observeForever {
+            Timber.d("List is => $it")
+        }
+
+        getEnhanceDetailsUsecase.getBooksWithRanks(title,author).observeForever {
+            Timber.d("Ranks is => $it")
+        }
+
+        useCaseHandler.execute(
+            useCase = getEnhanceDetailsUsecase,
+            values = requestValues,
+            callback = object : BaseUseCase.UseCaseCallback<GetEnhanceDetailsUsecase.ResponseValues> {
+                override suspend fun onSuccess(response: GetEnhanceDetailsUsecase.ResponseValues) {
+                    Timber.d("Result received : $response")
+                }
+
+                override suspend fun onError(t: Throwable) {
+                    Timber.d("Enhanced Error:${t.message}")
+                }
+            }
+        )
     }
 
     private fun showPrefStat() {
