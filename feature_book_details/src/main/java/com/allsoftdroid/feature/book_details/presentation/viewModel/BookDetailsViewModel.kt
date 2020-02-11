@@ -1,7 +1,9 @@
 package com.allsoftdroid.feature.book_details.presentation.viewModel
 
 import androidx.lifecycle.*
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.EnhanceDetailsRepositoryImpl
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.WebDocument
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.FetchAdditionalBookDetailsRepositoryImpl
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.SearchBookDetailsRepositoryImpl
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
 import com.allsoftdroid.common.base.store.downloader.*
@@ -11,10 +13,7 @@ import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
-import com.allsoftdroid.feature.book_details.domain.usecase.GetDownloadUsecase
-import com.allsoftdroid.feature.book_details.domain.usecase.SearchBookDetailsUsecase
-import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
-import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
+import com.allsoftdroid.feature.book_details.domain.usecase.*
 import com.allsoftdroid.feature.book_details.utils.*
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -143,7 +142,7 @@ class BookDetailsViewModel(
     private suspend fun fetchEnhanceDetails(title:String,author:String) {
 
         Timber.d("Fetching enhanced details for title:$title and author:$author")
-        val getEnhanceDetailsUsecase = SearchBookDetailsUsecase(enhanceDetailsRepository = EnhanceDetailsRepositoryImpl())
+        val getEnhanceDetailsUsecase = SearchBookDetailsUsecase(ISearchBookDetailsRepository = SearchBookDetailsRepositoryImpl())
         val requestValues  = SearchBookDetailsUsecase.RequestValues(searchTitle =title,author = author)
 
         getEnhanceDetailsUsecase.getSearchBookList().observeForever {
@@ -151,10 +150,11 @@ class BookDetailsViewModel(
         }
 
         getEnhanceDetailsUsecase.getBooksWithRanks(title,author).observeForever {
-            Timber.d("Ranks is => $it")
-            Timber.d("Selecting top item in list as best match")
-
-
+            if (!it.isNullOrEmpty()){
+                Timber.d("Ranks is => $it")
+                Timber.d("Selecting top item in list as best match")
+//                fetchBookDetails(it.first().second)
+            }
         }
 
         useCaseHandler.execute(
@@ -170,6 +170,35 @@ class BookDetailsViewModel(
                 }
             }
         )
+    }
+
+    private fun fetchBookDetails(webDocument: WebDocument) {
+        Timber.d("Fetching book details for $webDocument")
+
+        viewModelScope.launch {
+            val additionBookDetailsRepository = FetchAdditionalBookDetailsRepositoryImpl()
+            val getFetchAdditionalBookDetailsUseCase = FetchAdditionalBookDetailsUsecase(additionBookDetailsRepository)
+
+            val requestValues  = FetchAdditionalBookDetailsUsecase.RequestValues(bookUrl = webDocument.url)
+
+            getFetchAdditionalBookDetailsUseCase.getAdditionalBookDetails().observeForever {
+                Timber.d("Book details fetched is : $it")
+            }
+
+            useCaseHandler.execute(
+                useCase = getFetchAdditionalBookDetailsUseCase,
+                values = requestValues,
+                callback = object : BaseUseCase.UseCaseCallback<FetchAdditionalBookDetailsUsecase.ResponseValues> {
+                    override suspend fun onSuccess(response: FetchAdditionalBookDetailsUsecase.ResponseValues) {
+                        Timber.d("Result received : $response")
+                    }
+
+                    override suspend fun onError(t: Throwable) {
+                        Timber.d("Enhanced Error:${t.message}")
+                    }
+                }
+            )
+        }
     }
 
     private fun showPrefStat() {
