@@ -1,38 +1,52 @@
 package com.allsoftdroid.feature.book_details.domain.usecase
 
+import androidx.lifecycle.LiveData
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.WebDocument
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.EnhanceDetailsRepository
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.NetworkResponseListener
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.network.Failure
+import com.allsoftdroid.common.base.network.Loading
+import com.allsoftdroid.common.base.network.NetworkResult
 import com.allsoftdroid.common.base.network.Success
 import com.allsoftdroid.common.base.usecase.BaseUseCase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class GetEnhanceDetailsUsecase(private val enhanceDetailsRepository: EnhanceDetailsRepository) :
     BaseUseCase<GetEnhanceDetailsUsecase.RequestValues, GetEnhanceDetailsUsecase.ResponseValues>() {
 
     override suspend fun executeUseCase(requestValues: RequestValues?) {
-        //check network connection
         requestValues?.let {
 
-            enhanceDetailsRepository.searchBookDetailsInRemoteRepository(it.searchTitle,it.author,it.page)
+            enhanceDetailsRepository.registerNetworkResponse(listener = object : NetworkResponseListener {
 
-            useCaseCallback?.onSuccess(ResponseValues(Event(true)))
+                override suspend fun onResponse(result: NetworkResult) {
+                    withContext(Dispatchers.Main){
+                        when(result){
+                            is Success -> useCaseCallback?.onSuccess(ResponseValues(Event(true)))
+                            is Failure -> useCaseCallback?.onError(result.error)
+                            is Loading -> Timber.d("Currently it is loading")
+                        }
+                    }
+                    enhanceDetailsRepository.unRegisterNetworkResponse()
+                }
+            })
+
+            enhanceDetailsRepository.searchBookDetailsInRemoteRepository(searchTitle = it.searchTitle,page = it.page,author = it.author)
+
         }?:useCaseCallback?.onError(Error("Request is null"))
     }
 
-    fun getSearchBookList():List<WebDocument>{
-        return when(enhanceDetailsRepository.networkStatus()){
-            is Success -> enhanceDetailsRepository.getSearchBooksList()
-            else -> emptyList()
-        }
+    fun getSearchBookList():LiveData<List<WebDocument>>{
+        return enhanceDetailsRepository.getSearchBooksList()
     }
 
-    fun getBooksWithRanks():List<Pair<Int,WebDocument>>{
-        return when(enhanceDetailsRepository.networkStatus()){
-            is Success -> enhanceDetailsRepository.getBookListWithRanks()
-            else -> emptyList()
-        }
+    fun getBooksWithRanks(bookTitle:String,bookAuthor:String):LiveData<List<Pair<Int,WebDocument>>>{
+        return enhanceDetailsRepository.getBookListWithRanks(bookTitle,bookAuthor)
     }
 
     class RequestValues(val searchTitle: String,val author:String="",val page:Int=1) : BaseUseCase.RequestValues
-    class ResponseValues(val event: Event<Any>) : BaseUseCase.ResponseValues
+    class ResponseValues(val list: Event<Any>) : BaseUseCase.ResponseValues
 }
