@@ -75,16 +75,19 @@ class EnhanceDetailsRepositoryImpl : EnhanceDetailsRepository {
                     Timber.d("Response got:${response.body()}")
                     result?.results?.let {
                         _bookSearchResult = result.results
-
-                        val list = BookBestMatchFromNetworkResult.getList(it)
-                        _listOfItem.value = list
-                        _bestMatch.value = BookBestMatchFromNetworkResult.getListWithRanks(list,searchTitle,author)
-
-//                        Timber.d("best match is :${_bestMatch.value}")
-//                        Timber.d("Search list is :${_listOfItem.value}")
                         Timber.d("Setting response to success")
                         GlobalScope.launch {
-                            listener?.onResponse(Success(true))
+                            val list = BookBestMatchFromNetworkResult.getList(it)
+                            val best = BookBestMatchFromNetworkResult.getListWithRanks(list,searchTitle,author)
+                            withContext(Dispatchers.Main){
+
+                                _listOfItem.value = list
+                                _bestMatch.value = best
+
+                                Timber.d("best match is :${_bestMatch.value}")
+                                Timber.d("Search list is :${_listOfItem.value}")
+                                listener?.onResponse(Success(true))
+                            }
                         }
                     }
                 }
