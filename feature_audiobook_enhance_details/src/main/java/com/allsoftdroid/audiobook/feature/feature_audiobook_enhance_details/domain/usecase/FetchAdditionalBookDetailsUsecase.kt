@@ -1,9 +1,9 @@
-package com.allsoftdroid.feature.book_details.domain.usecase
+package com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase
 
 import androidx.lifecycle.LiveData
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.BookDetails
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.IFetchAdditionBookDetailsRepository
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.NetworkResponseListener
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.IFetchAdditionBookDetailsRepository
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.network.NetworkResponseListener
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.Failure
 import com.allsoftdroid.common.base.network.Loading
