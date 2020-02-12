@@ -3,12 +3,13 @@ package com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.dat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.BookDetails
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.IFetchAdditionBookDetailsRepository
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.NetworkResponseListener
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.IFetchAdditionBookDetailsRepository
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.network.NetworkResponseListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class FetchAdditionalBookDetailsRepositoryImpl : IFetchAdditionBookDetailsRepository {
+class FetchAdditionalBookDetailsRepositoryImpl :
+    IFetchAdditionBookDetailsRepository {
 
 
     private var _bookDetails = MutableLiveData<BookDetails>()
