@@ -4,6 +4,8 @@ import androidx.lifecycle.*
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.WebDocument
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.FetchAdditionalBookDetailsRepositoryImpl
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.SearchBookDetailsRepositoryImpl
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.FetchAdditionalBookDetailsUsecase
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.SearchBookDetailsUsecase
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
 import com.allsoftdroid.common.base.store.downloader.*
@@ -142,27 +144,28 @@ class BookDetailsViewModel(
     private suspend fun fetchEnhanceDetails(title:String,author:String) {
 
         Timber.d("Fetching enhanced details for title:$title and author:$author")
-        val getEnhanceDetailsUsecase = SearchBookDetailsUsecase(ISearchBookDetailsRepository = SearchBookDetailsRepositoryImpl())
+        val searchBookDetailsUsecase = SearchBookDetailsUsecase(searchBookDetailsRepository = SearchBookDetailsRepositoryImpl())
         val requestValues  = SearchBookDetailsUsecase.RequestValues(searchTitle =title,author = author)
 
-        getEnhanceDetailsUsecase.getSearchBookList().observeForever {
-            Timber.d("List is => $it")
-        }
-
-        getEnhanceDetailsUsecase.getBooksWithRanks(title,author).observeForever {
-            if (!it.isNullOrEmpty()){
-                Timber.d("Ranks is => $it")
-                Timber.d("Selecting top item in list as best match")
-//                fetchBookDetails(it.first().second)
-            }
-        }
 
         useCaseHandler.execute(
-            useCase = getEnhanceDetailsUsecase,
+            useCase = searchBookDetailsUsecase,
             values = requestValues,
             callback = object : BaseUseCase.UseCaseCallback<SearchBookDetailsUsecase.ResponseValues> {
                 override suspend fun onSuccess(response: SearchBookDetailsUsecase.ResponseValues) {
-                    Timber.d("Result received : $response")
+                    Timber.d("Result received for book details search : $response")
+
+                    searchBookDetailsUsecase.getSearchBookList().observeForever {
+                        Timber.d("List is => $it")
+                    }
+
+                    searchBookDetailsUsecase.getBooksWithRanks(title,author).observeForever {
+                        if (!it.isNullOrEmpty()){
+                            Timber.d("Ranks is => $it")
+                            Timber.d("Selecting top item in list as best match")
+//                fetchBookDetails(it.first().second)
+                        }
+                    }
                 }
 
                 override suspend fun onError(t: Throwable) {
