@@ -131,7 +131,7 @@ class BookDetailsViewModel(
 
                 audioBookMetadata.observeForever {
                     Timber.d("Metadata is available, fetching enhance details")
-                    if(enhanceDetailsJob==null){
+                    if(enhanceDetailsJob==null && it!=null){
                         enhanceDetailsJob = viewModelScope.launch {
                             fetchEnhanceDetails(title = it.title,author = it.creator)
                         }
