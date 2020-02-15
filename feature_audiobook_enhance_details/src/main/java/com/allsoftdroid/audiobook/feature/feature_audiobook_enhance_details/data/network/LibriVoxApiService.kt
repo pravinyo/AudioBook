@@ -8,6 +8,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query
+import java.util.concurrent.TimeUnit
 
 
 private fun getHttpClientListener(): OkHttpClient {
@@ -15,6 +16,8 @@ private fun getHttpClientListener(): OkHttpClient {
 
     return OkHttpClient.Builder()
         .addInterceptor(logging)
+        .readTimeout(30,TimeUnit.SECONDS)
+        .connectTimeout(30,TimeUnit.SECONDS)
         .build()
 }
 
