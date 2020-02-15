@@ -1,12 +1,15 @@
 package com.allsoftdroid.feature.book_details.presentation
 
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.text.bold
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.BookDetails
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
@@ -116,13 +119,13 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             }
         })
 
-        bookDetailsViewModel.additionalBookDetails.observe(viewLifecycleOwner, Observer {bookdetails->
-            Timber.d("Book details received: $bookdetails")
-            dataBinding.textViewDescription.text = if(bookdetails.description.isEmpty()){
+        bookDetailsViewModel.additionalBookDetails.observe(viewLifecycleOwner, Observer {bookDetails->
+            Timber.d("Book details received: $bookDetails")
+            dataBinding.textViewDescription.text = if(bookDetails.description.isEmpty()){
                 bookDetailsViewModel.audioBookMetadata.value?.let {
                     convertHtmlToText(it.description)
                 }
-            }else bookdetails.description
+            }else formattedBookDetails(bookDetails)
         })
 
         disposable.add(
@@ -176,6 +179,21 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         })
 
         return dataBinding.root
+    }
+
+    private fun formattedBookDetails(bookDetails: BookDetails):String{
+        val builder = SpannableStringBuilder()
+            .bold { append("Language:") }
+            .append(bookDetails.language)
+            .bold { append("Runtime:") }
+            .append(bookDetails.runtime)
+            .bold { append("Genres:") }
+            .append(bookDetails.genres)
+            .bold { append("Read Text:") }
+            .append(bookDetails.gutenbergUrl)
+            .bold { append("Description:") }
+            .append(bookDetails.description)
+        return builder.toString()
     }
 
     private fun handleDownloaderEvent(event: Event<DownloadEvent>) {
