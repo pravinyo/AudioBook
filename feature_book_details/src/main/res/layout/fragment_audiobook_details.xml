@@ -52,7 +52,6 @@
                     android:layout_margin="@dimen/track_item_margin_start"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:bookDescription="@{audioBookDetailsViewModel.audioBookMetadata}"
                     app:layout_constraintBottom_toTopOf="@+id/recyclerView"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
