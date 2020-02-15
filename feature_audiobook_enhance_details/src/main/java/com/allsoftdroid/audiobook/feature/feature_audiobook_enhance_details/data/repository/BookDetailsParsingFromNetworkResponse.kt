@@ -13,21 +13,22 @@ class BookDetailsParsingFromNetworkResponse {
 
             Jsoup.connect(url).get().run {
                 val runTime = this.select(".product-details > dd:nth-child(2)").text()
-                println("Runtime: $runTime")
 
                 val archiveLink = this.select("div.book-page-sidebar:nth-child(6) > p:nth-child(2) > a:nth-child(1)").attr("href")
-                println("Archive:$archiveLink")
+
                 val textLink = this.select("div.book-page-sidebar:nth-child(6) > p:nth-child(3) > a:nth-child(1)").attr("href")
-                println("Text: $textLink")
 
                 val description = this.select(".description").text()
-                println(description)
 
-                val genre = this.select("p.book-page-genre:nth-child(5)").text()
-                println(genre)
+                var genre = this.select("p.book-page-genre:nth-child(5)").text()
+                if(genre.contains(":")){
+                    genre = genre.split(":").last()
+                }
 
-                val lang = this.select("p.book-page-genre:nth-child(6)").text()
-                println(lang)
+                var lang = this.select("p.book-page-genre:nth-child(6)").text()
+                if(lang.contains(":")){
+                    lang = lang.split(":").last()
+                }
 
                 this.select("table.chapter-download tr").forEach {
                     val chap = chapterList.size
