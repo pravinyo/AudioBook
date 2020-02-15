@@ -20,6 +20,7 @@ import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.D
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 import com.allsoftdroid.feature.book_details.utils.NetworkState
+import com.allsoftdroid.feature.book_details.utils.convertHtmlToText
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -113,6 +114,15 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
                     }
                 }
             }
+        })
+
+        bookDetailsViewModel.additionalBookDetails.observe(viewLifecycleOwner, Observer {bookdetails->
+            Timber.d("Book details received: $bookdetails")
+            dataBinding.textViewDescription.text = if(bookdetails.description.isEmpty()){
+                bookDetailsViewModel.audioBookMetadata.value?.let {
+                    convertHtmlToText(it.description)
+                }
+            }else bookdetails.description
         })
 
         disposable.add(
