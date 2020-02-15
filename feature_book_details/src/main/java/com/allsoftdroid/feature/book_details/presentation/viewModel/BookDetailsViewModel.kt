@@ -1,6 +1,7 @@
 package com.allsoftdroid.feature.book_details.presentation.viewModel
 
 import androidx.lifecycle.*
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.BookDetails
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.WebDocument
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.FetchAdditionalBookDetailsRepositoryImpl
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.SearchBookDetailsRepositoryImpl
@@ -57,6 +58,9 @@ class BookDetailsViewModel(
     val audioBookMetadata = Transformations.switchMap(metadataStateChangeEvent){
         getMetadataUsecase.getMetadata()
     }
+
+    private var _additionalBookDetails = MutableLiveData<BookDetails>()
+    val additionalBookDetails:LiveData<BookDetails> = _additionalBookDetails
 
     //track state event
     private val _newTrackStateEvent = MutableLiveData<Event<Any>>() //holds track number clicked by user
@@ -163,7 +167,7 @@ class BookDetailsViewModel(
                         if (!it.isNullOrEmpty()){
                             Timber.d("Ranks is => $it")
                             Timber.d("Selecting top item in list as best match")
-//                fetchBookDetails(it.first().second)
+                            fetchBookDetails(it.first().second)
                         }
                     }
                 }
@@ -186,6 +190,7 @@ class BookDetailsViewModel(
 
             getFetchAdditionalBookDetailsUseCase.getAdditionalBookDetails().observeForever {
                 Timber.d("Book details fetched is : $it")
+                _additionalBookDetails.value = it
             }
 
             useCaseHandler.execute(
