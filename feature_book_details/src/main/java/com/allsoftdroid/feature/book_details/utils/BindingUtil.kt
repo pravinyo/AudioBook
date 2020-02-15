@@ -138,13 +138,13 @@ fun setImageUrl(imageView: ImageView, item: AudioBookMetadataDomainModel?) {
 /**
  * Update list items desc details
  */
-@BindingAdapter("bookDescription")
-fun TextView.setBookDescription(item: AudioBookMetadataDomainModel?){
-    item?.let {
-        text =
-            convertHtmlToText(it.description)
-    }
-}
+//@BindingAdapter("bookDescription")
+//fun TextView.setBookDescription(item: AudioBookMetadataDomainModel?){
+//    item?.let {
+//        text =
+//            convertHtmlToText(it.description)
+//    }
+//}
 
 /*
 Binding adapter for updating the title in list items
@@ -169,7 +169,7 @@ private fun getNormalizedText(text:String?,limit:Int):String{
     return text?:""
 }
 
-private fun convertHtmlToText(text:String?) = text?.let {
+fun convertHtmlToText(text:String?) = text?.let {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         Html.fromHtml(it, Html.FROM_HTML_MODE_COMPACT)
     } else {
