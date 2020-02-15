@@ -190,7 +190,10 @@ class BookDetailsViewModel(
 
             getFetchAdditionalBookDetailsUseCase.getAdditionalBookDetails().observeForever {
                 Timber.d("Book details fetched is : $it")
-                _additionalBookDetails.value = it
+                if (it!=null){
+                    it.webDocument = webDocument
+                        _additionalBookDetails.value = it
+                }
             }
 
             useCaseHandler.execute(
