@@ -8,6 +8,7 @@ TODO: Downloader show check if file is already downloaded no need to add for pen
 TODO: Modify download progress indicator to be reactive
 
 Expected
+TODO: make single point for all the request in book details like for metadata, track and enhanced data call
 TODO: Permission checker
 TODO: playing book screen*
 TODO: listen later feature
