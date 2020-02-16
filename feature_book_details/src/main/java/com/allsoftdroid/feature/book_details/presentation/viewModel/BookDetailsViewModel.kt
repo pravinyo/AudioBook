@@ -157,10 +157,14 @@ class BookDetailsViewModel(
             values = requestValues,
             callback = object : BaseUseCase.UseCaseCallback<SearchBookDetailsUsecase.ResponseValues> {
                 override suspend fun onSuccess(response: SearchBookDetailsUsecase.ResponseValues) {
-                    Timber.d("Result received for book details search : $response")
+                    Timber.d("Result received for book details search : ${response.toString()}")
 
                     searchBookDetailsUsecase.getSearchBookList().observeForever {
                         Timber.d("List is => $it")
+                        if(it.first().list.isNullOrEmpty() || it.first().author.isEmpty()){
+                            Timber.d("It appears that book is not ready")
+                            _additionalBookDetails.value = null
+                        }
                     }
 
                     searchBookDetailsUsecase.getBooksWithRanks(title,author).observeForever {
