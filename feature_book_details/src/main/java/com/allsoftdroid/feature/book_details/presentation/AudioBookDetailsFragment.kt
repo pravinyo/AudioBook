@@ -17,6 +17,7 @@ import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
+import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.AudioBookTrackAdapter
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.DownloadItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
@@ -122,13 +123,16 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         bookDetailsViewModel.additionalBookDetails.observe(viewLifecycleOwner, Observer {bookDetails->
             Timber.d("Book details received: $bookDetails")
             try{
-                dataBinding.textViewDescription.text = if(bookDetails.description.isEmpty()){
+                dataBinding.textViewDescription.text = if(bookDetails==null || bookDetails.description.isEmpty()){
                     bookDetailsViewModel.audioBookMetadata.value?.let {
-                        convertHtmlToText(it.description)
+                        formattedBookDetails(it)
                     }
                 }else formattedBookDetails(bookDetails)
             }catch ( e:Exception){
                 e.printStackTrace()
+                bookDetailsViewModel.audioBookMetadata.value?.let {
+                    dataBinding.textViewDescription.text = formattedBookDetails(it)
+                }
             }
         })
 
@@ -183,6 +187,23 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         })
 
         return dataBinding.root
+    }
+
+    private fun formattedBookDetails(bookDetails: AudioBookMetadataDomainModel):CharSequence{
+        val labelAuthor ="Author:\t"
+        val labelRuntime ="\n\nRuntime:\t"
+        val labelDescription = "\n\nDescription:\t"
+
+        return Truss()
+            .label(labelAuthor,Color.BLUE)
+            .append(bookDetails.creator)
+
+            .label(labelRuntime,Color.BLUE)
+            .append(bookDetails.runtime)
+
+            .label(labelDescription,Color.BLUE)
+            .append(convertHtmlToText(bookDetails.description))
+            .build()
     }
 
     private fun formattedBookDetails(bookDetails: BookDetails):CharSequence{
