@@ -3,18 +3,17 @@ package com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.dat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.WebDocument
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.network.LibriVoxApi
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.ISearchBookDetailsRepository
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.network.NetworkResponseListener
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.ISearchBookDetailsRepository
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.IStoreRepository
 import com.allsoftdroid.common.base.network.Failure
 import com.allsoftdroid.common.base.network.Success
-import com.dropbox.android.external.store4.Store
-import com.dropbox.android.external.store4.StoreBuilder
 import com.dropbox.android.external.store4.get
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import timber.log.Timber
 
-class SearchBookDetailsRepositoryImpl :   ISearchBookDetailsRepository {
+class SearchBookDetailsRepositoryImpl(private val storeCachingRepository:IStoreRepository) :   ISearchBookDetailsRepository {
 
     /***
      * hold stories related to politics
@@ -37,10 +36,9 @@ class SearchBookDetailsRepositoryImpl :   ISearchBookDetailsRepository {
     @ExperimentalCoroutinesApi
     @FlowPreview
     override suspend fun searchBookDetailsInRemoteRepository(searchTitle:String, author:String, page:Int){
-        val store = provideRoomStoreMultiParam()
 
         try{
-            val data = store.get(Pair(searchTitle,page))
+            val data = storeCachingRepository.provideStoreMultiParam().get(Pair(searchTitle,page))
 
             if(data.isNotEmpty()){
                 val list = BookBestMatchFromNetworkResult.getList(data)
@@ -60,27 +58,6 @@ class SearchBookDetailsRepositoryImpl :   ISearchBookDetailsRepository {
         }catch (e:Exception){
             e.printStackTrace()
         }
-    }
-
-    @FlowPreview
-    @ExperimentalCoroutinesApi
-    fun provideRoomStoreMultiParam(): Store<Pair<String, Int>, String> {
-
-        return StoreBuilder
-            .fromNonFlow<Pair<String,Int>, String> { (searchTitle,pageNumber) ->
-                val response = LibriVoxApi.retrofitService.searchBookInRemoteRepositoryAsync(
-                    title = searchTitle,
-                    author = "",
-                    search_page = pageNumber
-                ).await()
-
-                if(response.isSuccessful){
-                    response.body()?.results?:""
-                }else{
-                    ""
-                }
-            }
-            .build()
     }
 
     override fun getSearchBooksList(): LiveData<List<WebDocument>> = _listOfItem
