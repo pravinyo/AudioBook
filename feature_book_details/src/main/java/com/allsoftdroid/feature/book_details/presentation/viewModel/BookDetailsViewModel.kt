@@ -3,7 +3,9 @@ package com.allsoftdroid.feature.book_details.presentation.viewModel
 import androidx.lifecycle.*
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.BookDetails
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.WebDocument
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.network.LibriVoxApi
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.FetchAdditionalBookDetailsRepositoryImpl
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.NetworkCachingStoreRepositoryImpl
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.SearchBookDetailsRepositoryImpl
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.FetchAdditionalBookDetailsUsecase
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.SearchBookDetailsUsecase
@@ -148,7 +150,10 @@ class BookDetailsViewModel(
     private suspend fun fetchEnhanceDetails(title:String,author:String) {
 
         Timber.d("Fetching enhanced details for title:$title and author:$author")
-        val searchBookDetailsUsecase = SearchBookDetailsUsecase(searchBookDetailsRepository = SearchBookDetailsRepositoryImpl())
+
+        val networkCacheRepository = NetworkCachingStoreRepositoryImpl(LibriVoxApi.retrofitService)
+        val searchBookDetailsUsecase = SearchBookDetailsUsecase(
+            searchBookDetailsRepository = SearchBookDetailsRepositoryImpl(networkCacheRepository))
         val requestValues  = SearchBookDetailsUsecase.RequestValues(searchTitle =title,author = author)
 
 
