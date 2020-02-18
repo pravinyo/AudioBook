@@ -7,6 +7,7 @@ import com.allsoftdroid.buildsrc.ModuleDependency
 apply plugin: GradlePluginId.ANDROID_LIBRARY
 apply plugin: GradlePluginId.KOTLIN_ANDROID
 apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
+apply plugin: GradlePluginId.KOTLIN_KAPT
 
 android {
 
@@ -43,4 +44,14 @@ dependencies {
 
     implementation(LibraryDependency.JSOUP)
     implementation(LibraryDependency.LOGGING_INTERCEPTOR)
+
+    implementation(LibraryDependency.DROPBOX_STORE){
+        because("Store added to support caching for network bandwidth saving")
+    }
+
+    implementation(LibraryDependency.RETROFIT_MOSHI_CONVERTER)
+    implementation(LibraryDependency.MOSHI)
+    kapt(LibraryDependency.MOSHI_KOTLIN_CODEGEN){
+        because("Replaced with Gson as it makes code better and clean")
+    }
 }
