@@ -29,6 +29,8 @@ class BookDetailsViewModel(
     private val useCaseHandler: UseCaseHandler,
     private val getMetadataUsecase:GetMetadataUsecase,
     private val downloadUsecase: GetDownloadUsecase,
+    private val searchBookDetailsUsecase: SearchBookDetailsUsecase,
+    private val getFetchAdditionalBookDetailsUseCase: FetchAdditionalBookDetailsUsecase,
     private val getTrackListUsecase : GetTrackListUsecase) : ViewModel(){
     /**
      * cancelling this job cancels all the job started by this viewmodel
@@ -150,12 +152,7 @@ class BookDetailsViewModel(
     private suspend fun fetchEnhanceDetails(title:String,author:String) {
 
         Timber.d("Fetching enhanced details for title:$title and author:$author")
-
-        val networkCacheRepository = NetworkCachingStoreRepositoryImpl(LibriVoxApi.retrofitService)
-        val searchBookDetailsUsecase = SearchBookDetailsUsecase(
-            searchBookDetailsRepository = SearchBookDetailsRepositoryImpl(networkCacheRepository))
         val requestValues  = SearchBookDetailsUsecase.RequestValues(searchTitle =title,author = author)
-
 
         useCaseHandler.execute(
             useCase = searchBookDetailsUsecase,
@@ -192,9 +189,6 @@ class BookDetailsViewModel(
         Timber.d("Fetching book details for $webDocument")
 
         viewModelScope.launch {
-            val additionBookDetailsRepository = FetchAdditionalBookDetailsRepositoryImpl()
-            val getFetchAdditionalBookDetailsUseCase = FetchAdditionalBookDetailsUsecase(additionBookDetailsRepository)
-
             val requestValues  = FetchAdditionalBookDetailsUsecase.RequestValues(bookUrl = webDocument.url)
 
             getFetchAdditionalBookDetailsUseCase.getAdditionalBookDetails().observeForever {
@@ -453,7 +447,6 @@ class BookDetailsViewModel(
             _audioBookTracks.value = tracks
         }
 
-//        _newTrackStateEvent.value = Event(0)
     }
 
 }
