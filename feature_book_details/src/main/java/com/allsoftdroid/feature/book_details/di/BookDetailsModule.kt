@@ -10,14 +10,15 @@ import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.doma
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.IStoreRepository
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.FetchAdditionalBookDetailsUsecase
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.SearchBookDetailsUsecase
-import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus
 import com.allsoftdroid.database.common.AudioBookDatabase
 import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.feature.book_details.data.databaseExtension.SaveMetadataInDatabase
 import com.allsoftdroid.feature.book_details.data.network.service.ArchiveMetadataApi
-import com.allsoftdroid.feature.book_details.data.repository.AudioBookMetadataRepositoryImpl
-import com.allsoftdroid.feature.book_details.domain.repository.AudioBookMetadataRepository
+import com.allsoftdroid.feature.book_details.data.repository.MetadataRepositoryImpl
+import com.allsoftdroid.feature.book_details.data.repository.TrackListRepositoryImpl
+import com.allsoftdroid.feature.book_details.domain.repository.IMetadataRepository
+import com.allsoftdroid.feature.book_details.domain.repository.ITrackListRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.GetDownloadUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
@@ -65,7 +66,7 @@ object BookDetailsModule {
         }
 
         factory {
-            GetTrackListUsecase(metadataRepository = get())
+            GetTrackListUsecase(listRepository = get())
         }
 
         factory {
@@ -88,11 +89,18 @@ object BookDetailsModule {
     private val repositoryModule : Module = module {
 
         factory {
-            AudioBookMetadataRepositoryImpl(
+            MetadataRepositoryImpl(
                 metadataDao = get(),
                 bookId = getProperty(PROPERTY_BOOK_ID),
                 metadataDataSource = get(),
-                saveInDatabase = get(named(name = METADATA_DATABASE))) as AudioBookMetadataRepository
+                saveInDatabase = get(named(name = METADATA_DATABASE))) as IMetadataRepository
+        }
+
+        factory {
+            TrackListRepositoryImpl(
+                metadataDao = get(),
+                bookId = getProperty(PROPERTY_BOOK_ID)
+            ) as ITrackListRepository
         }
 
         factory {
