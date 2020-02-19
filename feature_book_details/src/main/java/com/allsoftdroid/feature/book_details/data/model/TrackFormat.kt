@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature.book_details.data.repository
+package com.allsoftdroid.feature.book_details.data.model
 
 sealed class TrackFormat{
     object FormatBP64 : TrackFormat()
