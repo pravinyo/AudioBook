@@ -19,16 +19,16 @@ interface ILibriVoxApiService {
     @Headers("X-Requested-With:XMLHttpRequest")
     @GET(Utils.Books.ADVANCED_SEARCH)
     fun searchBookInRemoteRepositoryAsync(
-        @Query("title") title:String,
-        @Query("author") author:String="",
-        @Query("reader") reader:String="",
-        @Query("keywords") keywords:String="",
-        @Query("genre_id") genre_id:Int=0,
-        @Query("status") status:String="all",
-        @Query("project_type") project_type:String="either",
-        @Query("recorded_language") recorded_language:String="",
-        @Query("sort_order") sort_order:String="catalog_date",
-        @Query("search_page") search_page:Int=1,
-        @Query("search_form") search_form:String="advanced",
-        @Query("q") q:String=""): Deferred<Response<NetworkResponse>>
+        @Query(Utils.Books.QUERY_TITLE) title:String,
+        @Query(Utils.Books.QUERY_AUTHOR) author:String="",
+        @Query(Utils.Books.QUERY_READER) reader:String="",
+        @Query(Utils.Books.QUERY_KEYWORDS) keywords:String="",
+        @Query(Utils.Books.QUERY_GENRE_ID) genre_id:Int= Utils.Books.DEFAULT_GENRE_ID,
+        @Query(Utils.Books.QUERY_STATUS) status:String= Utils.Books.DEFAULT_STATUS,
+        @Query(Utils.Books.QUERY_PROJECT_TYPE) project_type:String= Utils.Books.DEFAULT_PROJECT_TYPE,
+        @Query(Utils.Books.QUERY_RECORDED_LANGUAGE) recorded_language:String="",
+        @Query(Utils.Books.QUERY_SORT_ORDER) sort_order:String = Utils.Books.DEFAULT_SORT_ORDER,
+        @Query(Utils.Books.QUERY_SEARCH_PAGE) search_page:Int=1,
+        @Query(Utils.Books.QUERY_SEARCH_FORM) search_form:String= Utils.Books.DEFAULT_SEARCH_FORM,
+        @Query(Utils.Books.QUERY_Q) q:String=""): Deferred<Response<NetworkResponse>>
 }
