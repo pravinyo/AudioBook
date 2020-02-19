@@ -67,7 +67,7 @@ public class Truss {
         while (!stack.isEmpty()) {
             popSpan();
         }
-        return builder; // TODO make immutable copy?
+        return builder;
     }
 
     private static final class Span {
