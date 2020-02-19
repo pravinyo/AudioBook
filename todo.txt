@@ -5,7 +5,6 @@ TODO: Follow TDD Approach
 BUG
 TODO: App is getting crash when opening The Complete poetical works by edgar Allan Poe [crash screenshot is available]
 TODO: Downloader show check if file is already downloaded no need to add for pending downloads
-TODO: Modify download progress indicator to be reactive
 
 Expected
 TODO: make single point for all the request in book details like for metadata, track and enhanced data call
@@ -25,7 +24,6 @@ Optional
 TODO: Download feature
               - Download book wise
 TODO: Palette API to render color based on dormant color in image
-TODO: libri Api (https://librivox.org/api/info)
 TODO: alert to play book based on users daily commute time and activity.[Transition API]
 TODO: Japanese language support, english
 TODO: new book available alert[Service]
@@ -40,13 +38,10 @@ TODO: Book Library management screen
                                 - Master detail screen is good.
 
 TODO:  LibriVox API integration
-                                      - fetch data via api call
-                                      - parse result
-                                      - compare the best match and  show the details in details screen.
-                                      - save the results in DB for future reference.
                                       - don't call the LibriVox api if data is already present in the database.
                                       - use mediator livedata for RxJava for combining results.
                                       - Add total book hours to be played for each book in details screen
+
 To generate a dependency graph run below commands
 1. gradlew projectDependencyGraph
 2. open file in \build\reports\dependency-graph from parent folder
