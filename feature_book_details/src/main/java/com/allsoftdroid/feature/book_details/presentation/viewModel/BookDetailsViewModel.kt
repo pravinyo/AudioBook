@@ -3,10 +3,6 @@ package com.allsoftdroid.feature.book_details.presentation.viewModel
 import androidx.lifecycle.*
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.BookDetails
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.WebDocument
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.network.LibriVoxApi
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.FetchAdditionalBookDetailsRepositoryImpl
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.NetworkCachingStoreRepositoryImpl
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.SearchBookDetailsRepositoryImpl
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.FetchAdditionalBookDetailsUsecase
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.SearchBookDetailsUsecase
 import com.allsoftdroid.common.base.extension.Event
@@ -15,7 +11,7 @@ import com.allsoftdroid.common.base.store.downloader.*
 import com.allsoftdroid.common.base.store.downloader.Progress
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
-import com.allsoftdroid.feature.book_details.data.repository.TrackFormat
+import com.allsoftdroid.feature.book_details.data.model.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.*
@@ -159,7 +155,7 @@ class BookDetailsViewModel(
             values = requestValues,
             callback = object : BaseUseCase.UseCaseCallback<SearchBookDetailsUsecase.ResponseValues> {
                 override suspend fun onSuccess(response: SearchBookDetailsUsecase.ResponseValues) {
-                    Timber.d("Result received for book details search : ${response.toString()}")
+                    Timber.d("Result received for book details search : $response")
 
                     searchBookDetailsUsecase.getSearchBookList().observeForever {
                         Timber.d("List is => $it")
