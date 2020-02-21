@@ -8,7 +8,6 @@ TODO: Downloader show check if file is already downloaded no need to add for pen
 
 Expected
 TODO: make single point for all the request in book details like for metadata, track and enhanced data call
-TODO: Permission checker
 TODO: playing book screen*
 TODO: listen later feature
 TODO: local download/save book feature
@@ -16,9 +15,8 @@ TODO: Offline playing option for downloaded audio file.
                                       - Check whether file is downloaded or not.
                                       - If downloaded play local file
                                       - else online stream
-TODO: navigation drawer for downloads, listen later and help, licenses and analytics feature.
-TODO: Licenses and Attribution
-
+TODO: navigation drawer for downloads, help, Licenses and Attribution
+TODO: Bottom Navigation for Books, listen later[login for cloud save], analytics feature[login for cloud save].
 
 Optional
 TODO: Download feature
