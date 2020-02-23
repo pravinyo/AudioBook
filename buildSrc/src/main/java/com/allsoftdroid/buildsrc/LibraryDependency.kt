@@ -93,7 +93,8 @@ object LibraryDependency {
     const val LOTTIE = "com.airbnb.android:lottie:${LibraryVersion.LOTTIE}"
 
 
-    const val ROOM_KTX = "androidx.room:room-runtime:${LibraryVersion.ROOM}"
+    const val ROOM_RUNTIME = "androidx.room:room-runtime:${LibraryVersion.ROOM}"
+    const val ROOM_KTX = "androidx.room:room-ktx:${LibraryVersion.ROOM}"
     const val ROOM_COMPILER = "androidx.room:room-compiler:${LibraryVersion.ROOM}"
 
     const val GLIDE = "com.github.bumptech.glide:glide:${LibraryVersion.GLIDE}"
