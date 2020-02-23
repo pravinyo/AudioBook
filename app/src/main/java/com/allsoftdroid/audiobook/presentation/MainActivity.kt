@@ -17,12 +17,14 @@ import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManage
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.utility.MovableFrameLayout
+import com.allsoftdroid.audiobook.utility.StoragePermissionHandler
 import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ConnectionLiveData
 import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.allsoftdroid.common.base.store.downloader.DownloadEvent
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
+import com.allsoftdroid.common.base.store.downloader.DownloadNothing
 import com.allsoftdroid.common.base.store.downloader.OpenDownloadActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -147,13 +149,34 @@ class MainActivity : BaseActivity() {
     }
 
     private fun handleDownloadEvent(event: Event<DownloadEvent>) {
+
         event.getContentIfNotHandled()?.let {
-            when(it){
-                is OpenDownloadActivity -> {
-                    navigateToDownloadManagementActivity()
+
+            if( it is DownloadNothing) return
+
+            if(!StoragePermissionHandler.isPermissionGranted(this)){
+                StoragePermissionHandler.requestPermission(this)
+            }else{
+                when (it) {
+                    is OpenDownloadActivity -> {
+                        navigateToDownloadManagementActivity()
+                    }
+                    else -> downloader.handleDownloadEvent(it)
                 }
-                else -> downloader.handleDownloadEvent(it)
             }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(StoragePermissionHandler.isRequestGrantedFor(requestCode,grantResults)){
+            Toast.makeText(this,"Thanks for granting permission",Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(this,"This Feature need Storage Permission",Toast.LENGTH_SHORT).show()
         }
     }
 

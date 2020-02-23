@@ -1,5 +1,6 @@
 package com.allsoftdroid.feature.book_details.presentation
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.BookDetails
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
@@ -15,11 +17,14 @@ import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
+import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.AudioBookTrackAdapter
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.DownloadItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 import com.allsoftdroid.feature.book_details.utils.NetworkState
+import com.allsoftdroid.feature.book_details.utils.Truss
+import com.allsoftdroid.feature.book_details.utils.convertHtmlToText
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -115,6 +120,22 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             }
         })
 
+        bookDetailsViewModel.additionalBookDetails.observe(viewLifecycleOwner, Observer {bookDetails->
+            Timber.d("Book details received: $bookDetails")
+            try{
+                dataBinding.textViewDescription.text = if(bookDetails==null || bookDetails.description.isEmpty()){
+                    bookDetailsViewModel.audioBookMetadata.value?.let {
+                        formattedBookDetails(it)
+                    }
+                }else formattedBookDetails(bookDetails)
+            }catch ( e:Exception){
+                e.printStackTrace()
+                bookDetailsViewModel.audioBookMetadata.value?.let {
+                    dataBinding.textViewDescription.text = formattedBookDetails(it)
+                }
+            }
+        })
+
         disposable.add(
             eventStore.observe()
                 .subscribeOn(Schedulers.computation())
@@ -166,6 +187,56 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         })
 
         return dataBinding.root
+    }
+
+    private fun formattedBookDetails(bookDetails: AudioBookMetadataDomainModel):CharSequence{
+        val labelAuthor ="Author:\t"
+        val labelRuntime ="\n\nRuntime:\t"
+        val labelDescription = "\n\nDescription:\t"
+
+        return Truss()
+            .label(labelAuthor,Color.BLUE)
+            .append(bookDetails.creator)
+
+            .label(labelRuntime,Color.BLUE)
+            .append(bookDetails.runtime)
+
+            .label(labelDescription,Color.BLUE)
+            .append(convertHtmlToText(bookDetails.description))
+            .build()
+    }
+
+    private fun formattedBookDetails(bookDetails: BookDetails):CharSequence{
+        val labelAuthor ="Author:\t"
+        val labelExtra ="\n\nExtra:\t"
+        val labelLanguage="\n\nLanguage:\t"
+        val labelRuntime ="\n\nRuntime:\t"
+        val labelGenres = "\n\nGenre(s):\t"
+        val labelReadText = "\n\nRead Text:\t"
+        val labelDescription = "\n\nDescription:\t"
+
+        return Truss()
+            .label(labelAuthor,Color.BLUE)
+            .append(bookDetails.webDocument?.author?:"NA")
+
+            .label(labelExtra,Color.BLUE)
+            .append(bookDetails.webDocument?.list.toString())
+
+            .label(labelLanguage,Color.BLUE)
+            .append(bookDetails.language)
+
+            .label(labelRuntime,Color.BLUE)
+            .append(bookDetails.runtime)
+
+            .label(labelGenres,Color.BLUE)
+            .append(bookDetails.genres)
+
+            .label(labelReadText,Color.BLUE)
+            .append(bookDetails.gutenbergUrl)
+
+            .label(labelDescription,Color.BLUE)
+            .append(bookDetails.description)
+            .build()
     }
 
     private fun handleDownloaderEvent(event: Event<DownloadEvent>) {

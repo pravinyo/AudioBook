@@ -10,13 +10,21 @@ import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseAlbumEntity
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseMetadataEntity
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseTrackEntity
+import com.allsoftdroid.database.networkCacheDB.DatabaseNetworkResponseEntity
+import com.allsoftdroid.database.networkCacheDB.NetworkCacheDao
 
 /**
  * Contains Database definition
  */
 @Database(
-    entities = [DatabaseAudioBook::class,DatabaseMetadataEntity::class,DatabaseAlbumEntity::class,DatabaseTrackEntity::class],
-    version = 5 ,
+    entities = [
+        DatabaseAudioBook::class,
+        DatabaseMetadataEntity::class,
+        DatabaseAlbumEntity::class,
+        DatabaseTrackEntity::class,
+        DatabaseNetworkResponseEntity::class
+    ],
+    version = 6 ,
     exportSchema = false)
 abstract class AudioBookDatabase : RoomDatabase(){
 
@@ -25,6 +33,9 @@ abstract class AudioBookDatabase : RoomDatabase(){
 
     //Metadata DAO
     abstract fun metadataDao() : MetadataDao
+
+    //NetworkCache DAO
+    abstract fun networkDao(): NetworkCacheDao
 
 
     /**

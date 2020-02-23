@@ -2,7 +2,7 @@ package com.allsoftdroid.feature.book_details.domain.usecase
 
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
-import com.allsoftdroid.feature.book_details.domain.repository.AudioBookMetadataRepository
+import com.allsoftdroid.feature.book_details.domain.repository.IMetadataRepository
 import com.allsoftdroid.feature.book_details.utils.NetworkState
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Dispatchers
@@ -10,7 +10,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class GetMetadataUsecase( private val metadataRepository: AudioBookMetadataRepository) :
+class GetMetadataUsecase( private val metadataRepository: IMetadataRepository) :
     BaseUseCase<GetMetadataUsecase.RequestValues, GetMetadataUsecase.ResponseValues>(){
 
     private var disposable: CompositeDisposable = CompositeDisposable()

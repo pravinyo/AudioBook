@@ -2,6 +2,7 @@ package com.allsoftdroid.feature_book.domain.usecase
 
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.Failure
+import com.allsoftdroid.common.base.network.Loading
 import com.allsoftdroid.common.base.network.NetworkResult
 import com.allsoftdroid.common.base.network.Success
 import com.allsoftdroid.common.base.usecase.BaseUseCase
@@ -27,6 +28,7 @@ class GetAudioBookListUsecase( private val audioBookRep: AudioBookRepository) :
                     when(result){
                         is Success -> useCaseCallback?.onSuccess(ResponseValues(Event(Unit)))
                         is Failure -> useCaseCallback?.onError(result.error)
+                        is Loading -> Timber.d("Loading")
                     }
                 }
 

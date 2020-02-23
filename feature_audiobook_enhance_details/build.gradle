@@ -1,0 +1,58 @@
+import com.allsoftdroid.buildsrc.AndroidConfig
+import com.allsoftdroid.buildsrc.BuildTypeDebug
+import com.allsoftdroid.buildsrc.BuildTypeRelease
+import com.allsoftdroid.buildsrc.LibraryDependency
+import com.allsoftdroid.buildsrc.ModuleDependency
+
+apply plugin: GradlePluginId.ANDROID_LIBRARY
+apply plugin: GradlePluginId.KOTLIN_ANDROID
+apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
+apply plugin: GradlePluginId.KOTLIN_KAPT
+
+android {
+
+    compileSdkVersion AndroidConfig.COMPILE_SDK_VERSION
+
+    defaultConfig {
+        minSdkVersion(AndroidConfig.MIN_SDK_VERSION)
+        targetSdkVersion(AndroidConfig.TARGET_SDK_VERSION)
+        versionCode AndroidConfig.VERSION_CODE
+        versionName AndroidConfig.VERSION_NAME
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled BuildTypeRelease.isMinifyEnabled
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            minifyEnabled BuildTypeDebug.isMinifyEnabled
+        }
+
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
+    }
+
+
+}
+
+dependencies {
+    implementation(project(path: ModuleDependency.LIBRARY_COMMON))
+    implementation(project(path: ModuleDependency.DATABASE))
+
+    implementation(LibraryDependency.JSOUP)
+    implementation(LibraryDependency.LOGGING_INTERCEPTOR)
+
+    implementation(LibraryDependency.DROPBOX_STORE){
+        because("Store added to support caching for network bandwidth saving")
+    }
+
+    implementation(LibraryDependency.RETROFIT_MOSHI_CONVERTER)
+    implementation(LibraryDependency.MOSHI)
+    kapt(LibraryDependency.MOSHI_KOTLIN_CODEGEN){
+        because("Replaced with Gson as it makes code better and clean")
+    }
+}

@@ -3,6 +3,9 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val MOSHI = "1.9.2"
+    const val DROPBOX_STORE = "4.0.0-alpha03"
+    const val JSOUP = "1.12.1"
     const val SUPPORT_V13 = "28.0.0"
     const val MULTISTAGE_TOGGLE_BTN = "0.2.2"
     const val LEAKY_CANARY = "2.0"
@@ -56,6 +59,8 @@ object LibraryDependency {
     const val RETROFIT_COROUTINES_ADAPTER="com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:${LibraryVersion.version_retrofit_coroutines_adapter}"
 
     const val GSON ="com.google.code.gson:gson:${LibraryVersion.GSON}"
+    const val MOSHI = "com.squareup.moshi:moshi:${LibraryVersion.MOSHI}"
+    const val MOSHI_KOTLIN_CODEGEN ="com.squareup.moshi:moshi-kotlin-codegen:${LibraryVersion.MOSHI}"
 
     const val LOGGING_INTERCEPTOR = "com.squareup.okhttp3:logging-interceptor:${LibraryVersion.LOGGING_INTERCEPTOR}"
     const val STETHO = "com.facebook.stetho:stetho:${LibraryVersion.STETHO}"
@@ -88,7 +93,8 @@ object LibraryDependency {
     const val LOTTIE = "com.airbnb.android:lottie:${LibraryVersion.LOTTIE}"
 
 
-    const val ROOM_KTX = "androidx.room:room-runtime:${LibraryVersion.ROOM}"
+    const val ROOM_RUNTIME = "androidx.room:room-runtime:${LibraryVersion.ROOM}"
+    const val ROOM_KTX = "androidx.room:room-ktx:${LibraryVersion.ROOM}"
     const val ROOM_COMPILER = "androidx.room:room-compiler:${LibraryVersion.ROOM}"
 
     const val GLIDE = "com.github.bumptech.glide:glide:${LibraryVersion.GLIDE}"
@@ -108,4 +114,8 @@ object LibraryDependency {
     const val MULTISTAGE_TOGGLE_BUTTON = "org.honorato.multistatetogglebutton:multistatetogglebutton:${LibraryVersion.MULTISTAGE_TOGGLE_BTN}"
 
     const val SUPPORT_V13 = "com.android.support:support-v13:${LibraryVersion.SUPPORT_V13}"
+
+    const val JSOUP = "org.jsoup:jsoup:${LibraryVersion.JSOUP}"
+
+    const val DROPBOX_STORE = "com.dropbox.mobile.store:store4:${LibraryVersion.DROPBOX_STORE}"
 }

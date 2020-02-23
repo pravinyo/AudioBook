@@ -1,14 +1,24 @@
 package com.allsoftdroid.feature.book_details.di
 
 import androidx.lifecycle.SavedStateHandle
-import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.network.LibriVoxApi
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.FetchAdditionalBookDetailsRepositoryImpl
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.NetworkCachingStoreRepositoryImpl
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.SearchBookDetailsRepositoryImpl
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.IFetchAdditionBookDetailsRepository
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.ISearchBookDetailsRepository
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.IStoreRepository
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.FetchAdditionalBookDetailsUsecase
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.SearchBookDetailsUsecase
 import com.allsoftdroid.database.common.AudioBookDatabase
 import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.feature.book_details.data.databaseExtension.SaveMetadataInDatabase
 import com.allsoftdroid.feature.book_details.data.network.service.ArchiveMetadataApi
-import com.allsoftdroid.feature.book_details.data.repository.AudioBookMetadataRepositoryImpl
-import com.allsoftdroid.feature.book_details.domain.repository.AudioBookMetadataRepository
+import com.allsoftdroid.feature.book_details.data.repository.MetadataRepositoryImpl
+import com.allsoftdroid.feature.book_details.data.repository.TrackListRepositoryImpl
+import com.allsoftdroid.feature.book_details.domain.repository.IMetadataRepository
+import com.allsoftdroid.feature.book_details.domain.repository.ITrackListRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.GetDownloadUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
@@ -28,7 +38,8 @@ object BookDetailsModule {
             bookDetailsViewModelModule,
             usecaseModule,
             repositoryModule,
-            dataModule
+            dataModule,
+            networkModule
         ))
     }
 
@@ -42,7 +53,9 @@ object BookDetailsModule {
                 useCaseHandler = get(),
                 getTrackListUsecase = get(),
                 getMetadataUsecase = get(),
-                downloadUsecase = get()
+                downloadUsecase = get(),
+                searchBookDetailsUsecase = get(),
+                getFetchAdditionalBookDetailsUseCase = get()
             )
         }
     }
@@ -53,28 +66,67 @@ object BookDetailsModule {
         }
 
         factory {
-            GetTrackListUsecase(metadataRepository = get())
+            GetTrackListUsecase(listRepository = get())
         }
 
         factory {
             GetDownloadUsecase(downloadEventStore = get())
+        }
+
+        factory {
+            SearchBookDetailsUsecase(
+                searchBookDetailsRepository = get()
+            )
+        }
+
+        factory {
+            FetchAdditionalBookDetailsUsecase(
+                fetchAdditionBookDetailsRepository = get()
+            )
         }
     }
 
     private val repositoryModule : Module = module {
 
         factory {
-            AudioBookMetadataRepositoryImpl(
+            MetadataRepositoryImpl(
                 metadataDao = get(),
                 bookId = getProperty(PROPERTY_BOOK_ID),
                 metadataDataSource = get(),
-                saveInDatabase = get(named(name = METADATA_DATABASE))) as AudioBookMetadataRepository
+                saveInDatabase = get(named(name = METADATA_DATABASE))) as IMetadataRepository
+        }
+
+        factory {
+            TrackListRepositoryImpl(
+                metadataDao = get(),
+                bookId = getProperty(PROPERTY_BOOK_ID)
+            ) as ITrackListRepository
+        }
+
+        factory {
+            SearchBookDetailsRepositoryImpl(storeCachingRepository = get()) as ISearchBookDetailsRepository
+        }
+
+        factory {
+            FetchAdditionalBookDetailsRepositoryImpl() as IFetchAdditionBookDetailsRepository
+        }
+    }
+
+    private val networkModule : Module = module{
+        single{
+            NetworkCachingStoreRepositoryImpl(
+                networkService = LibriVoxApi.retrofitService,
+                networkCacheDao = get()) as IStoreRepository
         }
     }
 
     private val dataModule : Module = module {
         single {
             AudioBookDatabase.getDatabase(get()).metadataDao()
+        }
+
+        single {
+            AudioBookDatabase.getDatabase(get()).networkDao()
         }
 
         single(named(name = METADATA_DATABASE)) {
