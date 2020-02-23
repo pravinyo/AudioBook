@@ -114,13 +114,19 @@ object BookDetailsModule {
 
     private val networkModule : Module = module{
         single{
-            NetworkCachingStoreRepositoryImpl(LibriVoxApi.retrofitService) as IStoreRepository
+            NetworkCachingStoreRepositoryImpl(
+                networkService = LibriVoxApi.retrofitService,
+                networkCacheDao = get()) as IStoreRepository
         }
     }
 
     private val dataModule : Module = module {
         single {
             AudioBookDatabase.getDatabase(get()).metadataDao()
+        }
+
+        single {
+            AudioBookDatabase.getDatabase(get()).networkDao()
         }
 
         single(named(name = METADATA_DATABASE)) {
