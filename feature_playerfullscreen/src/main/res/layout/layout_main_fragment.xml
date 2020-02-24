@@ -1,13 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/toolbar_back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:clickable="true"
+            android:contentDescription="@string/close_player"
+            android:focusable="true"
+            android:src="@drawable/ic_keyboard_arrow_left_black_24dp" />
+
+        <TextView
+            android:id="@+id/tv_book_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Book Title Text goes here"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/toolbar_downloads"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="16dp"
+            android:clickable="true"
+            android:contentDescription="@string/share_book"
+            android:focusable="true"
+            android:src="@drawable/share_outline" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_book_cover"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorAccent"
+        android:contentDescription="@string/book_cover_photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
     <TextView
+        android:id="@+id/tv_book_progress_title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textColor="@color/black"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:text="Player Fragment is Here"/>
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:text="Chapter 1 of 30"
+        android:textColor="@color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_book_cover" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tv_book_chapter_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="Chapter name here"
+        android:textColor="@color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_book_progress_title" />
+
+    <ProgressBar
+        android:id="@+id/pb_book_chapter_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:max="100"
+        android:progress="45"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_book_chapter_name" />
+
+    <TextView
+        android:id="@+id/tv_book_progress_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center_horizontal"
+        android:text="12min 30sec remaining"
+        android:textColor="@color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pb_book_chapter_progress" />
+
+    <LinearLayout
+        android:id="@+id/playerControl"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_book_chapter_previous"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:padding="8dp"
+            android:layout_margin="16dp"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/play_previous"
+            android:src="@drawable/skip_previous_outline" />
+
+        <ImageView
+            android:id="@+id/iv_book_chapter_playpause"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:padding="8dp"
+            android:layout_margin="16dp"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/play_pause_control"
+            android:src="@drawable/play_circle" />
+
+        <ImageView
+            android:id="@+id/iv_book_chapter_next"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:padding="8dp"
+            android:layout_margin="16dp"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/play_next"
+            android:src="@drawable/skip_next_outline" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
