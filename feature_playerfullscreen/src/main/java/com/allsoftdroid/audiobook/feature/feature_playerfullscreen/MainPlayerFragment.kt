@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
@@ -19,7 +20,11 @@ class MainPlayerFragment : BaseContainerFragment(){
         savedInstanceState: Bundle?
     ): View? {
 
-        return inflater.inflate(R.layout.layout_main_fragment,container,false)
+        val view = inflater.inflate(R.layout.layout_main_fragment,container,false)
+        view.findViewById<ImageView>(R.id.toolbar_back_button).setOnClickListener {
+            handleBackPressEvent()
+        }
+        return view
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
