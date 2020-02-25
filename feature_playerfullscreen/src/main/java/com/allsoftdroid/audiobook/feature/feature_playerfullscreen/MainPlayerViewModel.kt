@@ -1,6 +1,9 @@
 package com.allsoftdroid.audiobook.feature.feature_playerfullscreen
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.data.PlayingTrackDetails
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.di.FeatureMainPlayerModule.SUPER_VISOR_JOB
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.di.FeatureMainPlayerModule.VIEW_MODEL_SCOPE
 import kotlinx.coroutines.CompletableJob
@@ -21,7 +24,18 @@ class MainPlayerViewModel : ViewModel(), KoinComponent {
      */
     private val viewModelScope : CoroutineScope by inject(named(name = VIEW_MODEL_SCOPE))
 
+    private var _playingTrackDetails = MutableLiveData<PlayingTrackDetails>()
+    val playingTrackDetails:LiveData<PlayingTrackDetails> = _playingTrackDetails
 
+    fun setBookIdentifier(identifier:String){
+        _playingTrackDetails.value = PlayingTrackDetails(
+            bookIdentifier = identifier,
+            bookTitle = "Book Title goes here",
+            name = "Track Name goes here",
+            chapterIndex = 1,
+            totalChapter = 30
+        )
+    }
 
     override fun onCleared() {
         super.onCleared()
