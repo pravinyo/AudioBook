@@ -47,4 +47,7 @@ dependencies {
     implementation(LibraryDependency.KOIN_X_VIEWMODEL){
         because("Koin DI need this to inject viewModel")
     }
+
+    implementation(LibraryDependency.GLIDE)
+    annotationProcessor(LibraryDependency.GLIDE_COMPILER)
 }
