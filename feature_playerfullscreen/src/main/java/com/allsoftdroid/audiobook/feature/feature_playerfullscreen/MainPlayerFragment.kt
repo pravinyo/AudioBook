@@ -8,6 +8,7 @@ import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
+import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.databinding.LayoutMainFragmentBinding
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.di.FeatureMainPlayerModule
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import org.koin.android.ext.android.inject
@@ -15,7 +16,8 @@ import org.koin.android.ext.android.inject
 class MainPlayerFragment : BaseContainerFragment(){
 
     private lateinit var callback: OnBackPressedCallback
-    private val booksViewModel: MainPlayerViewModel by inject()
+    private val mainPlayerViewModel: MainPlayerViewModel by inject()
+    private val bookId = "tom_sawyer_librivox"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,13 +26,17 @@ class MainPlayerFragment : BaseContainerFragment(){
     ): View? {
 
         FeatureMainPlayerModule.injectFeature()
+        val binding:LayoutMainFragmentBinding = inflateLayout(inflater,R.layout.layout_main_fragment,container)
 
-        val view = inflater.inflate(R.layout.layout_main_fragment,container,false)
-        view.findViewById<ImageView>(R.id.toolbar_back_button).setOnClickListener {
+        binding.viewModel = mainPlayerViewModel
+
+        binding.toolbarBackButton.setOnClickListener {
             handleBackPressEvent()
         }
 
-        return view
+        mainPlayerViewModel.setBookIdentifier(bookId)
+
+        return binding.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
