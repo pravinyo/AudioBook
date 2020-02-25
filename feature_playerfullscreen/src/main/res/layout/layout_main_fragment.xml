@@ -54,6 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="240dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
         android:background="@color/colorAccent"
         android:contentDescription="@string/book_cover_photo"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,6 +68,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:text="Chapter 1 of 30"
         android:textColor="@color/white"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -81,6 +83,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:text="Chapter name here"
         android:textColor="@color/white"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
@@ -96,8 +99,9 @@
         android:max="100"
         android:progress="45"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_book_chapter_name" />
@@ -109,13 +113,15 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:gravity="center_horizontal"
         android:text="12min 30sec remaining"
         android:textColor="@color/white"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pb_book_chapter_progress" />
+        app:layout_constraintTop_toBottomOf="@id/pb_book_chapter_progress"
+        app:layout_constraintBottom_toTopOf="@id/playerControl"/>
 
     <LinearLayout
         android:id="@+id/playerControl"
