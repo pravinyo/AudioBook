@@ -2,6 +2,7 @@ import com.allsoftdroid.buildsrc.AndroidConfig
 import com.allsoftdroid.buildsrc.BuildTypeDebug
 import com.allsoftdroid.buildsrc.BuildTypeRelease
 import com.allsoftdroid.buildsrc.DataBinding
+import com.allsoftdroid.buildsrc.LibraryDependency
 import com.allsoftdroid.buildsrc.ModuleDependency
 
 apply plugin: GradlePluginId.ANDROID_LIBRARY
@@ -43,4 +44,7 @@ android {
 
 dependencies {
     implementation(project(path: ModuleDependency.LIBRARY_COMMON))
+    implementation(LibraryDependency.KOIN_X_VIEWMODEL){
+        because("Koin DI need this to inject viewModel")
+    }
 }
