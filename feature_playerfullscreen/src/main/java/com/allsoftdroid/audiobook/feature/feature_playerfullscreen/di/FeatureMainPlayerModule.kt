@@ -35,7 +35,7 @@ object FeatureMainPlayerModule {
 
     var mainPlayerViewModelModule : Module = module {
         viewModel{
-            MainPlayerViewModel()
+            MainPlayerViewModel(eventStore = get())
         }
     }
         @VisibleForTesting set
