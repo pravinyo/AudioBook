@@ -53,6 +53,6 @@ object FeatureMainPlayerModule {
         @VisibleForTesting set
 
 
-    const val SUPER_VISOR_JOB = "SuperVisorJob"
-    const val VIEW_MODEL_SCOPE = "ViewModelScope"
+    const val SUPER_VISOR_JOB = "MainPlayerSuperVisorJob"
+    const val VIEW_MODEL_SCOPE = "MainPlayerViewModelScope"
 }
