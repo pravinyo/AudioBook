@@ -176,4 +176,9 @@ class MiniPlayerFragment : BaseContainerFragment() {
 
         Timber.d("State change event sent: title : $title and book id:$bookId")
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        dispose.dispose()
+    }
 }
