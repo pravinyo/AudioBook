@@ -74,8 +74,8 @@ class MainPlayerViewModel(private val eventStore : AudioPlayerEventStore) : View
 
     fun playPause(){
         _playerControlState.value = Event(PlayerControlState(shouldItPlay = _shouldItPlay))
-
         setShouldPlay(!_shouldItPlay)
+        shouldPlayEvent()
     }
 
     fun setBookDetails(bookId:String, bookName:String, trackName:String, currentPlayingTrack: Int, totalChapter:Int){
@@ -94,7 +94,6 @@ class MainPlayerViewModel(private val eventStore : AudioPlayerEventStore) : View
     fun setShouldPlay(play:Boolean){
         _shouldItPlay = play
         shouldItPlay.value = _shouldItPlay
-        shouldPlayEvent()
     }
 
     private fun shouldPlayEvent(){
