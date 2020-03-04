@@ -126,6 +126,10 @@ class MainPlayerViewModel(private val eventStore : AudioPlayerEventStore) : View
         }
     }
 
+    fun showMiniPlayer(){
+        eventStore.publish(Event(OpenMiniPlayerEvent))
+    }
+
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
