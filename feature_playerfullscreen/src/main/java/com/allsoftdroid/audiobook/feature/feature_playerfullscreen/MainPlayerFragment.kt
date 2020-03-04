@@ -76,12 +76,12 @@ class MainPlayerFragment : BaseContainerFragment(){
         callback = requireActivity().onBackPressedDispatcher.addCallback(this){
             handleBackPressEvent()
         }
-
         callback.isEnabled = true
     }
 
     private fun handleBackPressEvent(){
         this.findNavController().navigateUp()
+        mainPlayerViewModel.showMiniPlayer()
     }
 
     override fun onDestroyView() {
