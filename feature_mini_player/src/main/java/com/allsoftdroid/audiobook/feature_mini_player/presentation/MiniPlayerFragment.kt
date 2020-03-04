@@ -144,25 +144,8 @@ class MiniPlayerFragment : BaseContainerFragment() {
         miniPlayerViewModel.openMainPlayerEvent.observe(viewLifecycleOwner, Observer { event ->
             event.getContentIfNotHandled()?.let {open ->
                 if(open){
-
-                    this.findNavController().currentDestination?.let {
-                        when(it.id){
-                            R.id.AudioBookDetailsFragment ->{
-                                this.findNavController()
-                                    .navigate(R.id.action_AudioBookDetailsFragment_to_MainPlayerFragment)
-                            }
-
-                            R.id.AudioBookListFragment ->{
-                                this.findNavController()
-                                    .navigate(R.id.action_AudioBookListFragment_to_MainPlayerFragment)
-                            }
-
-                            else -> {
-                                Timber.d("Operation not allowed")
-                                Toast.makeText(this.activity,"Can't navigate to Player",Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
+                    Timber.d("Event sent for opening main player event")
+                    eventStore.publish(Event(OpenMainPlayerEvent))
                 }
             }
         })
