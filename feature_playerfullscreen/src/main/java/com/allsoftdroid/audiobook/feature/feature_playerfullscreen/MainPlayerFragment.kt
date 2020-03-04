@@ -57,14 +57,14 @@ class MainPlayerFragment : BaseContainerFragment(){
 
                         is Play, is Next, is Previous -> {
                             binding.ivBookChapterPlaypause.apply {
-                                setImageResource(R.drawable.play_circle_green)
+                                setImageResource(R.drawable.pause_circle_green)
                             }
                             mainPlayerViewModel.setShouldPlay(play = true)
                         }
 
                         is Pause -> {
                             binding.ivBookChapterPlaypause.apply {
-                                setImageResource(R.drawable.pause_circle_green)
+                                setImageResource(R.drawable.play_circle_green)
                             }
                             mainPlayerViewModel.setShouldPlay(play = false)
                         }
