@@ -93,13 +93,16 @@ class AudioServiceBinder(application: Application) : Binder(){
             }
 
             if (shouldPreparePlayerAgain(playWhenReady, playbackState)) {
-                Timber.d("Preparing player again")
-                preparePlayer()
+                if (playbackState != STATE_ENDED){
+                    Timber.d("Preparing player again")
+                    preparePlayer()
+                }
             }
 
             when(playbackState){
                 STATE_ENDED -> {
                     Timber.d("ENDED")
+                    errorEvent.value = Event(true)
                 }
 
                 STATE_IDLE -> Timber.d("IDLE")
