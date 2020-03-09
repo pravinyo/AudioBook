@@ -302,14 +302,23 @@ class MainActivity : BaseActivity() {
 
     private fun navigateToMainPlayerScreen(){
         val controller = findNavController(R.id.navHostFragment)
+        val playingTrackDetails = mainActivityViewModel.getPlayingTrack()
+
+        val bundle = bundleOf(
+            "bookId" to playingTrackDetails.bookIdentifier,
+            "bookTitle" to playingTrackDetails.bookTitle,
+            "trackName" to playingTrackDetails.trackName,
+            "chapterIndex" to playingTrackDetails.chapterIndex,
+            "totalChapter" to playingTrackDetails.totalChapter)
+
         controller.currentDestination?.let {
             when(it.id){
                 R.id.AudioBookDetailsFragment ->{
-                    controller.navigate(R.id.action_AudioBookDetailsFragment_to_MainPlayerFragment)
+                    controller.navigate(R.id.action_AudioBookDetailsFragment_to_MainPlayerFragment,bundle)
                 }
 
                 R.id.AudioBookListFragment ->{
-                    controller.navigate(R.id.action_AudioBookListFragment_to_MainPlayerFragment)
+                    controller.navigate(R.id.action_AudioBookListFragment_to_MainPlayerFragment,bundle)
                 }
 
                 else -> {
