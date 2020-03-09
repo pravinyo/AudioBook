@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.allsoftdroid.audiobook.domain.model.LastPlayedTrack
 import com.allsoftdroid.audiobook.domain.usecase.GetLastPlayedUsecase
+import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.data.PlayingTrackDetails
 import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
@@ -36,6 +37,9 @@ class MainActivityViewModel(application : Application,
     private var _lastPlayed = MutableLiveData<Event<LastPlayedTrack>>()
     val lastPlayed :LiveData<Event<LastPlayedTrack>> = _lastPlayed
 
+    private lateinit var _playingTrackDetails:PlayingTrackDetails
+    fun getPlayingTrack() = _playingTrackDetails
+
     fun playerStatus( showPlayer : Boolean){
         _showMiniPlayer.value = Event(showPlayer)
     }
@@ -63,6 +67,15 @@ class MainActivityViewModel(application : Application,
                 position = event.position
             )
         ))
+
+        _playingTrackDetails = PlayingTrackDetails(
+            bookIdentifier = audioManager.getBookId(),
+            bookTitle = event.bookName,
+            trackName = audioManager.getTrackTitle(),
+            chapterIndex = event.position,
+            totalChapter = event.trackList.size
+        )
+
         Timber.d("Play selected track event:track item position:${event.position} and bookid:${event.bookId} and name:${event.bookName}")
     }
 
@@ -79,6 +92,8 @@ class MainActivityViewModel(application : Application,
             )
         ))
 
+        _playingTrackDetails.chapterIndex = audioManager.currentPlayingIndex() + 1
+
         Timber.d("Next event occurred")
     }
 
@@ -93,6 +108,8 @@ class MainActivityViewModel(application : Application,
                 position = audioManager.currentPlayingIndex() + 1
             )
         ))
+        _playingTrackDetails.chapterIndex = audioManager.currentPlayingIndex() + 1
+
         Timber.d("Previous event occur")
     }
 
