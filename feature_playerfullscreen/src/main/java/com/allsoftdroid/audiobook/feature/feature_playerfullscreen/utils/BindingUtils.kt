@@ -15,7 +15,7 @@ import com.bumptech.glide.request.RequestOptions
 @BindingAdapter("trackTitle")
 fun TextView.setTrackTitle(item : PlayingTrackDetails?){
     item?.let {
-        text = item.name
+        text = item.trackName
     }?:"Unknown"
 }
 
