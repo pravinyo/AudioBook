@@ -36,7 +36,7 @@ class MainPlayerViewModel(private val eventStore : AudioPlayerEventStore) : View
     var shouldItPlay  = MutableLiveData<Boolean>()
 
     private var _playingTrackDetails = MutableLiveData<PlayingTrackDetails>()
-    val playingTrackDetails:LiveData<PlayingTrackDetails> = _playingTrackDetails
+    val playingTrackDetails : LiveData<PlayingTrackDetails> = _playingTrackDetails
 
     private var currentPlayingIndex = 0
 
@@ -83,12 +83,18 @@ class MainPlayerViewModel(private val eventStore : AudioPlayerEventStore) : View
         _playingTrackDetails.value = PlayingTrackDetails(
             bookIdentifier = bookId,
             bookTitle = bookName,
-            name = trackName,
+            trackName = trackName,
             chapterIndex = currentPlayingTrack,
             totalChapter = totalChapter
         )
 
         currentPlayingIndex = currentPlayingTrack
+    }
+
+    fun updateTrackDetails(chapterIndex:Int,chapterTitle:String){
+        _playingTrackDetails.value?.let {
+            setBookDetails(it.bookIdentifier,it.bookTitle,chapterTitle,chapterIndex,it.totalChapter)
+        }
     }
 
     fun setShouldPlay(play:Boolean){
