@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
@@ -35,6 +36,17 @@ class MainPlayerFragment : BaseContainerFragment(){
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = mainPlayerViewModel
 
+        try{
+            mainPlayerViewModel.setBookDetails(
+                bookId= arguments!!.getString("bookId")!!,
+                bookName = arguments!!.getString("bookTitle")?:"NA",
+                trackName = arguments!!.getString("trackName")?:"NA",
+                currentPlayingTrack = arguments!!.getInt("chapterIndex"),
+                totalChapter = arguments!!.getInt("totalChapter"))
+        }catch (e:Exception){
+            Toast.makeText(this.activity,"Error in initialization",Toast.LENGTH_SHORT).show()
+        }
+
         binding.toolbarBackButton.setOnClickListener {
             handleBackPressEvent()
         }
@@ -47,12 +59,7 @@ class MainPlayerFragment : BaseContainerFragment(){
                     when(event){
                         is TrackDetails -> {
                             Timber.d("Received event for update track details event")
-                            mainPlayerViewModel.setBookDetails(
-                                bookId= event.bookId,
-                                bookName = "Unknown",
-                                trackName = event.trackTitle,
-                                currentPlayingTrack = event.position,
-                                totalChapter = 0)
+                            mainPlayerViewModel.updateTrackDetails(event.position,event.trackTitle)
                         }
 
                         is Play, is Next, is Previous -> {
