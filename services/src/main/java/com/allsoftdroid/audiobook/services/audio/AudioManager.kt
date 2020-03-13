@@ -120,4 +120,11 @@ class AudioManager private constructor(context: Context):KoinComponent{
     fun getTrackTitle() = audioService.getCurrentTrackTitle()
 
     fun getBookId() = audioService.getBookId()
+
+    /**
+     * Return the time elapsed playing the current track
+     */
+    fun getPlayingTrackProgress():Float{
+        return 0f
+    }
 }
