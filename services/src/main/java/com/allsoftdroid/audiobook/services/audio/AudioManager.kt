@@ -115,8 +115,6 @@ class AudioManager private constructor(context: Context):KoinComponent{
 
     fun isPlaying() = audioService.isPlaying()
 
-    fun isPlayerCreated() = audioService.isInitialized()
-
     fun currentPlayingIndex() = audioService.getCurrentAudioPosition()
 
     fun getTrackTitle() = audioService.getCurrentTrackTitle()
