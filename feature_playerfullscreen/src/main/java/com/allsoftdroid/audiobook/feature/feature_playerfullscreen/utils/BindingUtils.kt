@@ -29,7 +29,7 @@ fun TextView.setTrackBookTitle(item : PlayingTrackDetails?){
 @BindingAdapter("bookChapterProgressTitle")
 fun TextView.setBookChapterProgressTitle(item : PlayingTrackDetails?){
     item?.let {
-        text = "Chapter ${item.chapterIndex} of ${item.totalChapter}"
+        text = "Section ${item.chapterIndex} of ${item.totalChapter}"
     }?:"Unknown"
 }
 
