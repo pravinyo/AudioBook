@@ -124,7 +124,6 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
             android:gravity="center_horizontal"
-            android:text="12min 30sec remaining"
             android:textColor="@color/white"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintEnd_toEndOf="parent"
