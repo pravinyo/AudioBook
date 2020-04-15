@@ -277,4 +277,21 @@ class AudioServiceBinder(application: Application) : Binder(){
     fun getBookName() = bookName
     fun isInitialized() = exoPlayer!=null
 
+    fun getTrackPlayingProgress():Int{
+        exoPlayer?.let {
+            return (it.currentPosition*100/it.duration).toInt()
+        }
+
+        return 0
+    }
+
+    fun getTrackDurationLeft():Long{
+        exoPlayer?.let {
+            val timeLeft = it.duration - it.currentPosition
+            return if(timeLeft>0) timeLeft else 0
+        }
+
+        return 0
+    }
+
 }
