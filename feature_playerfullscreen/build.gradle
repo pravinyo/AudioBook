@@ -44,6 +44,7 @@ android {
 
 dependencies {
     implementation(project(path: ModuleDependency.LIBRARY_COMMON))
+    implementation(project(path: ModuleDependency.SERVICES))
     implementation(LibraryDependency.KOIN_X_VIEWMODEL){
         because("Koin DI need this to inject viewModel")
     }
