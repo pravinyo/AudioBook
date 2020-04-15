@@ -184,9 +184,22 @@ class AudioManager private constructor(context: Context):KoinComponent{
     fun getBookId() = audioService.getBookId()
 
     /**
-     * Return the time elapsed playing the current @[AudioPlayListItem]
+     * Return the progress of current @[AudioPlayListItem] on scale of 100
      */
-    fun getPlayingTrackProgress():Float{
-        return 0f
+    fun getPlayingTrackProgress():Int{
+        return audioService.getTrackPlayingProgress()
+    }
+
+    /**
+     * Returns tme left to finish the track. It calculates minutes left and seconds left and return then as string
+     */
+    fun getTrackRemainingTime():String{
+        val milliSecondsLeft = audioService.getTrackDurationLeft()
+
+        val seconds = milliSecondsLeft/1000
+        val minutesLeft = seconds / 60
+        val secondsLeft = seconds % 60
+
+        return "$minutesLeft min, $secondsLeft sec remaining"
     }
 }
