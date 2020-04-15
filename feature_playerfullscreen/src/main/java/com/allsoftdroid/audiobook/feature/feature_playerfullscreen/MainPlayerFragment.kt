@@ -1,6 +1,8 @@
 package com.allsoftdroid.audiobook.feature.feature_playerfullscreen
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +12,7 @@ import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.databinding.LayoutMainFragmentBinding
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.di.FeatureMainPlayerModule
+import com.allsoftdroid.audiobook.services.audio.AudioManager
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
 import io.reactivex.disposables.Disposable
@@ -22,7 +25,17 @@ class MainPlayerFragment : BaseContainerFragment(){
     private val mainPlayerViewModel: MainPlayerViewModel by inject()
     private val eventStore : AudioPlayerEventStore by inject()
 
+    private val audioManager:AudioManager by inject()
+
     private lateinit var dispose : Disposable
+    private lateinit var refBinding: LayoutMainFragmentBinding
+    lateinit var mainHandler: Handler
+    private val updateTextTask = object : Runnable {
+        override fun run() {
+            updateProgress()
+            mainHandler.postDelayed(this, 1000)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,6 +80,7 @@ class MainPlayerFragment : BaseContainerFragment(){
                                 setImageResource(R.drawable.pause_circle_green)
                             }
                             mainPlayerViewModel.setShouldPlay(play = true)
+                            mainHandler.post(updateTextTask)
                         }
 
                         is Pause -> {
@@ -74,11 +88,16 @@ class MainPlayerFragment : BaseContainerFragment(){
                                 setImageResource(R.drawable.play_circle_green)
                             }
                             mainPlayerViewModel.setShouldPlay(play = false)
+                            mainHandler.removeCallbacks(updateTextTask)
                         }
+                        else -> Timber.d("Ignore event $event")
                     }
                 }
             }
 
+
+        refBinding = binding
+        mainHandler = Handler(Looper.getMainLooper())
 
         return binding.root
     }
@@ -100,5 +119,25 @@ class MainPlayerFragment : BaseContainerFragment(){
     override fun onDestroyView() {
         super.onDestroyView()
         dispose.dispose()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mainHandler.removeCallbacks(updateTextTask)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mainHandler.post(updateTextTask)
+    }
+
+    private fun updateProgress(){
+        refBinding.pbBookChapterProgress.apply {
+            this.progress = audioManager.getPlayingTrackProgress()
+        }
+
+        refBinding.tvBookProgressTime.apply {
+            this.text = audioManager.getTrackRemainingTime()
+        }
     }
 }
