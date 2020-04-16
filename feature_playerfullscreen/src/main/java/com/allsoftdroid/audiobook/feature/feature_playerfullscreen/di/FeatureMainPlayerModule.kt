@@ -2,6 +2,8 @@ package com.allsoftdroid.audiobook.feature.feature_playerfullscreen.di
 
 import androidx.annotation.VisibleForTesting
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.MainPlayerViewModel
+import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.domain.usecase.GetPlayingTrackProgressUsecase
+import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.domain.usecase.GetTrackRemainingTimeUsecase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,7 +23,8 @@ object FeatureMainPlayerModule {
         unloadKoinModules(
             listOf(
                 mainPlayerViewModelModule,
-                jobModule
+                jobModule,
+                usecaseModule
             )
         )
     }
@@ -29,13 +32,17 @@ object FeatureMainPlayerModule {
     private val loadFeature by lazy {
         loadKoinModules(listOf(
             mainPlayerViewModelModule,
-            jobModule
+            jobModule,
+            usecaseModule
         ))
     }
 
     var mainPlayerViewModelModule : Module = module {
         viewModel{
-            MainPlayerViewModel(eventStore = get())
+            MainPlayerViewModel(eventStore = get(),
+                useCaseHandler = get(),
+                trackProgressUsecase = get(),
+                remainingTimeUsecase = get())
         }
     }
         @VisibleForTesting set
@@ -52,6 +59,15 @@ object FeatureMainPlayerModule {
     }
         @VisibleForTesting set
 
+    var usecaseModule:Module = module {
+        factory {
+            GetPlayingTrackProgressUsecase(audioManager = get())
+        }
+
+        factory {
+            GetTrackRemainingTimeUsecase(audioManager = get())
+        }
+    }
 
     const val SUPER_VISOR_JOB = "MainPlayerSuperVisorJob"
     const val VIEW_MODEL_SCOPE = "MainPlayerViewModelScope"
