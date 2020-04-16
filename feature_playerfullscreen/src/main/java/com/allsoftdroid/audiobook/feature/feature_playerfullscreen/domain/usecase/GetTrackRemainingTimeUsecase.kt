@@ -53,14 +53,18 @@ class GetTrackRemainingTimeUsecase(private val audioManager: AudioManager) :
     }
 
     fun cancel() {
-        canCancelTrack = false
-        mainHandler.removeCallbacks(updateTextTask)
+        if(this::mainHandler.isInitialized){
+            canCancelTrack = false
+            mainHandler.removeCallbacks(updateTextTask)
+        }
     }
 
-    private fun start() {
-        stopPreviousTrackProgress()
-        canCancelTrack = true
-        mainHandler.post(updateTextTask)
+    fun start() {
+        if(this::mainHandler.isInitialized){
+            stopPreviousTrackProgress()
+            canCancelTrack = true
+            mainHandler.post(updateTextTask)
+        }
     }
 
 
