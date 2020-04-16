@@ -93,14 +93,15 @@ class MainPlayerViewModel(
         shouldPlayEvent()
     }
 
-    fun setBookDetails(bookId:String, bookName:String, trackName:String, currentPlayingTrack: Int, totalChapter:Int){
+    fun setBookDetails(bookId:String, bookName:String, trackName:String, currentPlayingTrack: Int, totalChapter:Int,isPlaying:Boolean){
 
         _playingTrackDetails.value = PlayingTrackDetails(
             bookIdentifier = bookId,
             bookTitle = bookName,
             trackName = trackName,
             chapterIndex = currentPlayingTrack,
-            totalChapter = totalChapter
+            totalChapter = totalChapter,
+            isPlaying = isPlaying
         )
 
         currentPlayingIndex = currentPlayingTrack
@@ -113,7 +114,7 @@ class MainPlayerViewModel(
 
     fun updateTrackDetails(chapterIndex:Int,chapterTitle:String){
         _playingTrackDetails.value?.let {
-            setBookDetails(it.bookIdentifier,it.bookTitle,chapterTitle,chapterIndex,it.totalChapter)
+            setBookDetails(it.bookIdentifier,it.bookTitle,chapterTitle,chapterIndex,it.totalChapter,it.isPlaying)
         }
     }
 
@@ -182,10 +183,19 @@ class MainPlayerViewModel(
             })
     }
 
-    override fun onCleared() {
-        super.onCleared()
+    fun resumeProgressTracking(){
+        trackProgressUsecase.start()
+        remainingTimeUsecase.start()
+    }
+
+    fun stopProgressTracking(){
         trackProgressUsecase.cancel()
         remainingTimeUsecase.cancel()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        stopProgressTracking()
         viewModelJob.cancel()
     }
 }
