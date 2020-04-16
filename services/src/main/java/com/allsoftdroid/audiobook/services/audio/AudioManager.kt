@@ -191,15 +191,11 @@ class AudioManager private constructor(context: Context):KoinComponent{
     }
 
     /**
-     * Returns tme left to finish the track. It calculates minutes left and seconds left and return then as string
+     * Returns tme left to finish the track. It calculates seconds left and return long value
      */
-    fun getTrackRemainingTime():String{
+    fun getTrackRemainingTime():Long{
         val milliSecondsLeft = audioService.getTrackDurationLeft()
 
-        val seconds = milliSecondsLeft/1000
-        val minutesLeft = seconds / 60
-        val secondsLeft = seconds % 60
-
-        return "$minutesLeft min, $secondsLeft sec remaining"
+        return milliSecondsLeft/1000
     }
 }
