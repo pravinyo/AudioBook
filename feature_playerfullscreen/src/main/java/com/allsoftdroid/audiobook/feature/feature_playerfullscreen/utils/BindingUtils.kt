@@ -16,21 +16,21 @@ import com.bumptech.glide.request.RequestOptions
 fun TextView.setTrackTitle(item : PlayingTrackDetails?){
     item?.let {
         text = item.trackName
-    }?:"Unknown"
+    }
 }
 
 @BindingAdapter("trackBookTitle")
 fun TextView.setTrackBookTitle(item : PlayingTrackDetails?){
     item?.let {
         text = item.bookTitle
-    }?:"Unknown"
+    }
 }
 
 @BindingAdapter("bookChapterProgressTitle")
 fun TextView.setBookChapterProgressTitle(item : PlayingTrackDetails?){
     item?.let {
         text = "Section ${item.chapterIndex} of ${item.totalChapter}"
-    }?:"Unknown"
+    }
 }
 
 
