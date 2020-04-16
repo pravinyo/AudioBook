@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature.feature_playerfullscreen
+package com.allsoftdroid.audiobook.feature.feature_playerfullscreen.presentation
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +9,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.R
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.databinding.LayoutMainFragmentBinding
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.di.FeatureMainPlayerModule
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
@@ -32,7 +33,8 @@ class MainPlayerFragment : BaseContainerFragment(){
     ): View? {
 
         FeatureMainPlayerModule.injectFeature()
-        val binding:LayoutMainFragmentBinding = inflateLayout(inflater,R.layout.layout_main_fragment,container)
+        val binding:LayoutMainFragmentBinding = inflateLayout(inflater,
+            R.layout.layout_main_fragment,container)
 
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = mainPlayerViewModel

@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.allsoftdroid.audiobook.feature.feature_playerfullscreen.MainPlayerViewModel" />
+            type="com.allsoftdroid.audiobook.feature.feature_playerfullscreen.presentation.MainPlayerViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

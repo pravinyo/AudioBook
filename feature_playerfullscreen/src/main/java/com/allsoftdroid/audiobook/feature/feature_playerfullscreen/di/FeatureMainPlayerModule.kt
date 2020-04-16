@@ -1,7 +1,7 @@
 package com.allsoftdroid.audiobook.feature.feature_playerfullscreen.di
 
 import androidx.annotation.VisibleForTesting
-import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.MainPlayerViewModel
+import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.presentation.MainPlayerViewModel
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.domain.usecase.GetPlayingTrackProgressUsecase
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.domain.usecase.GetTrackRemainingTimeUsecase
 import kotlinx.coroutines.CoroutineScope
@@ -39,10 +39,12 @@ object FeatureMainPlayerModule {
 
     var mainPlayerViewModelModule : Module = module {
         viewModel{
-            MainPlayerViewModel(eventStore = get(),
+            MainPlayerViewModel(
+                eventStore = get(),
                 useCaseHandler = get(),
                 trackProgressUsecase = get(),
-                remainingTimeUsecase = get())
+                remainingTimeUsecase = get()
+            )
         }
     }
         @VisibleForTesting set

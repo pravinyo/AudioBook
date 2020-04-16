@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature.feature_playerfullscreen
+package com.allsoftdroid.audiobook.feature.feature_playerfullscreen.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

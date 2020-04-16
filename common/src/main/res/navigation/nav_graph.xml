@@ -44,7 +44,7 @@
 
     <fragment
         android:id="@+id/MainPlayerFragment"
-        android:name="com.allsoftdroid.audiobook.feature.feature_playerfullscreen.MainPlayerFragment"
+        android:name="com.allsoftdroid.audiobook.feature.feature_playerfullscreen.presentation.MainPlayerFragment"
         android:label="MainPlayerFragment">
 
         <argument
