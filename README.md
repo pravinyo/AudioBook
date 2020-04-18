@@ -1,5 +1,5 @@
 # AudioBook App
-![AudioBook Feature UnitTest](https://github.com/pravinyo/AudioBook/workflows/AudioBook%20Feature%20UnitTest/badge.svg)
+![AudioBook Feature UnitTest](https://github.com/pravinyo/AudioBook/workflows/AudioBook%20Feature%20UnitTest/badge.svg) ![AudioBook Dependency Graph Generator](https://github.com/pravinyo/AudioBook/workflows/AudioBook%20Dependency%20Graph%20Generator/badge.svg)
 
 A small AudioBook Project with the purpose of exploring multi module and new libraries in android Development. Some of this exploration are:
 * Coroutines
