@@ -38,14 +38,14 @@ jobs:
       - name: commit to local
         shell: bash
         run: |
-        cd graph
-        git config --local user.email "pravinyo12@gmail.com"
-        git config --local user.name "Pravinyo"
-        git add .
-        git commit -m "New Graph Added"
+          cd graph
+          git config --local user.email "pravinyo12@gmail.com"
+          git config --local user.name "Pravinyo"
+          git add .
+          git commit -m "New Graph Added"
         
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ci_build_test
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ci_build_test
