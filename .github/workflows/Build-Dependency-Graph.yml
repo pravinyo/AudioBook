@@ -23,7 +23,7 @@ jobs:
         run: sudo apt-get install graphviz
 
       - name: Generate Graph
-        run: bash ./gradlew :app:projectDependencyGraph
+        run: bash ./gradlew projectDependencyGraph
 
       - name: Upload Saved file for Job dependencyGraphJob
         uses: actions/upload-artifact@v1
