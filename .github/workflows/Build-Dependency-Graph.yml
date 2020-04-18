@@ -41,6 +41,21 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: graph
-      
       - name: upload graph file to Repository
-        run: ls -lart ./graph
+        run:  |
+          ls -lart
+          ls -lart ./graph
+          cp ./graph/project.dot.png ./photos/dependencies_graph.png
+
+      - name: commit to local
+        run: |
+          cd graph
+          git config --local user.email "pravinyo12@gmail.com"
+          git config --local user.name "Pravinyo"
+          git add .
+          git commit -m "New Graph Added"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ci_build_test
