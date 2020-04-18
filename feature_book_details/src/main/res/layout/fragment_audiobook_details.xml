@@ -16,6 +16,7 @@
         <include android:id="@+id/network_no_connection"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             layout="@layout/layout_no_connection"/>
 
         <androidx.core.widget.NestedScrollView
