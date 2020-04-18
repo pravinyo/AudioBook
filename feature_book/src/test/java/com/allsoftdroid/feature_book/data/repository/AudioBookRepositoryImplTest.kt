@@ -11,7 +11,7 @@ import com.allsoftdroid.feature_book.common.getOrAwaitValue
 import com.allsoftdroid.feature_book.common.mock
 import com.allsoftdroid.feature_book.common.whenever
 import com.allsoftdroid.feature_book.data.dataSource.FakeAudioDataSource
-import com.allsoftdroid.feature_book.data.dataSource.FakeRemoteBookService
+import com.allsoftdroid.feature_book.data.network.service.ArchiveLibriVoxAudioBookService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -21,7 +21,7 @@ import org.junit.*
 class AudioBookRepositoryImplTest{
 
     private lateinit var audioBookDao: FakeAudioDataSource
-    private lateinit var remoteBookService: FakeRemoteBookService
+    private lateinit var remoteBookService: ArchiveLibriVoxAudioBookService
     private lateinit var saveInDatabase: SaveInDatabase<AudioBookDao,SaveBookListInDatabase>
     private lateinit var audioBookRepository: AudioBookRepository
     private lateinit var list : ArrayList<AudioBookDomainModel>
