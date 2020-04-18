@@ -309,7 +309,8 @@ class MainActivity : BaseActivity() {
             "bookTitle" to playingTrackDetails.bookTitle,
             "trackName" to playingTrackDetails.trackName,
             "chapterIndex" to playingTrackDetails.chapterIndex,
-            "totalChapter" to playingTrackDetails.totalChapter)
+            "totalChapter" to playingTrackDetails.totalChapter,
+            "isPlaying" to playingTrackDetails.isPlaying)
 
         controller.currentDestination?.let {
             when(it.id){
