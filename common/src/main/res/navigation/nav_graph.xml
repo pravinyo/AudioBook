@@ -62,6 +62,9 @@
         <argument
             android:name="totalChapter"
             app:argType="integer" />
+        <argument
+            android:name="isPlaying"
+            app:argType="boolean" />
 
         <action
             android:id="@+id/action_MainPlayerFragment_to_AudioBookListFragment"
