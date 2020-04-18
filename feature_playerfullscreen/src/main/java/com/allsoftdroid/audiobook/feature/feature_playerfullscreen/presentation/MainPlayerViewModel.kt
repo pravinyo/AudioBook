@@ -88,8 +88,8 @@ class MainPlayerViewModel(
     }
 
     fun playPause(){
-        _playerControlState.value = Event(PlayerControlState(shouldItPlay = _shouldItPlay))
         setShouldPlay(!_shouldItPlay)
+        _playerControlState.value = Event(PlayerControlState(shouldItPlay = _shouldItPlay))
         shouldPlayEvent()
     }
 
