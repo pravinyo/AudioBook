@@ -5,6 +5,7 @@ import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
 import com.allsoftdroid.feature_book.data.repository.FakeAudioBookRepository
+import com.allsoftdroid.feature_book.domain.usecase.GetSearchBookUsecase
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +20,8 @@ val bookListViewModelModule : Module = module {
     viewModel {(app: Application) ->
         AudioBookListViewModel(
             useCaseHandler = get(),
-            getAlbumListUseCase = get()
+            getAlbumListUseCase = get(),
+            getSearchBookUsecase = get()
         )
     }
 }
@@ -31,6 +33,10 @@ val usecaseModule : Module = module {
 
     factory {
         GetAudioBookListUsecase(audioBookRep = get())
+    }
+
+    factory {
+        GetSearchBookUsecase(audioBookRep = get())
     }
 }
 
