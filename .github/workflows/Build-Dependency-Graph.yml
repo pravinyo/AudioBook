@@ -1,4 +1,4 @@
-name: AudioBook Dependency Graph
+name: AudioBook Dependency Graph Generator
 
 on:
   push:
@@ -25,12 +25,22 @@ jobs:
       - name: Generate Graph
         run: bash ./gradlew :app:projectDependencyGraph
 
+      - name: Upload Saved file for Job dependencyGraphJob
+        uses: actions/upload-artifact@v1
+        with:
+          name: graph
+          path: /home/runner/work/AudioBook/AudioBook/build/reports/dependency-graph/project.dot.png
 
   UploadToRepository:
     name: Save to Git Repository
+    needs: dependencyGraphJob
     runs-on: ubuntu-18.04
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Path of stored
-        run: cd ./build/reports/ && ls
+      - name: Download stored graph file by dependencyGraphJob
+        uses: actions/download-artifact@v1
+        with:
+          name: graph
+      
+      - name: upload graph file to Repository
+        run: ls -lart ./graph
