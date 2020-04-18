@@ -40,12 +40,24 @@ class MainPlayerFragment : BaseContainerFragment(){
         binding.viewModel = mainPlayerViewModel
 
         try{
+            val isPlaying=arguments!!.getBoolean("isPlaying")
+
             mainPlayerViewModel.setBookDetails(
                 bookId= arguments!!.getString("bookId")!!,
                 bookName = arguments!!.getString("bookTitle")?:"NA",
                 trackName = arguments!!.getString("trackName")?:"NA",
                 currentPlayingTrack = arguments!!.getInt("chapterIndex"),
-                totalChapter = arguments!!.getInt("totalChapter"))
+                totalChapter = arguments!!.getInt("totalChapter"),
+                isPlaying = isPlaying)
+
+            if(isPlaying){
+                Timber.d("Setting playing control to show pause button")
+                mainPlayerViewModel.setShouldPlay(play = false)
+                mainPlayerViewModel.playPause()
+            }else{
+                Timber.d("isPlaying is false")
+            }
+
         }catch (e:Exception){
             Toast.makeText(this.activity,"Error in initialization",Toast.LENGTH_SHORT).show()
         }
@@ -69,14 +81,12 @@ class MainPlayerFragment : BaseContainerFragment(){
                             binding.ivBookChapterPlaypause.apply {
                                 setImageResource(R.drawable.pause_circle_green)
                             }
-                            mainPlayerViewModel.setShouldPlay(play = true)
                         }
 
                         is Pause -> {
                             binding.ivBookChapterPlaypause.apply {
                                 setImageResource(R.drawable.play_circle_green)
                             }
-                            mainPlayerViewModel.setShouldPlay(play = false)
                         }
                         else -> Timber.d("Ignore event $event")
                     }
@@ -120,5 +130,15 @@ class MainPlayerFragment : BaseContainerFragment(){
     override fun onDestroyView() {
         super.onDestroyView()
         compositeDisposable.dispose()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mainPlayerViewModel.stopProgressTracking()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mainPlayerViewModel.resumeProgressTracking()
     }
 }
