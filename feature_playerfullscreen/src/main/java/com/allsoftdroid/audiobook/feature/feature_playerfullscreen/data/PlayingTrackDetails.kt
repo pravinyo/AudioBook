@@ -5,5 +5,6 @@ data class PlayingTrackDetails(
     val bookTitle:String,
     val trackName: String,
     var chapterIndex:Int,
-    val totalChapter:Int
+    val totalChapter:Int,
+    var isPlaying:Boolean
 )
