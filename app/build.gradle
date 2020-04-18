@@ -65,6 +65,7 @@ dependencies {
     implementation(project(path: ModuleDependency.FEATURE_BOOK_DETAILS))
     implementation(project(path: ModuleDependency.FEATURE_MINI_PLAYER))
     implementation(project(path: ModuleDependency.FEATURE_DOWNLOADER))
+    implementation(project(path: ModuleDependency.FEATURE_PLAYER_FULL_SCREEN))
 
     implementation(project(path: ModuleDependency.SERVICES))
 

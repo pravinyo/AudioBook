@@ -13,3 +13,6 @@ data class EmptyEvent(val default: AudioPlayerEventState):AudioPlayerEvent()
 
 data class PlaySelectedTrack(val trackList : List<AudioPlayListItem>,val bookId:String,val bookName:String, val position:Int) : AudioPlayerEvent()
 data class TrackDetails(val trackTitle:String,val bookId: String, val position: Int):AudioPlayerEvent()
+
+object OpenMainPlayerEvent : AudioPlayerEvent()
+object OpenMiniPlayerEvent : AudioPlayerEvent()

@@ -93,13 +93,16 @@ class AudioServiceBinder(application: Application) : Binder(){
             }
 
             if (shouldPreparePlayerAgain(playWhenReady, playbackState)) {
-                Timber.d("Preparing player again")
-                preparePlayer()
+                if (playbackState != STATE_ENDED){
+                    Timber.d("Preparing player again")
+                    preparePlayer()
+                }
             }
 
             when(playbackState){
                 STATE_ENDED -> {
                     Timber.d("ENDED")
+                    errorEvent.value = Event(true)
                 }
 
                 STATE_IDLE -> Timber.d("IDLE")
@@ -273,5 +276,22 @@ class AudioServiceBinder(application: Application) : Binder(){
     fun getBookId() = bookId
     fun getBookName() = bookName
     fun isInitialized() = exoPlayer!=null
+
+    fun getTrackPlayingProgress():Int{
+        exoPlayer?.let {
+            return (it.currentPosition*100/it.duration).toInt()
+        }
+
+        return 0
+    }
+
+    fun getTrackDurationLeft():Long{
+        exoPlayer?.let {
+            val timeLeft = it.duration - it.currentPosition
+            return if(timeLeft>0) timeLeft else 0
+        }
+
+        return 0
+    }
 
 }

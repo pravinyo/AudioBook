@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.allsoftdroid.audiobook.feature_mini_player.R
 import com.allsoftdroid.audiobook.feature_mini_player.databinding.FragmentMiniPlayerBinding
 import com.allsoftdroid.audiobook.feature_mini_player.di.FeatureMiniPlayerModule
@@ -138,6 +140,16 @@ class MiniPlayerFragment : BaseContainerFragment() {
                 }
             }
 
+
+        miniPlayerViewModel.openMainPlayerEvent.observe(viewLifecycleOwner, Observer { event ->
+            event.getContentIfNotHandled()?.let {open ->
+                if(open){
+                    Timber.d("Event sent for opening main player event")
+                    eventStore.publish(Event(OpenMainPlayerEvent))
+                }
+            }
+        })
+
         return binding.root
     }
 
@@ -146,5 +158,10 @@ class MiniPlayerFragment : BaseContainerFragment() {
         miniPlayerViewModel.setBookId(bookId)
 
         Timber.d("State change event sent: title : $title and book id:$bookId")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        dispose.dispose()
     }
 }

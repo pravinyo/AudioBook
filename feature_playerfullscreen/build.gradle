@@ -1,15 +1,16 @@
 import com.allsoftdroid.buildsrc.AndroidConfig
 import com.allsoftdroid.buildsrc.BuildTypeDebug
 import com.allsoftdroid.buildsrc.BuildTypeRelease
+import com.allsoftdroid.buildsrc.DataBinding
 import com.allsoftdroid.buildsrc.LibraryDependency
 import com.allsoftdroid.buildsrc.ModuleDependency
 
 apply plugin: GradlePluginId.ANDROID_LIBRARY
 apply plugin: GradlePluginId.KOTLIN_ANDROID
+apply plugin: GradlePluginId.KOTLIN_KAPT
 apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
 
 android {
-
     compileSdkVersion AndroidConfig.COMPILE_SDK_VERSION
 
     defaultConfig {
@@ -35,12 +36,19 @@ android {
         }
     }
 
+    dataBinding{
+        enabled = DataBinding.IS_ENABLED
+    }
 
 }
 
 dependencies {
     implementation(project(path: ModuleDependency.LIBRARY_COMMON))
+    implementation(project(path: ModuleDependency.SERVICES))
+    implementation(LibraryDependency.KOIN_X_VIEWMODEL){
+        because("Koin DI need this to inject viewModel")
+    }
 
-    implementation(LibraryDependency.EXOPLAYER)
-    implementation(LibraryDependency.SUPPORT_V13)
+    implementation(LibraryDependency.GLIDE)
+    annotationProcessor(LibraryDependency.GLIDE_COMPILER)
 }

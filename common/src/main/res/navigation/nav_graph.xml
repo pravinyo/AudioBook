@@ -12,6 +12,9 @@
             android:id="@+id/action_AudioBookListFragment_to_AudioBookDetailsFragment"
             app:destination="@id/AudioBookDetailsFragment"
             />
+        <action
+            android:id="@+id/action_AudioBookListFragment_to_MainPlayerFragment"
+            app:destination="@id/MainPlayerFragment" />
 
     </fragment>
 
@@ -34,6 +37,41 @@
             app:destination="@id/AudioBookListFragment"
             app:popUpTo="@+id/AudioBookDetailsFragment"
             app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_AudioBookDetailsFragment_to_MainPlayerFragment"
+            app:destination="@id/MainPlayerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/MainPlayerFragment"
+        android:name="com.allsoftdroid.audiobook.feature.feature_playerfullscreen.presentation.MainPlayerFragment"
+        android:label="MainPlayerFragment">
+
+        <argument
+            android:name="bookId"
+            app:argType="string" />
+        <argument
+            android:name="bookTitle"
+            app:argType="string" />
+        <argument
+            android:name="trackName"
+            app:argType="string" />
+        <argument
+            android:name="chapterIndex"
+            app:argType="integer" />
+        <argument
+            android:name="totalChapter"
+            app:argType="integer" />
+        <argument
+            android:name="isPlaying"
+            app:argType="boolean" />
+
+        <action
+            android:id="@+id/action_MainPlayerFragment_to_AudioBookListFragment"
+            app:destination="@id/AudioBookListFragment" />
+        <action
+            android:id="@+id/action_MainPlayerFragment_to_AudioBookDetailsFragment"
+            app:destination="@id/AudioBookDetailsFragment" />
     </fragment>
 
 </navigation>

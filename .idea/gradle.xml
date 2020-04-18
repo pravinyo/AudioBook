@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <option name="delegatedBuild" value="false" />
+        <option name="testRunner" value="PLATFORM" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
@@ -17,11 +20,11 @@
             <option value="$PROJECT_DIR$/feature_book_details" />
             <option value="$PROJECT_DIR$/feature_downloader" />
             <option value="$PROJECT_DIR$/feature_mini_player" />
+            <option value="$PROJECT_DIR$/feature_playerfullscreen" />
             <option value="$PROJECT_DIR$/services" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
-        <option name="testRunner" value="PLATFORM" />
       </GradleProjectSettings>
     </option>
   </component>

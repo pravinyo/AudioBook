@@ -50,7 +50,7 @@ fun TextView.setTrackLength(item : AudioBookTrackDomainModel?){
 fun setTrackPlayingStatus(imageView: ImageView,item :AudioBookTrackDomainModel?){
     item?.let {
         if(item.isPlaying){
-            imageView.setImageResource(R.drawable.play_circle)
+            imageView.setImageResource(R.drawable.play_circle_green)
         }else{
             imageView.setImageResource(R.drawable.play_circle_outline)
         }

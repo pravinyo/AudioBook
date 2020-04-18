@@ -9,6 +9,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.di.AppModule
 import com.allsoftdroid.audiobook.domain.model.LastPlayedTrack
@@ -125,7 +126,7 @@ class MainActivity : BaseActivity() {
         Timber.d("Main Activity  start")
         mainActivityViewModel.showPlayer.observe(this, Observer {
             it.peekContent().let { shouldShow ->
-                Timber.d("Player state event received from view model")
+                Timber.d("Player state event received from view model:shouldShow->$shouldShow")
                 miniPlayerViewState(shouldShow)
             }
         })
@@ -195,15 +196,20 @@ class MainActivity : BaseActivity() {
                 supportFragmentManager.beginTransaction()
                     .add(R.id.miniPlayerContainer,MiniPlayerFragment(),MINI_PLAYER_TAG)
                     .commit()
-                findViewById<MovableFrameLayout>(R.id.miniPlayerContainer).visibility = View.VISIBLE
+            }else{
+                supportFragmentManager.beginTransaction()
+                    .show(fragment)
+                    .commit()
+            }
 
-                findViewById<View>(R.id.navHostFragment).apply {
+            findViewById<MovableFrameLayout>(R.id.miniPlayerContainer).visibility = View.VISIBLE
 
-                    val layout = CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT)
-                    layout.bottomMargin = resources.getDimension(R.dimen.mini_player_height).toInt()
+            findViewById<View>(R.id.navHostFragment).apply {
 
-                    layoutParams = layout
-                }
+                val layout = CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT)
+                layout.bottomMargin = resources.getDimension(R.dimen.mini_player_height).toInt()
+
+                layoutParams = layout
             }
 
         }else{
@@ -215,7 +221,14 @@ class MainActivity : BaseActivity() {
                     .commit()
             }
 
-            Toast.makeText(this,"Hide Mini Player",Toast.LENGTH_SHORT).show()
+            findViewById<MovableFrameLayout>(R.id.miniPlayerContainer).visibility = View.GONE
+
+            findViewById<View>(R.id.navHostFragment).apply {
+
+                val layout = CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT)
+                layout.bottomMargin = 0
+                layoutParams = layout
+            }
         }
 
     }
@@ -246,6 +259,16 @@ class MainActivity : BaseActivity() {
                 }
             }
 
+            is OpenMainPlayerEvent ->{
+                mainActivityViewModel.playerStatus(showPlayer = false)
+                navigateToMainPlayerScreen()
+            }
+
+            is OpenMiniPlayerEvent ->{
+                Timber.d("mini player opening event received")
+                mainActivityViewModel.playerStatus(showPlayer = true)
+            }
+
             else -> {
                 Timber.d("Unknown event received")
                 Timber.d("Unknown Event has message of type TrackDetails: "+(event is TrackDetails))
@@ -274,6 +297,36 @@ class MainActivity : BaseActivity() {
             mainActivityViewModel.unBoundAudioService()
         }catch (exception: Exception){
             Timber.d(exception)
+        }
+    }
+
+    private fun navigateToMainPlayerScreen(){
+        val controller = findNavController(R.id.navHostFragment)
+        val playingTrackDetails = mainActivityViewModel.getPlayingTrack()
+
+        val bundle = bundleOf(
+            "bookId" to playingTrackDetails.bookIdentifier,
+            "bookTitle" to playingTrackDetails.bookTitle,
+            "trackName" to playingTrackDetails.trackName,
+            "chapterIndex" to playingTrackDetails.chapterIndex,
+            "totalChapter" to playingTrackDetails.totalChapter,
+            "isPlaying" to playingTrackDetails.isPlaying)
+
+        controller.currentDestination?.let {
+            when(it.id){
+                R.id.AudioBookDetailsFragment ->{
+                    controller.navigate(R.id.action_AudioBookDetailsFragment_to_MainPlayerFragment,bundle)
+                }
+
+                R.id.AudioBookListFragment ->{
+                    controller.navigate(R.id.action_AudioBookListFragment_to_MainPlayerFragment,bundle)
+                }
+
+                else -> {
+                    Timber.d("Operation not allowed")
+                    Toast.makeText(this,"Can't navigate to Player",Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 }
