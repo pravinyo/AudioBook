@@ -38,7 +38,6 @@ jobs:
       - name: commit to local
         shell: bash
         run: |
-          cd graph
           git config --local user.email "pravinyo12@gmail.com"
           git config --local user.name "Pravinyo"
           git add .
