@@ -45,7 +45,7 @@ jobs:
         run:  |
           ls -lart
           ls -lart ./graph
-          cp ./graph/project.dot.png ./photos/dependencies_graph.png
+          cp ./graph/project.dot.png /home/runner/work/AudioBook/AudioBook/photos/dependencies_graph.png
 
       - name: commit to local
         run: |
