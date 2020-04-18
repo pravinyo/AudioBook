@@ -3,9 +3,8 @@ name: AudioBook Dependency Graph Generator
 on:
   push:
     branches:
-      - '*'
-      - '!master'
-      - '!release*'
+      - 'development'
+      - 'release*'
 
 jobs:
   dependencyGraphJob:
