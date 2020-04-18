@@ -23,6 +23,7 @@ jobs:
 
   apk:
     name: Generate APK
+    needs: testJob
     runs-on: ubuntu-18.04
 
     steps:
