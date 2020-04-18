@@ -6,22 +6,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
-import com.allsoftdroid.common.base.store.*
+import com.allsoftdroid.common.base.store.audioPlayer.*
+import com.allsoftdroid.common.base.store.downloader.DownloadEvent
+import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
+import com.allsoftdroid.common.base.store.downloader.DownloadNothing
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.AudioBookTrackAdapter
+import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.DownloadItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
+import com.allsoftdroid.feature.book_details.utils.NetworkState
+import com.allsoftdroid.feature.book_details.utils.TextFormatter.Companion.formattedBookDetails
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.KoinComponent
+import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
 
@@ -29,15 +36,21 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
 
 
     private lateinit var bookId : String
+    private lateinit var bookTitle :String
+    private var bookTrackNumber:Int = 0
+
     /**
     Lazily initialize the view model
      */
-    private val bookDetailsViewModel: BookDetailsViewModel by inject()
+    private val bookDetailsViewModel: BookDetailsViewModel by viewModel{
+        parametersOf(Bundle(), "vm1")
+    }
 
     private val eventStore : AudioPlayerEventStore by inject()
+    private val downloadStore : DownloadEventStore by inject()
 
 
-    private lateinit var disposable : Disposable
+    private val disposable : CompositeDisposable = CompositeDisposable()
 
     private lateinit var dataBindingReference : FragmentAudiobookDetailsBinding
 
@@ -50,6 +63,8 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         val dataBinding : FragmentAudiobookDetailsBinding = inflateLayout(inflater,R.layout.fragment_audiobook_details,container)
 
         bookId = arguments?.getString("bookId")?:""
+        bookTitle = arguments?.getString("title")?:""
+        bookTrackNumber = arguments?.getInt("trackNumber")?:0
 
         getKoin().setProperty(BookDetailsModule.PROPERTY_BOOK_ID,bookId)
         BookDetailsModule.injectFeature()
@@ -59,18 +74,25 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
 
         bookDetailsViewModel.backArrowPressed.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let {
-                this.findNavController()
-                    .navigate(R.id.action_AudioBookDetailsFragment_to_AudioBookListFragment)
+                this.activity?.onBackPressed()
             }
         })
 
-        val trackAdapter = AudioBookTrackAdapter(TrackItemClickedListener{ trackNumber,filename,title ->
-            trackNumber?.let {
-                playSelectedTrackFile(it)
-
-                Timber.d("State change event sent")
+        val trackAdapter = AudioBookTrackAdapter(
+            downloadStore,
+            bookId,
+            TrackItemClickedListener{ trackNumber, _, _ ->
+                trackNumber?.let {
+                    playSelectedTrackFile(it,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
+                    Timber.d("State change event sent: new pos:$it")
+                }?:Timber.d("State change event sent: new pos:$trackNumber")
+                }
+            ,
+            DownloadItemClickedListener { trackId ->
+                bookDetailsViewModel.downloadSelectedItemWith(trackId)
+                Timber.d("Download Track with $trackId")
             }
-        })
+        )
 
         dataBinding.recyclerView.adapter = trackAdapter
 
@@ -81,27 +103,100 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         bookDetailsViewModel.audioBookTracks.observe(viewLifecycleOwner, Observer {
             it?.let {
                 Timber.d("list size received is ${it.size}")
-                trackAdapter.submitList(null)
-                trackAdapter.submitList(it)
+                if(it.isNotEmpty()){
+                    trackAdapter.submitList(it)
+                    removeLoading()
+
+                    if(bookTrackNumber>0){
+                        Timber.d("Book Track number is $bookTrackNumber")
+                        playSelectedTrackFile(bookTrackNumber,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
+                        dataBinding.tvToolbarTitle.text = bookTitle
+                        bookTrackNumber=0
+                    }
+                }
             }
         })
 
-        disposable  = eventStore.observe()
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                handleEvent(it)
+        bookDetailsViewModel.additionalBookDetails.observe(viewLifecycleOwner, Observer {bookDetails->
+            Timber.d("Book details received: $bookDetails")
+            try{
+                dataBinding.textViewDescription.text = if(bookDetails==null || bookDetails.description.isEmpty()){
+                    bookDetailsViewModel.audioBookMetadata.value?.let {
+                        formattedBookDetails(it)
+                    }
+                }else formattedBookDetails(bookDetails)
+            }catch ( e:Exception){
+                e.printStackTrace()
+                bookDetailsViewModel.audioBookMetadata.value?.let {
+                    dataBinding.textViewDescription.text = formattedBookDetails(it)
+                }
             }
+        })
+
+        disposable.add(
+            eventStore.observe()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    handleEvent(it)
+                }
+        )
+
+        disposable.add(
+            downloadStore.observe()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    handleDownloaderEvent(it)
+                }
+        )
 
         dataBindingReference = dataBinding
 
-        //TODO: at this time tracks are not available that is why this change is not reflected
-//        if(sharedPreferences.isPlaying()){
-//            dataBindingReference.tvToolbarTitle.text = sharedPreferences.trackTitle()
-//            bookDetailsViewModel.onPlayItemClicked(sharedPreferences.trackPosition())
-//        }
+        dataBinding.mstbTrackFormat.apply {
+            setElements(R.array.track_format_array,bookDetailsViewModel.trackFormatIndex)
+
+            setOnValueChangedListener {
+                bookDetailsViewModel.loadTrackWithFormat(it)
+                Toast.makeText(activity,"Loading",Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        bookDetailsViewModel.networkResponse.observe(this, Observer {
+            it.getContentIfNotHandled()?.let { networkState ->
+                when(networkState){
+                    NetworkState.LOADING -> {
+                        setVisibility(dataBinding.pbContentLoading,set = true)
+                        setVisibility(dataBinding.networkNoConnection,set = false)
+                        Timber.d("Loading")}
+                    NetworkState.COMPLETED -> {
+                        removeLoading()
+                        Timber.d("Completed")}
+                    NetworkState.ERROR -> {
+                        setVisibility(dataBinding.pbContentLoading,set = false)
+
+                        if(bookDetailsViewModel.audioBookTracks.value.isNullOrEmpty()){
+                            setVisibility(dataBinding.networkNoConnection,set = true)
+                        }
+                        Toast.makeText(activity,"Connection Error",Toast.LENGTH_SHORT).show()}
+                }
+            }
+        })
 
         return dataBinding.root
+    }
+
+    private fun removeLoading() {
+        setVisibility(dataBindingReference.networkNoConnection,set = false)
+        setVisibility(dataBindingReference.pbContentLoading,set = false)
+    }
+
+    private fun handleDownloaderEvent(event: Event<DownloadEvent>) {
+        event.peekContent().let {
+            if(it is DownloadNothing) return
+
+            Timber.d("Event is for book: ${it.bookId} - chapter:${it.chapterIndex}")
+            bookDetailsViewModel.updateDownloadStatus(it)
+        }
     }
 
     private fun handleEvent(event: Event<AudioPlayerEvent>) {
@@ -139,7 +234,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
                         Timber.d("Pause event received")
                     }
 
-                    is Initial -> {
+                    is EmptyEvent -> {
                         Timber.d("Initial event received")
                     }
                     else -> Toast.makeText(it.applicationContext,"Unknown Pressed Details Fragment",Toast.LENGTH_SHORT).show()
@@ -148,17 +243,23 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         }
     }
 
-    private fun playSelectedTrackFile(currentPos:Int) {
+    private fun playSelectedTrackFile(currentPos:Int,bookName:String) {
         bookDetailsViewModel.audioBookTracks.value?.let {
             Timber.d("Sending new event for play selected track by the user")
-            eventStore.publish(Event(PlaySelectedTrack(trackList = it,bookId = bookId,position = currentPos)))
-
-//            sharedPreferences.saveTrackPosition(pos = currentPos)
-//            sharedPreferences.saveIsPlaying(true)
-//            sharedPreferences.saveTrackTitle(it[currentPos-1].title?:"")
-            Timber.d("saving current state event of the track")
+            eventStore.publish(Event(
+                PlaySelectedTrack(
+                    trackList = it,
+                    bookId = bookId,
+                    position = currentPos,
+                    bookName = bookName
+                )
+            ))
 
         }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setVisibility(view:View,set:Boolean){
+         view.visibility = if (set) View.VISIBLE else View.GONE
     }
 
     override fun onDestroy() {

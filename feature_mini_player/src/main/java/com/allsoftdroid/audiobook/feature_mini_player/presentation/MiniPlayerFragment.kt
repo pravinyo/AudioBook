@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.allsoftdroid.audiobook.feature_mini_player.R
 import com.allsoftdroid.audiobook.feature_mini_player.databinding.FragmentMiniPlayerBinding
 import com.allsoftdroid.audiobook.feature_mini_player.di.FeatureMiniPlayerModule
@@ -12,7 +14,7 @@ import com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel.Min
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
-import com.allsoftdroid.common.base.store.*
+import com.allsoftdroid.common.base.store.audioPlayer.*
 import io.reactivex.disposables.Disposable
 import org.koin.android.ext.android.inject
 import timber.log.Timber
@@ -48,10 +50,14 @@ class MiniPlayerFragment : BaseContainerFragment() {
             it.getContentIfNotHandled()?.let { nextClicked ->
                 if(nextClicked){
                     Timber.d("Sending new next event")
-                    eventStore.publish(Event(Next(PlayingState(
-                        playingItemIndex = currentPlayingIndex+1,
-                        action_need = true
-                    ))))
+                    eventStore.publish(Event(
+                        Next(
+                            PlayingState(
+                                playingItemIndex = currentPlayingIndex + 1,
+                                action_need = true
+                            )
+                        )
+                    ))
                 }
             }
         })
@@ -62,10 +68,14 @@ class MiniPlayerFragment : BaseContainerFragment() {
 
                 if(previousClicked){
                     Timber.d("Sending new Previous event")
-                    eventStore.publish(Event(Previous(PlayingState(
-                        playingItemIndex = currentPlayingIndex-1,
-                        action_need = true
-                    ))))
+                    eventStore.publish(Event(
+                        Previous(
+                            PlayingState(
+                                playingItemIndex = currentPlayingIndex - 1,
+                                action_need = true
+                            )
+                        )
+                    ))
                 }
             }
         })
@@ -78,16 +88,24 @@ class MiniPlayerFragment : BaseContainerFragment() {
 
                 if(shouldPlay){
                     Timber.d("Sending new play event")
-                    eventStore.publish(Event(Play(PlayingState(
-                        playingItemIndex = currentPlayingIndex,
-                        action_need = true
-                    ))))
+                    eventStore.publish(Event(
+                        Play(
+                            PlayingState(
+                                playingItemIndex = currentPlayingIndex,
+                                action_need = true
+                            )
+                        )
+                    ))
                 }else{
                     Timber.d("Sending new pause event")
-                    eventStore.publish(Event(Pause(PlayingState(
-                        playingItemIndex = currentPlayingIndex,
-                        action_need = true
-                    ))))
+                    eventStore.publish(Event(
+                        Pause(
+                            PlayingState(
+                                playingItemIndex = currentPlayingIndex,
+                                action_need = true
+                            )
+                        )
+                    ))
                 }
             }
         })
@@ -122,6 +140,16 @@ class MiniPlayerFragment : BaseContainerFragment() {
                 }
             }
 
+
+        miniPlayerViewModel.openMainPlayerEvent.observe(viewLifecycleOwner, Observer { event ->
+            event.getContentIfNotHandled()?.let {open ->
+                if(open){
+                    Timber.d("Event sent for opening main player event")
+                    eventStore.publish(Event(OpenMainPlayerEvent))
+                }
+            }
+        })
+
         return binding.root
     }
 
@@ -129,6 +157,11 @@ class MiniPlayerFragment : BaseContainerFragment() {
         miniPlayerViewModel.setTrackTitle(title)
         miniPlayerViewModel.setBookId(bookId)
 
-        Timber.d("State change event sent")
+        Timber.d("State change event sent: title : $title and book id:$bookId")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        dispose.dispose()
     }
 }

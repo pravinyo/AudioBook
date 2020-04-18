@@ -1,0 +1,48 @@
+name: AudioBook Dependency Graph Generator
+
+on:
+  push:
+    branches:
+      - 'development'
+
+jobs:
+  dependencyGraphJob:
+    name: Build dependency Graph for modules
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Install dependencies before generating Graph
+        run: sudo apt-get install graphviz
+
+      - name: Generate Graph
+        run: bash ./gradlew projectDependencyGraph
+
+      - name: Upload Saved file for Job dependencyGraphJob
+        uses: actions/upload-artifact@v1
+        with:
+          name: graph
+          path: /home/runner/work/AudioBook/AudioBook/build/reports/dependency-graph/project.dot.png
+
+      - name: copy graph file to Repository
+        shell: bash
+        run: ls -lart && cp /home/runner/work/AudioBook/AudioBook/build/reports/dependency-graph/project.dot.png /home/runner/work/AudioBook/AudioBook/photos/dependencies_graph.png
+
+      - name: commit to local
+        shell: bash
+        run: |
+          git config --local user.email "pravinyo12@gmail.com"
+          git config --local user.name "Pravinyo"
+          git add .
+          git commit -m "New Graph Added"
+        
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: development

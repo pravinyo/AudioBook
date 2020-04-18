@@ -52,7 +52,6 @@
 
         <ImageButton
             android:id="@+id/image_notification_prev"
-            android:src="@drawable/ic_skip_previous_black_24dp"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:backgroundTint="@color/transparent"
@@ -69,7 +68,6 @@
 
         <ImageButton
             android:id="@+id/image_notification_next"
-            android:src="@drawable/ic_skip_next_black_24dp"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:backgroundTint="@color/transparent"

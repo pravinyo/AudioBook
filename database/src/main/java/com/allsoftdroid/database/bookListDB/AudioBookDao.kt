@@ -16,7 +16,7 @@ interface AudioBookDao {
     /**
      * Get List of {@link DatabaseAudioBook} from database
      */
-    @Query("SELECT * FROM AudioBook_Table")
+    @Query("SELECT * FROM AudioBook_Table order by datetime(published_date) desc")
     fun getBooks(): LiveData<List<DatabaseAudioBook>>
 
     /**

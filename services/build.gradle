@@ -41,8 +41,6 @@ android {
 dependencies {
     implementation(project(path: ModuleDependency.LIBRARY_COMMON))
 
-    implementation(LibraryDependency.GLIDE)
-    annotationProcessor(LibraryDependency.GLIDE_COMPILER)
-
     implementation(LibraryDependency.EXOPLAYER)
+    implementation(LibraryDependency.SUPPORT_V13)
 }

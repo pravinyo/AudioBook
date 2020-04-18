@@ -26,6 +26,9 @@ class MiniPlayerViewModel(application : Application) : AndroidViewModel(applicat
     private var _bookId = MutableLiveData<String>()
     val bookId :LiveData<String> = _bookId
 
+    private var _openMainPlayer = MutableLiveData<Event<Boolean>>()
+    val openMainPlayerEvent :LiveData<Event<Boolean>> = _openMainPlayer
+
     init {
         shouldItPlay.value = _shouldItPlay
     }
@@ -55,5 +58,9 @@ class MiniPlayerViewModel(application : Application) : AndroidViewModel(applicat
     fun setShouldPlay(play:Boolean){
         _shouldItPlay = play
         shouldItPlay.value = _shouldItPlay
+    }
+
+    fun openMainPlayer(){
+        _openMainPlayer.value = Event(true)
     }
 }

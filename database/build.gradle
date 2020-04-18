@@ -52,7 +52,10 @@ dependencies {
 
     implementation(LibraryDependency.KOTLIN)
 
-    api(LibraryDependency.ROOM_KTX)
+    api(LibraryDependency.ROOM_RUNTIME)
+    implementation(LibraryDependency.ROOM_KTX){
+        because("room ktx added for support of suspend in room")
+    }
     kapt(LibraryDependency.ROOM_COMPILER)
 
     implementation(TestLibraryDependency.JUNIT)

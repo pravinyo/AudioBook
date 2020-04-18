@@ -1,24 +1,38 @@
 package com.allsoftdroid.feature_book.presentation
 
+import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.annotation.VisibleForTesting
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
-import com.allsoftdroid.feature_book.utils.NetworkState
+import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
+import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus
+import com.allsoftdroid.common.base.store.downloader.OpenDownloadActivity
 import com.allsoftdroid.feature_book.R
+import com.allsoftdroid.feature_book.data.network.Utils
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
 import com.allsoftdroid.feature_book.di.FeatureBookModule
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookAdapter
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBookItemClickedListener
+import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.PaginationListener
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
+import com.allsoftdroid.feature_book.utils.NetworkState
 import org.koin.android.ext.android.inject
+import timber.log.Timber
+
 
 class AudioBookListFragment : BaseContainerFragment(){
 
@@ -28,6 +42,9 @@ class AudioBookListFragment : BaseContainerFragment(){
     private val booksViewModel: AudioBookListViewModel by inject()
     @VisibleForTesting var bundleShared: Bundle = Bundle.EMPTY
 
+    private lateinit var callback:OnBackPressedCallback
+
+    private val downloadEventStore: DownloadEventStore  = DownloaderEventBus.getEventBusInstance()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
@@ -49,16 +66,31 @@ class AudioBookListFragment : BaseContainerFragment(){
         //recycler view layout manager
         binding.recyclerViewBooks.apply {
             layoutManager = LinearLayoutManager(context)
+            addOnScrollListener(object : PaginationListener(
+                layoutManager = layoutManager as LinearLayoutManager,
+                pageSize = Utils.Books.DEFAULT_ROW_COUNT){
+
+                override fun loadNext() {
+                    booksViewModel.loadNextData()
+                }
+
+                override fun isLoading(): Boolean {
+                    return booksViewModel.networkResponse.value?.peekContent() == NetworkState.LOADING
+                }
+            })
         }
 
         //Observe the books list and update the list as soon as we get the update
         booksViewModel.audioBooks.observe(viewLifecycleOwner, Observer {
             it?.let {
-                bookAdapter.submitList(it)
+                if(!booksViewModel.isSearching){
+                    setVisibility(binding.networkNoConnection,set=false)
+                    bookAdapter.submitList(it)
+                }
             }
         })
 
-        booksViewModel.itemClicked.observe(this, Observer {
+        booksViewModel.itemClicked.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let { bookId ->
                 //Navigate to display page
                 val bundle = bundleOf("bookId" to bookId)
@@ -74,22 +106,132 @@ class AudioBookListFragment : BaseContainerFragment(){
                 when(networkState){
                     NetworkState.LOADING -> {
                         Toast.makeText(context,"Loading",Toast.LENGTH_SHORT).show()
-                        binding.loadingProgressbar.visibility = View.VISIBLE
+                        setVisibility(binding.loadingProgressbar,set = true)
+                        setVisibility(binding.networkNoConnection,set=false)
                     }
 
                     NetworkState.COMPLETED -> {
                         Toast.makeText(context,"Success",Toast.LENGTH_SHORT).show()
-                        binding.loadingProgressbar.visibility = View.GONE
+                        setVisibility(binding.loadingProgressbar,set=false)
+                        setVisibility(binding.networkNoConnection,set=false)
                     }
 
                     NetworkState.ERROR -> {
-                        binding.loadingProgressbar.visibility = View.GONE
+                        setVisibility(binding.loadingProgressbar,set=false)
+
+                        if(booksViewModel.audioBooks.value.isNullOrEmpty()){
+                            setVisibility(binding.networkNoConnection,set=true)
+                        }else if(booksViewModel.searchBooks.value.isNullOrEmpty()){
+                            setVisibility(binding.networkNoConnection,set=true)
+                        }
+
                         Toast.makeText(context,"Network Error",Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         })
 
+        binding.toolbarBookSearch.setOnClickListener{
+            binding.etToolbarSearch.text.clear()
+            booksViewModel.onSearchItemPressed()
+        }
+
+        binding.etToolbarSearch.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                s?.let {
+                    booksViewModel.setSearchOrClose(isSearchBtn = it.isNotEmpty() && it.length>3)
+                }
+            }
+        })
+
+        binding.ivSearchCancel.setOnClickListener {
+            binding.etToolbarSearch.clearFocus()
+            hideKeyboard()
+
+            booksViewModel.onSearchFinished()
+        }
+
+        binding.ivSearch.setOnClickListener {
+            val searchText = binding.etToolbarSearch.text.trim().toString()
+            binding.etToolbarSearch.clearFocus()
+            hideKeyboard()
+
+            if(searchText.length>3){
+                bookAdapter.submitList(null)
+                booksViewModel.search(query = searchText)
+            }
+        }
+
+        booksViewModel.searchBooks.observe(this, Observer {
+            it.map {book ->
+                Timber.d("Fetched: ${book.mId}")
+            }
+
+            if(it.isNotEmpty()){
+                val prev = bookAdapter.itemCount
+                bookAdapter.submitList(it)
+                if (prev >0) binding.recyclerViewBooks.scrollToPosition(prev-1)
+                Timber.d("Adapter size: $prev and List size:${it.size} and scroll to : ${prev-1}")
+                setVisibility(binding.networkNoConnection,set=false)
+            }else{
+                setVisibility(binding.networkNoConnection,set=true)
+            }
+        })
+
+        binding.toolbarDownloads.setOnClickListener {
+            navigateToDownloadsActivity()
+        }
+
         return binding.root
+    }
+
+    private fun navigateToDownloadsActivity() {
+        downloadEventStore.publish(
+            Event(OpenDownloadActivity())
+        )
+    }
+
+    private fun setVisibility(view: View, set: Boolean) {
+        view.visibility = if(set) View.VISIBLE else View.GONE
+    }
+
+    private fun hideKeyboard() {
+        val view = this.view?.rootView
+        view?.let { v ->
+            val imm = this.context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.hideSoftInputFromWindow(v.windowToken, 0)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        callback = requireActivity().onBackPressedDispatcher.addCallback(this){
+            handleBackPressEvent()
+        }
+
+        callback.isEnabled = true
+    }
+
+    private fun handleBackPressEvent(){
+
+        Timber.d("backPress:Back pressed")
+        if (booksViewModel.isSearching) {
+
+            booksViewModel.apply {
+                cancelSearchRequest()
+                onSearchFinished()
+                loadRecentBookList()
+            }
+        }else{
+            callback.isEnabled = false
+            requireActivity().onBackPressed()
+        }
     }
 }

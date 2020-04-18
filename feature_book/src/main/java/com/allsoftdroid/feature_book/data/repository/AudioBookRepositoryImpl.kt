@@ -1,6 +1,7 @@
 package com.allsoftdroid.feature_book.data.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.network.Failure
 import com.allsoftdroid.common.base.network.Success
@@ -9,9 +10,9 @@ import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.feature_book.data.databaseExtension.SaveBookListInDatabase
 import com.allsoftdroid.feature_book.data.databaseExtension.asBookDomainModel
 import com.allsoftdroid.feature_book.data.model.AudioBookDataModel
+import com.allsoftdroid.feature_book.data.model.toDomainModel
 import com.allsoftdroid.feature_book.data.network.Utils
 import com.allsoftdroid.feature_book.data.network.response.GetAudioBooksResponse
-import com.allsoftdroid.feature_book.data.network.service.ArchiveBooksApi
 import com.allsoftdroid.feature_book.data.network.service.ArchiveLibriVoxAudioBookService
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
@@ -49,7 +50,7 @@ class AudioBookRepositoryImpl(
     /***
      * track network response for  completion and started
      */
-//    private var _networkResponse = MutableLiveData<NetworkResult>()
+    private var _searchResponse = MutableLiveData<List<AudioBookDomainModel>>()
 
     private var listener: NetworkResponseListener? = null
 
@@ -76,7 +77,6 @@ class AudioBookRepositoryImpl(
                 override fun onFailure(call: Call<String>, t: Throwable) {
                     Timber.i("Failure occur")
 
-                    //TODO: better way?
                     GlobalScope.launch {
                         listener?.onResponse(Failure(Error(t)))
                     }
@@ -96,7 +96,6 @@ class AudioBookRepositoryImpl(
                          * Since we have data, we can independently save it to database
                          * It uses entire application scope
                          */
-                        //TODO: better way?
                         GlobalScope.launch {
                             saveToDatabase(result.response.docs)
                             listener?.onResponse(Success(result = result.response.docs.size))
@@ -122,5 +121,42 @@ class AudioBookRepositoryImpl(
 
 
     override fun getAudioBooks() =  this.audioBook
+
+    override suspend fun searchBookList(query: String, page: Int) {
+        withContext(Dispatchers.IO) {
+            Timber.i("Starting network call")
+
+            remoteBookService.searchBooks(
+                search = Utils.Books.buildQuery(query),
+                page = page,
+                rowCount = Utils.Books.DEFAULT_ROW_COUNT
+            ).enqueue(object : Callback<String> {
+                override fun onFailure(call: Call<String>, t: Throwable) {
+                    Timber.i("Failure occur")
+
+                    GlobalScope.launch {
+                        listener?.onResponse(Failure(Error(t)))
+                    }
+                }
+
+                override fun onResponse(call: Call<String>, response: Response<String>) {
+                    val gson = Gson()
+                    val result =
+                        gson.fromJson(response.body(), GetAudioBooksResponse::class.java)
+
+                    result?.response?.docs?.let {list->
+                        Timber.i("Size:${result.response.docs.size}")
+                        _searchResponse.value = list.map { it.toDomainModel() }
+
+                        GlobalScope.launch {
+                            listener?.onResponse(Success(result = result.response.docs.size))
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    override fun getSearchBooks(): LiveData<List<AudioBookDomainModel>> = _searchResponse
 }
 

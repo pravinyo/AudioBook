@@ -45,12 +45,16 @@ android {
         jvmTarget = '1.8'
     }
 
-    dataBinding{
+    dataBinding {
         enabled = DataBinding.IS_ENABLED
     }
 
 //    dynamicFeatures = [":feature_book", ":feature_book_details"]
 
+
+
+
+//    dynamicFeatures = [":feature_downloader"]
 }
 
 dependencies {
@@ -60,6 +64,8 @@ dependencies {
     implementation(project(path: ModuleDependency.FEATURE_BOOK))
     implementation(project(path: ModuleDependency.FEATURE_BOOK_DETAILS))
     implementation(project(path: ModuleDependency.FEATURE_MINI_PLAYER))
+    implementation(project(path: ModuleDependency.FEATURE_DOWNLOADER))
+    implementation(project(path: ModuleDependency.FEATURE_PLAYER_FULL_SCREEN))
 
     implementation(project(path: ModuleDependency.SERVICES))
 
@@ -78,4 +84,8 @@ dependencies {
 
     implementation(TestLibraryDependency.FRAGMENT_TEST)
     implementation(TestLibraryDependency.ANDROID_X_CORE)
+
+    debugImplementation(LibraryDependency.LEAKY_CANARY)
+
+    implementation(LibraryDependency.SUPPORT_V13)
 }

@@ -24,7 +24,7 @@ android {
     buildTypes {
         release {
             minifyEnabled BuildTypeRelease.isMinifyEnabled
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         debug {
@@ -44,6 +44,9 @@ android {
 
 dependencies {
     implementation(project(path: ModuleDependency.LIBRARY_COMMON))
+
+    implementation(project(path: ModuleDependency.FEATURE_AUDIOBOOK_ENHANCE_DETAILS))
+
     implementation(project(path: ModuleDependency.DATABASE))
     implementation(project(path: ModuleDependency.SERVICES))
 
@@ -51,4 +54,5 @@ dependencies {
     annotationProcessor(LibraryDependency.GLIDE_COMPILER)
 
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
+    implementation(LibraryDependency.MULTISTAGE_TOGGLE_BUTTON)
 }

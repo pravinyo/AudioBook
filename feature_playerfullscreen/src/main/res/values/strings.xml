@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Player Full Screen</string>
+    <string name="share_book">share book</string>
+    <string name="close_player">close player</string>
+    <string name="book_cover_photo">book cover photo</string>
+    <string name="play_next">Play Next</string>
+    <string name="play_previous">Play previous</string>
+    <string name="play_pause_control">play pause control</string>
+</resources>

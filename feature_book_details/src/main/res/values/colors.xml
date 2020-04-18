@@ -4,4 +4,6 @@
     <color name="white">#fff</color>
     <color name="transparent">#0000ffff</color>
     <color name="semi_transparent">#973F3E3E</color>
+    <color name="gray">#808080</color>
+    <color name="blue">#0db9f2</color>
 </resources>

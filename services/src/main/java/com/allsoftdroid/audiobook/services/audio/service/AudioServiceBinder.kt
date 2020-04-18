@@ -4,14 +4,16 @@ import android.app.Application
 import android.content.Context
 import android.os.Binder
 import androidx.core.net.toUri
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.audiobook.services.R
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.extension.Variable
 import com.allsoftdroid.common.base.network.ArchiveUtils
-import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player.*
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -31,6 +33,7 @@ class AudioServiceBinder(application: Application) : Binder(){
 
     //id of playing audio book
     private lateinit var bookId:String
+    private lateinit var bookName:String
 
     companion object {
         //song list
@@ -39,6 +42,13 @@ class AudioServiceBinder(application: Application) : Binder(){
 
     //current position
     private var trackPos:Int = 0
+
+    private var _trackTitle = Variable("")
+    val trackTitle : Variable<String>
+        get() = _trackTitle
+
+    val nextTrackEvent = Variable(Event(false))
+    val errorEvent = Variable(Event(false))
 
     /**
      * EXO Code start
@@ -56,18 +66,43 @@ class AudioServiceBinder(application: Application) : Binder(){
             if (exoPlayer?.playbackError != null) {
                 Timber.d("Error detected ")
 
+                exoPlayer?.playbackError?.let {
+                    when(it.type){
+                        ExoPlaybackException.TYPE_SOURCE->{
+                            Timber.d("Source Error detected :${it.message}")
+                        }
+                        ExoPlaybackException.TYPE_REMOTE->{
+                            Timber.d("Remote Error detected :${it.message}")
+                        }
+                        ExoPlaybackException.TYPE_OUT_OF_MEMORY->{
+                            Timber.d("Memory Error detected :${it.message}")
+                        }
+                        ExoPlaybackException.TYPE_RENDERER->{
+                            Timber.d("Renderer Error detected :${it.message}")
+                        }
+                        ExoPlaybackException.TYPE_UNEXPECTED->{
+                            Timber.d("Unexpected Error detected :${it.message}")
+                        }
+                    }
+                }
+
+                errorEvent.value = Event(true)
+                Timber.d("Is playing :${exoPlayer?.isPlaying}")
                 playerPrepared = false
                 return
             }
 
             if (shouldPreparePlayerAgain(playWhenReady, playbackState)) {
-                Timber.d("Preparing player again")
-                preparePlayer()
+                if (playbackState != STATE_ENDED){
+                    Timber.d("Preparing player again")
+                    preparePlayer()
+                }
             }
 
             when(playbackState){
                 STATE_ENDED -> {
                     Timber.d("ENDED")
+                    errorEvent.value = Event(true)
                 }
 
                 STATE_IDLE -> Timber.d("IDLE")
@@ -82,14 +117,15 @@ class AudioServiceBinder(application: Application) : Binder(){
                 Timber.d("Event ended audio about to start new")
                 if(trackPos != it.currentWindowIndex){
                     nextTrackEvent.value= Event(true)
-                    _trackTitle.value = trackList[it.currentWindowIndex].title
+                    _trackTitle.value = trackList[it.currentWindowIndex].title?:"NA"
                     trackPos = it.currentWindowIndex
                 }
             }
         }
     }
 
-    private fun shouldPreparePlayerAgain(playWhenReady: Boolean, playbackState: Int) = playWhenReady && (playbackState == STATE_IDLE || playbackState == STATE_ENDED)
+    private fun shouldPreparePlayerAgain(playWhenReady: Boolean, playbackState: Int)
+            = playWhenReady && (playbackState == STATE_IDLE || playbackState == STATE_ENDED)
 
     private fun preparePlayer() {
         Timber.d("Preparing player")
@@ -137,6 +173,7 @@ class AudioServiceBinder(application: Application) : Binder(){
             Timber.d("Player is not yet created. starting to create")
             onCreate()
         }
+        Timber.d("List size is: ${trackList.size} and play item at pos:$currentPos")
         setTrackPosition(currentPos)
         Timber.d("Track pos is set.")
     }
@@ -148,7 +185,7 @@ class AudioServiceBinder(application: Application) : Binder(){
                 this.playWhenReady = true
                 previous()
                 if(this.currentWindowIndex>=0){
-                    _trackTitle.value = trackList[this.currentWindowIndex].title
+                    _trackTitle.value = trackList[this.currentWindowIndex].title?:"NA"
                 }
                 Timber.d("Title: ${trackTitle.value}")
             } else {
@@ -166,7 +203,7 @@ class AudioServiceBinder(application: Application) : Binder(){
                 it.next()
                 if(it.currentWindowIndex< trackList.size)
                 {
-                    _trackTitle.value = trackList[it.currentWindowIndex].title
+                    _trackTitle.value = trackList[it.currentWindowIndex].title?:"NA"
                 }
                 Timber.d("Title: ${trackTitle.value}")
             }else{
@@ -183,18 +220,15 @@ class AudioServiceBinder(application: Application) : Binder(){
 
     fun resume(){
         exoPlayer?.apply {
-            this.playWhenReady = true
+            playWhenReady = true
+
+            if(playbackError!=null){
+                Timber.d("Retrying ")
+                playerPrepared = true
+                retry()
+            }
         }
     }
-
-    //TODO: Rx
-    private var _trackTitle = MutableLiveData<String>()
-    val trackTitle : LiveData<String>
-        get() = _trackTitle
-
-
-    //TODO: Rx
-    val nextTrackEvent = MutableLiveData<Event<Boolean>>()
 
     fun isPlaying() = exoPlayer?.isPlaying?:false
 
@@ -210,13 +244,14 @@ class AudioServiceBinder(application: Application) : Binder(){
             it.seekTo(pos, C.TIME_UNSET)
             Timber.d("Seek is set to $pos")
             it.playWhenReady = true
-            _trackTitle.value = trackList[it.currentWindowIndex].title
+            _trackTitle.value = trackList[it.currentWindowIndex].title?:"NA"
             Timber.d("Track title updated and soon will be played")
         }
     }
 
-    fun setBookId(id:String){
+    fun setBookDetails(id: String, name: String){
         bookId = id
+        bookName = name
         Timber.d("Book ID is $id")
     }
 
@@ -225,7 +260,7 @@ class AudioServiceBinder(application: Application) : Binder(){
         Timber.d("Track list set and it's size is ${tracks.size}")
     }
 
-    fun getCurrentTrackTitle(): String = trackTitle.value?:"UNKNOWN"
+    fun getCurrentTrackTitle(): String = trackTitle.value
 
     // Return current audio play position.
     fun getCurrentAudioPosition(): Int {
@@ -239,5 +274,24 @@ class AudioServiceBinder(application: Application) : Binder(){
     }
 
     fun getBookId() = bookId
+    fun getBookName() = bookName
+    fun isInitialized() = exoPlayer!=null
+
+    fun getTrackPlayingProgress():Int{
+        exoPlayer?.let {
+            return (it.currentPosition*100/it.duration).toInt()
+        }
+
+        return 0
+    }
+
+    fun getTrackDurationLeft():Long{
+        exoPlayer?.let {
+            val timeLeft = it.duration - it.currentPosition
+            return if(timeLeft>0) timeLeft else 0
+        }
+
+        return 0
+    }
 
 }

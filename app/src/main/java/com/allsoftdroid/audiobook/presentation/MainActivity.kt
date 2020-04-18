@@ -1,22 +1,32 @@
 package com.allsoftdroid.audiobook.presentation
 
-import android.content.IntentFilter
-import android.net.ConnectivityManager
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.fragment.app.FragmentContainerView
+import androidx.appcompat.app.AlertDialog
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.di.AppModule
+import com.allsoftdroid.audiobook.domain.model.LastPlayedTrack
+import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloaderCore
+import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManagementActivity
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
-import com.allsoftdroid.audiobook.services.audio.AudioManager
+import com.allsoftdroid.audiobook.utility.MovableFrameLayout
+import com.allsoftdroid.audiobook.utility.StoragePermissionHandler
 import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.extension.Event
-import com.allsoftdroid.common.base.extension.PlayingState
-import com.allsoftdroid.common.base.network.ConnectivityReceiver
-import com.allsoftdroid.common.base.store.*
+import com.allsoftdroid.common.base.network.ConnectionLiveData
+import com.allsoftdroid.common.base.store.audioPlayer.*
+import com.allsoftdroid.common.base.store.downloader.DownloadEvent
+import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
+import com.allsoftdroid.common.base.store.downloader.DownloadNothing
+import com.allsoftdroid.common.base.store.downloader.OpenDownloadActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -24,10 +34,11 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
 
-class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverListener {
+class MainActivity : BaseActivity() {
 
     override val layoutResId = R.layout.activity_main
 
@@ -37,46 +48,143 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
 
     private val mainActivityViewModel : MainActivityViewModel by viewModel()
 
-    private val eventStore : AudioPlayerEventStore by inject()
+    private val connectionListener: ConnectionLiveData by inject{parametersOf(this)}
 
-    private val audioManager : AudioManager by inject()
+    private val downloadEventStore:DownloadEventStore by inject()
 
-    private val connectionListener:ConnectivityReceiver by inject()
+    private val downloader: IDownloaderCore by inject{parametersOf(this)}
 
-    private val snackbar by lazy {
+    private lateinit var disposable:Disposable
+
+
+
+    private val snackBar by lazy {
         val sb = Snackbar.make(findViewById(R.id.navHostFragment), "You are offline", Snackbar.LENGTH_LONG) //Assume "rootLayout" as the root layout of every activity.
         sb.duration = BaseTransientBottomBar.LENGTH_INDEFINITE
         sb
     }
 
-    private lateinit var disposable : Disposable
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         AppModule.injectFeature()
+
+        mainActivityViewModel.lastPlayed.observe(this, Observer {event ->
+            event.getContentIfNotHandled()?.let {
+                Timber.d("Last played : ${it.title}")
+
+                val dialog = alertDialog(it)
+                dialog.setCancelable(false)
+                dialog.setCanceledOnTouchOutside(false)
+                dialog.show()
+            }
+        })
+    }
+
+
+    private fun alertDialog(lastPlayedTrack: LastPlayedTrack):AlertDialog{
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("continue ${lastPlayedTrack.bookName} from where you left,")
+        builder.setMessage("Chapter : ${lastPlayedTrack.title}")
+
+        builder.setPositiveButton("Listen") { _, _ ->
+            Toast.makeText(this,"Playing",Toast.LENGTH_SHORT).show()
+            //Navigate to display page
+            val bundle = bundleOf(
+                "bookId" to lastPlayedTrack.bookId,
+                "title" to lastPlayedTrack.title,
+                "trackNumber" to lastPlayedTrack.position)
+
+            connectionListener.value?.let { connected->
+                if(connected){
+                    Navigation.findNavController(this,R.id.navHostFragment)
+                        .navigate(com.allsoftdroid.feature_book.R.id.action_AudioBookListFragment_to_AudioBookDetailsFragment,bundle)
+                    mainActivityViewModel.clearSharedPref()
+                }else{
+                    Toast.makeText(this,"Please connect to internet",Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        builder.setNegativeButton("Dismiss"){
+            _,_ ->
+            mainActivityViewModel.clearSharedPref()
+        }
+
+        return builder.create()
     }
 
     override fun onStart() {
         super.onStart()
 
-        audioManager.bindAudioService()
-        registerReceiver(connectionListener, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        mainActivityViewModel.bindAudioService()
+
+        connectionListener.observe(this, Observer {isConnected ->
+            showNetworkMessage(isConnected)
+        })
 
         Timber.d("Main Activity  start")
         mainActivityViewModel.showPlayer.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { shouldShow ->
-
-                Timber.d("Player state event received from view model")
+            it.peekContent().let { shouldShow ->
+                Timber.d("Player state event received from view model:shouldShow->$shouldShow")
                 miniPlayerViewState(shouldShow)
             }
         })
 
-        disposable  = eventStore.observe()
+        mainActivityViewModel.playerEvent.observeForever {
+            it.getContentIfNotHandled()?.let {audioPlayerEvent ->
+                connectionListener.value?.let { isConnected ->
+                    Timber.d("Event is new and is being handled")
+                    if(!isConnected) Toast.makeText(this,"Please Connect to Internet",Toast.LENGTH_SHORT).show()
+                    performAction(audioPlayerEvent)
+                }
+            }
+        }
+
+        disposable = downloadEventStore.observe()
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                handleEvent(it)
+                handleDownloadEvent(it)
             }
+    }
+
+    private fun handleDownloadEvent(event: Event<DownloadEvent>) {
+
+        event.getContentIfNotHandled()?.let {
+
+            if( it is DownloadNothing) return
+
+            if(!StoragePermissionHandler.isPermissionGranted(this)){
+                StoragePermissionHandler.requestPermission(this)
+            }else{
+                when (it) {
+                    is OpenDownloadActivity -> {
+                        navigateToDownloadManagementActivity()
+                    }
+                    else -> downloader.handleDownloadEvent(it)
+                }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(StoragePermissionHandler.isRequestGrantedFor(requestCode,grantResults)){
+            Toast.makeText(this,"Thanks for granting permission",Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(this,"This Feature need Storage Permission",Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun navigateToDownloadManagementActivity() {
+        val intent = Intent(this,
+            DownloadManagementActivity::class.java)
+        startActivity(intent)
     }
 
     private fun miniPlayerViewState(shouldShow: Boolean) {
@@ -88,7 +196,20 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
                 supportFragmentManager.beginTransaction()
                     .add(R.id.miniPlayerContainer,MiniPlayerFragment(),MINI_PLAYER_TAG)
                     .commit()
-                findViewById<FragmentContainerView>(R.id.miniPlayerContainer).visibility = View.VISIBLE
+            }else{
+                supportFragmentManager.beginTransaction()
+                    .show(fragment)
+                    .commit()
+            }
+
+            findViewById<MovableFrameLayout>(R.id.miniPlayerContainer).visibility = View.VISIBLE
+
+            findViewById<View>(R.id.navHostFragment).apply {
+
+                val layout = CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT)
+                layout.bottomMargin = resources.getDimension(R.dimen.mini_player_height).toInt()
+
+                layoutParams = layout
             }
 
         }else{
@@ -100,16 +221,14 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
                     .commit()
             }
 
-            Toast.makeText(this,"Hide Mini Player",Toast.LENGTH_SHORT).show()
-        }
+            findViewById<MovableFrameLayout>(R.id.miniPlayerContainer).visibility = View.GONE
 
-    }
+            findViewById<View>(R.id.navHostFragment).apply {
 
-    private fun handleEvent(event: Event<AudioPlayerEvent>) {
-
-        event.getContentIfNotHandled()?.let {
-            Timber.d("Event is new and is being handled")
-            performAction(it)
+                val layout = CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT)
+                layout.bottomMargin = 0
+                layoutParams = layout
+            }
         }
 
     }
@@ -117,84 +236,97 @@ class MainActivity : BaseActivity(),ConnectivityReceiver.ConnectivityReceiverLis
     private fun performAction(event: AudioPlayerEvent){
         when(event){
             is Next -> {
-                val state = event.result as PlayingState
-
-                if(state.action_need) audioManager.playNext()
-
-                eventStore.publish(Event(TrackDetails(
-                    trackTitle = audioManager.getTrackTitle(),
-                    bookId = audioManager.getBookId(),
-                    position = state.playingItemIndex)))
-
-                Timber.d("Next event occurred")
+                mainActivityViewModel.nextTrack(event)
             }
 
             is Previous -> {
-
-                val state = event.result as PlayingState
-
-                audioManager.playPrevious()
-
-                eventStore.publish(Event(TrackDetails(
-                    trackTitle = audioManager.getTrackTitle(),
-                    bookId = audioManager.getBookId(),
-                    position = state.playingItemIndex)))
-                Timber.d("Previous event occur")
+                mainActivityViewModel.previousTrack(event)
             }
 
             is Play -> {
-                audioManager.resumeTrack()
-                Timber.d("Play/Resume track event")
+                mainActivityViewModel.resumeOrPlayTrack()
             }
 
             is Pause -> {
-                audioManager.pauseTrack()
-                Timber.d("pause event")
+                mainActivityViewModel.pauseTrack()
             }
 
             is PlaySelectedTrack -> {
 
-                audioManager.setPlayTrackList(event.trackList,event.bookId)
-                audioManager.playTrackAtPosition(event.position)
-
-                eventStore.publish(Event(TrackDetails(
-                    trackTitle = audioManager.getTrackTitle(),
-                    bookId = audioManager.getBookId(),
-                    position = event.position)))
-
-                mainActivityViewModel.playerStatus(true)
-
-                Timber.d("Play selected track event")
+                mainActivityViewModel.apply {
+                    playSelectedTrack(event)
+                    playerStatus(true)
+                }
             }
+
+            is OpenMainPlayerEvent ->{
+                mainActivityViewModel.playerStatus(showPlayer = false)
+                navigateToMainPlayerScreen()
+            }
+
+            is OpenMiniPlayerEvent ->{
+                Timber.d("mini player opening event received")
+                mainActivityViewModel.playerStatus(showPlayer = true)
+            }
+
             else -> {
                 Timber.d("Unknown event received")
                 Timber.d("Unknown Event has message of type TrackDetails: "+(event is TrackDetails))
-                Timber.d("Unknown Event has message of type Initial: "+(event is Initial))
+                Timber.d("Unknown Event has message of type Initial: "+(event is EmptyEvent))
             }
         }
-    }
-
-    override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        showNetworkMessage(isConnected)
     }
 
     private fun showNetworkMessage(isConnected: Boolean) {
         if (!isConnected) {
-            snackbar.show()
+            snackBar.show()
         } else {
-            snackbar.dismiss()
+            snackBar.dismiss()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        ConnectivityReceiver.connectivityReceiverListener = this
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        stopAudioService()
         disposable.dispose()
-        audioManager.unBoundAudioService()
-        unregisterReceiver(connectionListener)
+        downloader.Destroy()
+    }
+
+    private fun stopAudioService(){
+        try{
+            mainActivityViewModel.unBoundAudioService()
+        }catch (exception: Exception){
+            Timber.d(exception)
+        }
+    }
+
+    private fun navigateToMainPlayerScreen(){
+        val controller = findNavController(R.id.navHostFragment)
+        val playingTrackDetails = mainActivityViewModel.getPlayingTrack()
+
+        val bundle = bundleOf(
+            "bookId" to playingTrackDetails.bookIdentifier,
+            "bookTitle" to playingTrackDetails.bookTitle,
+            "trackName" to playingTrackDetails.trackName,
+            "chapterIndex" to playingTrackDetails.chapterIndex,
+            "totalChapter" to playingTrackDetails.totalChapter,
+            "isPlaying" to playingTrackDetails.isPlaying)
+
+        controller.currentDestination?.let {
+            when(it.id){
+                R.id.AudioBookDetailsFragment ->{
+                    controller.navigate(R.id.action_AudioBookDetailsFragment_to_MainPlayerFragment,bundle)
+                }
+
+                R.id.AudioBookListFragment ->{
+                    controller.navigate(R.id.action_AudioBookListFragment_to_MainPlayerFragment,bundle)
+                }
+
+                else -> {
+                    Timber.d("Operation not allowed")
+                    Toast.makeText(this,"Can't navigate to Player",Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }

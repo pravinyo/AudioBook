@@ -19,6 +19,7 @@ class AudioManager private constructor(context: Context):KoinComponent{
 
     var audioServiceBinder : AudioServiceBinder? = null
     private var _currentTrack = 0
+    private var mBookId:String =""
     private val appContext : Context = context
 
     // This service connection object is the bridge between activity and background service.
@@ -36,8 +37,6 @@ class AudioManager private constructor(context: Context):KoinComponent{
         }
     }
 
-    // Bind background service with caller . Then this caller can use
-    // background service's AudioServiceBinder instance to invoke related methods.
 
     private val playIntent:Intent by inject()
 
@@ -46,11 +45,18 @@ class AudioManager private constructor(context: Context):KoinComponent{
     }
 
 
+    /**
+     * On Instance creation, inject all the required dependencies
+     */
     init {
         AudioServiceModule.injectFeature()
     }
 
 
+    /**
+     * This function will bind service and  start the service in foreground
+     * It will start service if  @[audioServiceBinder] is null.
+     */
     fun bindAudioService() {
         if (audioServiceBinder == null) {
             // Below code will invoke serviceConnection's onServiceConnected method.
@@ -59,7 +65,10 @@ class AudioManager private constructor(context: Context):KoinComponent{
         }
     }
 
-    // Unbound background audio service with caller activity.
+    /**
+     * This function will unbind service and  stop the service from running
+     * It will stop service if  @[audioServiceBinder] is available and not null
+     */
     fun unBoundAudioService() {
         if (audioServiceBinder != null) {
             appContext.unbindService(serviceConnection)
@@ -67,32 +76,71 @@ class AudioManager private constructor(context: Context):KoinComponent{
         }
     }
 
-    fun playTrackAtPosition(trackNumber : Int?){
-        if (_currentTrack != trackNumber){
-
+    /**
+     * This  function checks whether request for new @[trackNumber] is same and from same @[bookId] or not.
+     * It will trigger playing of provided @[AudioPlayListItem] only, If @[trackNumber] provided is different from @[_currentTrack]
+     * or @[bookId] provided is different from @[mBookId]
+     *
+     * @param trackNumber
+     * Integer value for @[AudioPlayListItem] number(index start from 1) from playlist
+     * @param bookId
+     * String value whcih holds Unique book identifier
+     */
+    fun playTrackAtPosition(trackNumber : Int?,bookId: String){
+        if (_currentTrack != trackNumber || mBookId != bookId){
+            mBookId = bookId
             _currentTrack = trackNumber?:1
+            Timber.d("Manager: Play track at position :$trackNumber")
             playSelectedTrackFile(_currentTrack.minus(1))
+        }else{
+            Timber.d("Manager: Ignored Play track at position :$trackNumber")
         }
     }
 
-    fun setPlayTrackList(playlist: List<AudioPlayListItem>,bookId: String){
+    /**
+     * This function set new playlist to be played and book details like name and identifier for later use
+     * @param playlist
+     * List of @[AudioPlayListItem] to be played
+     * @param bookId
+     * Unique identifier of the book
+     * @param bookName
+     * Name of the Book
+     */
+    fun setPlayTrackList(playlist: List<AudioPlayListItem>,bookId: String,bookName:String){
         audioService.setMultipleTracks(playlist)
-        audioService.setBookId(bookId)
+        audioService.setBookDetails(bookId,bookName)
     }
 
+    /**
+     * It is a private method which reinitialize the player and plays the @[AudioPlayListItem] from the defined @[AudioPlayListItem] location in the playlist
+     * @param currentPos
+     * It is the position of the @[AudioPlayListItem] to be played from the playlist
+     */
     private fun playSelectedTrackFile(currentPos:Int) {
         audioService.initializeAndPlay(currentPos)
     }
 
+    /**
+     * This function calls next on the playlist items to play next @[AudioPlayListItem]
+     */
     fun playNext(){
         Timber.d("Playing next Audio File")
         audioService.goToNext()
     }
 
+    /**
+     * This function calls previous or beginning(if it is first @[AudioPlayListItem] in the playlist) of the @[AudioPlayListItem]
+     */
     fun playPrevious(){
         audioService.goToPreviousOrBeginning()
     }
 
+    /**
+     * This function pause the currently playing @[AudioPlayListItem]:
+     * It first checks whether any @[AudioPlayListItem] is playing or not.
+     * If playing then calls @[pauseTrack] method on running foreground service
+     * else it will ignore the request with log details
+     */
     fun pauseTrack(){
         if (audioService.isPlaying()){
             audioService.pause()
@@ -100,14 +148,54 @@ class AudioManager private constructor(context: Context):KoinComponent{
         }
     }
 
+    /**
+     * This function resumes the currently playing @[AudioPlayListItem]:
+     * It first checks whether any @[AudioPlayListItem] is playing or not.
+     * If not playing then calls @[resumeTrack] method on running foreground service
+     * else it will ignore the request with log details
+     */
     fun resumeTrack(){
         if (!audioService.isPlaying()){
             audioService.resume()
             Timber.d("Resume pressed")
+        }else{
+            Timber.d("Resume pressed but track is already playing")
         }
     }
 
+    /**
+     * Returns the player status whether it is playing any @[AudioPlayListItem] or not
+     */
+    fun isPlaying() = audioService.isPlaying()
+
+    /**
+     * Returns the @[AudioPlayListItem] index(index start from 0) from the @[AudioPlayListItem] playlist
+     */
+    fun currentPlayingIndex() = audioService.getCurrentAudioPosition()
+
+    /**
+     * Returns the @[AudioPlayListItem] title of the currently playing track
+     */
     fun getTrackTitle() = audioService.getCurrentTrackTitle()
 
+    /**
+     * Returns the book identifier of the currently playing @[AudioPlayListItem]
+     */
     fun getBookId() = audioService.getBookId()
+
+    /**
+     * Return the progress of current @[AudioPlayListItem] on scale of 100
+     */
+    fun getPlayingTrackProgress():Int{
+        return audioService.getTrackPlayingProgress()
+    }
+
+    /**
+     * Returns tme left to finish the track. It calculates seconds left and return long value
+     */
+    fun getTrackRemainingTime():Long{
+        val milliSecondsLeft = audioService.getTrackDurationLeft()
+
+        return milliSecondsLeft/1000
+    }
 }
