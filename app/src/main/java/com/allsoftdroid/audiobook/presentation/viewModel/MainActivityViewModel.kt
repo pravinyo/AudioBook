@@ -38,6 +38,7 @@ class MainActivityViewModel(application : Application,
     val lastPlayed :LiveData<Event<LastPlayedTrack>> = _lastPlayed
 
     private lateinit var _playingTrackDetails:PlayingTrackDetails
+
     fun getPlayingTrack() = _playingTrackDetails
 
     fun playerStatus( showPlayer : Boolean){
@@ -73,7 +74,8 @@ class MainActivityViewModel(application : Application,
             bookTitle = event.bookName,
             trackName = audioManager.getTrackTitle(),
             chapterIndex = event.position,
-            totalChapter = event.trackList.size
+            totalChapter = event.trackList.size,
+            isPlaying = true
         )
 
         Timber.d("Play selected track event:track item position:${event.position} and bookid:${event.bookId} and name:${event.bookName}")
@@ -93,6 +95,7 @@ class MainActivityViewModel(application : Application,
         ))
 
         _playingTrackDetails.chapterIndex = audioManager.currentPlayingIndex() + 1
+        _playingTrackDetails.isPlaying = true
 
         Timber.d("Next event occurred")
     }
@@ -109,17 +112,20 @@ class MainActivityViewModel(application : Application,
             )
         ))
         _playingTrackDetails.chapterIndex = audioManager.currentPlayingIndex() + 1
+        _playingTrackDetails.isPlaying = true
 
         Timber.d("Previous event occur")
     }
 
     fun pauseTrack(){
         audioManager.pauseTrack()
+        _playingTrackDetails.isPlaying = false
         Timber.d("pause event")
     }
 
     fun resumeOrPlayTrack(){
         audioManager.resumeTrack()
+        _playingTrackDetails.isPlaying = true
         Timber.d("Play/Resume track event")
     }
 
