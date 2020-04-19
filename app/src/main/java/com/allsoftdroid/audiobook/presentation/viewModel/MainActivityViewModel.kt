@@ -22,6 +22,8 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class MainActivityViewModel(application : Application,
+                            private val handler: UseCaseHandler,
+                            private val lastPlayedUsecase: GetLastPlayedUsecase,
                             private val sharedPref: BookDetailsSharedPreferenceRepository,
                             private val eventStore : AudioPlayerEventStore,
                             private val audioManager : AudioManager) : AndroidViewModel(application){
@@ -149,11 +151,10 @@ class MainActivityViewModel(application : Application,
     }
 
     private fun checkLastPlayed(){
-        val handler = UseCaseHandler.getInstance()
         val request = GetLastPlayedUsecase.RequestValues(sharedPref = sharedPref)
 
         viewModelScope.launch {
-            handler.execute(GetLastPlayedUsecase(),request,object : BaseUseCase.UseCaseCallback<GetLastPlayedUsecase.ResponseValues>{
+            handler.execute(lastPlayedUsecase,request,object : BaseUseCase.UseCaseCallback<GetLastPlayedUsecase.ResponseValues>{
                 override suspend fun onSuccess(response: GetLastPlayedUsecase.ResponseValues) {
                     _lastPlayed.value = Event(response.lastPlayedTrack)
                 }
