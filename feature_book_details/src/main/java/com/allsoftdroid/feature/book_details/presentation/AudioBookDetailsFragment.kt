@@ -35,9 +35,10 @@ import timber.log.Timber
 class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
 
 
-    private lateinit var bookId : String
-    private lateinit var bookTitle :String
-    private var bookTrackNumber:Int = 0
+    private lateinit var argBookId : String
+    private lateinit var argBookTitle :String
+    private lateinit var argBookName: String
+    private var argBookTrackNumber:Int = 0
 
     /**
     Lazily initialize the view model
@@ -62,11 +63,12 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
 
         val dataBinding : FragmentAudiobookDetailsBinding = inflateLayout(inflater,R.layout.fragment_audiobook_details,container)
 
-        bookId = arguments?.getString("bookId")?:""
-        bookTitle = arguments?.getString("title")?:""
-        bookTrackNumber = arguments?.getInt("trackNumber")?:0
+        argBookId = arguments?.getString("bookId")?:""
+        argBookTitle = arguments?.getString("title")?:""
+        argBookTrackNumber = arguments?.getInt("trackNumber")?:0
+        argBookName = arguments?.getString("bookName")?:"NA"
 
-        getKoin().setProperty(BookDetailsModule.PROPERTY_BOOK_ID,bookId)
+        getKoin().setProperty(BookDetailsModule.PROPERTY_BOOK_ID,argBookId)
         BookDetailsModule.injectFeature()
 
         dataBinding.lifecycleOwner = viewLifecycleOwner
@@ -80,7 +82,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
 
         val trackAdapter = AudioBookTrackAdapter(
             downloadStore,
-            bookId,
+            argBookId,
             TrackItemClickedListener{ trackNumber, _, _ ->
                 trackNumber?.let {
                     playSelectedTrackFile(it,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
@@ -107,11 +109,11 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
                     trackAdapter.submitList(it)
                     removeLoading()
 
-                    if(bookTrackNumber>0){
-                        Timber.d("Book Track number is $bookTrackNumber")
-                        playSelectedTrackFile(bookTrackNumber,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
-                        dataBinding.tvToolbarTitle.text = bookTitle
-                        bookTrackNumber=0
+                    if(argBookTrackNumber>0){
+                        Timber.d("Book Track number is $argBookTrackNumber")
+                        playSelectedTrackFile(argBookTrackNumber,argBookName)
+                        dataBinding.tvToolbarTitle.text = argBookTitle
+                        argBookTrackNumber = 0
                     }
                 }
             }
@@ -249,7 +251,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             eventStore.publish(Event(
                 PlaySelectedTrack(
                     trackList = it,
-                    bookId = bookId,
+                    bookId = argBookId,
                     position = currentPos,
                     bookName = bookName
                 )
