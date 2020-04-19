@@ -13,13 +13,11 @@ module/player:
 library/downloader:
   - feature_downloader/**/*
 
-library/database:
-  - database/**/*
-
 module/library:
   - common/**/*
   - buildSrc/**/*
   - services/**/*
+  - database/**/*
 
 module/app:
   - app/**/*
