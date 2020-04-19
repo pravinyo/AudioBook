@@ -18,6 +18,7 @@ import com.allsoftdroid.audiobook.services.R
 import com.allsoftdroid.audiobook.services.audio.service.AudioService
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.common.base.utils.ImageUtils
+import org.w3c.dom.Text
 import com.allsoftdroid.audiobook.services.audio.broadcastReceivers.NotificationPlayerEventBroadcastReceiver.Companion as NotificationPlayerEventBroadcastReceiver1
 
 
@@ -54,8 +55,8 @@ class NotificationUtils {
                 } // Night mode is active, we're using dark theme
             }
 
-            collapsedView.setTextViewText(R.id.notification_book_name,bookName)
-            collapsedView.setTextViewText(R.id.notification_track_name,trackTitle)
+            collapsedView.setTextViewText(R.id.notification_book_name,TextFormatter.getPartialString(bookName))
+            collapsedView.setTextViewText(R.id.notification_track_name,TextFormatter.getPartialString(trackTitle))
             collapsedView.setImageViewResource(R.id.image_notification_playpause,playPauseIcon)
 
             val drawable = CreateImageOverlay
