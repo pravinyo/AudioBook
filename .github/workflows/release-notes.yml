@@ -1,8 +1,9 @@
 # Trigger the workflow on milestone events
 name: Release notes generator
-on: 
-    milestone:
-      types: [closed]
+
+on:
+  milestone:
+    types: [closed]
 
 jobs:
   create-release-notes:
