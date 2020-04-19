@@ -1,7 +1,7 @@
 test:
   - test/**/*
 
-module/feature:
+feature:
   - feature_book/**/*
   - feature_book_details/**/*
   - feature_audiobook_enhance_details/**/*
@@ -10,12 +10,15 @@ module/feature:
   - feature_downloader/**/*
 
 
-module/library:
+library:
   - common/**/*
   - buildSrc/**/*
   - services/**/*
   - database/**/*
 
-module/app:
+app:
   - app/**/*
   - ./*
+
+documentation:
+  - ./*.md
