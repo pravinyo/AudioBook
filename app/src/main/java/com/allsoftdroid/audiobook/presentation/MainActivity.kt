@@ -71,7 +71,7 @@ class MainActivity : BaseActivity() {
 
         mainActivityViewModel.lastPlayed.observe(this, Observer {event ->
             event.getContentIfNotHandled()?.let {
-                Timber.d("Last played : ${it.title}")
+                Timber.d("Last played : $it")
 
                 val dialog = alertDialog(it)
                 dialog.setCancelable(false)
@@ -93,6 +93,7 @@ class MainActivity : BaseActivity() {
             val bundle = bundleOf(
                 "bookId" to lastPlayedTrack.bookId,
                 "title" to lastPlayedTrack.title,
+                "bookName" to lastPlayedTrack.bookName,
                 "trackNumber" to lastPlayedTrack.position)
 
             connectionListener.value?.let { connected->
