@@ -1,0 +1,28 @@
+test:
+  - test/**/*
+
+module/feature:
+  - feature_book/**/*
+  - feature_book_details/**/*
+  - feature_audiobook_enhance_details/**/*
+
+module/player:
+  - feature_mini_player/**/*
+  - feature_playerfullscreen/**/*
+
+library/downloader:
+  - feature_downloader/**/*
+
+library/database:
+  - database/**/*
+
+module/library:
+  - common/**/*
+  - buildSrc/**/*
+  - services/**/*
+
+module/app:
+  - app/**/*
+
+app:
+  -./*
