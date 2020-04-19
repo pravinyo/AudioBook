@@ -7,8 +7,8 @@ A small AudioBook Project with the purpose of exploring multi module and new lib
 * Jetpack testing
 * Navigation pattern
 
-> API : 
- - Archive.org API
+### API used for backend data: 
+ - Archive API
  - LibriVox API
 
 # Implementation techniques used:

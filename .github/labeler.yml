@@ -1,0 +1,24 @@
+test:
+  - test/**/*
+
+feature:
+  - feature_book/**/*
+  - feature_book_details/**/*
+  - feature_audiobook_enhance_details/**/*
+  - feature_mini_player/**/*
+  - feature_playerfullscreen/**/*
+  - feature_downloader/**/*
+
+
+library:
+  - common/**/*
+  - buildSrc/**/*
+  - services/**/*
+  - database/**/*
+
+app:
+  - app/**/*
+  - ./*
+
+documentation:
+  - ./*.md
