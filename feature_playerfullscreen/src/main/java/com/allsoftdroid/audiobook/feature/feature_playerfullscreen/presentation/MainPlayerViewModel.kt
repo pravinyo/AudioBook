@@ -41,7 +41,7 @@ class MainPlayerViewModel(
     private var _playerControlState = MutableLiveData<Event<PlayerControlState>>()
     val previousControlState : LiveData<Event<PlayerControlState>> = _playerControlState
 
-    private var _shouldItPlay:Boolean = true
+    private var _shouldItPlay:Boolean = false
     var shouldItPlay  = MutableLiveData<Boolean>()
 
     private var _playingTrackDetails = MutableLiveData<PlayingTrackDetails>()

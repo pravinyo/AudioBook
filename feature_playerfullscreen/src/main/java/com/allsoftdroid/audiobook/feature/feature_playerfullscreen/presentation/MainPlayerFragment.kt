@@ -52,7 +52,6 @@ class MainPlayerFragment : BaseContainerFragment(){
 
             if(isPlaying){
                 Timber.d("Setting playing control to show pause button")
-                mainPlayerViewModel.setShouldPlay(play = false)
                 mainPlayerViewModel.playPause()
             }else{
                 Timber.d("isPlaying is false")
