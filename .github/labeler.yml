@@ -5,13 +5,10 @@ module/feature:
   - feature_book/**/*
   - feature_book_details/**/*
   - feature_audiobook_enhance_details/**/*
-
-module/player:
   - feature_mini_player/**/*
   - feature_playerfullscreen/**/*
-
-library/downloader:
   - feature_downloader/**/*
+
 
 module/library:
   - common/**/*
@@ -21,6 +18,4 @@ module/library:
 
 module/app:
   - app/**/*
-
-app:
   -./*
