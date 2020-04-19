@@ -18,4 +18,4 @@ module/library:
 
 module/app:
   - app/**/*
-  -./*
+  - ./*
