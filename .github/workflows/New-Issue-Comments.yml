@@ -1,8 +1,7 @@
 name: New Issue Comment Bot
 
 on:
-  issues:
-    opened
+  issues: {types: opened}
   
 jobs:
   comment:
