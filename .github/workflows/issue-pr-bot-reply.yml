@@ -9,5 +9,5 @@ jobs:
     - uses: actions/first-interaction@v1
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        issue-message: '👋 Thanks for reporting!, We will soon review it and assign labels based on severity''
+        issue-message: '👋 Thanks for reporting!, We will soon review it and assign labels based on severity'
         pr-message: 'Thanks for your input. Soon it will be reviewed.'
