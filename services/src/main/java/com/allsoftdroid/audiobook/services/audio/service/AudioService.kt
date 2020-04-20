@@ -9,6 +9,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.view.KeyEvent
 import android.widget.Toast
 import androidx.media.session.MediaButtonReceiver
+import com.allsoftdroid.audiobook.services.audio.di.AudioServiceModule
 import com.allsoftdroid.audiobook.services.audio.utils.NotificationUtils.Companion.sendNotification
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
@@ -41,11 +42,12 @@ class AudioService : Service(),KoinComponent{
     private var disposable:CompositeDisposable = CompositeDisposable()
 
     override fun onBind(p0: Intent?): IBinder? {
+        Timber.d("Binding Audio Service")
         return audioServiceBinder
     }
 
 
-    private lateinit var mediaSessionCompat : MediaSessionCompat
+    private var mediaSessionCompat : MediaSessionCompat? = null
 
     private val mNoisyReceiver:BroadcastReceiver = object : BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -59,7 +61,7 @@ class AudioService : Service(),KoinComponent{
         }
     }
 
-    private val mediaSessionCallback:MediaSessionCompat.Callback = object : MediaSessionCompat.Callback(){
+    private var mediaSessionCallback:MediaSessionCompat.Callback? = object : MediaSessionCompat.Callback(){
 
         override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
 
@@ -97,15 +99,17 @@ class AudioService : Service(),KoinComponent{
         val buttonReceiver = ComponentName(applicationContext,MediaButtonReceiver::class.java)
         mediaSessionCompat = MediaSessionCompat(applicationContext,"TAG",buttonReceiver,null)
 
-        mediaSessionCompat.setCallback(mediaSessionCallback)
-        val flag  = MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
-        mediaSessionCompat.setFlags(flag)
+        mediaSessionCompat?.let {mediaSession ->
+            mediaSession.setCallback(mediaSessionCallback)
+            val flag  = MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
+            mediaSession.setFlags(flag)
 
-        val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
-        mediaButtonIntent.setClass(this,MediaButtonReceiver::class.java)
+            val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+            mediaButtonIntent.setClass(this,MediaButtonReceiver::class.java)
 
-        val pendingIntent = PendingIntent.getBroadcast(this,0,mediaButtonIntent,0)
-        mediaSessionCompat.setMediaButtonReceiver(pendingIntent)
+            val pendingIntent = PendingIntent.getBroadcast(this,0,mediaButtonIntent,0)
+            mediaSession.setMediaButtonReceiver(pendingIntent)
+        }
     }
 
     override fun onCreate() {
@@ -217,14 +221,24 @@ class AudioService : Service(),KoinComponent{
 
     override fun onUnbind(intent: Intent?): Boolean {
         audioServiceBinder.onUnbind()
+        Timber.d("Unbinding Audio Service")
         return super.onUnbind(intent)
     }
 
     override fun onDestroy() {
+        Timber.d("Destroying Audio Service 1")
         super.onDestroy()
+        Timber.d("Destroying Audio Service 2")
         stopForeground(true)
         applicationContext.unregisterReceiver(mNoisyReceiver)
-        mediaSessionCompat.release()
+        mediaSessionCallback = null
+
+        mediaSessionCompat?.let {
+            it.release()
+            mediaSessionCompat = null
+        }
+
         disposable.dispose()
+        AudioServiceModule.unLoadModules()
     }
 }

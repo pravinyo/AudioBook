@@ -23,7 +23,8 @@
             android:configChanges="uiMode"
             android:theme="@style/AppTheme.Splash"
             android:screenOrientation="portrait"
-            android:launchMode= "singleTop">
+            android:launchMode= "singleTop"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW"/>
@@ -31,24 +32,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".feature_downloader.presentation.DownloadManagementActivity">
-<!--                        <intent-filter>-->
-<!--                            <action android:name="android.intent.action.MAIN" />-->
-<!--                            <action android:name="android.intent.action.VIEW"/>-->
-<!--                            <category android:name="android.intent.category.LAUNCHER" />-->
-<!--                        </intent-filter>-->
-        </activity>
+        <activity android:name=".feature_downloader.presentation.DownloadManagementActivity" />
 
         <service
             android:name=".services.audio.service.AudioService"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
-                <action android:name="android.media.browse.MediaBrowserService" />
-            </intent-filter>
-        </service>
+            android:enabled="true"/>
 
         <receiver android:name="androidx.media.session.MediaButtonReceiver">
             <intent-filter>

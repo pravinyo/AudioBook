@@ -4,11 +4,21 @@ import android.content.Intent
 import com.allsoftdroid.audiobook.services.audio.service.AudioService
 import com.allsoftdroid.audiobook.services.audio.service.AudioServiceBinder
 import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 object AudioServiceModule {
     fun injectFeature() = loadFeature
+
+    fun unLoadModules(){
+        unloadKoinModules(
+            listOf(
+                intentModule,
+                serviceBinderModule
+            )
+        )
+    }
 
     private val loadFeature by lazy {
         loadKoinModules(listOf(
@@ -16,15 +26,6 @@ object AudioServiceModule {
             serviceBinderModule
         ))
     }
-
-
-//It's already defined in the app module
-
-//val audioPlayerEventBusModule : Module = module {
-//    single {
-//        AudioPlayerEventBus.getEventBusInstance()
-//    }
-//}
 
     private val intentModule:Module = module {
         single {
