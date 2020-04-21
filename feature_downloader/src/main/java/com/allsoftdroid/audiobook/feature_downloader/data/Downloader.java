@@ -182,7 +182,7 @@ public class Downloader implements IDownloader {
         long downloadId= downloadUtils.getDownloadIdIfIsDownloading(mContext,URL);
         if(downloadId==downloadUtils.DOWNLOADER_NOT_DOWNLOADING){
             Uri uri = Uri.parse(URL);
-            Timber.d("DownloaderLOG: =>%s", URL);
+            Timber.d("Downloading file from URL: =>%s", URL);
             downloadId = downloadUtils.DownloadData(
                     downloadManager,
                     uri,
@@ -193,6 +193,7 @@ public class Downloader implements IDownloader {
 
 
             if(downloadId !=downloadUtils.DOWNLOADER_PROTOCOL_NOT_SUPPORTED){
+                Timber.d("Downloader doesn't support this protocol for file from URL: =>%s", URL);
                 insertDownloadDatabase(downloadId,name,URL);
             }else {
 
@@ -221,7 +222,9 @@ public class Downloader implements IDownloader {
                 return downloadUtils.DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
             }
         }else {
-            return -99;
+            Timber.d("It's appears that file is already downloaded from URL: =>%s", URL);
+            Timber.d("Downloader return id %s  for URL  =>%s", downloadId ,URL);
+            return downloadId;
         }
         Timber.d("Downloader2: =>%s",URL);
         return downloadId;
