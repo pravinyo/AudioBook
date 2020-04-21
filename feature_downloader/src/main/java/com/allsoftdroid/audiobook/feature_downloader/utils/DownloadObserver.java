@@ -42,7 +42,7 @@ public class DownloadObserver{
                             downloadRunning();
                         }else handler.postDelayed(this,checker_delay_time);
                     }else if(response[0].equals(Utility.STATUS_SUCCESS)){
-                        downloadRunning();
+                        mDownloader.updateDownloaded(mUrl,mBookId,mChapterIndex);
                     }
                     else if(response[0].equals(Utility.STATUS_RUNNING)){
                         long[] progress = mDownloader.getProgress(mDownloadId);
