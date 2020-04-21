@@ -6,9 +6,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 
-import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManagementActivity;
 import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract;
 
 import java.util.ArrayList;
@@ -16,11 +14,11 @@ import java.util.ArrayList;
 import timber.log.Timber;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
+import static com.allsoftdroid.audiobook.feature_downloader.utils.DownloadStatus.DOWNLOADER_NOT_DOWNLOADING;
+import static com.allsoftdroid.audiobook.feature_downloader.utils.DownloadStatus.DOWNLOADER_PENDING_ID;
+import static com.allsoftdroid.audiobook.feature_downloader.utils.DownloadStatus.DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
 
 public class downloadUtils {
-    public static final long DOWNLOADER_PROTOCOL_NOT_SUPPORTED=-444;
-    public static final long DOWNLOADER_NOT_DOWNLOADING=-145;
-    public static final long DOWNLOADER_PENDING_ID = 0;
 
     private static String[] DownloadStatus(Cursor cursor){
 
@@ -105,7 +103,7 @@ public class downloadUtils {
 
     public static String[] Check_Status(DownloadManager downloadManager, long downloadId) {
 
-        String[] statusAndReason = new String[0];
+        String[] statusAndReason;
         DownloadManager.Query downloadQuery = new DownloadManager.Query();
         //set the query filter to our previously Enqueued download
         downloadQuery.setFilterById(downloadId);
@@ -131,7 +129,7 @@ public class downloadUtils {
         long downloadReference;
 
         try {
-            Log.i("DownloadUtils:=>",uri.toString());
+            Timber.i(uri.toString());
             // Create request for android download manager
             DownloadManager.Request request = new DownloadManager.Request(uri);
 
@@ -142,7 +140,6 @@ public class downloadUtils {
             request.setDescription(description);
 
             //Set the local destination for the downloaded file to a path within the application's external files directory
-            //request.setDestinationInExternalFilesDir(context,parentDirectoryPath,name);
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,subPath+name);
 
             //Show notification visibility
@@ -151,18 +148,18 @@ public class downloadUtils {
             //Enqueue download and save into referenceId
             downloadReference = downloadManager.enqueue(request);
         }catch (Exception e){
-            downloadReference = downloadUtils.DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
+            downloadReference = DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
         }
 
         return downloadReference;
     }
 
-    public static long isDownloading(Context context, String URL){
+    public static long getDownloadIdIfIsDownloading(Context context, String URL){
         String[] projection = {
                 downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID
         };
 
-        String selection= downloadContract.downloadEntry.COLUMN_DOWNLOAD_NAME+" = ?";
+        String selection= downloadContract.downloadEntry.COLUMN_DOWNLOAD_URL+" = ?";
         String[] selectionArgs={URL};
         Cursor cursor = context.getContentResolver().query(
                 downloadContract.downloadEntry.CONTENT_URI,
@@ -190,7 +187,7 @@ public class downloadUtils {
 
         for(int i=0;i<urls.length;i++){
 
-            if (isDownloading(context,urls[i])>0)
+            if (getDownloadIdIfIsDownloading(context,urls[i])>0)
                 continue;
 
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(urls[i]));
@@ -241,7 +238,7 @@ public class downloadUtils {
             while (cursor.moveToNext()) {
                 long downloadId = cursor.getLong(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID));
 
-                if(downloadId!=downloadUtils.DOWNLOADER_PENDING_ID){
+                if(downloadId!=DOWNLOADER_PENDING_ID){
                     query.setFilterById(downloadId);
                     if (downloadManager != null) {
                         Cursor c = downloadManager.query(query);
@@ -317,6 +314,6 @@ public class downloadUtils {
 
         if(cursor!=null) cursor.close();
 
-        Timber.d("data:"+data);
+        Timber.d("data:%s", data);
     }
 }

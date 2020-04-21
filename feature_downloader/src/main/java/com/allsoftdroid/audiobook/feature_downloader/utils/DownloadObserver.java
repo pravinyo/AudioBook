@@ -23,7 +23,7 @@ public class DownloadObserver{
         mUrl = url;
         mDownloadId = download_id;
         mDownloader = downloader;
-        Timber.d("File path:"+path);
+        Timber.d("File path:%s", path);
     }
 
     public void startWatching(){
@@ -37,12 +37,12 @@ public class DownloadObserver{
                     String[] response = mDownloader.getStatusByDownloadId(mDownloadId);
 
                     if (response==null || response.length==0){
-                        Timber.d("No response for this downloadId:"+mDownloader);
+                        Timber.d("No response for this downloadId:%s", mDownloader);
                         if(mDownloader.getProgress(mDownloadId)!=null){
                             downloadRunning();
                         }else handler.postDelayed(this,checker_delay_time);
                     }else if(response[0].equals(Utility.STATUS_SUCCESS)){
-                        downloadRunning();
+                        mDownloader.updateDownloaded(mUrl,mBookId,mChapterIndex);
                     }
                     else if(response[0].equals(Utility.STATUS_RUNNING)){
                         long[] progress = mDownloader.getProgress(mDownloadId);
@@ -94,6 +94,6 @@ public class DownloadObserver{
     public void stopWatching() {
         handler.removeCallbacksAndMessages(null);
         mDownloader = null;
-        Timber.d("Tracker removed for fileUrl: "+mUrl);
+        Timber.d("Tracker removed for fileUrl: %s", mUrl);
     }
 }
