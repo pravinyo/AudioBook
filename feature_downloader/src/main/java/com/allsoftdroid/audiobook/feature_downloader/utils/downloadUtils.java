@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import timber.log.Timber;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
+import static com.allsoftdroid.audiobook.feature_downloader.utils.DownloadStatus.DOWNLOADER_NOT_DOWNLOADING;
+import static com.allsoftdroid.audiobook.feature_downloader.utils.DownloadStatus.DOWNLOADER_PENDING_ID;
+import static com.allsoftdroid.audiobook.feature_downloader.utils.DownloadStatus.DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
 
 public class downloadUtils {
-    public static final long DOWNLOADER_PROTOCOL_NOT_SUPPORTED=-444;
-    public static final long DOWNLOADER_NOT_DOWNLOADING=-145;
-    public static final long DOWNLOADER_PENDING_ID = 0;
 
     private static String[] DownloadStatus(Cursor cursor){
 
@@ -148,7 +148,7 @@ public class downloadUtils {
             //Enqueue download and save into referenceId
             downloadReference = downloadManager.enqueue(request);
         }catch (Exception e){
-            downloadReference = downloadUtils.DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
+            downloadReference = DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
         }
 
         return downloadReference;
@@ -238,7 +238,7 @@ public class downloadUtils {
             while (cursor.moveToNext()) {
                 long downloadId = cursor.getLong(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID));
 
-                if(downloadId!=downloadUtils.DOWNLOADER_PENDING_ID){
+                if(downloadId!=DOWNLOADER_PENDING_ID){
                     query.setFilterById(downloadId);
                     if (downloadManager != null) {
                         Cursor c = downloadManager.query(query);
