@@ -140,7 +140,6 @@ public class downloadUtils {
             request.setDescription(description);
 
             //Set the local destination for the downloaded file to a path within the application's external files directory
-            //request.setDestinationInExternalFilesDir(context,parentDirectoryPath,name);
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,subPath+name);
 
             //Show notification visibility
@@ -155,7 +154,7 @@ public class downloadUtils {
         return downloadReference;
     }
 
-    public static long isDownloading(Context context, String URL){
+    public static long getDownloadIdIfIsDownloading(Context context, String URL){
         String[] projection = {
                 downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID
         };
@@ -188,7 +187,7 @@ public class downloadUtils {
 
         for(int i=0;i<urls.length;i++){
 
-            if (isDownloading(context,urls[i])>0)
+            if (getDownloadIdIfIsDownloading(context,urls[i])>0)
                 continue;
 
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(urls[i]));

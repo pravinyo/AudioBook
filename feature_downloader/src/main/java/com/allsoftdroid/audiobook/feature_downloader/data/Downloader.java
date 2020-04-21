@@ -179,7 +179,7 @@ public class Downloader implements IDownloader {
     private long download(String URL, String name, String description, String subPath){
 
         //store downloadId to database for own reference
-        long downloadId= downloadUtils.isDownloading(mContext,URL);
+        long downloadId= downloadUtils.getDownloadIdIfIsDownloading(mContext,URL);
         if(downloadId==downloadUtils.DOWNLOADER_NOT_DOWNLOADING){
             Uri uri = Uri.parse(URL);
             Timber.d("DownloaderLOG: =>%s", URL);
