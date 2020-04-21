@@ -6,9 +6,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 
-import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManagementActivity;
 import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract;
 
 import java.util.ArrayList;
@@ -105,7 +103,7 @@ public class downloadUtils {
 
     public static String[] Check_Status(DownloadManager downloadManager, long downloadId) {
 
-        String[] statusAndReason = new String[0];
+        String[] statusAndReason;
         DownloadManager.Query downloadQuery = new DownloadManager.Query();
         //set the query filter to our previously Enqueued download
         downloadQuery.setFilterById(downloadId);
@@ -131,7 +129,7 @@ public class downloadUtils {
         long downloadReference;
 
         try {
-            Log.i("DownloadUtils:=>",uri.toString());
+            Timber.i(uri.toString());
             // Create request for android download manager
             DownloadManager.Request request = new DownloadManager.Request(uri);
 
@@ -317,6 +315,6 @@ public class downloadUtils {
 
         if(cursor!=null) cursor.close();
 
-        Timber.d("data:"+data);
+        Timber.d("data:%s", data);
     }
 }
