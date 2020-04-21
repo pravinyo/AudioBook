@@ -159,7 +159,7 @@ public class downloadUtils {
                 downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID
         };
 
-        String selection= downloadContract.downloadEntry.COLUMN_DOWNLOAD_NAME+" = ?";
+        String selection= downloadContract.downloadEntry.COLUMN_DOWNLOAD_URL+" = ?";
         String[] selectionArgs={URL};
         Cursor cursor = context.getContentResolver().query(
                 downloadContract.downloadEntry.CONTENT_URI,
