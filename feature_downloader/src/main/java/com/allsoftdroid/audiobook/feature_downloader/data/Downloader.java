@@ -92,22 +92,22 @@ public class Downloader implements IDownloader {
             mDownloadEventStore.publish(
                     new Event<>(new Cancelled(cancel.getBookId(), cancel.getChapterIndex(), cancel.getFileUrl()))
             );
-            Timber.d("Cancelled  event sent for "+cancel.toString());
+            Timber.d("Cancelled  event sent for %s", cancel.toString());
 
         }else if(downloadEvent instanceof Download){
             Download temp = (Download) downloadEvent;
             addToDownloadQueueRequest(temp);
 
-            Timber.d("Downloading  event sent for "+temp.toString());
+            Timber.d("Downloading  event sent for %s", temp.toString());
         }
         else if(downloadEvent instanceof Downloaded){
             Downloaded downloaded = (Downloaded) downloadEvent;
-            Timber.d("Downloaded  event received for "+downloaded.toString());
+            Timber.d("Downloaded  event received for %s", downloaded.toString());
             downloadNext(downloaded.getUrl());
 
         }
         else{
-            Timber.d("Download event value: " + downloadEvent);
+            Timber.d("Download event value: %s", downloadEvent);
         }
     }
 
@@ -136,18 +136,18 @@ public class Downloader implements IDownloader {
             downloadOldestRequest();
         }
 
-        Timber.d("Staring new Download, Removing URL:"+removeUrl);
+        Timber.d("Staring new Download, Removing URL:%s", removeUrl);
     }
 
     private void downloadOldestRequest() {
         if(isDownloading) return;
 
         Download download1 = mDownloadQueue.entrySet().iterator().next().getValue();
-        Timber.d("New Download event received: "+download1.toString());
+        Timber.d("New Download event received: %s", download1.toString());
         long downloadId = download(download1.getUrl(),download1.getName(),download1.getDescription(),download1.getSubPath());
 
         File file = new File(Environment.DIRECTORY_DOWNLOADS,download1.getSubPath()+download1.getName());
-        Timber.d("File path:"+file.getAbsolutePath());
+        Timber.d("File path:%s", file.getAbsolutePath());
 
         mDownloadObserver = new DownloadObserver(
                 this,
@@ -157,8 +157,7 @@ public class Downloader implements IDownloader {
                 download1.getUrl(),downloadId);
         mDownloadObserver.startWatching();
 
-        Timber.d("File tracker attached for New Download: "+download1.toString());
-        file = null;
+        Timber.d("File tracker attached for New Download: %s", download1.toString());
     }
 
     @Override
@@ -198,12 +197,22 @@ public class Downloader implements IDownloader {
             }else {
 
                 //TODO: way to clear database items
-                int count = keyStrokeCount.containsKey(URL)?keyStrokeCount.get(URL):0;
+                int count = 0;
+                if(keyStrokeCount.containsKey(URL)){
+                    try{
+                        count = keyStrokeCount.get(URL);
+                    }catch (NullPointerException e){
+                        e.printStackTrace();
+                    }
+                }
+
                 if(count >=2 ){
                     Toast.makeText(mContext,"file link Copied",Toast.LENGTH_SHORT).show();
                     ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText(name, URL);
-                    clipboard.setPrimaryClip(clip);
+                    if(clipboard!=null){
+                        ClipData clip = ClipData.newPlainText(name, URL);
+                        clipboard.setPrimaryClip(clip);
+                    }
                 }else{
                     if(count == 0) Toast.makeText(mContext,"Downloading Problem, Double Tap to copy URL",Toast.LENGTH_SHORT).show();
                     keyStrokeCount.put(URL,count+1);
@@ -282,13 +291,13 @@ public class Downloader implements IDownloader {
             String id = cursor.getString(cursor.getColumnIndex(downloadEntry._ID));
             Uri currentDownloadUri = ContentUris.withAppendedId(downloadEntry.CONTENT_URI, Long.parseLong(id));
             mContext.getContentResolver().update(currentDownloadUri,values,selection,selectionArgs);
-            Timber.d("Updated  at:"+currentDownloadUri.toString());
+            Timber.d("Updated  at:%s", currentDownloadUri.toString());
             cursor.close();
         }else {
             //It is new entry and we will add new in table
             Uri newUri = mContext.getContentResolver().insert(downloadEntry.CONTENT_URI,values);
             if(newUri!=null){
-                Timber.d("Inserted at:"+newUri.toString());
+                Timber.d("Inserted at:%s", newUri.toString());
             }
         }
     }
@@ -357,7 +366,7 @@ public class Downloader implements IDownloader {
 
         if(cursor!=null) cursor.close();
 
-        Timber.d("Data:"+data);
+        Timber.d("Data:%s", data);
     }
 
     @Override
