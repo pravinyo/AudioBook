@@ -17,7 +17,9 @@ object FeatureMiniPlayerModule {
 
     private val miniPlayerViewModelModule: Module = module{
         viewModel {
-            MiniPlayerViewModel(get())
+            MiniPlayerViewModel(
+                application = get(),
+                eventStore = get())
         }
     }
 }
