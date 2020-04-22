@@ -172,6 +172,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
                         Timber.d("Loading")}
                     NetworkState.COMPLETED -> {
                         removeLoading()
+                        setVisibility(dataBindingReference.pbContentLoading,set = false)
                         Timber.d("Completed")}
                     NetworkState.ERROR -> {
                         setVisibility(dataBinding.pbContentLoading,set = false)
