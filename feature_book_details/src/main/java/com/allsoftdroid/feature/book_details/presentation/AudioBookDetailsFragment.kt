@@ -240,7 +240,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
                     is EmptyEvent -> {
                         Timber.d("Initial event received")
                     }
-                    else -> Toast.makeText(it.applicationContext,"Unknown Pressed Details Fragment",Toast.LENGTH_SHORT).show()
+                    else -> Timber.d("Unknown Pressed Details Fragment")
                 }
             }
         }
