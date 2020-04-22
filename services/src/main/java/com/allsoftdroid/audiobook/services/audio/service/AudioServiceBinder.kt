@@ -47,6 +47,7 @@ class AudioServiceBinder(application: Application) : Binder(){
 
     val nextTrackEvent = Variable(Event(false))
     val errorEvent = Variable(Event(false))
+    val isPlayerReadyEvent = Variable(Event(false))
 
     /**
      * EXO Code start
@@ -86,6 +87,8 @@ class AudioServiceBinder(application: Application) : Binder(){
 
                 errorEvent.value = Event(true)
                 Timber.d("Is playing :${exoPlayer?.isPlaying}")
+                isPlayerReadyEvent.value = Event(false)
+                Timber.d("Player is not ready to play")
                 return
             }
 
@@ -102,9 +105,21 @@ class AudioServiceBinder(application: Application) : Binder(){
                     errorEvent.value = Event(true)
                 }
 
-                STATE_IDLE -> Timber.d("IDLE")
-                STATE_BUFFERING -> Timber.d("Buffering")
-                STATE_READY -> Timber.d("Ready")
+                STATE_IDLE -> {
+                    Timber.d("IDLE")
+                    isPlayerReadyEvent.value = Event(false)
+                    Timber.d("Player is not ready to play")
+                }
+                STATE_BUFFERING -> {
+                    Timber.d("Buffering")
+                    isPlayerReadyEvent.value = Event(false)
+                    Timber.d("Player is still bufferring")
+                }
+                STATE_READY -> {
+                    Timber.d("Ready")
+                    isPlayerReadyEvent.value = Event(true)
+                    Timber.d("Player is ready to play")
+                }
             }
         }
 
