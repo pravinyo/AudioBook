@@ -139,6 +139,13 @@ class AudioService : Service(),KoinComponent{
             }
         })
 
+        disposable.add(audioServiceBinder.isPlayerReadyEvent.observable.subscribe {
+            it.getContentIfNotHandled()?.let { readyStateEvent->
+                Timber.d("Received player ready state event, isReady:$readyStateEvent")
+                notifyPlayerStateEvent(readyStateEvent)
+            }
+        })
+
         disposable.add(
             eventStore.observe()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -202,6 +209,14 @@ class AudioService : Service(),KoinComponent{
                     playingItemIndex = audioServiceBinder.getCurrentAudioPosition(),
                     action_need = true
                 )
+            )
+        ))
+    }
+
+    private fun notifyPlayerStateEvent(isReady:Boolean){
+        eventStore.publish(Event(
+            AudioPlayerPlayingState(
+                isReady = isReady
             )
         ))
     }
