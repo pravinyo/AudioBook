@@ -5,17 +5,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.extension.PlayingState
+import com.allsoftdroid.common.base.store.audioPlayer.*
+import io.reactivex.disposables.Disposable
+import timber.log.Timber
 
-class MiniPlayerViewModel(application : Application) : AndroidViewModel(application){
-
-    private var _previousTrackClicked = MutableLiveData<Event<Boolean>>()
-    val previousTrackClicked : LiveData<Event<Boolean>> = _previousTrackClicked
-
-    private var _nextTrackClicked = MutableLiveData<Event<Boolean>>()
-    val nextTrackClicked : LiveData<Event<Boolean>> = _nextTrackClicked
-
-    private var _playPauseClicked = MutableLiveData<Event<Boolean>>()
-    val  playPausedClicked : LiveData<Event<Boolean>> = _playPauseClicked
+class MiniPlayerViewModel(
+    application : Application,
+    private val eventStore : AudioPlayerEventStore) : AndroidViewModel(application){
 
     private var _shouldItPlay:Boolean = true
     var shouldItPlay  = MutableLiveData<Boolean>()
@@ -26,41 +23,136 @@ class MiniPlayerViewModel(application : Application) : AndroidViewModel(applicat
     private var _bookId = MutableLiveData<String>()
     val bookId :LiveData<String> = _bookId
 
-    private var _openMainPlayer = MutableLiveData<Event<Boolean>>()
-    val openMainPlayerEvent :LiveData<Event<Boolean>> = _openMainPlayer
+    private var dispose : Disposable
+
+    private var _isPlayerReady:Boolean= false
+
+    private var _shouldWaitForPlayer = MutableLiveData<Boolean>()
+    val shouldWaitForPlayer:LiveData<Boolean> = _shouldWaitForPlayer
+
+    private var currentPlayingIndex = 0
 
     init {
         shouldItPlay.value = _shouldItPlay
+
+        dispose = eventStore.observe()
+            .subscribe {
+                Timber.d("Peeking event default")
+                it.peekContent().let {event ->
+                    when(event){
+                        is TrackDetails -> {
+                            Timber.d("Received event for update track details event")
+                            updateTrackDetails(title = event.trackTitle,bookId = event.bookId)
+                            currentPlayingIndex = event.position
+                        }
+
+                        is Play -> {
+                            setShouldPlay(play = true)
+                        }
+
+                        is Pause -> {
+                            setShouldPlay(play = false)
+                        }
+
+                        is Next -> {
+                            setShouldPlay(play = true)
+                        }
+
+                        is Previous -> {
+                            setShouldPlay(play = true)
+                        }
+
+                        is AudioPlayerPlayingState -> setPlayerReady(event.isReady)
+                    }
+                }
+            }
+    }
+
+    private fun setPlayerReady(isReady:Boolean){
+        _isPlayerReady = isReady
+        _shouldWaitForPlayer.value = !isReady
     }
 
     fun playPrevious(){
-        _previousTrackClicked.value = Event(true)
+        Timber.d("Sending new Previous event")
+        eventStore.publish(Event(
+            Previous(
+                PlayingState(
+                    playingItemIndex = currentPlayingIndex - 1,
+                    action_need = true
+                )
+            )
+        ))
     }
 
     fun playNext(){
-        _nextTrackClicked.value = Event(true)
+        Timber.d("Sending new next event")
+        eventStore.publish(Event(
+            Next(
+                PlayingState(
+                    playingItemIndex = currentPlayingIndex + 1,
+                    action_need = true
+                )
+            )
+        ))
     }
 
     fun playPause(){
-        _shouldItPlay = !_shouldItPlay
-        _playPauseClicked.value = Event(_shouldItPlay)
-        shouldItPlay.value = _shouldItPlay
+        if(_isPlayerReady){
+            _shouldItPlay = !_shouldItPlay
+            shouldItPlay.value = _shouldItPlay
+
+            if(_shouldItPlay){
+                Timber.d("Sending new play event")
+                eventStore.publish(Event(
+                    Play(
+                        PlayingState(
+                            playingItemIndex = currentPlayingIndex,
+                            action_need = true
+                        )
+                    )
+                ))
+            }else{
+                Timber.d("Sending new pause event")
+                eventStore.publish(Event(
+                    Pause(
+                        PlayingState(
+                            playingItemIndex = currentPlayingIndex,
+                            action_need = true
+                        )
+                    )
+                ))
+            }
+        }
     }
 
-    fun setTrackTitle(title : String?){
+    private fun setTrackTitle(title : String?){
         _trackTitle.value = title?:"UNKNOWN"
     }
 
-    fun setBookId(bookId:String){
+    private fun setBookId(bookId:String){
         _bookId.value = bookId
     }
     
-    fun setShouldPlay(play:Boolean){
+    private fun setShouldPlay(play:Boolean){
         _shouldItPlay = play
         shouldItPlay.value = _shouldItPlay
     }
 
     fun openMainPlayer(){
-        _openMainPlayer.value = Event(true)
+        Timber.d("Event sent for opening main player event")
+        eventStore.publish(Event(OpenMainPlayerEvent))
+    }
+
+    private fun updateTrackDetails(title:String,bookId:String) {
+        setTrackTitle(title)
+        setBookId(bookId)
+
+        Timber.d("State change event sent: title : $title and book id:$bookId")
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        dispose.dispose()
     }
 }
