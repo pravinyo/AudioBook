@@ -26,8 +26,6 @@ class AudioServiceBinder(application: Application) : Binder(){
 
     private var exoPlayer: SimpleExoPlayer? = null
 
-    private var playerPrepared: Boolean = false
-
     // Caller activity context, used when play local audio file.
     private var context: Context = application
 
@@ -88,7 +86,6 @@ class AudioServiceBinder(application: Application) : Binder(){
 
                 errorEvent.value = Event(true)
                 Timber.d("Is playing :${exoPlayer?.isPlaying}")
-                playerPrepared = false
                 return
             }
 
@@ -129,7 +126,6 @@ class AudioServiceBinder(application: Application) : Binder(){
 
     private fun preparePlayer() {
         Timber.d("Preparing player")
-        playerPrepared = true
         exoPlayer?.prepare(createMediaSource(trackList))
         exoPlayer?.seekTo(trackPos,C.TIME_UNSET)
     }
@@ -224,7 +220,6 @@ class AudioServiceBinder(application: Application) : Binder(){
 
             if(playbackError!=null){
                 Timber.d("Retrying ")
-                playerPrepared = true
                 retry()
             }
         }
