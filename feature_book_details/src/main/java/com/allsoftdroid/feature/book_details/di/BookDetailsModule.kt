@@ -108,7 +108,7 @@ object BookDetailsModule {
         }
 
         factory {
-            FetchAdditionalBookDetailsRepositoryImpl() as IFetchAdditionBookDetailsRepository
+            FetchAdditionalBookDetailsRepositoryImpl(storeCachingRepository = get()) as IFetchAdditionBookDetailsRepository
         }
     }
 
@@ -116,6 +116,7 @@ object BookDetailsModule {
         single{
             NetworkCachingStoreRepositoryImpl(
                 networkService = LibriVoxApi.retrofitService,
+                bookDetailsService = LibriVoxApi.bookDetailsApiService,
                 networkCacheDao = get()) as IStoreRepository
         }
     }
