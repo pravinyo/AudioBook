@@ -1,6 +1,8 @@
 package com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.network
 
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.network.request.ILibriVoxApiService
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.network.request.ILibriVoxDetailsApiService
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.network.request.LibrivoxDetailsApiService
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -17,6 +19,10 @@ class LibriVoxApi{
          */
         val retrofitService:ILibriVoxApiService by lazy {
             retrofit.create(ILibriVoxApiService::class.java)
+        }
+
+        val bookDetailsApiService:ILibriVoxDetailsApiService by lazy {
+            LibrivoxDetailsApiService()
         }
 
         private fun getHttpClientListener(): OkHttpClient {
