@@ -26,7 +26,7 @@ class FetchAdditionalBookDetailsUsecase(private val fetchAdditionBookDetailsRepo
                 override suspend fun onResponse(result: NetworkResult) {
                     withContext(Dispatchers.Main){
                         when(result){
-                            is Success -> useCaseCallback?.onSuccess(ResponseValues(Event(true)))
+                            is Success -> useCaseCallback?.onSuccess(ResponseValues(details = "Completed"))
                             is Failure -> useCaseCallback?.onError(result.error)
                             is Loading -> Timber.d("Currently it is loading")
                         }
@@ -45,5 +45,5 @@ class FetchAdditionalBookDetailsUsecase(private val fetchAdditionBookDetailsRepo
     }
 
     class RequestValues(val bookUrl:String) : BaseUseCase.RequestValues
-    class ResponseValues(val list: Event<Any>) : BaseUseCase.ResponseValues
+    class ResponseValues(val details: String) : BaseUseCase.ResponseValues
 }
