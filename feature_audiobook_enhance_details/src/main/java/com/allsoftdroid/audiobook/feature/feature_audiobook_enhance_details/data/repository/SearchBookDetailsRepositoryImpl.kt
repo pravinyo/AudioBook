@@ -38,7 +38,7 @@ class SearchBookDetailsRepositoryImpl(private val storeCachingRepository:IStoreR
     override suspend fun searchBookDetailsInRemoteRepository(searchTitle:String, author:String, page:Int){
 
         try{
-            val data = storeCachingRepository.provideStoreMultiParam().get(Pair(searchTitle,page))
+            val data = storeCachingRepository.provideEnhanceBookSearchStore().get(Pair(searchTitle,page))
 
             if(data.isNotEmpty()){
                 val list = BookBestMatchFromNetworkResult.getList(data)
