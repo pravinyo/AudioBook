@@ -192,6 +192,8 @@ class BookDetailsViewModel(
                 if (it!=null){
                     it.webDocument = webDocument
                         _additionalBookDetails.value = it
+                }else{
+                    _additionalBookDetails.value = null
                 }
             }
 
@@ -200,7 +202,7 @@ class BookDetailsViewModel(
                 values = requestValues,
                 callback = object : BaseUseCase.UseCaseCallback<FetchAdditionalBookDetailsUsecase.ResponseValues> {
                     override suspend fun onSuccess(response: FetchAdditionalBookDetailsUsecase.ResponseValues) {
-                        Timber.d("Result received : $response")
+                        Timber.d("Result received : ${response.details}")
                     }
 
                     override suspend fun onError(t: Throwable) {

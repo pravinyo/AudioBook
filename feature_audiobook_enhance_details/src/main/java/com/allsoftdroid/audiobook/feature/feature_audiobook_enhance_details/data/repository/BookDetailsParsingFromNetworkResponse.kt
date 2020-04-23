@@ -7,11 +7,11 @@ import org.jsoup.Jsoup
 class BookDetailsParsingFromNetworkResponse {
     companion object{
         lateinit var bookDetails: BookDetails
-        fun loadDetails(url:String):BookDetails{
+        fun loadDetails(urlData:String):BookDetails{
 
             val chapterList = mutableListOf<Chapter>()
 
-            Jsoup.connect(url).get().run {
+            Jsoup.parse(urlData).run {
                 val runTime = this.select(".product-details > dd:nth-child(2)").text()
 
                 val archiveLink = this.select("div.book-page-sidebar:nth-child(6) > p:nth-child(2) > a:nth-child(1)").attr("href")
