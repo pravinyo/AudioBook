@@ -123,6 +123,8 @@ class MiniPlayerViewModel(
                     )
                 ))
             }
+        }else{
+            Timber.d("Player is not ready")
         }
     }
 
