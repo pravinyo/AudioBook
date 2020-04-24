@@ -1,10 +1,8 @@
 package com.allsoftdroid.audiobook.services.audio.utils
 
 import android.app.Application
-import androidx.core.net.toUri
 import com.allsoftdroid.audiobook.services.R
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
-import com.allsoftdroid.common.base.network.ArchiveUtils
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
@@ -13,6 +11,8 @@ import timber.log.Timber
 
 class PrepareMediaHandler(private val context:Application) {
 
+    private val localStorageFiles = LocalFilesForBook(context)
+
     fun createMediaSource(bookId:String,playlist : List<AudioPlayListItem>): ConcatenatingMediaSource {
         Timber.d("Create media source called")
         val dataSourceFactory = DefaultDataSourceFactory(context, Util.getUserAgent(context, context.getString(
@@ -20,9 +20,10 @@ class PrepareMediaHandler(private val context:Application) {
         val concatenatingMediaSource = ConcatenatingMediaSource()
 
         Timber.d("Building media list")
-        for (sample in playlist) {
-            val mediaSource = ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(
-                ArchiveUtils.getRemoteFilePath(sample.filename,bookId).toUri())
+        val files = localStorageFiles.getListHavingOnlineAndOfflineUrl(bookId,playlist)
+
+        for (file in files) {
+            val mediaSource = ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(file)
             concatenatingMediaSource.addMediaSource(mediaSource)
         }
 
