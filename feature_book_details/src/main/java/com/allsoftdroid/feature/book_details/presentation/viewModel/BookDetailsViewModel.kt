@@ -273,14 +273,15 @@ class BookDetailsViewModel(
                     track?.let {
                         val album = it.trackAlbum?:getMetadataUsecase.getBookIdentifier()
                         val desc  = "Downloading: chapter ${track.trackNumber} from $album"
+                        val id = getMetadataUsecase.getBookIdentifier()
                         download(
                             Download(
-                                bookId = getMetadataUsecase.getBookIdentifier(),
-                                url = ArchiveUtils.getRemoteFilePath(filename = track.filename,identifier = getMetadataUsecase.getBookIdentifier()),
+                                bookId = id,
+                                url = ArchiveUtils.getRemoteFilePath(filename = track.filename,identifier = id),
                                 name = track.filename,
                                 chapter = track.title?:"",
                                 description = desc,
-                                subPath = ArchiveUtils.getLocalSavePath(album),
+                                subPath = ArchiveUtils.getLocalSavePath(id),
                                 chapterIndex = track.trackNumber?:0
                             )
                         )
