@@ -225,7 +225,6 @@ class AudioService : Service(),KoinComponent{
     private fun buildNotification( isItFirst:Boolean = false) {
         sendNotification(
             trackTitle = audioServiceBinder.getCurrentTrackTitle(),
-            bookId = audioServiceBinder.getBookId(),
             bookName = audioServiceBinder.getBookName(),
             applicationContext = applicationContext,
             service = this,
