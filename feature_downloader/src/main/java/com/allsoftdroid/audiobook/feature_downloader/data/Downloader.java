@@ -192,7 +192,7 @@ public class Downloader implements IDownloader {
     private long download(String URL, String name, String description, String subPath){
 
         //TODO: user defined path for download path can be in default path for DIRECTORY_DOWNLOADS
-        String downloadFolder = ArchiveUtils.Companion.getDownloadsRootFolder(mContext);
+        String downloadFolder = ArchiveUtils.Companion.getDownloadsRootFolder(mContext.getApplication());
 
         //store downloadId to database for own reference
         long downloadId= downloadUtils.getDownloadIdIfIsDownloading(mContext,URL);
