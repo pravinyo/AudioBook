@@ -1,6 +1,6 @@
 package com.allsoftdroid.common.base.network
 
-import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.os.Environment
 import com.allsoftdroid.common.R
@@ -22,19 +22,19 @@ class ArchiveUtils {
 
         fun getThumbnail(imageId: String?) = "$BASE_IMAGE_URL/$imageId/"
 
-        fun getLocalSavePath(path:String) = "/AudioBooks/$path/"
+        fun getLocalSavePath(bookId:String) = "/AudioBooks/$bookId/"
 
-        fun setDownloadsRootFolder(context: Activity, root:String){
-            val sharedPref = context.getPreferences(Context.MODE_PRIVATE) ?: return
+        fun setDownloadsRootFolder(context: Application, root:String){
+            val sharedPref = context.getSharedPreferences(context.getString(R.string.downloads_path),Context.MODE_PRIVATE) ?: return
             with (sharedPref.edit()) {
                 putString(context.getString(R.string.downloads_root_directory_key), root)
                 commit()
             }
         }
 
-        fun getDownloadsRootFolder(context: Activity): String {
+        fun getDownloadsRootFolder(context: Application): String {
             val default = Environment.DIRECTORY_DOWNLOADS
-            val sharedPref = context.getPreferences(Context.MODE_PRIVATE)
+            val sharedPref = context.getSharedPreferences(context.getString(R.string.downloads_path),Context.MODE_PRIVATE)
 
             return sharedPref.getString(context.getString(R.string.downloads_root_directory_key),default)?:default
         }
