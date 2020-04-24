@@ -124,6 +124,7 @@ public class downloadUtils {
                                     Uri uri,
                                     String name,
                                     String description,
+                                    String root,
                                     String subPath) {
 
         long downloadReference;
@@ -140,7 +141,7 @@ public class downloadUtils {
             request.setDescription(description);
 
             //Set the local destination for the downloaded file to a path within the application's external files directory
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,subPath+name);
+            request.setDestinationInExternalPublicDir(root,subPath+name);
 
             //Show notification visibility
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
