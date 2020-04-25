@@ -28,10 +28,9 @@ This App is based on Single Activity Navigation. Each Fragment screen is develop
 ![AudioBook](/photos/dependencies_graph.png)
 
 ## :star: New Features
-
-- Player is stream file online instead of playing from local file [#75](https://github.com/pravinyo/AudioBook/issues/75)
-- UI should show check for downloaded files [#53](https://github.com/pravinyo/AudioBook/issues/53)
-- Downloader downloading same file multiple times [#52](https://github.com/pravinyo/AudioBook/issues/52)
+- Added Support to play offline downloaded files.
+- Smartly create playlist from downloaded files and online files to save bandwidth [#75](https://github.com/pravinyo/AudioBook/issues/75)
+- Downloader is improved [#53](https://github.com/pravinyo/AudioBook/issues/53), [#52](https://github.com/pravinyo/AudioBook/issues/52)
 
 ## :beetle: Bug Fixes
 
