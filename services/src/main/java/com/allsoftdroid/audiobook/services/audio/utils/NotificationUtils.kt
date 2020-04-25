@@ -31,7 +31,7 @@ class NotificationUtils {
         private const val NOTIFICATION_CHANNEL = "audio_book_music_player_channel"
 
         @SuppressLint("NewApi")
-        fun sendNotification(isAudioPlaying:Boolean, currentAudioPos:Int, service: AudioService, applicationContext: Context, trackTitle:String, bookId: String, bookName:String) {
+        fun sendNotification(isAudioPlaying:Boolean, currentAudioPos:Int, service: AudioService, applicationContext: Context, trackTitle:String, bookName:String) {
 
             val collapsedView = RemoteViews(applicationContext.packageName, R.layout.notification_mini_player_collapsed)
             var playPauseIcon = 0

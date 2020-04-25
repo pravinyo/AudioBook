@@ -96,8 +96,8 @@ class MainActivity : BaseActivity() {
                 "bookName" to lastPlayedTrack.bookName,
                 "trackNumber" to lastPlayedTrack.position)
 
-            connectionListener.value?.let { connected->
-                if(connected){
+            connectionListener.value?.let { connectedEvent->
+                if(connectedEvent.peekContent()){
                     Navigation.findNavController(this,R.id.navHostFragment)
                         .navigate(com.allsoftdroid.feature_book.R.id.action_AudioBookListFragment_to_AudioBookDetailsFragment,bundle)
                     mainActivityViewModel.clearSharedPref()
@@ -121,7 +121,7 @@ class MainActivity : BaseActivity() {
         mainActivityViewModel.bindAudioService()
 
         connectionListener.observe(this, Observer {isConnected ->
-            showNetworkMessage(isConnected)
+            showNetworkMessage(isConnected.peekContent())
         })
 
         Timber.d("Main Activity  start")
@@ -134,11 +134,15 @@ class MainActivity : BaseActivity() {
 
         mainActivityViewModel.playerEvent.observeForever {
             it.getContentIfNotHandled()?.let {audioPlayerEvent ->
-                connectionListener.value?.let { isConnected ->
-                    Timber.d("Event is new and is being handled")
-                    if(!isConnected) Toast.makeText(this,"Please Connect to Internet",Toast.LENGTH_SHORT).show()
-                    performAction(audioPlayerEvent)
-                }
+
+//                connectionListener.value?.let { isConnectedEvent ->
+//                    isConnectedEvent.getContentIfNotHandled()?.let {isConnected ->
+//                        if(!isConnected) Toast.makeText(this,"Please Connect to Internet",Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+
+                Timber.d("Event is new and is being handled")
+                performAction(audioPlayerEvent)
             }
         }
 

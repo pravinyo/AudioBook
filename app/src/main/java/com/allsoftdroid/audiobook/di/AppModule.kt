@@ -1,5 +1,6 @@
 package com.allsoftdroid.audiobook.di
 
+import android.app.Activity
 import android.content.Context
 import com.allsoftdroid.audiobook.domain.usecase.GetLastPlayedUsecase
 import com.allsoftdroid.audiobook.feature_downloader.data.Downloader
@@ -58,7 +59,7 @@ object AppModule {
         }
 
         single {
-                (ctx:Context) ->
+                (ctx:Activity) ->
             Downloader(
                 ctx,
                 get()

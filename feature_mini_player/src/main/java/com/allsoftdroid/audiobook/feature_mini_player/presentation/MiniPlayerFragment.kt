@@ -6,16 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import com.allsoftdroid.audiobook.feature_mini_player.R
 import com.allsoftdroid.audiobook.feature_mini_player.databinding.FragmentMiniPlayerBinding
 import com.allsoftdroid.audiobook.feature_mini_player.di.FeatureMiniPlayerModule
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel.MiniPlayerViewModel
-import com.allsoftdroid.common.base.extension.Event
-import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
-import com.allsoftdroid.common.base.store.audioPlayer.*
-import io.reactivex.disposables.Disposable
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 

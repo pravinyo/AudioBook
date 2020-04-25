@@ -1,5 +1,6 @@
 package com.allsoftdroid.audiobook.feature_downloader.data;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -22,6 +23,7 @@ import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloader;
 import com.allsoftdroid.audiobook.feature_downloader.utils.DownloadObserver;
 import com.allsoftdroid.audiobook.feature_downloader.utils.downloadUtils;
 import com.allsoftdroid.common.base.extension.Event;
+import com.allsoftdroid.common.base.network.ArchiveUtils;
 import com.allsoftdroid.common.base.store.downloader.Cancel;
 import com.allsoftdroid.common.base.store.downloader.Cancelled;
 import com.allsoftdroid.common.base.store.downloader.Download;
@@ -49,7 +51,7 @@ import static com.allsoftdroid.audiobook.feature_downloader.utils.Utility.STATUS
 
 public class Downloader implements IDownloader {
 
-    private Context mContext;
+    private Activity mContext;
     private DownloadManager downloadManager;
     private DownloadEventStore mDownloadEventStore;
     private static HashMap<String,Integer> keyStrokeCount = new HashMap<>();
@@ -57,12 +59,12 @@ public class Downloader implements IDownloader {
     private boolean isDownloading = false;
     private LinkedHashMap<String,Download> mDownloadQueue = new LinkedHashMap<>();
 
-    public Downloader(Context context) {
+    public Downloader(Activity context) {
         mContext = context;
         downloadManager = (DownloadManager) mContext.getSystemService(DOWNLOAD_SERVICE);
     }
 
-    public Downloader(Context context, DownloadEventStore eventStore){
+    public Downloader(Activity context, DownloadEventStore eventStore){
         mContext = context;
         downloadManager = (DownloadManager) mContext.getSystemService(DOWNLOAD_SERVICE);
         mDownloadEventStore = eventStore;
@@ -189,6 +191,8 @@ public class Downloader implements IDownloader {
 
     private long download(String URL, String name, String description, String subPath){
 
+        String downloadFolder = ArchiveUtils.Companion.getDownloadsRootFolder(mContext.getApplication());
+
         //store downloadId to database for own reference
         long downloadId= downloadUtils.getDownloadIdIfIsDownloading(mContext,URL);
         if(downloadId==DOWNLOADER_NOT_DOWNLOADING){
@@ -199,6 +203,7 @@ public class Downloader implements IDownloader {
                     uri,
                     name,
                     description,
+                    downloadFolder,
                     subPath
             );
 
