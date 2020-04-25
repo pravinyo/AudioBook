@@ -120,8 +120,17 @@ class MainActivity : BaseActivity() {
 
         mainActivityViewModel.bindAudioService()
 
-        connectionListener.observe(this, Observer {isConnected ->
-            showNetworkMessage(isConnected.peekContent())
+        connectionListener.observe(this, Observer {isConnectedEvent ->
+            isConnectedEvent.getContentIfNotHandled()?.let {isConnected ->
+                showNetworkMessage(isConnected)
+                if(isConnected){
+                    try{
+                        mainActivityViewModel.playIfAnyTrack()
+                    }catch (exception:Exception){
+                        Timber.e("Error occurred when resuming: ${exception.printStackTrace().toString()}")
+                    }
+                }
+            }
         })
 
         Timber.d("Main Activity  start")
@@ -134,13 +143,6 @@ class MainActivity : BaseActivity() {
 
         mainActivityViewModel.playerEvent.observeForever {
             it.getContentIfNotHandled()?.let {audioPlayerEvent ->
-
-//                connectionListener.value?.let { isConnectedEvent ->
-//                    isConnectedEvent.getContentIfNotHandled()?.let {isConnected ->
-//                        if(!isConnected) Toast.makeText(this,"Please Connect to Internet",Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-
                 Timber.d("Event is new and is being handled")
                 performAction(audioPlayerEvent)
             }
