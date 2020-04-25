@@ -131,6 +131,18 @@ class MainActivityViewModel(application : Application,
         Timber.d("Play/Resume track event")
     }
 
+    fun playIfAnyTrack(){
+
+        eventStore.publish(Event(
+            Play(PlayingState(
+                playingItemIndex = audioManager.currentPlayingIndex(),
+                action_need = true
+            ))
+        ))
+
+        Timber.d("Play if any pending tracks event")
+    }
+
     fun bindAudioService(){
         audioManager.bindAudioService()
     }
