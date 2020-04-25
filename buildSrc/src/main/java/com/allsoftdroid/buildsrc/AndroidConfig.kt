@@ -6,8 +6,14 @@ object AndroidConfig {
     const val TARGET_SDK_VERSION = 29
     const val BUILD_TOOLS_VERSION = "29.0.0"
 
-    const val VERSION_CODE = 1
-    const val VERSION_NAME = "1.0"
+    const val versionMajor = 4
+    const val versionMinor = 2
+    const val versionPatch = 3
+    var versionClassifier = "alpha"
+    const val isSnapshot = false
+
+    val VERSION_CODE = CodeVersionGenerator.generateVersionCode()
+    val VERSION_NAME = CodeVersionGenerator.generateVersionName()
 
     const val ID = "com.allsoftdroid.audiobook"
     const val TEST_INSTRUMENTATION_RUNNER = "androidx.test.runner.AndroidJUnitRunner"
