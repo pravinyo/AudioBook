@@ -27,6 +27,7 @@ This App is based on Single Activity Navigation. Each Fragment screen is develop
 # Dependency Graph of the Project:
 ![AudioBook](/photos/dependencies_graph.png)
 
+# Release: 4.2.3-alpha
 ## :star: New Features
 - Added Support to play offline downloaded files.
 - Smartly create playlist from downloaded files and online files to save bandwidth [#75](https://github.com/pravinyo/AudioBook/issues/75)
