@@ -4,5 +4,7 @@ import com.dropbox.android.external.store4.Store
 
 interface IStoreRepository {
 
-    fun provideStoreMultiParam(): Store<Pair<String, Int>, String>
+    fun provideEnhanceBookSearchStore(): Store<Pair<String, Int>, String>
+
+    fun provideEnhanceBookDetailsStore(): Store<String, String>
 }

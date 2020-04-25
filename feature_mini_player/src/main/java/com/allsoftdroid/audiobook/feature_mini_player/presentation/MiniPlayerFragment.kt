@@ -6,16 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import com.allsoftdroid.audiobook.feature_mini_player.R
 import com.allsoftdroid.audiobook.feature_mini_player.databinding.FragmentMiniPlayerBinding
 import com.allsoftdroid.audiobook.feature_mini_player.di.FeatureMiniPlayerModule
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel.MiniPlayerViewModel
-import com.allsoftdroid.common.base.extension.Event
-import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
-import com.allsoftdroid.common.base.store.audioPlayer.*
-import io.reactivex.disposables.Disposable
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -26,11 +21,7 @@ class MiniPlayerFragment : BaseContainerFragment() {
      */
     private val miniPlayerViewModel: MiniPlayerViewModel by inject()
 
-    private val eventStore : AudioPlayerEventStore by inject()
 
-    private var currentPlayingIndex = 0
-
-    private lateinit var dispose : Disposable
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,123 +36,12 @@ class MiniPlayerFragment : BaseContainerFragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = miniPlayerViewModel
 
-
-        miniPlayerViewModel.nextTrackClicked.observe(viewLifecycleOwner, Observer {
-            it.getContentIfNotHandled()?.let { nextClicked ->
-                if(nextClicked){
-                    Timber.d("Sending new next event")
-                    eventStore.publish(Event(
-                        Next(
-                            PlayingState(
-                                playingItemIndex = currentPlayingIndex + 1,
-                                action_need = true
-                            )
-                        )
-                    ))
-                }
-            }
-        })
-
-        miniPlayerViewModel.previousTrackClicked.observe(viewLifecycleOwner, Observer {
-            it.getContentIfNotHandled()?.let {
-                previousClicked ->
-
-                if(previousClicked){
-                    Timber.d("Sending new Previous event")
-                    eventStore.publish(Event(
-                        Previous(
-                            PlayingState(
-                                playingItemIndex = currentPlayingIndex - 1,
-                                action_need = true
-                            )
-                        )
-                    ))
-                }
-            }
-        })
-
-        miniPlayerViewModel.playPausedClicked.observe(viewLifecycleOwner, Observer {
-            it.getContentIfNotHandled()?.let {
-                    shouldPlay ->
-
-                Timber.d("should play event is $shouldPlay")
-
-                if(shouldPlay){
-                    Timber.d("Sending new play event")
-                    eventStore.publish(Event(
-                        Play(
-                            PlayingState(
-                                playingItemIndex = currentPlayingIndex,
-                                action_need = true
-                            )
-                        )
-                    ))
-                }else{
-                    Timber.d("Sending new pause event")
-                    eventStore.publish(Event(
-                        Pause(
-                            PlayingState(
-                                playingItemIndex = currentPlayingIndex,
-                                action_need = true
-                            )
-                        )
-                    ))
-                }
-            }
-        })
-
-        dispose = eventStore.observe()
-            .subscribe {
-                Timber.d("Peeking event default")
-                it.peekContent().let {event ->
-                    when(event){
-                        is TrackDetails -> {
-                            Timber.d("Received event for update track details event")
-                            updateTrackDetails(title = event.trackTitle,bookId = event.bookId)
-                            currentPlayingIndex = event.position
-                        }
-
-                        is Play -> {
-                            miniPlayerViewModel.setShouldPlay(play = true)
-                        }
-
-                        is Pause -> {
-                            miniPlayerViewModel.setShouldPlay(play = false)
-                        }
-
-                        is Next -> {
-                            miniPlayerViewModel.setShouldPlay(play = true)
-                        }
-
-                        is Previous -> {
-                            miniPlayerViewModel.setShouldPlay(play = true)
-                        }
-                    }
-                }
-            }
-
-
-        miniPlayerViewModel.openMainPlayerEvent.observe(viewLifecycleOwner, Observer { event ->
-            event.getContentIfNotHandled()?.let {open ->
-                if(open){
-                    Timber.d("Event sent for opening main player event")
-                    eventStore.publish(Event(OpenMainPlayerEvent))
-                }
+        miniPlayerViewModel.shouldWaitForPlayer.observe(viewLifecycleOwner, Observer { waitForPlayer ->
+            if(waitForPlayer){
+                Toast.makeText(this.activity,"Please wait, Preparing",Toast.LENGTH_SHORT).show()
             }
         })
 
         return binding.root
-    }
-
-    private fun updateTrackDetails(title:String,bookId:String) {
-        miniPlayerViewModel.setTrackTitle(title)
-        miniPlayerViewModel.setBookId(bookId)
-
-        Timber.d("State change event sent: title : $title and book id:$bookId")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        dispose.dispose()
     }
 }

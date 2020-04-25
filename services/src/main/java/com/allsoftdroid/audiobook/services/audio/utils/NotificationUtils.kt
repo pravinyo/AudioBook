@@ -18,6 +18,7 @@ import com.allsoftdroid.audiobook.services.R
 import com.allsoftdroid.audiobook.services.audio.service.AudioService
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.common.base.utils.ImageUtils
+import org.w3c.dom.Text
 import com.allsoftdroid.audiobook.services.audio.broadcastReceivers.NotificationPlayerEventBroadcastReceiver.Companion as NotificationPlayerEventBroadcastReceiver1
 
 
@@ -30,7 +31,7 @@ class NotificationUtils {
         private const val NOTIFICATION_CHANNEL = "audio_book_music_player_channel"
 
         @SuppressLint("NewApi")
-        fun sendNotification(isAudioPlaying:Boolean, currentAudioPos:Int, service: AudioService, applicationContext: Context, trackTitle:String, bookId: String, bookName:String) {
+        fun sendNotification(isAudioPlaying:Boolean, currentAudioPos:Int, service: AudioService, applicationContext: Context, trackTitle:String, bookName:String) {
 
             val collapsedView = RemoteViews(applicationContext.packageName, R.layout.notification_mini_player_collapsed)
             var playPauseIcon = 0
@@ -54,8 +55,8 @@ class NotificationUtils {
                 } // Night mode is active, we're using dark theme
             }
 
-            collapsedView.setTextViewText(R.id.notification_book_name,bookName)
-            collapsedView.setTextViewText(R.id.notification_track_name,trackTitle)
+            collapsedView.setTextViewText(R.id.notification_book_name,TextFormatter.getPartialString(bookName))
+            collapsedView.setTextViewText(R.id.notification_track_name,TextFormatter.getPartialString(trackTitle))
             collapsedView.setImageViewResource(R.id.image_notification_playpause,playPauseIcon)
 
             val drawable = CreateImageOverlay
@@ -108,7 +109,7 @@ class NotificationUtils {
             if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.O) {
                 val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 val name = applicationContext.getString(R.string.app_name)
-                val importance = NotificationManager.IMPORTANCE_HIGH
+                val importance = NotificationManager.IMPORTANCE_DEFAULT
                 NotificationChannel(NOTIFICATION_CHANNEL, name, importance).apply {
                     enableLights(false)
                     enableVibration(false)

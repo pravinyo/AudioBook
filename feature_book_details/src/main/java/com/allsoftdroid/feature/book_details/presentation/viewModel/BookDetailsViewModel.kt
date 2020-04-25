@@ -192,6 +192,8 @@ class BookDetailsViewModel(
                 if (it!=null){
                     it.webDocument = webDocument
                         _additionalBookDetails.value = it
+                }else{
+                    _additionalBookDetails.value = null
                 }
             }
 
@@ -200,7 +202,7 @@ class BookDetailsViewModel(
                 values = requestValues,
                 callback = object : BaseUseCase.UseCaseCallback<FetchAdditionalBookDetailsUsecase.ResponseValues> {
                     override suspend fun onSuccess(response: FetchAdditionalBookDetailsUsecase.ResponseValues) {
-                        Timber.d("Result received : $response")
+                        Timber.d("Result received : ${response.details}")
                     }
 
                     override suspend fun onError(t: Throwable) {
@@ -271,14 +273,15 @@ class BookDetailsViewModel(
                     track?.let {
                         val album = it.trackAlbum?:getMetadataUsecase.getBookIdentifier()
                         val desc  = "Downloading: chapter ${track.trackNumber} from $album"
+                        val id = getMetadataUsecase.getBookIdentifier()
                         download(
                             Download(
-                                bookId = getMetadataUsecase.getBookIdentifier(),
-                                url = ArchiveUtils.getRemoteFilePath(filename = track.filename,identifier = getMetadataUsecase.getBookIdentifier()),
+                                bookId = id,
+                                url = ArchiveUtils.getRemoteFilePath(filename = track.filename,identifier = id),
                                 name = track.filename,
                                 chapter = track.title?:"",
                                 description = desc,
-                                subPath = ArchiveUtils.getLocalSavePath(album),
+                                subPath = ArchiveUtils.getLocalSavePath(id),
                                 chapterIndex = track.trackNumber?:0
                             )
                         )

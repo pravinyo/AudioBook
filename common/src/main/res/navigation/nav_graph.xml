@@ -30,6 +30,9 @@
             android:name="title"
             app:argType="string" />
         <argument
+            android:name="bookName"
+            app:argType="string" />
+        <argument
             android:name="trackNumber"
             app:argType="integer" />
         <action

@@ -1,6 +1,8 @@
 package com.allsoftdroid.audiobook.di
 
+import android.app.Activity
 import android.content.Context
+import com.allsoftdroid.audiobook.domain.usecase.GetLastPlayedUsecase
 import com.allsoftdroid.audiobook.feature_downloader.data.Downloader
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloaderCore
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
@@ -38,7 +40,9 @@ object AppModule {
                 application = get(),
                 sharedPref = get(),
                 audioManager = get(),
-                eventStore = get()
+                eventStore = get(),
+                handler = get(),
+                lastPlayedUsecase = get()
             )
         }
     }
@@ -55,7 +59,7 @@ object AppModule {
         }
 
         single {
-                (ctx:Context) ->
+                (ctx:Activity) ->
             Downloader(
                 ctx,
                 get()
@@ -81,6 +85,10 @@ object AppModule {
     private val usecaseModule : Module = module {
         factory {
             UseCaseHandler.getInstance()
+        }
+
+        factory {
+            GetLastPlayedUsecase()
         }
     }
 

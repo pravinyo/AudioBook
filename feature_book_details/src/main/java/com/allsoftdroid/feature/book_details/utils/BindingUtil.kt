@@ -80,14 +80,6 @@ fun setTrackDownloadStatus(imageView: ImageView,item :AudioBookTrackDomainModel?
     Timber.d("Download image icon updated")
 }
 
-@BindingAdapter("trackDownloadProgress")
-fun setTrackDownloadProgress(view: ProgressBar, holder:TrackItemViewHolder?){
-
-    holder?.let {
-        Timber.d("Download event received with progress for $holder")
-    }
-}
-
 /**
 Handle visibility of progress bar
  */

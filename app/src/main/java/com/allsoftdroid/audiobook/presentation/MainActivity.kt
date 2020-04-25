@@ -71,7 +71,7 @@ class MainActivity : BaseActivity() {
 
         mainActivityViewModel.lastPlayed.observe(this, Observer {event ->
             event.getContentIfNotHandled()?.let {
-                Timber.d("Last played : ${it.title}")
+                Timber.d("Last played : $it")
 
                 val dialog = alertDialog(it)
                 dialog.setCancelable(false)
@@ -93,10 +93,11 @@ class MainActivity : BaseActivity() {
             val bundle = bundleOf(
                 "bookId" to lastPlayedTrack.bookId,
                 "title" to lastPlayedTrack.title,
+                "bookName" to lastPlayedTrack.bookName,
                 "trackNumber" to lastPlayedTrack.position)
 
-            connectionListener.value?.let { connected->
-                if(connected){
+            connectionListener.value?.let { connectedEvent->
+                if(connectedEvent.peekContent()){
                     Navigation.findNavController(this,R.id.navHostFragment)
                         .navigate(com.allsoftdroid.feature_book.R.id.action_AudioBookListFragment_to_AudioBookDetailsFragment,bundle)
                     mainActivityViewModel.clearSharedPref()
@@ -119,8 +120,17 @@ class MainActivity : BaseActivity() {
 
         mainActivityViewModel.bindAudioService()
 
-        connectionListener.observe(this, Observer {isConnected ->
-            showNetworkMessage(isConnected)
+        connectionListener.observe(this, Observer {isConnectedEvent ->
+            isConnectedEvent.getContentIfNotHandled()?.let {isConnected ->
+                showNetworkMessage(isConnected)
+                if(isConnected){
+                    try{
+                        mainActivityViewModel.playIfAnyTrack()
+                    }catch (exception:Exception){
+                        Timber.e("Error occurred when resuming: ${exception.printStackTrace().toString()}")
+                    }
+                }
+            }
         })
 
         Timber.d("Main Activity  start")
@@ -133,11 +143,8 @@ class MainActivity : BaseActivity() {
 
         mainActivityViewModel.playerEvent.observeForever {
             it.getContentIfNotHandled()?.let {audioPlayerEvent ->
-                connectionListener.value?.let { isConnected ->
-                    Timber.d("Event is new and is being handled")
-                    if(!isConnected) Toast.makeText(this,"Please Connect to Internet",Toast.LENGTH_SHORT).show()
-                    performAction(audioPlayerEvent)
-                }
+                Timber.d("Event is new and is being handled")
+                performAction(audioPlayerEvent)
             }
         }
 

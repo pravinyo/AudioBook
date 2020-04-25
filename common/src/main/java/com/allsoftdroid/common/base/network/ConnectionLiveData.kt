@@ -15,8 +15,9 @@ import android.net.NetworkRequest
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
+import com.allsoftdroid.common.base.extension.Event
 
-class ConnectionLiveData(private val context: Context) : LiveData<Boolean>(){
+class ConnectionLiveData(private val context: Context) : LiveData<Event<Boolean>>(){
 
     private var  intentFilter = IntentFilter(CONNECTIVITY_ACTION)
     private var  connectivityManager = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -64,17 +65,17 @@ class ConnectionLiveData(private val context: Context) : LiveData<Boolean>(){
 
     fun updateConnection() {
         val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
-        postValue(activeNetwork?.isConnectedOrConnecting == true)
+        postValue(Event(activeNetwork?.isConnectedOrConnecting == true))
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     class NetworkCallback(private val liveData : ConnectionLiveData) : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network?) {
-            liveData.postValue(true)
+            liveData.postValue(Event(true))
         }
 
         override fun onLost(network: Network?) {
-            liveData.postValue(false)
+            liveData.postValue(Event(false))
         }
     }
 }

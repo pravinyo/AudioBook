@@ -1,5 +1,6 @@
 package com.allsoftdroid.audiobook.feature_downloader.data;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -17,10 +18,12 @@ import androidx.core.content.FileProvider;
 
 import com.allsoftdroid.audiobook.feature_downloader.data.config.ProviderConfig;
 import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract.downloadEntry;
+import com.allsoftdroid.audiobook.feature_downloader.data.model.LocalFileDetails;
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloader;
 import com.allsoftdroid.audiobook.feature_downloader.utils.DownloadObserver;
 import com.allsoftdroid.audiobook.feature_downloader.utils.downloadUtils;
 import com.allsoftdroid.common.base.extension.Event;
+import com.allsoftdroid.common.base.network.ArchiveUtils;
 import com.allsoftdroid.common.base.store.downloader.Cancel;
 import com.allsoftdroid.common.base.store.downloader.Cancelled;
 import com.allsoftdroid.common.base.store.downloader.Download;
@@ -40,11 +43,15 @@ import java.util.Objects;
 import timber.log.Timber;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
+import static com.allsoftdroid.audiobook.feature_downloader.utils.DownloadStatus.DOWNLOADER_NOT_DOWNLOADING;
+import static com.allsoftdroid.audiobook.feature_downloader.utils.DownloadStatus.DOWNLOADER_PENDING_ID;
+import static com.allsoftdroid.audiobook.feature_downloader.utils.DownloadStatus.DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
+import static com.allsoftdroid.audiobook.feature_downloader.utils.DownloadStatus.DOWNLOADER_RE_DOWNLOAD;
 import static com.allsoftdroid.audiobook.feature_downloader.utils.Utility.STATUS_SUCCESS;
 
 public class Downloader implements IDownloader {
 
-    private Context mContext;
+    private Activity mContext;
     private DownloadManager downloadManager;
     private DownloadEventStore mDownloadEventStore;
     private static HashMap<String,Integer> keyStrokeCount = new HashMap<>();
@@ -52,12 +59,12 @@ public class Downloader implements IDownloader {
     private boolean isDownloading = false;
     private LinkedHashMap<String,Download> mDownloadQueue = new LinkedHashMap<>();
 
-    public Downloader(Context context) {
+    public Downloader(Activity context) {
         mContext = context;
         downloadManager = (DownloadManager) mContext.getSystemService(DOWNLOAD_SERVICE);
     }
 
-    public Downloader(Context context, DownloadEventStore eventStore){
+    public Downloader(Activity context, DownloadEventStore eventStore){
         mContext = context;
         downloadManager = (DownloadManager) mContext.getSystemService(DOWNLOAD_SERVICE);
         mDownloadEventStore = eventStore;
@@ -92,22 +99,22 @@ public class Downloader implements IDownloader {
             mDownloadEventStore.publish(
                     new Event<>(new Cancelled(cancel.getBookId(), cancel.getChapterIndex(), cancel.getFileUrl()))
             );
-            Timber.d("Cancelled  event sent for "+cancel.toString());
+            Timber.d("Cancelled  event sent for %s", cancel.toString());
 
         }else if(downloadEvent instanceof Download){
             Download temp = (Download) downloadEvent;
             addToDownloadQueueRequest(temp);
 
-            Timber.d("Downloading  event sent for "+temp.toString());
+            Timber.d("Downloading  event sent for %s", temp.toString());
         }
         else if(downloadEvent instanceof Downloaded){
             Downloaded downloaded = (Downloaded) downloadEvent;
-            Timber.d("Downloaded  event received for "+downloaded.toString());
+            Timber.d("Downloaded  event received for %s", downloaded.toString());
             downloadNext(downloaded.getUrl());
 
         }
         else{
-            Timber.d("Download event value: " + downloadEvent);
+            Timber.d("Download event value: %s", downloadEvent);
         }
     }
 
@@ -118,7 +125,7 @@ public class Downloader implements IDownloader {
             Timber.d("Downloading as it is first request");
             downloadOldestRequest();
         }else{
-            insertDownloadDatabase(downloadUtils.DOWNLOADER_PENDING_ID,obj.getName(),obj.getUrl());
+            insertDownloadDatabase(DOWNLOADER_PENDING_ID,obj.getName(),obj.getUrl());
             Timber.d("Added to download queue");
         }
 
@@ -136,18 +143,24 @@ public class Downloader implements IDownloader {
             downloadOldestRequest();
         }
 
-        Timber.d("Staring new Download, Removing URL:"+removeUrl);
+        Timber.d("Staring new Download, Removing URL:%s", removeUrl);
     }
 
     private void downloadOldestRequest() {
         if(isDownloading) return;
 
         Download download1 = mDownloadQueue.entrySet().iterator().next().getValue();
-        Timber.d("New Download event received: "+download1.toString());
+        Timber.d("New Download event received: %s", download1.toString());
+
         long downloadId = download(download1.getUrl(),download1.getName(),download1.getDescription(),download1.getSubPath());
 
+        if(downloadId == DOWNLOADER_RE_DOWNLOAD){
+            Timber.d("Re-downloading as file appear to be missing from local storage");
+            downloadId = download(download1.getUrl(),download1.getName(),download1.getDescription(),download1.getSubPath());
+        }
+
         File file = new File(Environment.DIRECTORY_DOWNLOADS,download1.getSubPath()+download1.getName());
-        Timber.d("File path:"+file.getAbsolutePath());
+        Timber.d("File path:%s", file.getAbsolutePath());
 
         mDownloadObserver = new DownloadObserver(
                 this,
@@ -157,8 +170,7 @@ public class Downloader implements IDownloader {
                 download1.getUrl(),downloadId);
         mDownloadObserver.startWatching();
 
-        Timber.d("File tracker attached for New Download: "+download1.toString());
-        file = null;
+        Timber.d("File tracker attached for New Download: %s", download1.toString());
     }
 
     @Override
@@ -179,41 +191,67 @@ public class Downloader implements IDownloader {
 
     private long download(String URL, String name, String description, String subPath){
 
+        String downloadFolder = ArchiveUtils.Companion.getDownloadsRootFolder(mContext.getApplication());
+
         //store downloadId to database for own reference
-        long downloadId= downloadUtils.isDownloading(mContext,URL);
-        if(downloadId==downloadUtils.DOWNLOADER_NOT_DOWNLOADING){
+        long downloadId= downloadUtils.getDownloadIdIfIsDownloading(mContext,URL);
+        if(downloadId==DOWNLOADER_NOT_DOWNLOADING){
             Uri uri = Uri.parse(URL);
-            Timber.d("DownloaderLOG: =>%s", URL);
+            Timber.d("Downloading file from URL: =>%s", URL);
             downloadId = downloadUtils.DownloadData(
                     downloadManager,
                     uri,
                     name,
                     description,
+                    downloadFolder,
                     subPath
             );
 
 
-            if(downloadId !=downloadUtils.DOWNLOADER_PROTOCOL_NOT_SUPPORTED){
+            if(downloadId !=DOWNLOADER_PROTOCOL_NOT_SUPPORTED){
+                Timber.d("Downloader doesn't support this protocol for file from URL: =>%s", URL);
                 insertDownloadDatabase(downloadId,name,URL);
             }else {
 
                 //TODO: way to clear database items
-                int count = keyStrokeCount.containsKey(URL)?keyStrokeCount.get(URL):0;
+                int count = 0;
+                if(keyStrokeCount.containsKey(URL)){
+                    try{
+                        count = keyStrokeCount.get(URL);
+                    }catch (NullPointerException e){
+                        e.printStackTrace();
+                    }
+                }
+
                 if(count >=2 ){
                     Toast.makeText(mContext,"file link Copied",Toast.LENGTH_SHORT).show();
                     ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText(name, URL);
-                    clipboard.setPrimaryClip(clip);
+                    if(clipboard!=null){
+                        ClipData clip = ClipData.newPlainText(name, URL);
+                        clipboard.setPrimaryClip(clip);
+                    }
                 }else{
                     if(count == 0) Toast.makeText(mContext,"Downloading Problem, Double Tap to copy URL",Toast.LENGTH_SHORT).show();
                     keyStrokeCount.put(URL,count+1);
                 }
 
-                return downloadUtils.DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
+                return DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
             }
         }else {
-            return -99;
+            Timber.d("It's appears that file is already downloaded from URL: =>%s", URL);
+            Timber.d("Downloader return id %s  for URL  =>%s", downloadId ,URL);
+
+            if(isFileLocallyExists(downloadId)){
+                Timber.d("No need to download file already exist");
+                return downloadId;
+            }else{
+                Timber.d("Need to download again as file  is missing from local");
+                cancelDownload(downloadId);
+                removeFromDownloadDatabase(downloadId);
+                return DOWNLOADER_RE_DOWNLOAD;
+            }
         }
+
         Timber.d("Downloader2: =>%s",URL);
         return downloadId;
     }
@@ -282,13 +320,13 @@ public class Downloader implements IDownloader {
             String id = cursor.getString(cursor.getColumnIndex(downloadEntry._ID));
             Uri currentDownloadUri = ContentUris.withAppendedId(downloadEntry.CONTENT_URI, Long.parseLong(id));
             mContext.getContentResolver().update(currentDownloadUri,values,selection,selectionArgs);
-            Timber.d("Updated  at:"+currentDownloadUri.toString());
+            Timber.d("Updated  at:%s", currentDownloadUri.toString());
             cursor.close();
         }else {
             //It is new entry and we will add new in table
             Uri newUri = mContext.getContentResolver().insert(downloadEntry.CONTENT_URI,values);
             if(newUri!=null){
-                Timber.d("Inserted at:"+newUri.toString());
+                Timber.d("Inserted at:%s", newUri.toString());
             }
         }
     }
@@ -357,7 +395,7 @@ public class Downloader implements IDownloader {
 
         if(cursor!=null) cursor.close();
 
-        Timber.d("Data:"+data);
+        Timber.d("Data:%s", data);
     }
 
     @Override
@@ -444,33 +482,49 @@ public class Downloader implements IDownloader {
     @Override
     public void openDownloadedFile(Context context, long downloadId) {
 
-        DownloadManager.Query query = new DownloadManager.Query();
-        query.setFilterById(downloadId);
-        Cursor cursor = downloadManager.query(query);
+        LocalFileDetails localFileDetails = getLocalFileUriForDownloadId(downloadId);
+
+        if(localFileDetails!=null){
+            Intent myIntent = new Intent(Intent.ACTION_VIEW);
+            if(Build.VERSION.SDK_INT>=24){
+                File newFile = new File(Objects.requireNonNull(localFileDetails.getLocalUri().getPath()));
+                Uri contentUri = FileProvider.getUriForFile(context, ProviderConfig.PROVIDER_AUTHORITY, newFile);
+                myIntent.setDataAndType(contentUri, localFileDetails.getMimeType());
+                myIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            }else {
+                myIntent.setDataAndType(localFileDetails.getLocalUri(), localFileDetails.getMimeType());
+            }
+
+            Intent open = Intent.createChooser(myIntent, "Choose an application to open with:");
+            context.startActivity(open);
+        }
+    }
+
+    private LocalFileDetails getLocalFileUriForDownloadId(long downloadId){
+        Cursor cursor = query(downloadId);
+
         if (cursor!=null && cursor.moveToFirst()) {
             int downloadStatus = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
             String downloadLocalUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
             String downloadMimeType = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_MEDIA_TYPE));
             if ((downloadStatus == DownloadManager.STATUS_SUCCESSFUL) && downloadLocalUri != null) {
-                openFile(context, Uri.parse(downloadLocalUri), downloadMimeType);
+                return new LocalFileDetails(downloadLocalUri,downloadMimeType);
             }
         }
+
         if(cursor!=null) cursor.close();
+        return null;
     }
 
-    private void openFile(Context context,Uri item ,String mimeType){
-        Intent myIntent = new Intent(Intent.ACTION_VIEW);
-        if(Build.VERSION.SDK_INT>=24){
-            File newFile = new File(Objects.requireNonNull(item.getPath()));
-            Uri contentUri = FileProvider.getUriForFile(context, ProviderConfig.PROVIDER_AUTHORITY, newFile);
-            myIntent.setDataAndType(contentUri, mimeType);
-            myIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        }else {
-            myIntent.setDataAndType(item, mimeType);
+    private boolean isFileLocallyExists(long mDownloadId){
+        LocalFileDetails localFileDetails = getLocalFileUriForDownloadId(mDownloadId);
+
+        if(localFileDetails!=null){
+            File localFile = new File(Objects.requireNonNull(localFileDetails.getLocalUri().getPath()));
+            return localFile.isFile();
         }
 
-        Intent open = Intent.createChooser(myIntent, "Choose an application to open with:");
-        context.startActivity(open);
+        return false;
     }
 
     @Override
