@@ -3,7 +3,7 @@ name: "Release Deploy CI"
 on:
   push:
     branches:         # array of glob patterns matching against refs/heads. Optional; defaults to all
-      - release_ci          # triggers on pushes that contain changes in release
+      - release        # triggers on pushes that contain changes in release
 
 jobs:
   build:
@@ -22,4 +22,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO_OWNER: pravinyo
           WITH_V: true
-          RELEASE_BRANCHES: release_ci
+          RELEASE_BRANCHES: release
