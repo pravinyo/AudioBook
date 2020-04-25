@@ -1,0 +1,25 @@
+name: "Release Deploy CI"
+
+on:
+  push:
+    branches:         # array of glob patterns matching against refs/heads. Optional; defaults to all
+      - release        # triggers on pushes that contain changes in release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Create Release Folder
+        run: rsync -arv --exclude='.git/' --exclude='.github/' --exclude='.idea/' --exclude='.gitignore' . ./release
+      - name: Switch to Release folder
+        run: |
+          cd release
+          ls -la
+      - name: Bump Version and Push tag
+        uses: anothrNick/github-tag-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_OWNER: pravinyo
+          WITH_V: true
+          RELEASE_BRANCHES: release
