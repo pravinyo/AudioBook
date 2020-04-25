@@ -22,4 +22,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO_OWNER: pravinyo
           WITH_V: true
-          RELEASE_BRANCHES: release
+          RELEASE_BRANCHES: release_ci
