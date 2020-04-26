@@ -14,7 +14,6 @@ jobs:
           issue-lock-inactive-days: '10'
           issue-lock-reason: 'resolved'
           issue-lock-labels: 'outdated'
-          issue-lock-comment: 'Closing as per process'
           issue-lock-comment: >
             This issue has been automatically locked since there
             has not been any recent activity after it was closed.
