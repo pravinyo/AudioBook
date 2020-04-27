@@ -55,4 +55,7 @@ dependencies {
     kapt(LibraryDependency.MOSHI_KOTLIN_CODEGEN){
         because("Replaced with Gson as it makes code better and clean")
     }
+
+    // Local Test - JVM testing
+    testImplementation(TestLibraryDependency.JUNIT)
 }
