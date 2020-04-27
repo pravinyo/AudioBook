@@ -58,4 +58,5 @@ dependencies {
 
     // Local Test - JVM testing
     testImplementation(TestLibraryDependency.JUNIT)
+    testImplementation(TestLibraryDependency.HAMCREST)
 }
