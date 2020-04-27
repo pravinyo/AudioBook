@@ -1,5 +1,7 @@
 package com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.utils
 
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.not
 import org.junit.Assert
 import org.junit.Test
 
@@ -15,7 +17,8 @@ class BookDetailsParserFromHtmlTest {
         //Act
         val details = systemUnderTest.loadDetails(pageData)
         //Assert
-        Assert.assertNotNull(details)
+        Assert.assertThat(details.chapters,not(emptyList()))
+        Assert.assertThat(details.runtime.length,not(0))
     }
 
     @Test
@@ -26,7 +29,7 @@ class BookDetailsParserFromHtmlTest {
         //Act
         val details = systemUnderTest.loadDetails(pageData)
         //Assert
-        Assert.assertEquals(68,details.chapters.size)
+        Assert.assertThat(details.chapters.size,`is`(68))
     }
 
     @Test
@@ -37,7 +40,7 @@ class BookDetailsParserFromHtmlTest {
         //Act
         val details = systemUnderTest.loadDetails(pageData)
         //Assert
-        Assert.assertNotEquals(0,details.description.length)
+        Assert.assertThat(details.description.length,not(0))
     }
 
     @Test
@@ -51,6 +54,10 @@ class BookDetailsParserFromHtmlTest {
         Assert.assertEquals("",details.archiveUrl)
         Assert.assertEquals(0,details.chapters.size)
         Assert.assertEquals("",details.runtime)
+
+        Assert.assertThat(details.chapters.size,`is`(0))
+        Assert.assertThat(details.archiveUrl,`is`(""))
+        Assert.assertThat(details.runtime,`is`(""))
     }
 
     private fun getHtmlResponse(path:String): String {
