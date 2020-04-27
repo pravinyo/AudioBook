@@ -25,7 +25,7 @@ class BestBookDetailsParser {
 
     fun getListWithRanks(list: List<WebDocument>,bookTitle:String,bookAuthor:String):List<Pair<Int,WebDocument>>{
 
-        if (list.isEmpty()) throw IllegalArgumentException("List cannot be empty")
+        if (list.isEmpty()) return emptyList()
 
         val title = formattedFilter(bookTitle)
         titleKeyWords = formattedList(title)
