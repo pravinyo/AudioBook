@@ -6,6 +6,7 @@ import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.network.NetworkResponseListener
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.ISearchBookDetailsRepository
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.IStoreRepository
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.utils.BestBookDetailsParser
 import com.allsoftdroid.common.base.network.Failure
 import com.allsoftdroid.common.base.network.Success
 import com.dropbox.android.external.store4.get
@@ -14,7 +15,8 @@ import kotlinx.coroutines.FlowPreview
 import timber.log.Timber
 
 class SearchBookDetailsRepositoryImpl(private val storeCachingRepository:IStoreRepository,
-                                      private val bestMatcher: BestBookDetailsParser) :   ISearchBookDetailsRepository {
+                                      private val bestMatcher: BestBookDetailsParser
+) :   ISearchBookDetailsRepository {
 
     /***
      * hold stories related to politics
