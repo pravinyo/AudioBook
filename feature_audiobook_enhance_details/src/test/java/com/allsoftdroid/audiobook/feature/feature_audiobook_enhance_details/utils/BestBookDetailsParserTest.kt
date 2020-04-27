@@ -1,5 +1,7 @@
 package com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.utils
 
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.Matchers.not
 import org.junit.Assert
 import org.junit.Test
 
@@ -16,7 +18,7 @@ class BestBookDetailsParserTest {
         //Act
         val result = systemUnderTest.getList(htmlResponse)
         //Assert
-        Assert.assertNotEquals(0,result.size)
+        Assert.assertThat(result.size, not(0))
     }
 
     @Test
@@ -26,7 +28,7 @@ class BestBookDetailsParserTest {
         //Act
         val result = systemUnderTest.getList(htmlResponse)
         //Assert
-        Assert.assertEquals(0,result.size)
+        Assert.assertThat(result.size,`is`(0))
     }
 
     @Test
@@ -37,7 +39,7 @@ class BestBookDetailsParserTest {
         val result = systemUnderTest.getList(htmlResponse)
         val ranks = systemUnderTest.getListWithRanks(result,"poem","Frank Oliver CALL (1878 - 1956)")
         //Assert
-        Assert.assertNotEquals(0,ranks.size)
+        Assert.assertThat(ranks.size, not(0))
     }
 
     @Test
@@ -48,7 +50,7 @@ class BestBookDetailsParserTest {
         val result = systemUnderTest.getList(htmlResponse)
         val ranks = systemUnderTest.getListWithRanks(result,"poem","Frank Oliver CALL (1878 - 1956)")
         //Assert
-        Assert.assertEquals(0,ranks.size)
+        Assert.assertThat(ranks.size, `is`(0))
     }
 
     private fun getResponse(isFound:Boolean):String{
