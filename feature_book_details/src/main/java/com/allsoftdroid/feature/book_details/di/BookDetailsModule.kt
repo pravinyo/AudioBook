@@ -2,6 +2,7 @@ package com.allsoftdroid.feature.book_details.di
 
 import androidx.lifecycle.SavedStateHandle
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.network.LibriVoxApi
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.BookDetailsParserFromHtml
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.utils.BestBookDetailsParser
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.FetchAdditionalBookDetailsRepositoryImpl
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.NetworkCachingStoreRepositoryImpl
@@ -110,7 +111,8 @@ object BookDetailsModule {
         }
 
         factory {
-            FetchAdditionalBookDetailsRepositoryImpl(storeCachingRepository = get()) as IFetchAdditionBookDetailsRepository
+            FetchAdditionalBookDetailsRepositoryImpl(storeCachingRepository = get(),
+                bookDetailsParser = get()) as IFetchAdditionBookDetailsRepository
         }
     }
 
@@ -142,6 +144,10 @@ object BookDetailsModule {
         
         single{
             BestBookDetailsParser()
+        }
+
+        single {
+            BookDetailsParserFromHtml()
         }
     }
 
