@@ -13,7 +13,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import timber.log.Timber
 
-class SearchBookDetailsRepositoryImpl(private val storeCachingRepository:IStoreRepository) :   ISearchBookDetailsRepository {
+class SearchBookDetailsRepositoryImpl(private val storeCachingRepository:IStoreRepository,
+                                      private val bestMatcher: BestBookDetailsParser) :   ISearchBookDetailsRepository {
 
     /***
      * hold stories related to politics
@@ -41,8 +42,8 @@ class SearchBookDetailsRepositoryImpl(private val storeCachingRepository:IStoreR
             val data = storeCachingRepository.provideEnhanceBookSearchStore().get(Pair(searchTitle,page))
 
             if(data.isNotEmpty()){
-                val list = BookBestMatchFromNetworkResult.getList(data)
-                val best = BookBestMatchFromNetworkResult.getListWithRanks(list,searchTitle,author)
+                val list = bestMatcher.getList(data)
+                val best = bestMatcher.getListWithRanks(list,searchTitle,author)
 
                 _listOfItem.value = list
                 _bestMatch.value = best
