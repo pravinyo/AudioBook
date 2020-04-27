@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository
+package com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.utils
 
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.BookDetails
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.Chapter
