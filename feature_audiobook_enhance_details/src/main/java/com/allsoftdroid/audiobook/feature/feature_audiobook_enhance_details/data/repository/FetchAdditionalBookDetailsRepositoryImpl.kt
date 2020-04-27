@@ -11,7 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-class FetchAdditionalBookDetailsRepositoryImpl(private val storeCachingRepository: IStoreRepository) :
+class FetchAdditionalBookDetailsRepositoryImpl(private val storeCachingRepository: IStoreRepository,
+                                               private val bookDetailsParser: BookDetailsParserFromHtml) :
     IFetchAdditionBookDetailsRepository {
 
     private var _bookDetails = MutableLiveData<BookDetails>()
@@ -35,7 +36,7 @@ class FetchAdditionalBookDetailsRepositoryImpl(private val storeCachingRepositor
                 val pageData = storeCachingRepository.provideEnhanceBookDetailsStore().get(bookUrl)
 
                 if(pageData.isNotEmpty()){
-                    details = BookDetailsParsingFromNetworkResponse.loadDetails(pageData)
+                    details = bookDetailsParser.loadDetails(pageData)
                 }
             }catch (exception:Exception){
                 exception.printStackTrace()
