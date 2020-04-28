@@ -17,7 +17,7 @@ import timber.log.Timber
 class FetchAdditionalBookDetailsUsecase(private val fetchAdditionBookDetailsRepository: IFetchAdditionBookDetailsRepository) :
     BaseUseCase<FetchAdditionalBookDetailsUsecase.RequestValues, FetchAdditionalBookDetailsUsecase.ResponseValues>() {
 
-    override suspend fun executeUseCase(requestValues: RequestValues?) {
+    public override suspend fun executeUseCase(requestValues: RequestValues?) {
         requestValues?.let {
 
             fetchAdditionBookDetailsRepository.registerNetworkResponse(listener = object :
