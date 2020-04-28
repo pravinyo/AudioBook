@@ -61,4 +61,5 @@ dependencies {
     testImplementation(TestLibraryDependency.HAMCREST)
     testImplementation(TestLibraryDependency.MOCKITO_CORE)
     testImplementation(TestLibraryDependency.COROUTINES_TEST)
+    testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
 }
