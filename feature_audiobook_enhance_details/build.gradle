@@ -56,7 +56,9 @@ dependencies {
         because("Replaced with Gson as it makes code better and clean")
     }
 
-    // Local Test - JVM testing
+    // Unit Testing
     testImplementation(TestLibraryDependency.JUNIT)
     testImplementation(TestLibraryDependency.HAMCREST)
+    testImplementation(TestLibraryDependency.MOCKITO_CORE)
+    testImplementation(TestLibraryDependency.COROUTINES_TEST)
 }
