@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature.book_details.data.repository
+package com.allsoftdroid.feature.book_details.utils
 
 import com.allsoftdroid.feature.book_details.data.network.service.ArchiveMetadataService
 import okhttp3.Request

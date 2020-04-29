@@ -8,6 +8,8 @@ import com.allsoftdroid.feature.book_details.data.databaseExtension.SaveMetadata
 import com.allsoftdroid.feature.book_details.data.network.service.ArchiveMetadataService
 import com.allsoftdroid.feature.book_details.domain.repository.IMetadataRepository
 import com.allsoftdroid.feature.book_details.getOrAwaitValue
+import com.allsoftdroid.feature.book_details.utils.FakeMetadataSource
+import com.allsoftdroid.feature.book_details.utils.FakeRemoteMetadataSource
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -39,8 +41,10 @@ class MetadataRepositoryImplTest{
     @ExperimentalCoroutinesApi
     @Before
     fun setup(){
-        metadataDao = FakeMetadataSource()
-        remoteMetaDataSource = FakeRemoteMetadataSource()
+        metadataDao =
+            FakeMetadataSource()
+        remoteMetaDataSource =
+            FakeRemoteMetadataSource()
         saveInDatabase = mock(SaveInDatabase::class.java) as SaveInDatabase<MetadataDao, SaveMetadataInDatabase>
 
         metadataRepository = MetadataRepositoryImpl(

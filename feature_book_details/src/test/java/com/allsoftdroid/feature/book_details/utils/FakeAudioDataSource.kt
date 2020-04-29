@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature.book_details.data.repository
+package com.allsoftdroid.feature.book_details.utils
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

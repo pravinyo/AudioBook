@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature.book_details.data.repository
+package com.allsoftdroid.feature.book_details.utils
 
 import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
