@@ -45,10 +45,16 @@ android {
 dependencies {
     implementation(project(path: ModuleDependency.LIBRARY_COMMON))
     implementation(project(path: ModuleDependency.SERVICES))
+
     implementation(LibraryDependency.KOIN_X_VIEWMODEL){
         because("Koin DI need this to inject viewModel")
     }
-
     implementation(LibraryDependency.GLIDE)
     annotationProcessor(LibraryDependency.GLIDE_COMPILER)
+
+    //Test
+    testImplementation(TestLibraryDependency.JUNIT)
+    testImplementation(TestLibraryDependency.HAMCREST)
+    testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
+    testImplementation(TestLibraryDependency.MOCKITO_CORE)
 }
