@@ -53,4 +53,5 @@ dependencies {
     //Test
     testImplementation(TestLibraryDependency.JUNIT)
     testImplementation(TestLibraryDependency.HAMCREST)
+    testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
 }
