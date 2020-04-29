@@ -10,7 +10,7 @@ class GetTrackListUsecase(
     private val listRepository: ITrackListRepository):
     BaseUseCase<GetTrackListUsecase.RequestValues,GetTrackListUsecase.ResponseValues>(){
 
-    override suspend fun executeUseCase(requestValues: RequestValues?) {
+    public override suspend fun executeUseCase(requestValues: RequestValues?) {
         requestValues?.let {
             listRepository.loadTrackListData(requestValues.trackFormat)
             Timber.d("fetching started")
