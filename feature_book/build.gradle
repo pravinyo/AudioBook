@@ -81,8 +81,14 @@ dependencies {
     androidTestImplementation(TestLibraryDependency.COROUTINES_TEST)
     androidTestImplementation(TestLibraryDependency.ANDROID_X_EXT_TESTING)
     androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
+    androidTestImplementation(TestLibraryDependency.ESPRESSO_CONTRIB)
+    androidTestImplementation(TestLibraryDependency.MOCKITO_CORE)
+    androidTestImplementation("com.linkedin.dexmaker:dexmaker-mockito:2.12.1")
 
     implementation(TestLibraryDependency.FRAGMENT_TEST)
     implementation(TestLibraryDependency.ANDROID_X_CORE)
+
+    kaptAndroidTest("androidx.databinding:databinding-compiler:3.6.3")
+
 }
 
