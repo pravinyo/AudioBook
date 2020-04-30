@@ -1,5 +1,6 @@
 package com.allsoftdroid.audiobook.audiobookListFragment.repository
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.common.base.network.Failure
 import com.allsoftdroid.common.base.network.Success
@@ -27,7 +28,7 @@ class FakeAudioBookRepository(private val manualFailure:Boolean = false) : Audio
     override suspend fun fetchBookList(page: Int) {
         if(!manualFailure){
             val list = ArrayList<AudioBookDomainModel>()
-            list.add(AudioBookDomainModel("1","Title","creator","2019-12-01'T'11:11:00'Z'"))
+            list.add(AudioBookDomainModel("1","Title","creator","2019"))
 
             audioBooks.value = list
 
@@ -40,4 +41,13 @@ class FakeAudioBookRepository(private val manualFailure:Boolean = false) : Audio
     }
 
     override fun getAudioBooks()= audioBooks
+
+    override suspend fun searchBookList(query: String, page: Int) {
+
+    }
+
+    override fun getSearchBooks(): LiveData<List<AudioBookDomainModel>> {
+        val list = MutableLiveData<List<AudioBookDomainModel>>()
+        return list
+    }
 }
