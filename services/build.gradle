@@ -43,4 +43,9 @@ dependencies {
 
     implementation(LibraryDependency.EXOPLAYER)
     implementation(LibraryDependency.SUPPORT_V13)
+
+    //Test
+    testImplementation(TestLibraryDependency.JUNIT)
+    testImplementation(TestLibraryDependency.HAMCREST)
+    testImplementation(TestLibraryDependency.ROBOELECTRIC_TEST)
 }
