@@ -47,5 +47,6 @@ dependencies {
     //Test
     testImplementation(TestLibraryDependency.JUNIT)
     testImplementation(TestLibraryDependency.HAMCREST)
+    testImplementation(TestLibraryDependency.MOCKITO_CORE)
     testImplementation(TestLibraryDependency.ROBOELECTRIC_TEST)
 }
