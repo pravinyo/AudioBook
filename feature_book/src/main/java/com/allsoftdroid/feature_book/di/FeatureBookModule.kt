@@ -1,7 +1,6 @@
 package com.allsoftdroid.feature_book.di
 
 import androidx.annotation.VisibleForTesting
-import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.database.bookListDB.AudioBookDao
 import com.allsoftdroid.database.common.AudioBookDatabase
 import com.allsoftdroid.database.common.SaveInDatabase
