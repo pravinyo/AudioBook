@@ -8,6 +8,7 @@ private object TestLibraryVersion {
     const val ESPRESSO_CORE = "3.1.0"
     const val MOCKITO = "3.0.0"
     const val MOCKITO_KOTLIN = "2.2.0"
+    const val MOCKITO_DEXMAKER = "2.12.1"
     const val koin_version = "2.0.1"
     const val ANDROID_X_TEST = "1.2.0"
 
@@ -30,6 +31,7 @@ object TestLibraryDependency {
     const val MOCKITO_ANDROID = "org.mockito:mockito-android:${TestLibraryVersion.MOCKITO}"
     const val MOCKITO_KOTLIN = "com.nhaarman.mockitokotlin2:mockito-kotlin:${TestLibraryVersion.MOCKITO_KOTLIN}"
     const val MOCKITO_CORE = "org.mockito:mockito-core:${TestLibraryVersion.MOCKITO_CORE}"
+    const val MOCKITO_DEXMAKER = "com.linkedin.dexmaker:dexmaker-mockito:${TestLibraryVersion.MOCKITO_DEXMAKER}"
 
     const val COROUTINES_TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${CoreVersion.COROUTINES_ANDROID}"
     const val ANDROID_X_CORE_TESTING = "android.arch.core:core-testing:${TestLibraryVersion.ANDROID_X_TEST}"
