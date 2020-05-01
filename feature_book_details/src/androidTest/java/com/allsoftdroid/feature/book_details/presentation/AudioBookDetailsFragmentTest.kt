@@ -9,7 +9,10 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.data.repository.BookDetailsSharedPreferencesRepositoryImpl
+import com.allsoftdroid.feature.book_details.di.BookDetailsModule
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
+import com.allsoftdroid.feature.book_details.presentation.BookDetailsDI.dataModule
+import com.allsoftdroid.feature.book_details.presentation.BookDetailsDI.repositoryModule
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -27,20 +30,17 @@ class AudioBookDetailsFragmentTest{
     fun setup(){
 
         val application = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as Application
-        val dataModuleTest : Module = module {
+        val storageModule : Module = module {
             single<BookDetailsSharedPreferenceRepository> {
                 BookDetailsSharedPreferencesRepositoryImpl.create(application)
             }
         }
 
-        val usecaseHandlerModuleTest : Module = module {
-            single {
-                UseCaseHandler.getInstance()
-            }
-        }
+        BookDetailsModule.dataModule = dataModule
+        BookDetailsModule.repositoryModule = repositoryModule
 
         startKoin {
-            modules(dataModuleTest,usecaseHandlerModuleTest)
+            modules(storageModule)
         }
     }
 
