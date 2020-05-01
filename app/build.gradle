@@ -66,26 +66,9 @@ dependencies {
     implementation(project(path: ModuleDependency.FEATURE_MINI_PLAYER))
     implementation(project(path: ModuleDependency.FEATURE_DOWNLOADER))
     implementation(project(path: ModuleDependency.FEATURE_PLAYER_FULL_SCREEN))
-
     implementation(project(path: ModuleDependency.SERVICES))
 
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
-
-    androidTestImplementation(TestLibraryDependency.JUNIT)
-    androidTestImplementation(TestLibraryDependency.COROUTINES_TEST)
-    androidTestImplementation(TestLibraryDependency.ANDROID_X_EXT_TESTING)
-
-    androidTestImplementation(TestLibraryDependency.TEST_RUNNER)
-    androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
-    androidTestImplementation(TestLibraryDependency.ESPRESSO_CONTRIB)
-
-    androidTestImplementation(TestLibraryDependency.MOCKITO_CORE)
-    androidTestImplementation("com.linkedin.dexmaker:dexmaker-mockito:2.12.1")
-
-    implementation(TestLibraryDependency.FRAGMENT_TEST)
-    implementation(TestLibraryDependency.ANDROID_X_CORE)
-
     debugImplementation(LibraryDependency.LEAKY_CANARY)
-
     implementation(LibraryDependency.SUPPORT_V13)
 }
