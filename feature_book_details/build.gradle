@@ -19,6 +19,8 @@ android {
         targetSdkVersion(AndroidConfig.TARGET_SDK_VERSION)
         versionCode AndroidConfig.VERSION_CODE
         versionName AndroidConfig.VERSION_NAME
+
+        testInstrumentationRunner(AndroidConfig.TEST_INSTRUMENTATION_RUNNER)
     }
 
     buildTypes {
@@ -37,6 +39,10 @@ android {
         }
     }
 
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
     dataBinding{
         enabled = DataBinding.IS_ENABLED
     }
@@ -52,6 +58,7 @@ dependencies {
     annotationProcessor(LibraryDependency.GLIDE_COMPILER)
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
     implementation(LibraryDependency.MULTISTAGE_TOGGLE_BUTTON)
+    implementation(LibraryDependency.LOTTIE)
 
     //Unit Testing
     testImplementation(TestLibraryDependency.JUNIT)
@@ -59,4 +66,20 @@ dependencies {
     testImplementation(TestLibraryDependency.MOCKITO_CORE)
     testImplementation(TestLibraryDependency.COROUTINES_TEST)
     testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
+
+    //Instrumentation test
+    androidTestImplementation(TestLibraryDependency.JUNIT)
+    androidTestImplementation(TestLibraryDependency.COROUTINES_TEST)
+    androidTestImplementation(TestLibraryDependency.ANDROID_X_EXT_TESTING)
+    androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
+    androidTestImplementation(TestLibraryDependency.ESPRESSO_CONTRIB)
+    androidTestImplementation(TestLibraryDependency.MOCKITO_CORE)
+    androidTestImplementation(TestLibraryDependency.MOCKITO_DEXMAKER)
+
+    implementation(TestLibraryDependency.FRAGMENT_TEST)
+    implementation(TestLibraryDependency.ANDROID_X_CORE)
+
+    kaptAndroidTest("androidx.databinding:databinding-compiler:3.6.3"){
+        because("required to run instrumentation test")
+    }
 }
