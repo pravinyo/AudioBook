@@ -1,0 +1,1069 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6 ie"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7 ie"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8 ie"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9 ie"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="en" class="no-js">
+ <!--<![endif]-->
+ <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+ <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
+      </script>
+    <![endif]-->
+ <head> 
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"> 
+  <title>LibriVox</title> 
+  <meta name="description" content="Librivox"> 
+  <meta name="author" content="Librivox"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <link rel="shortcut icon" href="https://librivox.org/favicon.ico"> 
+  <link rel="stylesheet" href="https://librivox.org/css/style.css?v=1"> 
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,400italic,700,700italic" rel="stylesheet" type="text/css"> 
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+  <script type="text/javascript" src="https://librivox.org/js/catalog/small-menu.js"></script> 
+  <script type="text/javascript">
+  	var CI_ROOT = "https://librivox.org/"
+  </script> 
+ </head> 
+ <body> 
+  <section class="header-wrap"> 
+   <header class="site-header"> 
+    <!-- Site title/Logo and tagline --> 
+    <hgroup class="logo-wrap"> 
+     <h1 class="logo"><a href="https://librivox.org/"><img src="https://librivox.org/images/librivox-logo.png" alt="librivox-logo" width="180" height="37"><span class="assistive-text">Librivox</span></a></h1> 
+     <h3 class="tagline">Acoustical liberation of books in the public domain</h3> 
+    </hgroup> 
+    <!-- Sub menu --> 
+    <nav class="sub-menu"> 
+     <h1 class="assistive-text icon-fontawesome-webfont"><span>Menu</span></h1> 
+     <div class="assistive-text skip-link">
+      <a href="#" title="Skip to content">Skip to content</a>
+     </div> 
+     <ul class="sub-menu-list"> 
+      <li class="first"><a href="https://librivox.org/pages/about-librivox">about</a></li> 
+      <li><a href="https://forum.librivox.org/">forum</a></li> 
+      <li><a href="https://librivox.org/pages/contact-librivox">contact</a></li> 
+      <li><a href="https://librivox.org/pages/help">help</a></li> 
+      <li class="twitter ir"><a href="http://twitter.com/librivox">Twitter</a></li> 
+      <!-- <li class="facebook ir"><a href="http://www.facebook.com/LibriVox">Facebook</a></li> --> 
+      <li class="rss "><a href="https://librivox.org/pages/librivox-feeds">rss</a></li> 
+     </ul> 
+    </nav>
+    <!-- end sub-menu --> 
+    <!-- Search Form --> 
+    <div class="search-wrap"> 
+     <form role="search" action="#" id="searchform" method="get" class="searchform"> 
+      <label class="assistive-text" for="q">Search Librivox</label> 
+      <input type="text" placeholder="Search by Author, Title or Reader" id="q" name="q" class="field"> 
+      <input type="text" id="dummy" name="dummy" style="display:none;"> 
+      <input type="submit" value="Search" id="searchsubmit" name="submit" class="submit"> 
+     </form> 
+     <a href="#" class="advanced-search js-advanced-search"> Advanced search</a> 
+    </div> 
+    <!-- end search-wrap --> 
+   </header> 
+   <!-- Main menu --> 
+   <div class="main-menu-wrap"> 
+    <section class="main-menu"> 
+     <h3>Browse the catalog</h3> 
+     <nav class="main-menu-list-wrap"> 
+      <ul class="main-menu-list"> 
+       <li data-menu_item="author" class="js-menu_item first"><a href="#"><span class="author-icon"></span>Author</a></li> 
+       <li data-menu_item="title" class="js-menu_item last"><a href="#"><span class="title-icon"></span>Title</a></li> 
+       <li data-menu_item="genre" class="js-menu_item "><a href="#"><span class="genre-icon"></span>Genre/Subject</a></li> 
+       <li data-menu_item="language" class="js-menu_item "><a href="#"><span class="language-icon"></span>Language</a></li> 
+       <!-- <li data-menu_item="reader" class="js-menu_item "><a href="#"><span class="reader-icon"></span>Reader</a></li> --> 
+      </ul> 
+     </nav> 
+    </section> 
+    <!-- end main-menu --> 
+   </div> 
+   <!-- end .main-menu-wrap --> 
+  </section>
+  <!-- end .header-wrap --> 
+  <input type="hidden" id="primary_key" value="0"> 
+  <div class="main-content"> 
+   <div class="sidebar book-page"> 
+    <a href="https://librivox.org/pages/donate-to-librivox/" class="donate">Donate to Librivox</a> 
+    <a href="https://librivox.org/pages/thank-a-reader/" class="thank-reader">Thank a reader</a> 
+    <div class="disclaimer">
+      LibriVox recordings are Public Domain in the USA. If you are not in the USA, please verify the copyright status of these works in your own country before downloading, otherwise you may be violating copyright laws. 
+    </div> 
+    <div class="book-page-sidebar"> 
+     <h4>Listen/Download (<a href="https://librivox.org/pages/help">help?</a>)</h4> 
+     <dl class="listen-download clearfix"> 
+      <dt>
+       Whole book (zip file)
+      </dt> 
+      <dd>
+       <a href="http://www.archive.org/download//versespopularandhumorous_2004_librivox/versespopularandhumorous_2004_librivox_64kb_mp3.zip" class="book-download-btn">Download</a>
+      </dd> 
+      <dt>
+       Subscribe by iTunes
+      </dt> 
+      <dd>
+       <a href="itpc://librivox.org/rss/13269" class="book-download-btn">iTunes</a>
+      </dd> 
+      <dt>
+       RSS Feed
+      </dt> 
+      <dd>
+       <a href="https://librivox.org/rss/13269" class="book-download-btn">RSS</a>
+      </dd> 
+      <dt>
+       Download torrent
+      </dt> 
+      <dd>
+       <a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/versespopularandhumorous_2004_librivox_archive.torrent" class="book-download-btn">Torrent</a>
+      </dd> 
+     </dl> 
+    </div> 
+    <div class="book-page-sidebar"> 
+     <h4>Production details</h4> 
+     <dl class="product-details clearfix"> 
+      <dt>
+       Running Time:
+      </dt> 
+      <dd>
+       04:00:34
+      </dd> 
+      <dt>
+       Zip file size:
+      </dt> 
+      <dd>
+       113MB
+      </dd> 
+      <dt>
+       Catalog date:
+      </dt> 
+      <dd>
+       2020-04-21
+      </dd> 
+      <dt>
+       Read by:
+      </dt> 
+      <dd>
+       LibriVox Volunteers
+      </dd> 
+      <dt>
+       Book Coordinator:
+      </dt> 
+      <dd>
+       <a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a>
+      </dd> 
+      <dt>
+       Meta Coordinator:
+      </dt> 
+      <dd>
+       <a href="https://librivox.org/reader/6065">David Olson</a>
+      </dd> 
+      <dt>
+       Proof Listener:
+      </dt> 
+      <dd>
+       <a href="https://librivox.org/reader/11955">Helen Z. Ferrara</a>
+      </dd> 
+     </dl> 
+    </div> 
+    <div class="book-page-sidebar"> 
+     <h4>Links</h4> 
+     <p><a href="http://archive.org/details/versespopularandhumorous_2004_librivox">Internet Archive Page</a></p> 
+     <p><a href="http://www.gutenberg.org/ebooks/52066">Online text</a></p> 
+     <p><a href="http://en.wikipedia.org/wiki/Henry_Lawson">Wikipedia - Henry Lawson</a></p> 
+     <p><a href="https://en.wikipedia.org/wiki/Verses,_Popular_and_Humorous">Wikipedia Book - Verses Popular And Humorous</a></p> 
+     <p><a href="https://archive.org/download/versespopularandhumorous_2004_librivox/VersesPopularHumerous_librivox.m4b">M4B Audiobook (110MB)</a></p> 
+    </div> 
+   </div> 
+   <div class="page book-page"> 
+    <div class="content-wrap clearfix"> 
+     <div class="book-page-book-cover"> 
+      <img src="https://archive.org/download/versespopularandhumorous_2004_librivox/verses_1904.jpg" alt="book-cover-large" width="175" height="175"> 
+      <a href="https://archive.org/download/versespopularandhumorous_2004_librivox/verses_1904.jpg" class="download-cover">Download cover art</a> 
+      <a href="https://archive.org/download/versespopularandhumorous_2004_librivox/verses_1904.pdf" class="download-cover">Download CD case insert</a> 
+     </div> 
+     <h1>Verses Popular And Humorous</h1> 
+     <p class="book-page-author"><a href="https://librivox.org/author/415">Henry LAWSON (1867 - 1922)</a></p> 
+     <div class="description">
+      Verses, Popular and Humorous (1900) was the second collection of poems by Australian poet Henry Lawson. It features some of the poet's earlier major works, including "The Lights of Cobb and Co", "Saint Peter" and "The Grog-An'-Grumble-Steeplechase". Most of the poems in the volume had been written after the publication of In the Days When the World was Wide and Other Verses in 1896.
+      <br> The original collection includes 66 poems by the author that are reprinted from various sources. Later publications split the collection into two separate volumes: Popular Verses and Humorous Verses, though the contents differed from the original list. - Summary by Wikipedia 
+      <br>
+      <br> Initial DPL: Larry Wilson and MC: Phil Chenevert
+     </div> 
+     <!-- .description --> 
+     <p class="book-page-genre"><span>Genre(s):</span> Single author, Ballads</p> 
+     <p class="book-page-genre"><span>Language:</span> English</p> 
+    </div> 
+    <!-- end .content-wrap --> 
+    <table class="chapter-download"> 
+     <thead> 
+      <tr> 
+       <th>Section</th> 
+       <th>Chapter</th> 
+       <th>Reader</th> 
+       <th>Time</th> 
+      </tr> 
+     </thead> 
+     <tbody> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_00_lawson_64kb.mp3" class="play-btn">Play</a> 00 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_00_lawson_128kb.mp3" class="chapter-name">Preface</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:00:57</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_01_lawson_64kb.mp3" class="play-btn">Play</a> 01 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_01_lawson_128kb.mp3" class="chapter-name">The Ports Of The Open Sea</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:03:21</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_02_lawson_64kb.mp3" class="play-btn">Play</a> 02 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_02_lawson_128kb.mp3" class="chapter-name">The Three Kings</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:02:33</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_03_lawson_64kb.mp3" class="play-btn">Play</a> 03 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_03_lawson_128kb.mp3" class="chapter-name">The Outside Track</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:02:02</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_04_lawson_64kb.mp3" class="play-btn">Play</a> 04 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_04_lawson_128kb.mp3" class="chapter-name">Sydney-Side</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:02:36</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_05_lawson_64kb.mp3" class="play-btn">Play</a> 05 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_05_lawson_128kb.mp3" class="chapter-name">The Rovers</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:03:41</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_06_lawson_64kb.mp3" class="play-btn">Play</a> 06 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_06_lawson_128kb.mp3" class="chapter-name">Foreign Lands</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:03:15</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_07_lawson_64kb.mp3" class="play-btn">Play</a> 07 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_07_lawson_128kb.mp3" class="chapter-name">Mary Lemaine</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:02:36</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_08_lawson_64kb.mp3" class="play-btn">Play</a> 08 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_08_lawson_128kb.mp3" class="chapter-name">The Shakedown On The Floor</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:02:44</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_09_lawson_64kb.mp3" class="play-btn">Play</a> 09 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_09_lawson_128kb.mp3" class="chapter-name">Reedy River</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:02:33</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_10_lawson_64kb.mp3" class="play-btn">Play</a> 10 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_10_lawson_128kb.mp3" class="chapter-name">Old Stone Chimney</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:04:43</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_11_lawson_64kb.mp3" class="play-btn">Play</a> 11 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_11_lawson_128kb.mp3" class="chapter-name">Song Of The Old Bullock-Driver</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:03:09</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_12_lawson_64kb.mp3" class="play-btn">Play</a> 12 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_12_lawson_128kb.mp3" class="chapter-name">The Lighs Of Cobb &amp; Co</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:04:50</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_13_lawson_64kb.mp3" class="play-btn">Play</a> 13 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_13_lawson_128kb.mp3" class="chapter-name">How The Land Was Won</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:03:08</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_14_lawson_64kb.mp3" class="play-btn">Play</a> 14 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_14_lawson_128kb.mp3" class="chapter-name">The Boss Over The Board</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:03:19</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_15_lawson_64kb.mp3" class="play-btn">Play</a> 15 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_15_lawson_128kb.mp3" class="chapter-name">When The Ladies Come To The Shearing Shed</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:02:31</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_16_lawson_64kb.mp3" class="play-btn">Play</a> 16 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_16_lawson_128kb.mp3" class="chapter-name">The Ballad Of The Rouseabout</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:04:03</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_17_lawson_64kb.mp3" class="play-btn">Play</a> 17 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_17_lawson_128kb.mp3" class="chapter-name">Years After The War In Australia</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:05:36</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_18_lawson_64kb.mp3" class="play-btn">Play</a> 18 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_18_lawson_128kb.mp3" class="chapter-name">The Old Jimmy Woodser</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:01:50</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_19_lawson_64kb.mp3" class="play-btn">Play</a> 19 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_19_lawson_128kb.mp3" class="chapter-name">The Christ Of The "Never"</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:02:00</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_20_lawson_64kb.mp3" class="play-btn">Play</a> 20 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_20_lawson_128kb.mp3" class="chapter-name">The Cattle-Dog's Death</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:01:57</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_21_lawson_64kb.mp3" class="play-btn">Play</a> 21 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_21_lawson_128kb.mp3" class="chapter-name">The Song Of The Darling River</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:02:26</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_22_lawson_64kb.mp3" class="play-btn">Play</a> 22 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_22_lawson_128kb.mp3" class="chapter-name">Rain In The Mountains</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:00:56</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_23_lawson_64kb.mp3" class="play-btn">Play</a> 23 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_23_lawson_128kb.mp3" class="chapter-name">A May Night On The Mountains</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:01:37</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_24_lawson_64kb.mp3" class="play-btn">Play</a> 24 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_24_lawson_128kb.mp3" class="chapter-name">The New Chum Jackaroo</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:01:53</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_25_lawson_64kb.mp3" class="play-btn">Play</a> 25 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_25_lawson_128kb.mp3" class="chapter-name">The Dons Of Spain</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:02:14</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_26_lawson_64kb.mp3" class="play-btn">Play</a> 26 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_26_lawson_128kb.mp3" class="chapter-name">The Bursting Of The Boom</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:03:56</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_27_lawson_64kb.mp3" class="play-btn">Play</a> 27 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_27_lawson_128kb.mp3" class="chapter-name">Antony Villa</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:04:45</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_28_lawson_64kb.mp3" class="play-btn">Play</a> 28 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_28_lawson_128kb.mp3" class="chapter-name">Second Class Wait Here</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:02:28</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_29_lawson_64kb.mp3" class="play-btn">Play</a> 29 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_29_lawson_128kb.mp3" class="chapter-name">The Ships That Won't Go Down</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:01:25</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_30_lawson_64kb.mp3" class="play-btn">Play</a> 30 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_30_lawson_128kb.mp3" class="chapter-name">The Men We Might Have Been</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:01:28</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_31_lawson_64kb.mp3" class="play-btn">Play</a> 31 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_31_lawson_128kb.mp3" class="chapter-name">The Way Of The World</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:01:11</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_32_lawson_64kb.mp3" class="play-btn">Play</a> 32 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_32_lawson_128kb.mp3" class="chapter-name">The Battling Days</a></td> 
+       <td><a href="https://librivox.org/reader/12602">Arrowhead Aussie</a><br></td> 
+       <td>00:02:15</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_33_lawson_64kb.mp3" class="play-btn">Play</a> 33 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_33_lawson_128kb.mp3" class="chapter-name">Written Afterwards</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:04:12</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_34_lawson_64kb.mp3" class="play-btn">Play</a> 34 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_34_lawson_128kb.mp3" class="chapter-name">The Uncultured Rhymer To His Cultured Critics</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:02:51</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_35_lawson_64kb.mp3" class="play-btn">Play</a> 35 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_35_lawson_128kb.mp3" class="chapter-name">The Writer's Dream</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:09:57</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_36_lawson_64kb.mp3" class="play-btn">Play</a> 36 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_36_lawson_128kb.mp3" class="chapter-name">The Jolly Dead March</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:05:41</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_37_lawson_64kb.mp3" class="play-btn">Play</a> 37 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_37_lawson_128kb.mp3" class="chapter-name">My Literary Friend</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:02:08</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_38_lawson_64kb.mp3" class="play-btn">Play</a> 38 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_38_lawson_128kb.mp3" class="chapter-name">Mary Called Him "Mister"</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:02:33</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_39_lawson_64kb.mp3" class="play-btn">Play</a> 39 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_39_lawson_128kb.mp3" class="chapter-name">Rejected</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:04:01</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_40_lawson_64kb.mp3" class="play-btn">Play</a> 40 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_40_lawson_128kb.mp3" class="chapter-name">O'Hara, J.P.</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:05:26</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_41_lawson_64kb.mp3" class="play-btn">Play</a> 41 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_41_lawson_128kb.mp3" class="chapter-name">Bill And Jim Fall Out</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:03:56</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_42_lawson_64kb.mp3" class="play-btn">Play</a> 42 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_42_lawson_128kb.mp3" class="chapter-name">The Paroo</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:03:54</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_43_lawson_64kb.mp3" class="play-btn">Play</a> 43 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_43_lawson_128kb.mp3" class="chapter-name">The Green-Hand Rouseabout</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:05:10</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_44_lawson_64kb.mp3" class="play-btn">Play</a> 44 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_44_lawson_128kb.mp3" class="chapter-name">The Man From Waterloo</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:03:50</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_45_lawson_64kb.mp3" class="play-btn">Play</a> 45 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_45_lawson_128kb.mp3" class="chapter-name">Saint Peter</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:02:50</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_46_lawson_64kb.mp3" class="play-btn">Play</a> 46 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_46_lawson_128kb.mp3" class="chapter-name">The Stranger's Friend</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:04:58</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_47_lawson_64kb.mp3" class="play-btn">Play</a> 47 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_47_lawson_128kb.mp3" class="chapter-name">The God-Forgotten Election</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:06:26</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_48_lawson_64kb.mp3" class="play-btn">Play</a> 48 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_48_lawson_128kb.mp3" class="chapter-name">The Boss's Boots</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:06:52</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_49_lawson_64kb.mp3" class="play-btn">Play</a> 49 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_49_lawson_128kb.mp3" class="chapter-name">The Captain Of The Push</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:07:33</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_50_lawson_64kb.mp3" class="play-btn">Play</a> 50 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_50_lawson_128kb.mp3" class="chapter-name">Billy's "Square Affair"</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:04:39</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_51_lawson_64kb.mp3" class="play-btn">Play</a> 51 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_51_lawson_128kb.mp3" class="chapter-name">A Derry On A Cove</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:01:58</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_52_lawson_64kb.mp3" class="play-btn">Play</a> 52 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_52_lawson_128kb.mp3" class="chapter-name">Rise Ye! Rise Ye!</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:02:52</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_53_lawson_64kb.mp3" class="play-btn">Play</a> 53 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_53_lawson_128kb.mp3" class="chapter-name">The Ballad Of Mabel Clare</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:06:50</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_54_lawson_64kb.mp3" class="play-btn">Play</a> 54 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_54_lawson_128kb.mp3" class="chapter-name">Constable M'Carthy's Investigation</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:09:49</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_55_lawson_64kb.mp3" class="play-btn">Play</a> 55 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_55_lawson_128kb.mp3" class="chapter-name">At The Tug-of-War</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:02:31</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_56_lawson_64kb.mp3" class="play-btn">Play</a> 56 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_56_lawson_128kb.mp3" class="chapter-name">Here's Luck!</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:03:29</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_57_lawson_64kb.mp3" class="play-btn">Play</a> 57 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_57_lawson_128kb.mp3" class="chapter-name">The Men Who Come Behind</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:03:22</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_58_lawson_64kb.mp3" class="play-btn">Play</a> 58 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_58_lawson_128kb.mp3" class="chapter-name">The Days When We Went Swimming</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:02:21</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_59_lawson_64kb.mp3" class="play-btn">Play</a> 59 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_59_lawson_128kb.mp3" class="chapter-name">The Old Bark School</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:04:11</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_60_lawson_64kb.mp3" class="play-btn">Play</a> 60 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_60_lawson_128kb.mp3" class="chapter-name">Trouble On The Selection</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:01:55</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_61_lawson_64kb.mp3" class="play-btn">Play</a> 61 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_61_lawson_128kb.mp3" class="chapter-name">The Professional Wanderer</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:02:27</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_62_lawson_64kb.mp3" class="play-btn">Play</a> 62 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_62_lawson_128kb.mp3" class="chapter-name">A Little Mistake</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:03:36</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_63_lawson_64kb.mp3" class="play-btn">Play</a> 63 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_63_lawson_128kb.mp3" class="chapter-name">A Study In The "Nood"</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:03:05</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_64_lawson_64kb.mp3" class="play-btn">Play</a> 64 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_64_lawson_128kb.mp3" class="chapter-name">A Word To Texas Jack</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:07:00</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_65_lawson_64kb.mp3" class="play-btn">Play</a> 65 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_65_lawson_128kb.mp3" class="chapter-name">The Grog-An'-Grumble Steeplechase</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:05:20</td> 
+      </tr> 
+      <tr> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_66_lawson_64kb.mp3" class="play-btn">Play</a> 66 </td> 
+       <td><a href="http://www.archive.org/download/versespopularandhumorous_2004_librivox/verses_popular_and_humorous_66_lawson_128kb.mp3" class="chapter-name">But What's The Use</a></td> 
+       <td><a href="https://librivox.org/reader/11667">Lynda Marie Neilson</a><br></td> 
+       <td>00:02:53</td> 
+      </tr> 
+     </tbody> 
+    </table> 
+   </div>
+   <!-- end .page --> 
+  </div>
+  <!-- end .main-content --> 
+  <footer class="footer-wrap"> 
+   <div class="footer"> 
+    <p class="license clear"><a href="#"><img src="https://librivox.org/images/public-domain-license.gif" alt="public-domain-license" width="88" height="31"></a></p> 
+   </div>
+   <!-- end .footer-wrap --> 
+  </footer> 
+  <!--[if lte IE 9]>	
+	    <script type="text/javascript" src="https://librivox.org/js/catalog/jquery.columnizer.js"></script>
+     <![endif]--> 
+  <script type="text/javascript">
+
+	var search_category = "page";
+
+	var sub_category;
+
+	var advanced_search = 0;
+
+	var primary_key = 0;
+
+	var search_page = 1;
+	set_advanced_form_page(search_page);
+
+	var search_order = 'alpha';
+
+	var project_type = 'either';
+
+	var q = "";
+
+	var spinner = '<div class="loading_img" style="margin-left:300px;margin-top:60px;"><img src="../../img/loading.gif"/></div>';
+
+	$('.browse-header').hide();
+
+	var pathArray = window.location.pathname.split('/');
+
+	var current_page = pathArray[1]; 
+
+	if (q !== '')
+	{
+		advanced_search = 0;
+		$('.advanced-search-inner').hide('slow');
+		librivox_search();
+	}
+	else if (advanced_search === 1)
+	{
+		advanced_search_actions();
+	}
+	else if (advanced_search === 2)
+	{
+		advanced_form_submit();
+	}
+	else if (advanced_search === 3)
+	{
+		//may be able to combine with below
+		$('.advanced-search-inner').hide();
+		get_results(search_category, search_page, sub_category, primary_key);
+	}
+	else
+	{	
+		//only on loading search page
+		if (current_page === 'search')
+		{
+			var item = $('.js-menu_item[data-menu_item="'+search_category+'"]');
+			load_search_data(item, search_category);
+		}
+		else if (jQuery.inArray(current_page, ['author', 'reader', 'group']) > -1)
+		{
+			get_results(current_page, search_page, sub_category, primary_key);
+		}
+
+	}	
+	advanced_search = 0; // it's done its job
+
+
+	// do better 
+	$('#sort_type').hide();
+	if (search_category === 'title' ||  search_category === 'reader')
+	{
+		$('#sort_type').show();
+	}	
+
+	$('#sort_menu').hide();
+	if (search_category === 'title' || (primary_key > 0))
+	{
+		$('#sort_menu').show();
+	}	
+
+
+	// Manage menus
+	$('.js-menu_item').on('click', function(e){
+
+		search_category = $(this).attr('data-menu_item');
+
+		primary_key = 0;
+
+		if (current_page !== 'search')
+		{
+			window.location.href = CI_ROOT + 'search/' + search_category;
+		}	
+
+		e.preventDefault();
+
+		$('.advanced-search-inner').hide('slow');
+		$('#sidebar_wrapper').show();
+
+		$('#sort_menu').hide();
+		if (search_category === 'title' || (primary_key > 0))
+		{
+			$('#sort_menu').show();
+		}	
+
+		q = '';
+		$('#q').val('');		
+		
+		load_search_data($(this), $(this).attr('data-menu_item'));
+
+	});
+
+	$('.js-title-submenu').on('click', function(e){
+		e.preventDefault();
+		$('.js-title-submenu a').removeClass('selected');
+		$(this).children('a').addClass('selected');
+
+		project_type = $(this).attr('data-submenu');
+
+		set_advanced_form_page(1); //this is a new search, so reset
+
+		get_results(search_category, search_page, sub_category, primary_key);
+	});
+
+	$('.js-sort-menu').on('change', function(){
+		search_order = $(this).val();
+		get_results(search_category, search_page, sub_category, primary_key);
+
+	});
+
+
+	function load_search_data(item, label)
+	{
+		$('.js-menu_item a').removeClass('active').removeClass('current-page');
+
+		item.children('a').addClass('active').addClass('current-page');
+
+		//console.log(item.attr('data-menu_item'));
+
+		//global
+		search_order = 'alpha';
+		if (item.attr('data-menu_item') == 'title')
+		{
+			search_order = 'catalog_date';
+		}
+
+		$('.js-sort-menu').val(search_order);		
+
+		get_results(search_category, 1);
+
+		set_browse_header(label);
+
+	}
+
+
+	function set_browse_header(label)
+	{
+		label = label.charAt(0).toUpperCase() + label.slice(1);
+		var text = 'Browsing <span>'+ label +'</span>';
+		$('.browse-header').html(text).show();
+		$('.browse-header-wrap').show();
+	}
+
+
+	function get_results(search_category, search_page, sub_category, primary_key)
+	{
+	    sub_category 	= typeof sub_category !== 'undefined' ? sub_category : '';
+	    primary_key 	= typeof primary_key !== 'undefined' ? primary_key : 0;
+	    search_order 	= typeof search_order !== 'undefined' ? search_order : 'alpha';
+	    project_type 	= typeof project_type !== 'undefined' ? project_type : 'either';
+
+		var params = { 'primary_key': primary_key, 'search_category':search_category, 'sub_category': sub_category ,'search_page':search_page, 'search_order': search_order, 'project_type': project_type} ;
+
+		if (history.pushState && current_page == 'search') {
+			history.pushState(null, location.textContent, location.href);
+			history.replaceState(null, null, "https://librivox.org/search");
+		}
+
+		$.ajax({
+		  	url: CI_ROOT + current_page + '/get_results' ,
+		  	type: 'get', //yes, get...we want these all to work through the browser addressbar as well, now
+		  	data: { 'primary_key': primary_key, 'search_category':search_category, 'sub_category': sub_category ,'search_page':search_page, 'search_order': search_order, 'project_type': project_type},
+		  	beforeSend: function(){
+		  		$('.browse-list').html(spinner);
+		  		$('.page-number-nav').html('');
+		  	}, 		  	
+	      	complete: function(r){
+				var response_obj = jQuery.parseJSON(r.responseText);
+
+				$('.browse-list').html('');
+
+				if (response_obj.status == 'SUCCESS')
+				{				
+
+			  		$('#sort_menu').hide();
+			  		$('#sort_type').hide();
+
+
+					if ((response_obj.results != 'No results') && (search_category != 'group') && (search_category == 'title' || (primary_key > 0)))
+					{
+						$('#sort_menu').show();	
+						$('#sort_type').show();				
+					}
+
+					$('.browse-list').html(response_obj.results);
+					$('.page-number-nav').html(response_obj.pagination);
+				}
+
+				if (history.pushState) {
+					history.pushState(null, location.textContent, location.href);
+
+					history.replaceState(null, null, "?primary_key=" + primary_key + '&search_category=' + search_category + '&search_page=' + search_page + '&search_form=get_results');	
+					
+				}
+
+
+			}
+		});		
+	}
+
+
+	/* Advanced search form function  */
+
+	$('#advanced_search_form_submit').on('click', function(e){
+		e.preventDefault();
+
+		set_advanced_form_page(1); //this is a new search, so reset
+
+		advanced_form_submit();
+	});
+
+	function set_advanced_form_page(new_page)
+	{
+		search_page = new_page;
+		$('#search_page').val(new_page);
+	}
+
+	function advanced_form_submit()
+	{
+		$('.advanced-search-inner').hide('slow');
+
+		$('#sort_type').hide();
+		//console.log('hidden');	
+
+		q = '';
+		$('#q').val('');
+
+		get_advanced_results();
+
+		$('#sidebar_wrapper').show();		
+	}
+
+	function get_advanced_results()
+	{
+
+		$.ajax({
+		  	url: CI_ROOT  + 'advanced_search',
+		  	type: 'get',
+		  	data: $('#advanced_search_form').serialize() + '&q=' + q ,
+		  	beforeSend: function(){
+		  		$('.browse-list').html(spinner);
+		  		$('.page-number-nav').html('');
+		  	}, 
+	      	complete: function(r){
+				var response_obj = jQuery.parseJSON(r.responseText);
+
+				$('.browse-list').html(''); //clear the spinner, success or no
+				
+				//console.log(response_obj.status);
+
+		  		$('#sort_menu').hide();
+		  		$('#sort_type').hide();
+
+				if (response_obj.status == 'SUCCESS')
+				{					
+					$('.browse-list').html(response_obj.results);
+					$('.page-number-nav').html(response_obj.pagination);
+										
+					if (search_category == 'title' || (primary_key > 0))
+					{
+						$('#sort_menu').show();
+					}	
+				}
+
+
+				if (history.pushState) {
+					history.pushState(null, location.textContent, location.href);
+
+					if (q != '')
+					{
+						history.replaceState(null, null, "?q=" + q + '&search_form=advanced');
+					}	
+					else
+					{
+						history.replaceState(null, null, "?" + $('#advanced_search_form').serialize());
+					}	
+					
+				}
+
+			}
+		});
+	}	
+
+
+	$('.js-advanced-search').on('click', function(e){
+
+		// TODO: make toggle
+
+		if (current_page != 'search') 
+		{
+			window.location.href = CI_ROOT + 'search/' + 'advanced_search';
+		}
+
+
+		e.preventDefault();
+		advanced_search_actions();
+		return false;	
+
+	});
+
+	function advanced_search_actions()
+	{
+
+		$('.browse-header').html('');
+		$('.browse-list').html('');			
+		$('.page-number-nav').html('');
+		$('#sidebar_wrapper').hide();
+		$('#sort_menu').hide();
+
+		$('.advanced-search-inner').show('slow');
+
+	}
+
+
+	/* end Advanced Search Form*/
+
+	/* Librivox search form */
+
+	$('#searchsubmit').on('click', function(e){
+		e.preventDefault();
+
+		//console.log(current_page);
+
+		q = $('#q').val();
+
+		if (current_page != 'search') 
+		{
+			window.location.href = CI_ROOT + 'search/q/' + q;
+		}
+
+		librivox_search();
+
+		$('#sidebar_wrapper').show();
+		$('.advanced-search-inner').hide('slow');
+
+	});
+
+
+	function librivox_search()
+	{
+		set_advanced_form_page(1); //this is a new search, so reset
+
+		search_order = 'alpha';
+
+		$('#advanced_search_form #sort_order').val('alpha'); // the code eventually serializes the form, so we need to set it to alpha here
+
+		$('.browse-header-wrap').hide();
+
+		get_advanced_results();
+	}
+
+
+	/* end Librivox search form*/
+
+
+	$(document).on('click', '.page-number', function(e)
+	{
+		e.preventDefault();
+		search_page = $(this).attr('data-page_number');
+		var call_function = $(this).attr('data-call_function');
+
+		if (call_function == 'get_advanced_results')
+		{
+			$('#search_page').val(search_page); //set it for the form.serialize()
+			get_advanced_results();
+		}
+		else
+		{
+			get_results(search_category, search_page, sub_category, primary_key);
+		}	
+		
+		return false;
+	});
+
+	$(document).on('click', '.js-sublink', function(e)
+	{
+		e.preventDefault();
+		sub_category = $(this).attr('data-sub_category');
+		primary_key = $(this).attr('data-primary_key');
+
+		set_advanced_form_page(1); //this is a new search, so reset
+
+		if (search_category == 'title' || (primary_key > 0))
+		{
+			$('#sort_menu').show();
+		}
+
+		var label = $(this).text();
+
+		set_browse_header(label);
+
+		get_results(search_category, search_page, sub_category, primary_key);
+
+		return false;
+
+	});	
+
+	//reader sections
+
+	$('.data_tab').on('click', function(){
+		$('.data_tab').removeClass('selected');
+		$(this).addClass('selected');
+
+		$('.tab-pane').removeClass('selected').hide();
+
+		var active_pane = $(this).attr('data-tab');
+		$('#'+ active_pane ).show();
+
+		return false;
+	});
+
+
+</script> 
+  <script type="text/javascript">
+
+ var _gaq = _gaq || [];
+ _gaq.push(['_setAccount', 'UA-1429228-8']);
+ _gaq.push(['_setDomainName', 'librivox.org']);
+ _gaq.push(['_trackPageview']);
+
+ (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+ </script>
+ </body>
+</html>

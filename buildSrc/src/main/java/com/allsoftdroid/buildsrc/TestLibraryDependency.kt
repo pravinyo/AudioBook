@@ -1,4 +1,5 @@
 private object TestLibraryVersion {
+    const val HAMCREST = "2.2"
     const val MOCKITO_CORE = "2.10.0"
     const val FRAGMENT_TEST = CoreVersion.FRAGMENT_KTX
     const val JUNIT = "4.12"
@@ -16,6 +17,8 @@ private object TestLibraryVersion {
 
 object TestLibraryDependency {
     const val JUNIT = "junit:junit:${TestLibraryVersion.JUNIT}"
+    const val HAMCREST = "org.hamcrest:hamcrest:${TestLibraryVersion.HAMCREST}"
+
     const val KLUENT_ANDROID = "org.amshove.kluent:kluent-android:${TestLibraryVersion.KLUENT}"
     const val KLUENT = "org.amshove.kluent:kluent:${TestLibraryVersion.KLUENT}"
     const val TEST_RUNNER = "androidx.test:runner:${TestLibraryVersion.TEST_RUNNER}"

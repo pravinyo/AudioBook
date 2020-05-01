@@ -1,14 +1,10 @@
 package com.allsoftdroid.feature_book.presentation.usecase
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.feature_book.common.getOrAwaitValue
-import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
+import com.allsoftdroid.feature_book.data.repository.FakeAudioBookRepository
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
-import com.allsoftdroid.feature_book.common.mock
-import com.allsoftdroid.feature_book.common.whenever
-import com.allsoftdroid.feature_book.data.repository.FakeAudioBookRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain

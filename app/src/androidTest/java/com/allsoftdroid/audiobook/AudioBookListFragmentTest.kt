@@ -2,7 +2,6 @@ package com.allsoftdroid.audiobook
 
 
 import android.os.Bundle
-import androidx.core.os.bundleOf
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -14,10 +13,10 @@ import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.MediumTest
 import androidx.test.runner.AndroidJUnit4
-import com.allsoftdroid.audiobook.audiobookListFragment.di.bookListViewModelModule
-import com.allsoftdroid.audiobook.audiobookListFragment.di.jobModule
-import com.allsoftdroid.audiobook.audiobookListFragment.di.repositoryModule
-import com.allsoftdroid.audiobook.audiobookListFragment.di.usecaseModule
+import com.allsoftdroid.feature_book.presentation.audiobookListFragment.di.bookListViewModelModule
+import com.allsoftdroid.feature_book.presentation.audiobookListFragment.di.jobModule
+import com.allsoftdroid.feature_book.presentation.audiobookListFragment.di.repositoryModule
+import com.allsoftdroid.feature_book.presentation.audiobookListFragment.di.usecaseModule
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.di.FeatureBookModule
 import com.allsoftdroid.feature_book.presentation.AudioBookListFragment

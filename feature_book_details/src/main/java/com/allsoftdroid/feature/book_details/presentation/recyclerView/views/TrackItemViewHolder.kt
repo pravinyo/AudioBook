@@ -34,8 +34,7 @@ class TrackItemViewHolder private constructor(private val binding : BookMediaTra
 
                             showProgress()
                             binding.downloadProgress.progress = it.percent.toInt()
-                            Timber.d("download event for chapterIndex:${it.chapterIndex} " +
-                                    "and position is :$adapterPosition with progress:${it.percent.toInt()}")
+                            Timber.d("download event for chapterIndex:${it.chapterIndex} and position is :$adapterPosition with progress:${it.percent.toInt()}")
                         }
 
                         is Downloaded ->{
@@ -55,8 +54,7 @@ class TrackItemViewHolder private constructor(private val binding : BookMediaTra
                         }
                     }
 
-                    Timber.d("download event for chapterIndex:${it.chapterIndex} " +
-                            "and position is :$adapterPosition")
+                    Timber.d("download event for chapterIndex:${it.chapterIndex} and position is :$adapterPosition")
                 }
             }
         }

@@ -9,9 +9,8 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import timber.log.Timber
 
-class PrepareMediaHandler(private val context:Application) {
-
-    private val localStorageFiles = LocalFilesForBook(context)
+class PrepareMediaHandler(private val context:Application,
+                          private val localStorageFiles: LocalFilesForBook) {
 
     fun createMediaSource(bookId:String,playlist : List<AudioPlayListItem>): ConcatenatingMediaSource {
         Timber.d("Create media source called")

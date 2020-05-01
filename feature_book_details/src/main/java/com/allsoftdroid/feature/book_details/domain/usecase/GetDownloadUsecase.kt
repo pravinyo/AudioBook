@@ -9,7 +9,7 @@ import com.allsoftdroid.common.base.usecase.BaseUseCase
 class GetDownloadUsecase(private val downloadEventStore: DownloadEventStore) :
     BaseUseCase<GetDownloadUsecase.RequestValues, GetDownloadUsecase.ResponseValues>() {
 
-    override suspend fun executeUseCase(requestValues: RequestValues?) {
+    public override suspend fun executeUseCase(requestValues: RequestValues?) {
         //check network connection
         requestValues?.let {
             downloadEventStore.publish(

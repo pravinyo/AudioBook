@@ -44,15 +44,19 @@ android {
 
 dependencies {
     implementation(project(path: ModuleDependency.LIBRARY_COMMON))
-
     implementation(project(path: ModuleDependency.FEATURE_AUDIOBOOK_ENHANCE_DETAILS))
-
     implementation(project(path: ModuleDependency.DATABASE))
     implementation(project(path: ModuleDependency.SERVICES))
 
     implementation(LibraryDependency.GLIDE)
     annotationProcessor(LibraryDependency.GLIDE_COMPILER)
-
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
     implementation(LibraryDependency.MULTISTAGE_TOGGLE_BUTTON)
+
+    //Unit Testing
+    testImplementation(TestLibraryDependency.JUNIT)
+    testImplementation(TestLibraryDependency.HAMCREST)
+    testImplementation(TestLibraryDependency.MOCKITO_CORE)
+    testImplementation(TestLibraryDependency.COROUTINES_TEST)
+    testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
 }
