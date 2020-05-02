@@ -47,10 +47,11 @@ android {
 }
 
 dependencies {
-    implementation(LibraryDependency.LIFECYCLE_EXTENSIONS)
-    kapt(LibraryDependency.LIFECYCLE_COMPILER)
 
     implementation(LibraryDependency.KOTLIN)
+    implementation(LibraryDependency.COROUTINES_CORE)
+    implementation(LibraryDependency.LIFECYCLE_EXTENSIONS)
+    kapt(LibraryDependency.LIFECYCLE_COMPILER)
 
     api(LibraryDependency.ROOM_RUNTIME)
     implementation(LibraryDependency.ROOM_KTX){
@@ -58,6 +59,9 @@ dependencies {
     }
     kapt(LibraryDependency.ROOM_COMPILER)
 
-    implementation(TestLibraryDependency.JUNIT)
-    implementation(TestLibraryDependency.TEST_RUNNER)
+    androidTestImplementation(TestLibraryDependency.JUNIT)
+    androidTestImplementation(TestLibraryDependency.TEST_RUNNER)
+    androidTestImplementation(TestLibraryDependency.ANDROID_X_EXT_TESTING)
+    androidTestImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
+    androidTestImplementation(TestLibraryDependency.COROUTINES_TEST)
 }
