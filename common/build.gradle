@@ -84,4 +84,8 @@ dependencies {
     api(LibraryDependency.RX_RELAY)
 
     api(LibraryDependency.KOIN)
+
+    //test rules
+    implementation(TestLibraryDependency.JUNIT)
+    implementation(TestLibraryDependency.COROUTINES_TEST)
 }
