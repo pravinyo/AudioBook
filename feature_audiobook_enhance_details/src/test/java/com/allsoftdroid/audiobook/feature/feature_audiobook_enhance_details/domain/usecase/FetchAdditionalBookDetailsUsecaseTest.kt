@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.getOrAwaitValue
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.IFetchAdditionBookDetailsRepository
 import kotlinx.coroutines.*
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers
@@ -20,7 +21,9 @@ class FetchAdditionalBookDetailsUsecaseTest{
     @JvmField
     val rule = InstantTaskExecutorRule()
 
-    private lateinit var mainThreadSurrogate: ExecutorCoroutineDispatcher
+    @ExperimentalCoroutinesApi
+    val testDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
+
     private lateinit var fetchAdditionBookDetailsRepository:IFetchAdditionBookDetailsRepository
     private lateinit var fetchAdditionalBookDetailsUsecase: FetchAdditionalBookDetailsUsecase
 
@@ -29,8 +32,7 @@ class FetchAdditionalBookDetailsUsecaseTest{
     @ExperimentalCoroutinesApi
     @Before
     fun setup(){
-        mainThreadSurrogate = newSingleThreadContext("UI thread")
-        Dispatchers.setMain(mainThreadSurrogate)
+        Dispatchers.setMain(testDispatcher)
     }
 
     @Before
@@ -55,7 +57,7 @@ class FetchAdditionalBookDetailsUsecaseTest{
     @After
     fun tearDown() {
         Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
+        testDispatcher.cleanupTestCoroutines()
     }
 
 }

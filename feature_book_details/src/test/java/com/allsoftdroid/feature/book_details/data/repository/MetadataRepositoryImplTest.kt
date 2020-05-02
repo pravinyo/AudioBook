@@ -11,6 +11,7 @@ import com.allsoftdroid.feature.book_details.getOrAwaitValue
 import com.allsoftdroid.feature.book_details.utils.FakeMetadataSource
 import com.allsoftdroid.feature.book_details.utils.FakeRemoteMetadataSource
 import kotlinx.coroutines.*
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.hamcrest.MatcherAssert.assertThat
@@ -34,10 +35,9 @@ class MetadataRepositoryImplTest{
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
-    @ObsoleteCoroutinesApi
-    private val mainThreadSurrogate = newSingleThreadContext("UI thread")
+    @ExperimentalCoroutinesApi
+    val testDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
 
-    @ObsoleteCoroutinesApi
     @ExperimentalCoroutinesApi
     @Before
     fun setup(){
@@ -54,7 +54,7 @@ class MetadataRepositoryImplTest{
             saveInDatabase = saveInDatabase
         )
 
-        Dispatchers.setMain(mainThreadSurrogate)
+        Dispatchers.setMain(testDispatcher)
     }
 
     @Test
@@ -94,6 +94,6 @@ class MetadataRepositoryImplTest{
     @After
     fun tearDown() {
         Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
+        testDispatcher.cleanupTestCoroutines()
     }
 }

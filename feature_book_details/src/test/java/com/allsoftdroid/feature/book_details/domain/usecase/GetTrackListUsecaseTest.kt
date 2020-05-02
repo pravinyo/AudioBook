@@ -6,6 +6,7 @@ import com.allsoftdroid.feature.book_details.domain.repository.ITrackListReposit
 import com.allsoftdroid.feature.book_details.getOrAwaitValue
 import com.allsoftdroid.feature.book_details.utils.FakeTrackListRepository
 import kotlinx.coroutines.*
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers
@@ -20,22 +21,22 @@ class GetTrackListUsecaseTest{
     @JvmField
     val rule = InstantTaskExecutorRule()
 
+    @ExperimentalCoroutinesApi
+    val testDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
 
     private lateinit var trackListRepository: ITrackListRepository
     private lateinit var trackListUsecase: GetTrackListUsecase
-    private lateinit var mainThreadSurrogate: ExecutorCoroutineDispatcher
 
 
     @ExperimentalCoroutinesApi
     @Before
     fun setup(){
-        mainThreadSurrogate = newSingleThreadContext("UI thread")
 
         trackListRepository =
             FakeTrackListRepository()
         trackListUsecase = GetTrackListUsecase(trackListRepository)
 
-        Dispatchers.setMain(mainThreadSurrogate)
+        Dispatchers.setMain(testDispatcher)
     }
 
     @Test
@@ -80,6 +81,6 @@ class GetTrackListUsecaseTest{
     @After
     fun tearDown() {
         Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
+        testDispatcher.cleanupTestCoroutines()
     }
 }

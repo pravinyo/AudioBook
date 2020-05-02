@@ -6,32 +6,30 @@ import com.allsoftdroid.feature_book.data.repository.FakeAudioBookRepository
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
 import kotlinx.coroutines.*
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.junit.*
 
-
-@ObsoleteCoroutinesApi
 class AlbumUsecaseUnitTest{
 
     @Rule
     @JvmField
     val rule = InstantTaskExecutorRule()
 
+    @ExperimentalCoroutinesApi
+    val testDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
 
     private lateinit var audioBookRepository: AudioBookRepository
     private lateinit var albumUsecase :GetAudioBookListUsecase
-    private lateinit var mainThreadSurrogate: ExecutorCoroutineDispatcher
 
 
     @ExperimentalCoroutinesApi
     @Before
     fun setup(){
-
-        mainThreadSurrogate = newSingleThreadContext("UI thread")
-        Dispatchers.setMain(mainThreadSurrogate)
+        Dispatchers.setMain(testDispatcher)
     }
 
     @Test
@@ -67,7 +65,7 @@ class AlbumUsecaseUnitTest{
     @After
     fun tearDown() {
         Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
+        testDispatcher.cleanupTestCoroutines()
     }
 
 }

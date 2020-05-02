@@ -9,6 +9,7 @@ import com.allsoftdroid.feature_book.di.jobModule
 import com.allsoftdroid.feature_book.di.repositoryModule
 import com.allsoftdroid.feature_book.di.usecaseModule
 import kotlinx.coroutines.*
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.*
@@ -24,19 +25,17 @@ class BookListItemClickTest : KoinTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
-    @ObsoleteCoroutinesApi
-    private val mainThreadSurrogate = newSingleThreadContext("UI thread")
+    @ExperimentalCoroutinesApi
+    val testDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
 
     private val application = mock<Application>()
     private val bookId ="bookId"
     private val viewModel: AudioBookListViewModel by inject{ parametersOf(application)}
 
-
-    @ObsoleteCoroutinesApi
     @ExperimentalCoroutinesApi
     @Before
     fun setup(){
-        Dispatchers.setMain(mainThreadSurrogate)
+        Dispatchers.setMain(testDispatcher)
         startKoin {
             modules(listOf(bookListViewModelModule,usecaseModule,repositoryModule, jobModule))
         }
@@ -69,12 +68,11 @@ class BookListItemClickTest : KoinTest {
         }
     }
 
-    @ObsoleteCoroutinesApi
     @ExperimentalCoroutinesApi
     @After
     fun tearDown() {
         Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
+        testDispatcher.cleanupTestCoroutines()
         stopKoin()
     }
 }

@@ -5,6 +5,7 @@ import com.allsoftdroid.common.base.store.downloader.Download
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus
 import kotlinx.coroutines.*
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
@@ -19,21 +20,21 @@ class GetDownloadUsecaseTest{
     @JvmField
     val rule = InstantTaskExecutorRule()
 
+    @ExperimentalCoroutinesApi
+    val testDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
 
     private lateinit var eventStore: DownloadEventStore
     private lateinit var downloadUsecase: GetDownloadUsecase
-    private lateinit var mainThreadSurrogate: ExecutorCoroutineDispatcher
 
 
     @ExperimentalCoroutinesApi
     @Before
     fun setup(){
-        mainThreadSurrogate = newSingleThreadContext("UI thread")
 
         eventStore = DownloaderEventBus.getEventBusInstance()
         downloadUsecase = GetDownloadUsecase(eventStore)
 
-        Dispatchers.setMain(mainThreadSurrogate)
+        Dispatchers.setMain(testDispatcher)
     }
 
     @Test
@@ -91,6 +92,6 @@ class GetDownloadUsecaseTest{
     @After
     fun tearDown() {
         Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
+        testDispatcher.cleanupTestCoroutines()
     }
 }

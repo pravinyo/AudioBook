@@ -7,6 +7,7 @@ import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.util
 import com.dropbox.android.external.store4.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
@@ -39,12 +40,13 @@ class FetchAdditionalBookDetailsRepositoryTest{
     @JvmField
     val rule = InstantTaskExecutorRule()
 
-    private lateinit var mainThreadSurrogate: ExecutorCoroutineDispatcher
+    @ExperimentalCoroutinesApi
+    val testDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
+
 
     @Before
     fun setup(){
-        mainThreadSurrogate = newSingleThreadContext("UI thread")
-        Dispatchers.setMain(mainThreadSurrogate)
+        Dispatchers.setMain(testDispatcher)
     }
 
     @Before
@@ -73,7 +75,7 @@ class FetchAdditionalBookDetailsRepositoryTest{
     @After
     fun tearDown() {
         Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
+        testDispatcher.cleanupTestCoroutines()
     }
 }
 
