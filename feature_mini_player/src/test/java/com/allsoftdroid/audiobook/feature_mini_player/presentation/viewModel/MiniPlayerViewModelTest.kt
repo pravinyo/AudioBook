@@ -1,9 +1,9 @@
 package com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.allsoftdroid.audiobook.feature_mini_player.getOrAwaitValue
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.store.audioPlayer.*
+import com.allsoftdroid.common.test.getOrAwaitValue
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Before
