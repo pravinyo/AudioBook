@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository
+package com.allsoftdroid.common.test
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
