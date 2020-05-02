@@ -46,7 +46,7 @@ object BookDetailsModule {
         ))
     }
 
-    var bookDetailsViewModelModule : Module = module {
+    private val bookDetailsViewModelModule : Module = module {
 
         viewModel {
             (handle: SavedStateHandle) ->
@@ -61,9 +61,9 @@ object BookDetailsModule {
                 getFetchAdditionalBookDetailsUseCase = get()
             )
         }
-    } @VisibleForTesting set
+    }
 
-    var usecaseModule : Module = module {
+    private val usecaseModule : Module = module {
         factory {
             GetMetadataUsecase(metadataRepository = get())
         }
@@ -87,7 +87,7 @@ object BookDetailsModule {
                 fetchAdditionBookDetailsRepository = get()
             )
         }
-    } @VisibleForTesting set
+    }
 
     var repositoryModule : Module = module {
 
@@ -117,14 +117,14 @@ object BookDetailsModule {
         }
     } @VisibleForTesting set
 
-    var networkModule : Module = module{
+    private val networkModule : Module = module{
         single{
             NetworkCachingStoreRepositoryImpl(
                 networkService = LibriVoxApi.retrofitService,
                 bookDetailsService = LibriVoxApi.bookDetailsApiService,
                 networkCacheDao = get()) as IStoreRepository
         }
-    } @VisibleForTesting set
+    }
 
     var dataModule : Module = module {
         single {
