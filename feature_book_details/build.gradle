@@ -55,7 +55,7 @@ dependencies {
     implementation(project(path: ModuleDependency.SERVICES))
 
     implementation(LibraryDependency.GLIDE)
-    annotationProcessor(LibraryDependency.GLIDE_COMPILER)
+    kapt(LibraryDependency.GLIDE_COMPILER)
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
     implementation(LibraryDependency.MULTISTAGE_TOGGLE_BUTTON)
     implementation(LibraryDependency.LOTTIE)
