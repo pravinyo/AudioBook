@@ -2,7 +2,7 @@ package com.allsoftdroid.audiobook.feature.feature_playerfullscreen.domain.useca
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.allsoftdroid.audiobook.services.audio.AudioManager
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.junit.Before
@@ -29,8 +29,7 @@ class GetPlayingTrackProgressUsecaseTest{
 
     @Test
     fun getProgress_returnsProgress(){
-
-        runBlocking {
+        runBlockingTest {
             `when`(audioManager.getPlayingTrackProgress()).thenReturn(0)
 
             playingTrackProgressUsecase.executeUseCase(null)
