@@ -6,7 +6,6 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.platform.app.InstrumentationRegistry
-import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.data.repository.BookDetailsSharedPreferencesRepositoryImpl
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
@@ -49,8 +48,10 @@ class AudioBookDetailsFragmentTest{
 
         // WHEN - Details fragment launched to display task
         val bundle = bundleOf()
+        bundle.putString("bookId","art_of_war_librivox")
+        bundle.putString("title","The Art of War")
         launchFragmentInContainer<AudioBookDetailsFragment>(bundle, R.style.AppTheme)
-        Thread.sleep(2000)
+        Thread.sleep(5000)
     }
 
     @After
