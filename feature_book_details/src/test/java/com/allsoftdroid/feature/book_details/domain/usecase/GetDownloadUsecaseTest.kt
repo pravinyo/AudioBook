@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.allsoftdroid.common.base.store.downloader.Download
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus
+import com.allsoftdroid.common.test.MainCoroutineRule
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -21,25 +22,22 @@ class GetDownloadUsecaseTest{
     val rule = InstantTaskExecutorRule()
 
     @ExperimentalCoroutinesApi
-    val testDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
 
     private lateinit var eventStore: DownloadEventStore
     private lateinit var downloadUsecase: GetDownloadUsecase
 
-
-    @ExperimentalCoroutinesApi
     @Before
     fun setup(){
 
         eventStore = DownloaderEventBus.getEventBusInstance()
         downloadUsecase = GetDownloadUsecase(eventStore)
-
-        Dispatchers.setMain(testDispatcher)
     }
 
     @Test
     fun downloadUsecase_eventPublished_returnsNothing(){
-        runBlocking {
+        mainCoroutineRule.runBlockingTest {
 
             val download = Download(
                 url = "url",
@@ -63,7 +61,7 @@ class GetDownloadUsecaseTest{
 
     @Test
     fun downloadUsecase_eventReceived_returnsNothing(){
-        runBlockingTest {
+        mainCoroutineRule.runBlockingTest {
 
             val download = Download(
                 url = "url",
@@ -86,12 +84,5 @@ class GetDownloadUsecaseTest{
 
             result.dispose()
         }
-    }
-
-    @ExperimentalCoroutinesApi
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        testDispatcher.cleanupTestCoroutines()
     }
 }

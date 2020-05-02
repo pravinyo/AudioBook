@@ -1,22 +1,21 @@
 package com.allsoftdroid.feature.book_details.data.repository
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.allsoftdroid.common.test.MainCoroutineRule
+import com.allsoftdroid.common.test.getOrAwaitValue
 import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseMetadataEntity
 import com.allsoftdroid.feature.book_details.data.databaseExtension.SaveMetadataInDatabase
 import com.allsoftdroid.feature.book_details.data.network.service.ArchiveMetadataService
 import com.allsoftdroid.feature.book_details.domain.repository.IMetadataRepository
-import com.allsoftdroid.feature.book_details.getOrAwaitValue
 import com.allsoftdroid.feature.book_details.utils.FakeMetadataSource
 import com.allsoftdroid.feature.book_details.utils.FakeRemoteMetadataSource
-import kotlinx.coroutines.*
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.IsEqual
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -36,9 +35,10 @@ class MetadataRepositoryImplTest{
     val instantExecutorRule = InstantTaskExecutorRule()
 
     @ExperimentalCoroutinesApi
-    val testDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
 
-    @ExperimentalCoroutinesApi
+
     @Before
     fun setup(){
         metadataDao =
@@ -54,12 +54,12 @@ class MetadataRepositoryImplTest{
             saveInDatabase = saveInDatabase
         )
 
-        Dispatchers.setMain(testDispatcher)
     }
 
     @Test
     fun loadMetadata_checkBookId_returnsMetadata(){
-        runBlocking {
+
+        mainCoroutineRule.runBlockingTest {
             val result = metadataRepository.getBookId()
             assertThat(result,IsEqual(bookId))
         }
@@ -88,12 +88,5 @@ class MetadataRepositoryImplTest{
                 release_year = "2020",
                 runtime = "2"
             ))
-    }
-
-    @ExperimentalCoroutinesApi
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        testDispatcher.cleanupTestCoroutines()
     }
 }

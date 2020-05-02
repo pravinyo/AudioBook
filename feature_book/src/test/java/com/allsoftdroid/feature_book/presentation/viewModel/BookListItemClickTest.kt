@@ -2,16 +2,15 @@ package com.allsoftdroid.feature_book.presentation.viewModel
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.allsoftdroid.feature_book.common.getOrAwaitValue
+import com.allsoftdroid.common.test.MainCoroutineRule
+import com.allsoftdroid.common.test.getOrAwaitValue
 import com.allsoftdroid.feature_book.common.mock
 import com.allsoftdroid.feature_book.di.bookListViewModelModule
 import com.allsoftdroid.feature_book.di.jobModule
 import com.allsoftdroid.feature_book.di.repositoryModule
 import com.allsoftdroid.feature_book.di.usecaseModule
-import kotlinx.coroutines.*
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.*
 import org.junit.*
 import org.koin.core.context.startKoin
@@ -26,7 +25,8 @@ class BookListItemClickTest : KoinTest {
     val instantExecutorRule = InstantTaskExecutorRule()
 
     @ExperimentalCoroutinesApi
-    val testDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
 
     private val application = mock<Application>()
     private val bookId ="bookId"
@@ -35,7 +35,6 @@ class BookListItemClickTest : KoinTest {
     @ExperimentalCoroutinesApi
     @Before
     fun setup(){
-        Dispatchers.setMain(testDispatcher)
         startKoin {
             modules(listOf(bookListViewModelModule,usecaseModule,repositoryModule, jobModule))
         }
@@ -44,7 +43,7 @@ class BookListItemClickTest : KoinTest {
     @Test
     fun testBookListItem_ItemClick_SingleObserver(){
 
-        runBlocking {
+        runBlockingTest {
             viewModel.onBookItemClicked(bookId)
 
             val value = viewModel.itemClicked.getOrAwaitValue()
@@ -56,7 +55,7 @@ class BookListItemClickTest : KoinTest {
     @Test
     fun testBookListItem_ItemClick_TwoObserver(){
 
-        runBlocking {
+        runBlockingTest {
 
             viewModel.onBookItemClicked(bookId)
 
@@ -68,11 +67,8 @@ class BookListItemClickTest : KoinTest {
         }
     }
 
-    @ExperimentalCoroutinesApi
     @After
     fun tearDown() {
-        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        testDispatcher.cleanupTestCoroutines()
         stopKoin()
     }
 }
