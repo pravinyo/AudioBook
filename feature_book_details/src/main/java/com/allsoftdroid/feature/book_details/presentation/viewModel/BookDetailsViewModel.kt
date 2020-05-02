@@ -39,7 +39,9 @@ class BookDetailsViewModel(
     private val viewModelScope = CoroutineScope(viewModelJob+ Dispatchers.Main)
 
     //track network response
-    private var _networkResponse = MutableLiveData<Event<NetworkState>>()
+    private var _networkResponse = MutableLiveData<Event<NetworkState>>().also {
+        it.value = Event(NetworkState.LOADING)
+    }
     val networkResponse : LiveData<Event<NetworkState>>
     get() = _networkResponse
 
