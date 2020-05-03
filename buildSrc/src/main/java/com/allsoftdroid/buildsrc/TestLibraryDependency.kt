@@ -26,6 +26,7 @@ object TestLibraryDependency {
 
     const val ESPRESSO_CORE = "androidx.test.espresso:espresso-core:${TestLibraryVersion.ESPRESSO_CORE}"
     const val ESPRESSO_CONTRIB = "androidx.test.espresso:espresso-contrib:${TestLibraryVersion.ESPRESSO_CORE}"
+    const val ESPRESSO_IDLING_RESOURCES = "androidx.test.espresso:espresso-idling-resource:${TestLibraryVersion.ESPRESSO_CORE}"
 
     const val MOCKITO_INLINE = "org.mockito:mockito-inline:${TestLibraryVersion.MOCKITO}"
     const val MOCKITO_ANDROID = "org.mockito:mockito-android:${TestLibraryVersion.MOCKITO}"
