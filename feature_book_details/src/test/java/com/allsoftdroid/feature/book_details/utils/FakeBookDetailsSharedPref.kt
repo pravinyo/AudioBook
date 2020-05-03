@@ -4,55 +4,67 @@ import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsShared
 
 class FakeBookDetailsSharedPref : BookDetailsSharedPreferenceRepository {
 
-    override fun saveTrackPosition(pos: Int) {
+    private var trackPos = 0
+    private var trackTitle = "First"
+    private var bookId = "bookId"
+    private var bookname = "Fake Book"
+    private var trackFormat = 0
+    private var isPlaying = false
 
+    override fun saveTrackPosition(pos: Int) {
+        trackPos = pos
     }
 
     override fun trackPosition(): Int {
-        return 0
+        return trackPos
     }
 
     override fun saveTrackTitle(title: String) {
-
+        trackTitle = title
     }
 
     override fun trackTitle(): String {
-        return ""
+        return trackTitle
     }
 
-    override fun saveBookId(bookId: String) {
-
+    override fun saveBookId(id: String) {
+        bookId = id
     }
 
     override fun bookId(): String {
-        return ""
+        return bookId
     }
 
     override fun saveBookName(name: String) {
-
+        bookname = name
     }
 
     override fun bookName(): String {
-        return ""
+        return bookname
     }
 
     override fun saveTrackFormatIndex(formatIndex: Int) {
-
+        trackFormat = formatIndex
     }
 
     override fun trackFormatIndex(): Int {
-      return 0
+      return trackFormat
     }
 
     override fun clear() {
-
+        trackTitle = ""
+        trackPos = 0
+        bookId = ""
+        bookname = ""
+        trackFormat = 0
+        isPlaying = false
     }
 
     override fun saveIsPlaying(isPlaying: Boolean) {
-
+        this.isPlaying = isPlaying
     }
 
     override fun isPlaying(): Boolean {
-        return false
+        return isPlaying
     }
 }
