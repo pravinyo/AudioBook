@@ -49,6 +49,11 @@ android {
         enabled = DataBinding.IS_ENABLED
     }
 
+    testOptions.unitTests {
+        includeAndroidResources = true
+        returnDefaultValues = true
+    }
+
 //    dynamicFeatures = [":feature_book", ":feature_book_details"]
 
 
@@ -76,4 +81,11 @@ dependencies {
     testImplementation(TestLibraryDependency.JUNIT)
     testImplementation(TestLibraryDependency.COROUTINES_TEST)
     testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
+
+    //androidTest
+    androidTestImplementation(TestLibraryDependency.JUNIT)
+    androidTestImplementation(TestLibraryDependency.ANDROID_X_CORE)
+    androidTestImplementation(TestLibraryDependency.ANDROID_X_EXT_TESTING)
+    androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
+    androidTestImplementation(TestLibraryDependency.ESPRESSO_CONTRIB)
 }
