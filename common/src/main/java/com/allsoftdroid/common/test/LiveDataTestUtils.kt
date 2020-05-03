@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature.feature_playerfullscreen
+package com.allsoftdroid.common.test
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData

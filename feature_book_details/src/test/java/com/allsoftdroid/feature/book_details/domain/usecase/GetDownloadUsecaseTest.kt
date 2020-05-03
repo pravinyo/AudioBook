@@ -4,7 +4,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.allsoftdroid.common.base.store.downloader.Download
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus
+import com.allsoftdroid.common.test.MainCoroutineRule
 import kotlinx.coroutines.*
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
@@ -19,26 +21,23 @@ class GetDownloadUsecaseTest{
     @JvmField
     val rule = InstantTaskExecutorRule()
 
+    @ExperimentalCoroutinesApi
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
 
     private lateinit var eventStore: DownloadEventStore
     private lateinit var downloadUsecase: GetDownloadUsecase
-    private lateinit var mainThreadSurrogate: ExecutorCoroutineDispatcher
 
-
-    @ExperimentalCoroutinesApi
     @Before
     fun setup(){
-        mainThreadSurrogate = newSingleThreadContext("UI thread")
 
         eventStore = DownloaderEventBus.getEventBusInstance()
         downloadUsecase = GetDownloadUsecase(eventStore)
-
-        Dispatchers.setMain(mainThreadSurrogate)
     }
 
     @Test
     fun downloadUsecase_eventPublished_returnsNothing(){
-        runBlocking {
+        mainCoroutineRule.runBlockingTest {
 
             val download = Download(
                 url = "url",
@@ -62,7 +61,7 @@ class GetDownloadUsecaseTest{
 
     @Test
     fun downloadUsecase_eventReceived_returnsNothing(){
-        runBlockingTest {
+        mainCoroutineRule.runBlockingTest {
 
             val download = Download(
                 url = "url",
@@ -85,12 +84,5 @@ class GetDownloadUsecaseTest{
 
             result.dispose()
         }
-    }
-
-    @ExperimentalCoroutinesApi
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
     }
 }

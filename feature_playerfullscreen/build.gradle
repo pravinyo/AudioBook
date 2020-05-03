@@ -50,11 +50,12 @@ dependencies {
         because("Koin DI need this to inject viewModel")
     }
     implementation(LibraryDependency.GLIDE)
-    annotationProcessor(LibraryDependency.GLIDE_COMPILER)
+    kapt(LibraryDependency.GLIDE_COMPILER)
 
     //Test
     testImplementation(TestLibraryDependency.JUNIT)
     testImplementation(TestLibraryDependency.HAMCREST)
     testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
     testImplementation(TestLibraryDependency.MOCKITO_CORE)
+    testImplementation(TestLibraryDependency.COROUTINES_TEST)
 }

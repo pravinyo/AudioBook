@@ -18,7 +18,7 @@ internal fun AudioBookTrackDataModel.toDatabaseModel(id:String):DatabaseTrackEnt
     DatabaseTrackEntity(
         track_id = "$id@$track@$format",
         trackAlbum_id = id,
-        filename = name?:"NULL",
+        filename = name,
         trackTitle = title,
         trackNumber = track,
         length = length,

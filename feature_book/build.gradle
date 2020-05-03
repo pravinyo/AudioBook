@@ -56,7 +56,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation(LibraryDependency.GLIDE)
-    annotationProcessor(LibraryDependency.GLIDE_COMPILER)
+    kapt(LibraryDependency.GLIDE_COMPILER)
 
     implementation(LibraryDependency.RECYCLER_VIEW)
     implementation(LibraryDependency.CARD_VIEW)
@@ -77,18 +77,21 @@ dependencies {
     testImplementation(TestLibraryDependency.COROUTINES_TEST)
     testImplementation(TestLibraryDependency.KOIN_TEST)
 
+    //Instrumentation test
     androidTestImplementation(TestLibraryDependency.JUNIT)
     androidTestImplementation(TestLibraryDependency.COROUTINES_TEST)
     androidTestImplementation(TestLibraryDependency.ANDROID_X_EXT_TESTING)
     androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
     androidTestImplementation(TestLibraryDependency.ESPRESSO_CONTRIB)
     androidTestImplementation(TestLibraryDependency.MOCKITO_CORE)
-    androidTestImplementation("com.linkedin.dexmaker:dexmaker-mockito:2.12.1")
+    androidTestImplementation(TestLibraryDependency.MOCKITO_DEXMAKER)
 
     implementation(TestLibraryDependency.FRAGMENT_TEST)
     implementation(TestLibraryDependency.ANDROID_X_CORE)
 
-    kaptAndroidTest("androidx.databinding:databinding-compiler:3.6.3")
+    kaptAndroidTest("androidx.databinding:databinding-compiler:3.6.3"){
+        because("required to run instrumentation test")
+    }
 
 }
 

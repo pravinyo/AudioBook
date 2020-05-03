@@ -1,17 +1,19 @@
 package com.allsoftdroid.feature_book.presentation.usecase
 
-import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
+import com.allsoftdroid.common.test.MainCoroutineRule
+import com.allsoftdroid.feature_book.data.repository.FakeAudioBookRepository
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
-import com.allsoftdroid.feature_book.data.repository.FakeAudioBookRepository
-import kotlinx.coroutines.*
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
-import org.junit.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 
 class AlbumUsecaseBookListUnitTest{
 
@@ -19,31 +21,26 @@ class AlbumUsecaseBookListUnitTest{
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
+    @ExperimentalCoroutinesApi
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
 
     private lateinit var albumUsecase: GetAudioBookListUsecase
-    private lateinit var application: Application
     private lateinit var useCaseHandler: UseCaseHandler
     private lateinit var requestValues : GetAudioBookListUsecase.RequestValues
     private lateinit var repository : AudioBookRepository
 
-    @ObsoleteCoroutinesApi
-    private val mainThreadSurrogate = newSingleThreadContext("UI thread")
 
-
-    @ObsoleteCoroutinesApi
     @ExperimentalCoroutinesApi
     @Before
     fun setup(){
-        application = Application()
         useCaseHandler = UseCaseHandler.getInstance()
         requestValues = GetAudioBookListUsecase.RequestValues(pageNumber = 1)
-
-        Dispatchers.setMain(mainThreadSurrogate)
     }
 
     @Test
     fun albumUsecase_audioBooksFetchSuccess_returnsSuccessEvent(){
-        runBlocking {
+        mainCoroutineRule.runBlockingTest {
             var event : Event<Any> = Event("NULL")
 
             repository= FakeAudioBookRepository(
@@ -72,7 +69,7 @@ class AlbumUsecaseBookListUnitTest{
 
     @Test
     fun albumUsecase_audioBooksFetchFailure_returnsFailureEvent(){
-        runBlocking {
+        mainCoroutineRule.runBlockingTest {
             var event : Event<Any> = Event("NULL")
 
             repository= FakeAudioBookRepository(
@@ -96,13 +93,5 @@ class AlbumUsecaseBookListUnitTest{
 
             Assert.assertSame(FakeAudioBookRepository.FAILURE_MESSAGE,event.getContentIfNotHandled())
         }
-    }
-
-    @ObsoleteCoroutinesApi
-    @ExperimentalCoroutinesApi
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
     }
 }

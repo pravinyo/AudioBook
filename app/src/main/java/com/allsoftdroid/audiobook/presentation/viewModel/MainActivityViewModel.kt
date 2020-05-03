@@ -168,7 +168,9 @@ class MainActivityViewModel(application : Application,
         viewModelScope.launch {
             handler.execute(lastPlayedUsecase,request,object : BaseUseCase.UseCaseCallback<GetLastPlayedUsecase.ResponseValues>{
                 override suspend fun onSuccess(response: GetLastPlayedUsecase.ResponseValues) {
-                    _lastPlayed.value = Event(response.lastPlayedTrack)
+                    response.lastPlayedTrack?.let {
+                        _lastPlayed.value = Event(it)
+                    }
                 }
 
                 override suspend fun onError(t: Throwable) {

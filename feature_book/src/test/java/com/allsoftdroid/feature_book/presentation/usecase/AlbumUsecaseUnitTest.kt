@@ -1,42 +1,37 @@
 package com.allsoftdroid.feature_book.presentation.usecase
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.allsoftdroid.feature_book.common.getOrAwaitValue
+import com.allsoftdroid.common.test.MainCoroutineRule
+import com.allsoftdroid.common.test.getOrAwaitValue
 import com.allsoftdroid.feature_book.data.repository.FakeAudioBookRepository
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
-import kotlinx.coroutines.*
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
-import org.junit.*
+import org.junit.Assert
+import org.junit.Rule
+import org.junit.Test
 
-
-@ObsoleteCoroutinesApi
 class AlbumUsecaseUnitTest{
 
     @Rule
     @JvmField
     val rule = InstantTaskExecutorRule()
 
+    @ExperimentalCoroutinesApi
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
 
     private lateinit var audioBookRepository: AudioBookRepository
     private lateinit var albumUsecase :GetAudioBookListUsecase
-    private lateinit var mainThreadSurrogate: ExecutorCoroutineDispatcher
 
 
     @ExperimentalCoroutinesApi
-    @Before
-    fun setup(){
-
-        mainThreadSurrogate = newSingleThreadContext("UI thread")
-        Dispatchers.setMain(mainThreadSurrogate)
-    }
-
     @Test
     fun testAudioBookListUsecase_requestCompleted_returnsList(){
-        runBlocking {
+        mainCoroutineRule.runBlockingTest {
 
             audioBookRepository  = FakeAudioBookRepository(manualFailure = false)
             albumUsecase =   GetAudioBookListUsecase(audioBookRepository)
@@ -49,9 +44,10 @@ class AlbumUsecaseUnitTest{
         }
     }
 
+    @ExperimentalCoroutinesApi
     @Test
     fun testAudioBookListUsecase_requestFailed_returnsEmptyList(){
-        runBlocking {
+        mainCoroutineRule.runBlockingTest {
             audioBookRepository  = FakeAudioBookRepository(manualFailure = true)
             albumUsecase =   GetAudioBookListUsecase(audioBookRepository)
 
@@ -61,13 +57,6 @@ class AlbumUsecaseUnitTest{
 
             Assert.assertThat(list.size,`is`(0))
         }
-    }
-
-    @ExperimentalCoroutinesApi
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
     }
 
 }

@@ -1,5 +1,6 @@
 package com.allsoftdroid.feature.book_details.di
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.SavedStateHandle
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.network.LibriVoxApi
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.utils.BookDetailsParserFromHtml
@@ -88,7 +89,7 @@ object BookDetailsModule {
         }
     }
 
-    private val repositoryModule : Module = module {
+    var repositoryModule : Module = module {
 
         factory {
             MetadataRepositoryImpl(
@@ -114,7 +115,7 @@ object BookDetailsModule {
             FetchAdditionalBookDetailsRepositoryImpl(storeCachingRepository = get(),
                 bookDetailsParser = get()) as IFetchAdditionBookDetailsRepository
         }
-    }
+    } @VisibleForTesting set
 
     private val networkModule : Module = module{
         single{
@@ -125,7 +126,7 @@ object BookDetailsModule {
         }
     }
 
-    private val dataModule : Module = module {
+    var dataModule : Module = module {
         single {
             AudioBookDatabase.getDatabase(get()).metadataDao()
         }
@@ -149,7 +150,7 @@ object BookDetailsModule {
         single {
             BookDetailsParserFromHtml()
         }
-    }
+    } @VisibleForTesting set
 
     const val PROPERTY_BOOK_ID = "bookDetails_book_id"
     private const val METADATA_DATABASE = "SaveMetadataInDatabase"

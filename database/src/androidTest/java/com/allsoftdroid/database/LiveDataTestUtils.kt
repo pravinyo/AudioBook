@@ -1,4 +1,4 @@
-package com.allsoftdroid.feature.book_details
+package com.allsoftdroid.database
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
