@@ -71,4 +71,9 @@ dependencies {
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
     debugImplementation(LibraryDependency.LEAKY_CANARY)
     implementation(LibraryDependency.SUPPORT_V13)
+
+    //test
+    testImplementation(TestLibraryDependency.JUNIT)
+    testImplementation(TestLibraryDependency.COROUTINES_TEST)
+    testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
 }
