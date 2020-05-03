@@ -7,7 +7,6 @@ import com.allsoftdroid.feature_book.data.repository.FakeAudioBookRepository
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
@@ -29,6 +28,7 @@ class AlbumUsecaseUnitTest{
     private lateinit var albumUsecase :GetAudioBookListUsecase
 
 
+    @ExperimentalCoroutinesApi
     @Test
     fun testAudioBookListUsecase_requestCompleted_returnsList(){
         mainCoroutineRule.runBlockingTest {
@@ -44,6 +44,7 @@ class AlbumUsecaseUnitTest{
         }
     }
 
+    @ExperimentalCoroutinesApi
     @Test
     fun testAudioBookListUsecase_requestFailed_returnsEmptyList(){
         mainCoroutineRule.runBlockingTest {
