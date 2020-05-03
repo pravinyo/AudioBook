@@ -126,9 +126,11 @@ class MainActivityViewModel(application : Application,
     }
 
     fun resumeOrPlayTrack(){
-        audioManager.resumeTrack()
-        _playingTrackDetails.isPlaying = true
-        Timber.d("Play/Resume track event")
+        if(this::_playingTrackDetails.isInitialized){
+            audioManager.resumeTrack()
+            _playingTrackDetails.isPlaying = true
+            Timber.d("Play/Resume track event")
+        }
     }
 
     fun playIfAnyTrack(){
