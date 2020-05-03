@@ -88,4 +88,5 @@ dependencies {
     //test rules
     implementation(TestLibraryDependency.JUNIT)
     implementation(TestLibraryDependency.COROUTINES_TEST)
+    api(TestLibraryDependency.ESPRESSO_IDLING_RESOURCES)
 }
