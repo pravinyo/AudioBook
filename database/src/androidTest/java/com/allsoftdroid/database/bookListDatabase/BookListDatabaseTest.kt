@@ -10,8 +10,7 @@ import com.allsoftdroid.database.bookListDB.DatabaseAudioBook
 import com.allsoftdroid.database.common.AudioBookDatabase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.notNullValue
+import org.hamcrest.CoreMatchers.*
 import org.junit.After
 import org.junit.Assert.assertThat
 import org.junit.Before
@@ -62,12 +61,30 @@ class BooksDatabaseTest {
         )
 
         bookListDao.insert(user)
-        val last = bookListDao.getLastBook()
+        val last = bookListDao.getBookBy(user.identifier)
 
         assertThat(last,notNullValue())
         assertThat(last.identifier,`is`(user.identifier))
         assertThat(last.title,`is`(user.title))
         assertThat(last.creator,`is`(user.creator))
         assertThat(last.date,`is`(user.date))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun test_BooksDatabase_Users_insertAndDeleteSuccess() = runBlockingTest{
+        val user = DatabaseAudioBook(
+            identifier = "identifier",
+            title = "sample",
+            creator = "Pravin",
+            date = System.currentTimeMillis().toString()
+        )
+
+        bookListDao.insert(user)
+        bookListDao.deleteItem(user.identifier)
+
+        val last = bookListDao.getBookBy(user.identifier)
+
+        assertThat(last, nullValue())
     }
 }
