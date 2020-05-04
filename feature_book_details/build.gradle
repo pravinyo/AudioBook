@@ -46,6 +46,11 @@ android {
     dataBinding{
         enabled = DataBinding.IS_ENABLED
     }
+
+    testOptions.unitTests {
+        includeAndroidResources = true
+        returnDefaultValues = true
+    }
 }
 
 dependencies {

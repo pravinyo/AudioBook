@@ -150,7 +150,9 @@ class AudioService : Service(),KoinComponent{
             eventStore.observe()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    handleEvent(it)
+                    if(audioServiceBinder.isInitialized()){
+                        handleEvent(it)
+                    }
                 }
         )
 

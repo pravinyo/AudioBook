@@ -126,21 +126,25 @@ class MainActivityViewModel(application : Application,
     }
 
     fun resumeOrPlayTrack(){
-        audioManager.resumeTrack()
-        _playingTrackDetails.isPlaying = true
-        Timber.d("Play/Resume track event")
+        if(this::_playingTrackDetails.isInitialized){
+            audioManager.resumeTrack()
+            _playingTrackDetails.isPlaying = true
+            Timber.d("Play/Resume track event")
+        }
     }
 
     fun playIfAnyTrack(){
 
-        eventStore.publish(Event(
-            Play(PlayingState(
-                playingItemIndex = audioManager.currentPlayingIndex(),
-                action_need = true
+        if(audioManager.isServiceReady()){
+            eventStore.publish(Event(
+                Play(PlayingState(
+                    playingItemIndex = audioManager.currentPlayingIndex(),
+                    action_need = true
+                ))
             ))
-        ))
 
-        Timber.d("Play if any pending tracks event")
+            Timber.d("Play if any pending tracks event")
+        }
     }
 
     fun bindAudioService(){

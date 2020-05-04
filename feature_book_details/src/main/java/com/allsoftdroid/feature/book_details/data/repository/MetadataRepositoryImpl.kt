@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.Variable
+import com.allsoftdroid.common.test.wrapEspressoIdlingResource
 import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.feature.book_details.data.databaseExtension.SaveMetadataInDatabase
@@ -57,40 +58,42 @@ class MetadataRepositoryImpl(
     private var _networkResponse = Variable(Event(NetworkState.LOADING))
 
     override suspend fun loadMetadata() {
-        withContext(Dispatchers.IO){
-            _networkResponse.value = Event(NetworkState.LOADING)
+        wrapEspressoIdlingResource {
+            withContext(Dispatchers.IO){
+                _networkResponse.value = Event(NetworkState.LOADING)
 
-            Timber.i("Starting network call")
-            Timber.i("Loading for id:$bookId")
+                Timber.i("Starting network call")
+                Timber.i("Loading for id:$bookId")
 
-            metadataDataSource.getMetadata(bookId).enqueue(object : Callback<String> {
-                override fun onFailure(call: Call<String>, t: Throwable) {
-                    Timber.i("Failure occur:${t.message}")
-                    _networkResponse.value= Event(NetworkState.ERROR)
-                }
+                metadataDataSource.getMetadata(bookId).enqueue(object : Callback<String> {
+                    override fun onFailure(call: Call<String>, t: Throwable) {
+                        Timber.i("Failure occur:${t.message}")
+                        _networkResponse.value= Event(NetworkState.ERROR)
+                    }
 
-                override fun onResponse(call: Call<String>, response: Response<String>) {
-                    val gson = Gson()
-                    val result = gson.fromJson(response.body(), GetAudioBookMetadataResponse::class.java)
+                    override fun onResponse(call: Call<String>, response: Response<String>) {
+                        val gson = Gson()
+                        val result = gson.fromJson(response.body(), GetAudioBookMetadataResponse::class.java)
 
-                    result?.let {
+                        result?.let {
 
-                        Timber.i("Response file size: ${result.item_size}")
-                        _networkResponse.value = Event(NetworkState.COMPLETED)
+                            Timber.i("Response file size: ${result.item_size}")
+                            _networkResponse.value = Event(NetworkState.COMPLETED)
 
-                        Timber.i("Size:${result.metadata.title}")
+                            Timber.i("Size:${result.metadata.title}")
 
-                        /**
-                         * Run with application scope
-                         */
-                        GlobalScope.launch {
-                            saveInDatabase
-                                .addData(result)
-                                .execute()
+                            /**
+                             * Run with application scope
+                             */
+                            GlobalScope.launch {
+                                saveInDatabase
+                                    .addData(result)
+                                    .execute()
+                            }
                         }
                     }
-                }
-            })
+                })
+            }
         }
     }
 
