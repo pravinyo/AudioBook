@@ -56,6 +56,7 @@ class MetadataRepositoryImplTest{
 
     }
 
+    @ExperimentalCoroutinesApi
     @Test
     fun loadMetadata_checkBookId_returnsMetadata(){
 
