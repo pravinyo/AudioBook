@@ -135,14 +135,16 @@ class MainActivityViewModel(application : Application,
 
     fun playIfAnyTrack(){
 
-        eventStore.publish(Event(
-            Play(PlayingState(
-                playingItemIndex = audioManager.currentPlayingIndex(),
-                action_need = true
+        if(audioManager.isServiceReady()){
+            eventStore.publish(Event(
+                Play(PlayingState(
+                    playingItemIndex = audioManager.currentPlayingIndex(),
+                    action_need = true
+                ))
             ))
-        ))
 
-        Timber.d("Play if any pending tracks event")
+            Timber.d("Play if any pending tracks event")
+        }
     }
 
     fun bindAudioService(){
