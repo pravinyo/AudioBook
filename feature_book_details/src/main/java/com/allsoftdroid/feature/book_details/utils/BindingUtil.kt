@@ -4,14 +4,12 @@ import android.os.Build
 import android.text.Html
 import android.view.View
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
-import com.allsoftdroid.feature.book_details.presentation.recyclerView.views.TrackItemViewHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -55,29 +53,6 @@ fun setTrackPlayingStatus(imageView: ImageView,item :AudioBookTrackDomainModel?)
             imageView.setImageResource(R.drawable.play_circle_outline)
         }
     }
-}
-
-@BindingAdapter("trackDownloadStatus")
-fun setTrackDownloadStatus(imageView: ImageView,item :AudioBookTrackDomainModel?){
-    item?.let {
-        when (item.downloadStatus) {
-            is PROGRESS -> {
-                imageView.visibility = View.GONE
-            }
-
-            else -> {
-                imageView.setImageResource(
-                    when(item.downloadStatus){
-                        is DOWNLOADING -> R.drawable.close_circle_outline
-                        is DOWNLOADED, is PROGRESS -> R.drawable.download_check
-                        is NOTHING -> R.drawable.download_outline
-                    }
-                )
-                imageView.visibility = View.VISIBLE
-            }
-        }
-    }
-    Timber.d("Download image icon updated")
 }
 
 /**
@@ -127,17 +102,6 @@ fun setImageUrl(imageView: ImageView, item: AudioBookMetadataDomainModel?) {
     }
 }
 
-/**
- * Update list items desc details
- */
-//@BindingAdapter("bookDescription")
-//fun TextView.setBookDescription(item: AudioBookMetadataDomainModel?){
-//    item?.let {
-//        text =
-//            convertHtmlToText(it.description)
-//    }
-//}
-
 /*
 Binding adapter for updating the title in list items
  */
@@ -161,6 +125,7 @@ private fun getNormalizedText(text:String?,limit:Int):String{
     return text?:""
 }
 
+@Suppress("DEPRECATION")
 fun convertHtmlToText(text:String?) = text?.let {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         Html.fromHtml(it, Html.FROM_HTML_MODE_COMPACT)

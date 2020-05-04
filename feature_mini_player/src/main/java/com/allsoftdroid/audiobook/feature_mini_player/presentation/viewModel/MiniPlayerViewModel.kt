@@ -1,18 +1,15 @@
 package com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.store.audioPlayer.*
 import io.reactivex.disposables.Disposable
 import timber.log.Timber
 
-class MiniPlayerViewModel(
-    application : Application,
-    private val eventStore : AudioPlayerEventStore) : AndroidViewModel(application){
+class MiniPlayerViewModel(private val eventStore : AudioPlayerEventStore) : ViewModel(){
 
     private var _shouldItPlay:Boolean = true
     var shouldItPlay  = MutableLiveData<Boolean>()

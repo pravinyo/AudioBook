@@ -84,4 +84,11 @@ dependencies {
     api(LibraryDependency.RX_RELAY)
 
     api(LibraryDependency.KOIN)
+
+    //test rules
+    implementation(TestLibraryDependency.JUNIT)
+    implementation(TestLibraryDependency.COROUTINES_TEST)
+    api(TestLibraryDependency.ESPRESSO_IDLING_RESOURCES)
+    implementation(TestLibraryDependency.ANDROID_X_CORE)
+    implementation(TestLibraryDependency.FRAGMENT_TEST)
 }

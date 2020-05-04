@@ -47,7 +47,11 @@ dependencies {
     implementation(project(path: ModuleDependency.SERVICES))
 
     implementation(LibraryDependency.GLIDE)
-    annotationProcessor(LibraryDependency.GLIDE_COMPILER)
-
+    kapt(LibraryDependency.GLIDE_COMPILER)
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
+
+    //Test
+    testImplementation(TestLibraryDependency.JUNIT)
+    testImplementation(TestLibraryDependency.HAMCREST)
+    testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
 }

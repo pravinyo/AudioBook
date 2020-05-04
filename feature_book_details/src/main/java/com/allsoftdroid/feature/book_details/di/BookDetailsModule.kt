@@ -1,7 +1,10 @@
 package com.allsoftdroid.feature.book_details.di
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.SavedStateHandle
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.network.LibriVoxApi
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.utils.BookDetailsParserFromHtml
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.utils.BestBookDetailsParser
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.FetchAdditionalBookDetailsRepositoryImpl
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.NetworkCachingStoreRepositoryImpl
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository.SearchBookDetailsRepositoryImpl
@@ -86,7 +89,7 @@ object BookDetailsModule {
         }
     }
 
-    private val repositoryModule : Module = module {
+    var repositoryModule : Module = module {
 
         factory {
             MetadataRepositoryImpl(
@@ -104,13 +107,15 @@ object BookDetailsModule {
         }
 
         factory {
-            SearchBookDetailsRepositoryImpl(storeCachingRepository = get()) as ISearchBookDetailsRepository
+            SearchBookDetailsRepositoryImpl(storeCachingRepository = get(),
+                bestMatcher = get()) as ISearchBookDetailsRepository
         }
 
         factory {
-            FetchAdditionalBookDetailsRepositoryImpl(storeCachingRepository = get()) as IFetchAdditionBookDetailsRepository
+            FetchAdditionalBookDetailsRepositoryImpl(storeCachingRepository = get(),
+                bookDetailsParser = get()) as IFetchAdditionBookDetailsRepository
         }
-    }
+    } @VisibleForTesting set
 
     private val networkModule : Module = module{
         single{
@@ -121,7 +126,7 @@ object BookDetailsModule {
         }
     }
 
-    private val dataModule : Module = module {
+    var dataModule : Module = module {
         single {
             AudioBookDatabase.getDatabase(get()).metadataDao()
         }
@@ -137,7 +142,15 @@ object BookDetailsModule {
         single {
             ArchiveMetadataApi.RETROFIT_SERVICE
         }
-    }
+        
+        single{
+            BestBookDetailsParser()
+        }
+
+        single {
+            BookDetailsParserFromHtml()
+        }
+    } @VisibleForTesting set
 
     const val PROPERTY_BOOK_ID = "bookDetails_book_id"
     private const val METADATA_DATABASE = "SaveMetadataInDatabase"

@@ -8,9 +8,8 @@ import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import timber.log.Timber
 
-class AudioBookPlayer(private val context:Application) {
-
-    private val prepareMedia = PrepareMediaHandler(context)
+class AudioBookPlayer(private val context:Application,
+                      private val prepareMediaHandler: PrepareMediaHandler) {
 
     //current position
     private var trackPos:Int = 0
@@ -23,22 +22,6 @@ class AudioBookPlayer(private val context:Application) {
     private lateinit var bookId:String
 
     private var exoPlayer: SimpleExoPlayer? = null
-
-
-    val nextTrackEvent = Variable(Event(false))
-    val errorEvent = Variable(Event(false))
-    val isPlayerReadyEvent = Variable(Event(false))
-
-    fun createPlayer(){
-        Timber.d("Created")
-        this.exoPlayer = ExoPlayerFactory.newSimpleInstance(context, DefaultTrackSelector()).apply {
-            addListener(playerEventListener)
-            Timber.d("Listener attached")
-        }
-        Timber.d("Player created")
-    }
-
-    fun isPlayerInitialized() = exoPlayer != null
 
     private val playerEventListener = object : Player.EventListener {
 
@@ -126,13 +109,31 @@ class AudioBookPlayer(private val context:Application) {
         }
     }
 
+
+    val nextTrackEvent = Variable(Event(false))
+    val errorEvent = Variable(Event(false))
+    val isPlayerReadyEvent = Variable(Event(false))
+
+    fun createPlayer(){
+        Timber.d("Created")
+        this.exoPlayer = ExoPlayerFactory.newSimpleInstance(context, DefaultTrackSelector()).apply {
+            addListener(playerEventListener)
+            Timber.d("Listener attached")
+        }
+        Timber.d("Player created")
+    }
+
+    fun isPlayerInitialized() = exoPlayer != null
+
+
+
     private fun shouldPreparePlayerAgain(playWhenReady: Boolean, playbackState: Int)
             = playWhenReady && (playbackState == Player.STATE_IDLE || playbackState == Player.STATE_ENDED)
 
     private fun preparePlayer(bookId:String,trackList: List<AudioPlayListItem>) {
 
         Timber.d("Preparing player")
-        exoPlayer?.prepare(prepareMedia.createMediaSource(bookId, trackList))
+        exoPlayer?.prepare(prepareMediaHandler.createMediaSource(bookId, trackList))
         exoPlayer?.seekTo(trackPos, C.TIME_UNSET)
     }
 

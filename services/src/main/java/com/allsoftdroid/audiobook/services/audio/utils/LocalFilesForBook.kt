@@ -3,6 +3,7 @@ package com.allsoftdroid.audiobook.services.audio.utils
 import android.app.Application
 import android.net.Uri
 import android.os.Environment
+import androidx.annotation.VisibleForTesting
 import androidx.core.net.toUri
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
 import com.allsoftdroid.common.base.network.ArchiveUtils
@@ -12,7 +13,8 @@ import java.util.*
 
 class LocalFilesForBook(private val app:Application) {
 
-    private fun getDownloadedFilesList(bookId:String):List<String>?{
+    @VisibleForTesting
+    fun getDownloadedFilesList(bookId:String):List<String>?{
         val directory = Environment.getExternalStoragePublicDirectory(ArchiveUtils.getDownloadsRootFolder(context = app))
 
         val path = directory.toString() + ArchiveUtils.getLocalSavePath(bookId)

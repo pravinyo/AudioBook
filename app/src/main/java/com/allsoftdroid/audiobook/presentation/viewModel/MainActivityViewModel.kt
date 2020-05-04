@@ -126,21 +126,25 @@ class MainActivityViewModel(application : Application,
     }
 
     fun resumeOrPlayTrack(){
-        audioManager.resumeTrack()
-        _playingTrackDetails.isPlaying = true
-        Timber.d("Play/Resume track event")
+        if(this::_playingTrackDetails.isInitialized){
+            audioManager.resumeTrack()
+            _playingTrackDetails.isPlaying = true
+            Timber.d("Play/Resume track event")
+        }
     }
 
     fun playIfAnyTrack(){
 
-        eventStore.publish(Event(
-            Play(PlayingState(
-                playingItemIndex = audioManager.currentPlayingIndex(),
-                action_need = true
+        if(audioManager.isServiceReady()){
+            eventStore.publish(Event(
+                Play(PlayingState(
+                    playingItemIndex = audioManager.currentPlayingIndex(),
+                    action_need = true
+                ))
             ))
-        ))
 
-        Timber.d("Play if any pending tracks event")
+            Timber.d("Play if any pending tracks event")
+        }
     }
 
     fun bindAudioService(){
@@ -168,7 +172,9 @@ class MainActivityViewModel(application : Application,
         viewModelScope.launch {
             handler.execute(lastPlayedUsecase,request,object : BaseUseCase.UseCaseCallback<GetLastPlayedUsecase.ResponseValues>{
                 override suspend fun onSuccess(response: GetLastPlayedUsecase.ResponseValues) {
-                    _lastPlayed.value = Event(response.lastPlayedTrack)
+                    response.lastPlayedTrack?.let {
+                        _lastPlayed.value = Event(it)
+                    }
                 }
 
                 override suspend fun onError(t: Throwable) {

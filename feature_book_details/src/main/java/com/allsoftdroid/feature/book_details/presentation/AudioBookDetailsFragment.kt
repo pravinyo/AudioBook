@@ -21,7 +21,7 @@ import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.D
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 import com.allsoftdroid.feature.book_details.utils.NetworkState
-import com.allsoftdroid.feature.book_details.utils.TextFormatter.Companion.formattedBookDetails
+import com.allsoftdroid.feature.book_details.utils.TextFormatter.formattedBookDetails
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers

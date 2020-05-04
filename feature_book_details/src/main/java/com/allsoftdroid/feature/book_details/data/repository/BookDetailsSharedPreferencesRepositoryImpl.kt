@@ -3,6 +3,7 @@ package com.allsoftdroid.feature.book_details.data.repository
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import com.allsoftdroid.common.test.wrapEspressoIdlingResource
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -27,56 +28,80 @@ class BookDetailsSharedPreferencesRepositoryImpl(private val preferences : Share
     }
 
     override fun saveTrackPosition(pos: Int)=
-        preferences.editSharedPreferences {
-            putInt(KEY_NAME_TRACK_PLAYING_NUMBER,pos)
+        wrapEspressoIdlingResource {
+            preferences.editSharedPreferences {
+                putInt(KEY_NAME_TRACK_PLAYING_NUMBER,pos)
             }
-
-    override fun trackPosition():Int = preferences.getInt(KEY_NAME_TRACK_PLAYING_NUMBER,1)
-
-    override fun saveIsPlaying(isPlaying: Boolean)=
-        preferences.editSharedPreferences {
-            putBoolean(KEY_NAME_TRACK_IS_PLAYING,isPlaying)
         }
 
-    override fun isPlaying():Boolean = preferences.getBoolean(KEY_NAME_TRACK_IS_PLAYING,false)
+    override fun trackPosition():Int = wrapEspressoIdlingResource {
+        preferences.getInt(KEY_NAME_TRACK_PLAYING_NUMBER,1)
+    }
+
+    override fun saveIsPlaying(isPlaying: Boolean)=
+        wrapEspressoIdlingResource {
+            preferences.editSharedPreferences {
+                putBoolean(KEY_NAME_TRACK_IS_PLAYING,isPlaying)
+            }
+        }
+
+    override fun isPlaying():Boolean = wrapEspressoIdlingResource {
+        preferences.getBoolean(KEY_NAME_TRACK_IS_PLAYING,false)
+    }
 
     override fun saveTrackTitle(title: String) =
-        preferences.editSharedPreferences {
-            putString(KEY_NAME_TRACK_PLAYING_TITLE,title)
+        wrapEspressoIdlingResource {
+            preferences.editSharedPreferences {
+                putString(KEY_NAME_TRACK_PLAYING_TITLE,title)
             }
+        }
 
-    override fun trackTitle():String = preferences.getString(KEY_NAME_TRACK_PLAYING_TITLE,"")?:""
+    override fun trackTitle():String = wrapEspressoIdlingResource {
+        preferences.getString(KEY_NAME_TRACK_PLAYING_TITLE,"")?:""
+    }
 
     override fun saveBookId(bookId: String) {
-        preferences.editSharedPreferences {
-            putString(KEY_NAME_BOOK_ID,bookId)
+        wrapEspressoIdlingResource {
+            preferences.editSharedPreferences {
+                putString(KEY_NAME_BOOK_ID,bookId)
+            }
         }
     }
 
     override fun bookId(): String = preferences.getString(KEY_NAME_BOOK_ID,"")?:""
 
     override fun saveBookName(name: String) {
-        preferences.editSharedPreferences {
-            putString(KEY_NAME_BOOK_NAME,name)
+        wrapEspressoIdlingResource {
+            preferences.editSharedPreferences {
+                putString(KEY_NAME_BOOK_NAME,name)
+            }
         }
     }
 
-    override fun bookName(): String = preferences.getString(KEY_NAME_BOOK_NAME,"N/A")?:"N/A"
+    override fun bookName(): String = wrapEspressoIdlingResource {
+        preferences.getString(KEY_NAME_BOOK_NAME,"N/A")?:"N/A"
+    }
 
     override fun saveTrackFormatIndex(formatIndex: Int) {
-        preferences.editSharedPreferences {
-            putInt(KEY_NAME_TRACK_FORMAT,formatIndex)
+        wrapEspressoIdlingResource {
+            preferences.editSharedPreferences {
+                putInt(KEY_NAME_TRACK_FORMAT,formatIndex)
+            }
         }
     }
 
-    override fun trackFormatIndex(): Int = preferences.getInt(KEY_NAME_TRACK_FORMAT,0)
+    override fun trackFormatIndex(): Int = wrapEspressoIdlingResource {
+        preferences.getInt(KEY_NAME_TRACK_FORMAT,0)
+    }
 
-    override fun clear() = preferences.clearSharedPreferences {
-        remove(KEY_NAME_TRACK_PLAYING_TITLE)
-        remove(KEY_NAME_TRACK_PLAYING_NUMBER)
-        remove(KEY_NAME_TRACK_IS_PLAYING)
-        remove(KEY_NAME_BOOK_ID)
-        remove(KEY_NAME_TRACK_FORMAT)
+    override fun clear() = wrapEspressoIdlingResource {
+        preferences.clearSharedPreferences {
+            remove(KEY_NAME_TRACK_PLAYING_TITLE)
+            remove(KEY_NAME_TRACK_PLAYING_NUMBER)
+            remove(KEY_NAME_TRACK_IS_PLAYING)
+            remove(KEY_NAME_BOOK_ID)
+            remove(KEY_NAME_TRACK_FORMAT)
+        }
     }
 
     private fun SharedPreferences.editSharedPreferences(batch: SharedPreferences.Editor.() -> Unit) = edit().also(batch).apply()

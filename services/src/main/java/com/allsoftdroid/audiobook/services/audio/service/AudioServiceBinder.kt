@@ -1,6 +1,5 @@
 package com.allsoftdroid.audiobook.services.audio.service
 
-import android.app.Application
 import android.os.Binder
 import com.allsoftdroid.audiobook.services.audio.utils.AudioBookPlayer
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
@@ -10,9 +9,7 @@ import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 
 
-class AudioServiceBinder(application: Application) : Binder(){
-
-    private val player = AudioBookPlayer(application)
+class AudioServiceBinder(private val player: AudioBookPlayer) : Binder(){
 
     //id of playing audio book
     private lateinit var bookId:String

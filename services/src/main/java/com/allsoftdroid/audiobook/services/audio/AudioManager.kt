@@ -17,7 +17,7 @@ class AudioManager private constructor(context: Context):KoinComponent{
 
     companion object : SingletonHolder<AudioManager, Context>(creator = ::AudioManager)
 
-    var audioServiceBinder : AudioServiceBinder? = null
+    private var audioServiceBinder : AudioServiceBinder? = null
     private var _currentTrack = 0
     private var mBookId:String =""
     private val appContext : Context = context
@@ -52,6 +52,12 @@ class AudioManager private constructor(context: Context):KoinComponent{
         AudioServiceModule.injectFeature()
     }
 
+    /**
+     * This function will share the service status to application whether to send event or not
+     */
+    fun isServiceReady():Boolean{
+        return audioServiceBinder != null
+    }
 
     /**
      * This function will bind service and  start the service in foreground

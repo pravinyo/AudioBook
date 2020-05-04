@@ -27,6 +27,16 @@ This App is based on Single Activity Navigation. Each Fragment screen is develop
 # Dependency Graph of the Project:
 ![AudioBook](/photos/dependencies_graph.png)
 
+# Release: 4.3.0
+## :star: New Features/Fixes
+
+- Minor bug fixed for AudioManager
+- Resume play bug fixed
+- End to end test [#91](https://github.com/pravinyo/AudioBook/pull/91)
+- Android test [#90](https://github.com/pravinyo/AudioBook/pull/90)
+- Unit test added to modules [#89](https://github.com/pravinyo/AudioBook/pull/89)
+
+
 # Release: 4.2.3-alpha
 ## :star: New Features
 - Added Support to play offline downloaded files.

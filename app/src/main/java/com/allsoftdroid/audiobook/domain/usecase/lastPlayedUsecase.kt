@@ -20,11 +20,15 @@ class GetLastPlayedUsecase : BaseUseCase<GetLastPlayedUsecase.RequestValues, Get
                             )
                         )
                     )
+                }else{
+                    useCaseCallback?.onSuccess(
+                        ResponseValues(null)
+                    )
                 }
             }
         }?:useCaseCallback?.onError(Error("Request cannot be Null"))
     }
 
     class RequestValues(val sharedPref: BookDetailsSharedPreferenceRepository) : BaseUseCase.RequestValues
-    class ResponseValues (val lastPlayedTrack : LastPlayedTrack) : BaseUseCase.ResponseValues
+    class ResponseValues (val lastPlayedTrack : LastPlayedTrack?) : BaseUseCase.ResponseValues
 }

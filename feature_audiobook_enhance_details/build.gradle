@@ -55,4 +55,11 @@ dependencies {
     kapt(LibraryDependency.MOSHI_KOTLIN_CODEGEN){
         because("Replaced with Gson as it makes code better and clean")
     }
+
+    // Unit Testing
+    testImplementation(TestLibraryDependency.JUNIT)
+    testImplementation(TestLibraryDependency.HAMCREST)
+    testImplementation(TestLibraryDependency.MOCKITO_CORE)
+    testImplementation(TestLibraryDependency.COROUTINES_TEST)
+    testImplementation(TestLibraryDependency.ANDROID_X_CORE_TESTING)
 }

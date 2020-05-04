@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.network.Failure
 import com.allsoftdroid.common.base.network.Success
+import com.allsoftdroid.common.test.wrapEspressoIdlingResource
 import com.allsoftdroid.database.bookListDB.AudioBookDao
 import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.feature_book.data.databaseExtension.SaveBookListInDatabase
@@ -67,55 +68,59 @@ class AudioBookRepositoryImpl(
      * It request the content of type books for new updates
      */
     override suspend fun fetchBookList(page:Int) {
-        withContext(Dispatchers.IO) {
-            Timber.i("Starting network call")
+        wrapEspressoIdlingResource {
+            withContext(Dispatchers.IO) {
+                Timber.i("Starting network call")
 
-            remoteBookService.getAudioBooks(
-                page = page,
-                rowCount = Utils.Books.DEFAULT_ROW_COUNT
-            ).enqueue(object : Callback<String> {
-                override fun onFailure(call: Call<String>, t: Throwable) {
-                    Timber.i("Failure occur")
+                remoteBookService.getAudioBooks(
+                    page = page,
+                    rowCount = Utils.Books.DEFAULT_ROW_COUNT
+                ).enqueue(object : Callback<String> {
+                    override fun onFailure(call: Call<String>, t: Throwable) {
+                        Timber.i("Failure occur")
 
-                    GlobalScope.launch {
-                        listener?.onResponse(Failure(Error(t)))
-                    }
-                }
-
-                override fun onResponse(call: Call<String>, response: Response<String>) {
-                    val gson = Gson()
-                    val result =
-                        gson.fromJson(response.body(), GetAudioBooksResponse::class.java)
-
-                    Timber.i("Response got: ${result.response.docs[0].title}")
-
-                    result?.response?.docs?.let {
-                        Timber.i("Size:${result.response.docs.size}")
-
-                        /**
-                         * Since we have data, we can independently save it to database
-                         * It uses entire application scope
-                         */
                         GlobalScope.launch {
-                            saveToDatabase(result.response.docs)
-                            listener?.onResponse(Success(result = result.response.docs.size))
+                            listener?.onResponse(Failure(Error(t)))
                         }
-
                     }
-                }
-            })
+
+                    override fun onResponse(call: Call<String>, response: Response<String>) {
+                        val gson = Gson()
+                        val result =
+                            gson.fromJson(response.body(), GetAudioBooksResponse::class.java)
+
+                        Timber.i("Response got: ${result.response.docs[0].title}")
+
+                        result?.response?.docs?.let {
+                            Timber.i("Size:${result.response.docs.size}")
+
+                            /**
+                             * Since we have data, we can independently save it to database
+                             * It uses entire application scope
+                             */
+                            GlobalScope.launch {
+                                saveToDatabase(result.response.docs)
+                                listener?.onResponse(Success(result = result.response.docs.size))
+                            }
+
+                        }
+                    }
+                })
+            }
         }
     }
 
     private suspend fun saveToDatabase(list:List<AudioBookDataModel>){
-        Timber.i("Saving to DB")
-        if (list.isNotEmpty()){
-            Timber.i("List is not empty saving to Database")
-            saveInDatabase
-                .addData(data = list)
-                .execute()
-        }else{
-            Timber.i("List is empty")
+        wrapEspressoIdlingResource {
+            Timber.i("Saving to DB")
+            if (list.isNotEmpty()){
+                Timber.i("List is not empty saving to Database")
+                saveInDatabase
+                    .addData(data = list)
+                    .execute()
+            }else{
+                Timber.i("List is empty")
+            }
         }
     }
 
@@ -123,37 +128,39 @@ class AudioBookRepositoryImpl(
     override fun getAudioBooks() =  this.audioBook
 
     override suspend fun searchBookList(query: String, page: Int) {
-        withContext(Dispatchers.IO) {
-            Timber.i("Starting network call")
+        wrapEspressoIdlingResource {
+            withContext(Dispatchers.IO) {
+                Timber.i("Starting network call")
 
-            remoteBookService.searchBooks(
-                search = Utils.Books.buildQuery(query),
-                page = page,
-                rowCount = Utils.Books.DEFAULT_ROW_COUNT
-            ).enqueue(object : Callback<String> {
-                override fun onFailure(call: Call<String>, t: Throwable) {
-                    Timber.i("Failure occur")
-
-                    GlobalScope.launch {
-                        listener?.onResponse(Failure(Error(t)))
-                    }
-                }
-
-                override fun onResponse(call: Call<String>, response: Response<String>) {
-                    val gson = Gson()
-                    val result =
-                        gson.fromJson(response.body(), GetAudioBooksResponse::class.java)
-
-                    result?.response?.docs?.let {list->
-                        Timber.i("Size:${result.response.docs.size}")
-                        _searchResponse.value = list.map { it.toDomainModel() }
+                remoteBookService.searchBooks(
+                    search = Utils.Books.buildQuery(query),
+                    page = page,
+                    rowCount = Utils.Books.DEFAULT_ROW_COUNT
+                ).enqueue(object : Callback<String> {
+                    override fun onFailure(call: Call<String>, t: Throwable) {
+                        Timber.i("Failure occur")
 
                         GlobalScope.launch {
-                            listener?.onResponse(Success(result = result.response.docs.size))
+                            listener?.onResponse(Failure(Error(t)))
                         }
                     }
-                }
-            })
+
+                    override fun onResponse(call: Call<String>, response: Response<String>) {
+                        val gson = Gson()
+                        val result =
+                            gson.fromJson(response.body(), GetAudioBooksResponse::class.java)
+
+                        result?.response?.docs?.let {list->
+                            Timber.i("Size:${result.response.docs.size}")
+                            _searchResponse.value = list.map { it.toDomainModel() }
+
+                            GlobalScope.launch {
+                                listener?.onResponse(Success(result = result.response.docs.size))
+                            }
+                        }
+                    }
+                })
+            }
         }
     }
 
