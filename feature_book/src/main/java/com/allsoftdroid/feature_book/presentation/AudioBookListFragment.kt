@@ -44,7 +44,7 @@ class AudioBookListFragment : BaseContainerFragment(){
 
     private lateinit var callback:OnBackPressedCallback
 
-    private val downloadEventStore: DownloadEventStore  = DownloaderEventBus.getEventBusInstance()
+    private val downloadEventStore: DownloadEventStore by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
