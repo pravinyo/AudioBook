@@ -13,13 +13,14 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.annotation.VisibleForTesting
 import androidx.core.os.bundleOf
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
-import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus
 import com.allsoftdroid.common.base.store.downloader.OpenDownloadActivity
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.data.network.Utils
@@ -30,6 +31,7 @@ import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBook
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.PaginationListener
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
 import com.allsoftdroid.feature_book.utils.NetworkState
+import com.google.android.material.navigation.NavigationView
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -43,6 +45,8 @@ class AudioBookListFragment : BaseContainerFragment(){
     @VisibleForTesting var bundleShared: Bundle = Bundle.EMPTY
 
     private lateinit var callback:OnBackPressedCallback
+    private lateinit var drawer: DrawerLayout
+    private lateinit var navView : NavigationView
 
     private val downloadEventStore: DownloadEventStore by inject()
 
@@ -54,6 +58,58 @@ class AudioBookListFragment : BaseContainerFragment(){
 
         binding.lifecycleOwner = viewLifecycleOwner
         binding.audioBookListViewModel = booksViewModel
+        drawer = binding.drawerLayout
+        navView = binding.navView
+
+        setupUI(binding)
+
+        return binding.root
+    }
+
+    private fun setupDrawer() {
+        drawer.openDrawer(GravityCompat.START)
+        navView.setNavigationItemSelectedListener {
+            Toast.makeText(activity,"Id:${it.itemId}",Toast.LENGTH_SHORT).show()
+            drawer.closeDrawer(GravityCompat.START)
+            return@setNavigationItemSelectedListener true
+        }
+    }
+
+    private fun setupToolbar(binding:FragmentAudiobookListBinding){
+        binding.toolbarBookSearch.setOnClickListener{
+            binding.etToolbarSearch.text.clear()
+            booksViewModel.onSearchItemPressed()
+        }
+
+        binding.etToolbarSearch.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                s?.let {
+                    booksViewModel.setSearchOrClose(isSearchBtn = it.isNotEmpty() && it.length>3)
+                }
+            }
+        })
+
+        binding.ivSearchCancel.setOnClickListener {
+            binding.etToolbarSearch.clearFocus()
+            hideKeyboard()
+
+            booksViewModel.onSearchFinished()
+        }
+
+        binding.toolbarDownloads.setOnClickListener {
+            navigateToDownloadsActivity()
+        }
+    }
+
+    private fun setupUI(binding:FragmentAudiobookListBinding){
+        setupToolbar(binding)
+        setupDrawer()
 
         //val audio book adapter
         val bookAdapter = AudioBookAdapter(AudioBookItemClickedListener {
@@ -131,43 +187,6 @@ class AudioBookListFragment : BaseContainerFragment(){
             }
         })
 
-        binding.toolbarBookSearch.setOnClickListener{
-            binding.etToolbarSearch.text.clear()
-            booksViewModel.onSearchItemPressed()
-        }
-
-        binding.etToolbarSearch.addTextChangedListener(object : TextWatcher{
-            override fun afterTextChanged(p0: Editable?) {
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                s?.let {
-                    booksViewModel.setSearchOrClose(isSearchBtn = it.isNotEmpty() && it.length>3)
-                }
-            }
-        })
-
-        binding.ivSearchCancel.setOnClickListener {
-            binding.etToolbarSearch.clearFocus()
-            hideKeyboard()
-
-            booksViewModel.onSearchFinished()
-        }
-
-        binding.ivSearch.setOnClickListener {
-            val searchText = binding.etToolbarSearch.text.trim().toString()
-            binding.etToolbarSearch.clearFocus()
-            hideKeyboard()
-
-            if(searchText.length>3){
-                bookAdapter.submitList(null)
-                booksViewModel.search(query = searchText)
-            }
-        }
-
         booksViewModel.searchBooks.observe(this, Observer {
             it.map {book ->
                 Timber.d("Fetched: ${book.mId}")
@@ -184,11 +203,16 @@ class AudioBookListFragment : BaseContainerFragment(){
             }
         })
 
-        binding.toolbarDownloads.setOnClickListener {
-            navigateToDownloadsActivity()
-        }
+        binding.ivSearch.setOnClickListener {
+            val searchText = binding.etToolbarSearch.text.trim().toString()
+            binding.etToolbarSearch.clearFocus()
+            hideKeyboard()
 
-        return binding.root
+            if(searchText.length>3){
+                bookAdapter.submitList(null)
+                booksViewModel.search(query = searchText)
+            }
+        }
     }
 
     private fun navigateToDownloadsActivity() {
