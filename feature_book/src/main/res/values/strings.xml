@@ -8,4 +8,17 @@
     <string name="web_search_icon">web search</string>
     <string name="no_results_found">No Results Found! Try rephrasing</string>
     <string name="audiobook_download">Check Downloads</string>
+    <string name="toolbar_nav_hamburger">Toolbar menu</string>
+    <string name="my_books">My Books</string>
+    <string name="listen_later">Listen later</string>
+    <string name="downloads">Downloads</string>
+    <string name="user_data">User Data</string>
+    <string name="history">History</string>
+    <string name="statistics">Statistics</string>
+    <string name="settings">Settings</string>
+    <string name="report">Report</string>
+    <string name="rate">Rate</string>
+    <string name="library">Library</string>
+    <string name="profile_picture">profile picture</string>
+    <string name="guest_user">Guest User</string>
 </resources>
