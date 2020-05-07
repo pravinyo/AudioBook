@@ -67,11 +67,18 @@ class AudioBookListFragment : BaseContainerFragment(){
     }
 
     private fun setupDrawer() {
-        drawer.openDrawer(GravityCompat.START)
         navView.setNavigationItemSelectedListener {
-            Toast.makeText(activity,"Id:${it.itemId}",Toast.LENGTH_SHORT).show()
+
             drawer.closeDrawer(GravityCompat.START)
-            return@setNavigationItemSelectedListener true
+
+            when(it.itemId){
+                R.id.nav_item_downloads -> {
+                    navigateToDownloadsActivity()
+                    return@setNavigationItemSelectedListener true
+                }
+            }
+
+            return@setNavigationItemSelectedListener false
         }
     }
 
@@ -102,8 +109,8 @@ class AudioBookListFragment : BaseContainerFragment(){
             booksViewModel.onSearchFinished()
         }
 
-        binding.toolbarDownloads.setOnClickListener {
-            navigateToDownloadsActivity()
+        binding.toolbarNavHamburger.setOnClickListener {
+            drawer.openDrawer(GravityCompat.START)
         }
     }
 
@@ -244,18 +251,24 @@ class AudioBookListFragment : BaseContainerFragment(){
     }
 
     private fun handleBackPressEvent(){
-
         Timber.d("backPress:Back pressed")
-        if (booksViewModel.isSearching) {
-
-            booksViewModel.apply {
-                cancelSearchRequest()
-                onSearchFinished()
-                loadRecentBookList()
+        when {
+            drawer.isDrawerOpen(GravityCompat.START) -> {
+                drawer.closeDrawer(drawer)
             }
-        }else{
-            callback.isEnabled = false
-            requireActivity().onBackPressed()
+
+            booksViewModel.isSearching -> {
+                booksViewModel.apply {
+                    cancelSearchRequest()
+                    onSearchFinished()
+                    loadRecentBookList()
+                }
+            }
+
+            else -> {
+                callback.isEnabled = false
+                requireActivity().onBackPressed()
+            }
         }
     }
 }
