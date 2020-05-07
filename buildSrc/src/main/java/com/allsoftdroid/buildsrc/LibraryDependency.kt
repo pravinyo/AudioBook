@@ -3,6 +3,7 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val PREFERENCE = "1.1.1"
     const val MOSHI = "1.9.2"
     const val DROPBOX_STORE = "4.0.0-alpha03"
     const val JSOUP = "1.12.1"
@@ -79,6 +80,7 @@ object LibraryDependency {
 
     const val CORE_KTX = "androidx.core:core-ktx:${LibraryVersion.CORE_KTX}"
     const val FRAGMENT_KTX = "androidx.fragment:fragment-ktx:${LibraryVersion.FRAGMENT_KTX}"
+    const val PREFERENCE = "androidx.preference:preference:${LibraryVersion.PREFERENCE}"
 
     const val LIFECYCLE_EXTENSIONS = "androidx.lifecycle:lifecycle-extensions:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
     const val LIFECYCLE_COMPILER ="androidx.lifecycle:lifecycle-compiler:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
