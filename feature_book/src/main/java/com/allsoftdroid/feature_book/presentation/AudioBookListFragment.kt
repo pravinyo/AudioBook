@@ -76,6 +76,11 @@ class AudioBookListFragment : BaseContainerFragment(){
                     navigateToDownloadsActivity()
                     return@setNavigationItemSelectedListener true
                 }
+
+                R.id.nav_item_settings -> {
+                    this.findNavController()
+                        .navigate(R.id.action_AudioBookListFragment_to_SettingsFragment)
+                }
             }
 
             return@setNavigationItemSelectedListener false
