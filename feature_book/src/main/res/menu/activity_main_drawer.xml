@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="@string/library">
+        <menu>
+            <item android:id="@+id/nav_item_my_book"
+                android:icon="@drawable/ic_book_play"
+                android:title="@string/my_books" />
+            <item android:id="@+id/nav_item_listen_later"
+                android:icon="@drawable/ic_clock"
+                android:title="@string/listen_later" />
+            <item android:id="@+id/nav_item_downloads"
+                android:icon="@drawable/arrow_collapse_down"
+                android:title="@string/downloads" />
+        </menu>
+    </item>
+
+    <item android:title="@string/user_data">
+        <menu>
+            <item android:id="@+id/nav_item_history"
+                android:icon="@drawable/ic_history"
+                android:title="@string/history" />
+            <item android:id="@+id/nav_item_statistics"
+                android:icon="@drawable/ic_gauge"
+                android:title="@string/statistics" />
+            <item android:id="@+id/nav_item_settings"
+                android:icon="@drawable/ic_cog_outline"
+                android:title="@string/settings" />
+        </menu>
+    </item>
+
+    <group android:id="@+id/group_support">
+        <item android:id="@+id/nav_item_report"
+            android:icon="@drawable/ic_bug"
+            android:title="@string/report" />
+        <item android:id="@+id/nav_item_rate"
+            android:icon="@drawable/ic_star"
+            android:title="@string/rate" />
+    </group>
+</menu>
