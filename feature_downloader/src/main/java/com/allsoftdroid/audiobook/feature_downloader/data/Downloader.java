@@ -159,7 +159,8 @@ public class Downloader implements IDownloader {
             downloadId = download(download1.getUrl(),download1.getName(),download1.getDescription(),download1.getSubPath());
         }
 
-        File file = new File(Environment.DIRECTORY_DOWNLOADS,download1.getSubPath()+download1.getName());
+        String rootFolder = ArchiveUtils.Companion.getDownloadsRootFolder(this.mContext.getApplication());
+        File file = new File(rootFolder,download1.getSubPath()+download1.getName());
         Timber.d("File path:%s", file.getAbsolutePath());
 
         mDownloadObserver = new DownloadObserver(
@@ -191,7 +192,8 @@ public class Downloader implements IDownloader {
 
     private long download(String URL, String name, String description, String subPath){
 
-        String downloadFolder = ArchiveUtils.Companion.getDownloadsRootFolder(mContext.getApplication());
+        String downloadRootFolder = ArchiveUtils.Companion.getDownloadsRootFolder(mContext.getApplication());
+        Timber.d("Download Folder:%s", downloadRootFolder);
 
         //store downloadId to database for own reference
         long downloadId= downloadUtils.getDownloadIdIfIsDownloading(mContext,URL);
@@ -203,7 +205,7 @@ public class Downloader implements IDownloader {
                     uri,
                     name,
                     description,
-                    downloadFolder,
+                    downloadRootFolder,
                     subPath
             );
 
