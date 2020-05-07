@@ -2,6 +2,7 @@ package com.allsoftdroid.audiobook.feature_settings
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Environment
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.allsoftdroid.audiobook.feature_settings.utils.FileUtil
@@ -26,7 +27,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             val path = ArchiveUtils.getDownloadsRootFolder(it.application)
 
-            downloadPref?.summary = path
+            downloadPref?.summary = "/$path"
 
             downloadPref?.setOnPreferenceClickListener {
                 sendIntentForDirectoryPick()
@@ -55,7 +56,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         val path = FileUtil.getFullPathFromTreeUri(treeUri,activity)
 
                         path?.let {
-                            ArchiveUtils.setDownloadsRootFolder(activity.application,path)
+                            val root = Environment.getExternalStorageDirectory().path
+                            val folder = path.substring(root.length+1)
+                            Timber.d("Path returned: $folder")
+                            Timber.d("Path root older api: $root")
+                            ArchiveUtils.setDownloadsRootFolder(activity.application,folder)
                         }
                     }
                 }
