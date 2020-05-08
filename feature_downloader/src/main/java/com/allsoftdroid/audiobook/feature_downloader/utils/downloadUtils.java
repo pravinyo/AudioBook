@@ -160,6 +160,7 @@ public class downloadUtils {
             //Enqueue download and save into referenceId
             downloadReference = downloadManager.enqueue(request);
         }catch (Exception e){
+            e.printStackTrace();
             downloadReference = DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
         }
 
