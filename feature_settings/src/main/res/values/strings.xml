@@ -3,4 +3,5 @@
     <string name="title_storage">Storage</string>
     <string name="preference_title_downloads">Download Folder</string>
     <string name="preference_summary">default location</string>
+    <string name="preference_downloads_help">check allowed folder</string>
 </resources>
