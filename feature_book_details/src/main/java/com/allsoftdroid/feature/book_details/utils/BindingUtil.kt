@@ -13,7 +13,6 @@ import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainMo
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import timber.log.Timber
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
