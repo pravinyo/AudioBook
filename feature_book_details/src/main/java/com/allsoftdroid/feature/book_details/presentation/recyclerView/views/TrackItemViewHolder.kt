@@ -10,6 +10,7 @@ import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.BookMediaTrackItemBinding
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.DownloadItemClickedListener
+import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.ProgressbarItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.utils.*
 import timber.log.Timber
@@ -21,10 +22,16 @@ class TrackItemViewHolder private constructor(private val binding : BookMediaTra
 
     // bind the data to the view
     @SuppressLint("CheckResult")
-    fun bind(downloadEventStore: DownloadEventStore, bookId:String, item: AudioBookTrackDomainModel, clickedListener: TrackItemClickedListener, downloadItemClickedListener: DownloadItemClickedListener){
+    fun bind(downloadEventStore: DownloadEventStore,
+             bookId:String,
+             item: AudioBookTrackDomainModel,
+             clickedListener: TrackItemClickedListener,
+             progressbarItemClickedListener: ProgressbarItemClickedListener,
+             downloadItemClickedListener: DownloadItemClickedListener){
         binding.track = item
         binding.clickListener = clickedListener
         binding.downloadListener = downloadItemClickedListener
+        binding.progressClickListener = progressbarItemClickedListener
 
         downloadEventStore.observe().subscribe { event->
             event.peekContent().let {
@@ -41,8 +48,8 @@ class TrackItemViewHolder private constructor(private val binding : BookMediaTra
                             setItemIcon(DOWNLOADED)
                         }
 
-                        is Download -> {
-
+                        is Cancelled -> {
+                            setItemIcon(CANCELLED)
                         }
 
                         is Downloading ->{

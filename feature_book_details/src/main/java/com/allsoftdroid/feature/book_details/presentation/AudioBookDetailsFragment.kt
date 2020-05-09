@@ -16,6 +16,7 @@ import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetail
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.AudioBookTrackAdapter
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.DownloadItemClickedListener
+import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.ProgressbarItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 import com.allsoftdroid.feature.book_details.utils.NetworkState
@@ -87,6 +88,10 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
                     Timber.d("State change event sent: new pos:$it")
                 }?:Timber.d("State change event sent: new pos:$trackNumber")
                 }
+            ,
+            ProgressbarItemClickedListener {trackId ->
+                bookDetailsViewModel.openDownloadsScreen(trackId)
+            }
             ,
             DownloadItemClickedListener { trackId ->
                 bookDetailsViewModel.downloadSelectedItemWith(trackId)
