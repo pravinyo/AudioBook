@@ -78,7 +78,7 @@ class TrackItemViewHolder private constructor(private val binding : BookMediaTra
                 when(downloadStatus){
                     is DOWNLOADING,is PROGRESS -> R.drawable.close_circle_outline
                     is DOWNLOADED -> R.drawable.download_check
-                    is NOTHING -> R.drawable.download_outline
+                    is NOTHING,is CANCELLED -> R.drawable.download_outline
                 }
             )
         }
