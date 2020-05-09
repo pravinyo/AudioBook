@@ -10,9 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
-import com.allsoftdroid.common.base.store.downloader.DownloadEvent
-import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
-import com.allsoftdroid.common.base.store.downloader.DownloadNothing
+import com.allsoftdroid.common.base.store.downloader.*
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
@@ -195,7 +193,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
 
     private fun handleDownloaderEvent(event: Event<DownloadEvent>) {
         event.peekContent().let {
-            if(it is DownloadNothing) return
+            if(it is DownloadNothing || it is OpenDownloadActivity || it is PullAndUpdateStatus) return
 
             Timber.d("Event is for book: ${it.bookId} - chapter:${it.chapterIndex}")
             bookDetailsViewModel.updateDownloadStatus(it)
