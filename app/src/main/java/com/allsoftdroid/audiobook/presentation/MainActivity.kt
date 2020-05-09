@@ -127,7 +127,7 @@ class MainActivity : BaseActivity() {
                     try{
                         mainActivityViewModel.playIfAnyTrack()
                     }catch (exception:Exception){
-                        Timber.e("Error occurred when resuming: ${exception.printStackTrace().toString()}")
+                        Timber.e("Error occurred when resuming: ${exception.printStackTrace()}")
                     }
                 }
             }
@@ -247,7 +247,7 @@ class MainActivity : BaseActivity() {
             }
 
             is Previous -> {
-                mainActivityViewModel.previousTrack(event)
+                mainActivityViewModel.previousTrack()
             }
 
             is Play -> {
@@ -278,8 +278,8 @@ class MainActivity : BaseActivity() {
 
             else -> {
                 Timber.d("Unknown event received")
-                Timber.d("Unknown Event has message of type TrackDetails: "+(event is TrackDetails))
-                Timber.d("Unknown Event has message of type Initial: "+(event is EmptyEvent))
+                Timber.d("Unknown Event has message of type TrackDetails: ${event is TrackDetails}")
+                Timber.d("Unknown Event has message of type Initial: ${event is EmptyEvent}")
             }
         }
     }
