@@ -27,16 +27,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/imgView_book_image"
+                <FrameLayout
+                    android:id="@+id/fl_book_image_holder"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/book_details_banner_image_height"
-                    android:scaleType="centerCrop"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:bookImage="@{audioBookDetailsViewModel.audioBookMetadata}"
-                    android:contentDescription="@string/banner_image_for_audio_book" />
+                    app:layout_constraintStart_toStartOf="parent">
+                    <ImageView
+                        android:id="@+id/imgView_book_image"
+                        android:layout_gravity="center"
+                        android:layout_width="@dimen/book_details_book_image_length"
+                        android:layout_height="@dimen/book_details_book_image_length"
+                        android:scaleType="centerCrop"
+                        android:contentDescription="@string/banner_image_for_audio_book" />
+                </FrameLayout>
 
                 <ProgressBar
                     android:id="@+id/pb_content_loading"
@@ -56,7 +62,7 @@
                     app:layout_constraintBottom_toTopOf="@+id/recyclerView"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imgView_book_image" />
+                    app:layout_constraintTop_toBottomOf="@+id/fl_book_image_holder" />
 
                 <org.honorato.multistatetogglebutton.MultiStateToggleButton
                     android:id="@+id/mstb_trackFormat"
@@ -93,7 +99,6 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
-            android:background="@drawable/background_gradient_top_bottom"
             android:orientation="horizontal">
             <ImageButton
                 android:id="@+id/btn_toolbar_back_arrow"
