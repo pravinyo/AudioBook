@@ -276,7 +276,7 @@ class BookDetailsViewModel(
                         val album = it.trackAlbum?:getMetadataUsecase.getBookIdentifier()
                         val desc  = "Downloading: chapter ${track.trackNumber} from $album"
                         val id = getMetadataUsecase.getBookIdentifier()
-                        download(
+                        downloaderAction(
                             Download(
                                 bookId = id,
                                 url = ArchiveUtils.getRemoteFilePath(filename = track.filename,identifier = id),
@@ -294,7 +294,15 @@ class BookDetailsViewModel(
         }
     }
 
-    private suspend fun download(event:DownloadEvent){
+    fun openDownloadsScreen(trackId:String){
+        if(trackId.isNotEmpty()){
+            viewModelScope.launch{
+                downloaderAction(OpenDownloadActivity())
+            }
+        }
+    }
+
+    private suspend fun downloaderAction(event:DownloadEvent){
         val requestValues = GetDownloadUsecase.RequestValues(event)
 
         useCaseHandler.execute(
