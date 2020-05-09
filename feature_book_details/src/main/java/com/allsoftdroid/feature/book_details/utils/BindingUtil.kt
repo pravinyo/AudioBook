@@ -1,18 +1,26 @@
 package com.allsoftdroid.feature.book_details.utils
 
+import android.graphics.Bitmap
 import android.os.Build
 import android.text.Html
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
+import androidx.palette.graphics.Palette
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
@@ -76,11 +84,13 @@ If content is not yet available to be displayed show loading animation
 If content is not there show broken image
  */
 @BindingAdapter("bookImage")
-fun setImageUrl(imageView: ImageView, item: AudioBookMetadataDomainModel?) {
+fun setImageUrl(layout: FrameLayout, item: AudioBookMetadataDomainModel?) {
 
     item?.let {
         val url =
             getThumbnail(item.identifier)
+
+        val imageView = layout.findViewById<ImageView>(R.id.imgView_book_image)
 
         Glide
             .with(imageView.context)
@@ -97,6 +107,50 @@ fun setImageUrl(imageView: ImageView, item: AudioBookMetadataDomainModel?) {
                             .buildOverlay(front = R.drawable.ic_book_play,back = R.drawable.gradiant_background)
                     )
             )
+            .listener(object : RequestListener<Bitmap>{
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Bitmap?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+
+                    resource?.let {
+                        val paletteBuilder = Palette.from(resource)
+                        paletteBuilder.maximumColorCount(2)
+
+                        paletteBuilder.generate{
+                            it?.let {
+                                val dark = it.getDarkMutedColor(it.getMutedColor(0))
+                                val dominant = it.getDominantColor(it.getVibrantColor(0))
+                                val light = it.getLightMutedColor(it.getLightVibrantColor(0))
+
+                                layout.setBackgroundColor(dominant)
+
+                                with(layout.rootView.findViewById<View>(R.id.toolbar)){
+                                    setBackgroundColor(it.vibrantSwatch?.rgb ?:dark)
+
+                                    this.findViewById<TextView>(R.id.tv_toolbar_title).apply {
+                                        this.setTextColor(light)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return false
+                }
+            })
             .into(imageView)
     }
 }
