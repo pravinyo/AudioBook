@@ -77,6 +77,16 @@ class TrackItemClickedListener(val clickListener : (trackNumber : Int?,filename:
     fun onTrackItemClicked(track : AudioBookTrackDomainModel) = clickListener(track.trackNumber,track.filename,track.title)
 }
 
+/**
+ * Download button listener
+ */
 class DownloadItemClickedListener(val clickListener : (trackId : String)->Unit){
     fun onDownloadItemClicked(track : AudioBookTrackDomainModel) = clickListener(track.trackId)
+}
+
+/**
+ * Cancel running download listener
+ */
+class ProgressbarItemClickedListener(val clickListener : (trackId : String)->Unit){
+    fun onProgressbarItemClicked(track : AudioBookTrackDomainModel) = clickListener(track.trackId)
 }
