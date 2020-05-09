@@ -3,6 +3,7 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val PALETTE = "1.0.0"
     const val PREFERENCE = "1.1.1"
     const val MOSHI = "1.9.2"
     const val DROPBOX_STORE = "4.0.0-alpha03"
@@ -93,6 +94,7 @@ object LibraryDependency {
     const val COIL = "io.coil-kt:coil:${LibraryVersion.COIL}"
     const val K_ANDROID = "com.pawegio.kandroid:kandroid:${LibraryVersion.K_ANDROID}"
     const val LOTTIE = "com.airbnb.android:lottie:${LibraryVersion.LOTTIE}"
+    const val PALETTE = "androidx.palette:palette:${LibraryVersion.PALETTE}"
 
 
     const val ROOM_RUNTIME = "androidx.room:room-runtime:${LibraryVersion.ROOM}"
