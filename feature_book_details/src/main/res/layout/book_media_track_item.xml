@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -9,10 +9,12 @@
         <variable
             name="clickListener"
             type="com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener" />
-
         <variable
             name="downloadListener"
             type="com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.DownloadItemClickedListener" />
+        <variable
+            name="progressClickListener"
+            type="com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.ProgressbarItemClickedListener" />
 
     </data>
 
@@ -108,6 +110,7 @@
                 android:progressDrawable="@drawable/circular_progressbar"
                 android:background="@drawable/circle_shape"
                 style="?android:attr/progressBarStyleHorizontal"
+                android:onClick="@{()->progressClickListener.onProgressbarItemClicked(track)}"
                 android:max="100" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
