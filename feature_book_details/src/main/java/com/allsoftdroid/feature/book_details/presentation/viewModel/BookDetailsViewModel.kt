@@ -415,7 +415,8 @@ class BookDetailsViewModel(
     }
 
     fun updateDownloadStatus(statusEvent:DownloadEvent) {
-        Timber.d(" download event received")
+
+        Timber.d(" download status event received")
         _audioBookTracks.value?.let {tracks ->
 
             Timber.d("List is non null and ready to update")
@@ -436,18 +437,24 @@ class BookDetailsViewModel(
                     PROGRESS(percent = statusEvent.percent.toFloat())
                 }
 
+                is Cancelled -> {
+                    Timber.d("Event is of type Cancelled:${statusEvent}")
+                    CANCELLED
+                }
+
                 else -> {
                     Timber.d("Event is of type Download:${statusEvent is Download}")
                     Timber.d("Event is of type Failed:${statusEvent is Failed}")
-                    Timber.d("Event is of type Cancel:${statusEvent is Cancel}")
                     Timber.d("Event is of type DownloadNothing:${statusEvent is DownloadNothing}")
                     NOTHING
                 }
             }
 
+            Timber.i("New Track set for UI")
             _audioBookTracks.value = tracks
+            if(statusEvent is Cancelled){
+                _newTrackStateEvent.value = Event(true)
+            }
         }
-
     }
-
 }
