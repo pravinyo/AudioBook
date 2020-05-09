@@ -64,6 +64,7 @@ dependencies {
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
     implementation(LibraryDependency.MULTISTAGE_TOGGLE_BUTTON)
     implementation(LibraryDependency.LOTTIE)
+    implementation(LibraryDependency.PALETTE)
 
     //Unit Testing
     testImplementation(TestLibraryDependency.JUNIT)
@@ -84,7 +85,7 @@ dependencies {
     implementation(TestLibraryDependency.FRAGMENT_TEST)
     implementation(TestLibraryDependency.ANDROID_X_CORE)
 
-    kaptAndroidTest("androidx.databinding:databinding-compiler:3.6.3"){
+    kaptAndroidTest(TestLibraryDependency.DATA_BINDING_COMPILER){
         because("required to run instrumentation test")
     }
 }
