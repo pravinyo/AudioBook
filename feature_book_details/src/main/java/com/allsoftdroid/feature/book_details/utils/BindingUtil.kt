@@ -4,13 +4,12 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.text.Html
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.palette.graphics.Palette
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.BookDetails
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
@@ -172,17 +171,29 @@ fun TextView.setBookTitle(item: AudioBookMetadataDomainModel?){
 /*
 Binding adapter for updating the title in list items
  */
-@BindingAdapter("bookPlayTime")
-fun TextView.setBookPlayTime(item: AudioBookMetadataDomainModel?){
+@BindingAdapter("bookPlayTime1")
+fun TextView.setBookPlayTime1(item: AudioBookMetadataDomainModel?){
     item?.let {
         text = it.runtime
     }
 }
 
-@BindingAdapter("bookChapters")
-fun TextView.setBookChapterCount(item: AudioBookMetadataDomainModel?){
+/*
+Binding adapter for updating the title in list items
+ */
+@BindingAdapter("bookPlayTime2")
+fun TextView.setBookPlayTime2(item: BookDetails?){
     item?.let {
-        text = it.runtime
+        if(text == "NA") {
+            text = it.runtime
+        }
+    }
+}
+
+@BindingAdapter("bookChapters")
+fun TextView.setBookChapterCount(items: List<AudioBookTrackDomainModel>?){
+    items?.let {
+        text = if(it.isNotEmpty()) "${it.size} Chapters" else "NA"
     }
 }
 
