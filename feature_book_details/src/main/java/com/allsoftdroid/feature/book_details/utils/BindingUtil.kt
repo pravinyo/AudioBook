@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.palette.graphics.Palette
@@ -83,8 +84,8 @@ load images using glide library
 If content is not yet available to be displayed show loading animation
 If content is not there show broken image
  */
-@BindingAdapter("bookImage")
-fun setImageUrl(layout: FrameLayout, item: AudioBookMetadataDomainModel?) {
+@BindingAdapter("bookBanner")
+fun setBookBanner(layout: ConstraintLayout, item: AudioBookMetadataDomainModel?) {
 
     item?.let {
         val url =
@@ -165,6 +166,30 @@ fun TextView.setBookTitle(item: AudioBookMetadataDomainModel?){
             item.title,
             30
         )
+    }
+}
+
+/*
+Binding adapter for updating the title in list items
+ */
+@BindingAdapter("bookPlayTime")
+fun TextView.setBookPlayTime(item: AudioBookMetadataDomainModel?){
+    item?.let {
+        text = it.runtime
+    }
+}
+
+@BindingAdapter("bookChapters")
+fun TextView.setBookChapterCount(item: AudioBookMetadataDomainModel?){
+    item?.let {
+        text = it.runtime
+    }
+}
+
+@BindingAdapter("bookTags")
+fun TextView.setBookTags(item: AudioBookMetadataDomainModel?){
+    item?.let {
+        text = it.tag
     }
 }
 
