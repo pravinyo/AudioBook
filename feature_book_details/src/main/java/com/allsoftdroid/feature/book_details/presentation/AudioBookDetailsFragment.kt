@@ -125,7 +125,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         bookDetailsViewModel.additionalBookDetails.observe(viewLifecycleOwner, Observer {bookDetails->
             Timber.d("Book details received: $bookDetails")
             try{
-                dataBinding.textViewDescription.text = if(bookDetails==null || bookDetails.description.isEmpty()){
+                dataBinding.textViewBookIntro.text = if(bookDetails==null || bookDetails.description.isEmpty()){
                     bookDetailsViewModel.audioBookMetadata.value?.let {
                         formattedBookDetails(it)
                     }
@@ -133,7 +133,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
             }catch ( e:Exception){
                 e.printStackTrace()
                 bookDetailsViewModel.audioBookMetadata.value?.let {
-                    dataBinding.textViewDescription.text = formattedBookDetails(it)
+                    dataBinding.textViewBookIntro.text = formattedBookDetails(it)
                 }
             }
         })
@@ -157,14 +157,14 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
 
         dataBindingReference = dataBinding
 
-        dataBinding.mstbTrackFormat.apply {
-            setElements(R.array.track_format_array,bookDetailsViewModel.trackFormatIndex)
-
-            setOnValueChangedListener {
-                bookDetailsViewModel.loadTrackWithFormat(it)
-                Toast.makeText(activity,"Loading",Toast.LENGTH_SHORT).show()
-            }
-        }
+//        dataBinding.mstbTrackFormat.apply {
+//            setElements(R.array.track_format_array,bookDetailsViewModel.trackFormatIndex)
+//
+//            setOnValueChangedListener {
+//                bookDetailsViewModel.loadTrackWithFormat(it)
+//                Toast.makeText(activity,"Loading",Toast.LENGTH_SHORT).show()
+//            }
+//        }
 
         bookDetailsViewModel.networkResponse.observe(this, Observer {
             it.getContentIfNotHandled()?.let { networkState ->
