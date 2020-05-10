@@ -18,101 +18,96 @@
 
     </data>
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_marginTop="@dimen/track_item_margin_top"
         android:layout_marginStart="@dimen/track_item_margin_start"
         android:layout_marginEnd="@dimen/track_item_margin_end"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:onClick="@{()->clickListener.onTrackItemClicked(track)}"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/track_play_icon"
-                    android:layout_width="@dimen/track_item_control_btn_size"
-                    android:layout_height="@dimen/track_item_control_btn_size"
-                    android:contentDescription="@string/play_icons"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:trackPlayingStatus="@{track}" />
-
-
-                <TextView
-                    android:id="@+id/track_title"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/track_play_icon"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toEndOf="@+id/track_play_icon"
-                    app:layout_constraintTop_toTopOf="@+id/track_play_icon"
-                    app:layout_constraintVertical_bias="0.0"
-                    app:trackTitle="@{track}" />
-
-                <ImageView
-                    android:id="@+id/track_duration_icon"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/clock_outline"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/track_title"
-                    app:layout_constraintTop_toTopOf="@+id/track_duration" />
-
-                <TextView
-                    android:id="@+id/track_duration"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/track_title"
-                    app:layout_constraintStart_toEndOf="@+id/track_duration_icon"
-                    app:layout_constraintTop_toBottomOf="@+id/track_title"
-                    app:trackLength="@{track}" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_width="match_parent"
+        android:orientation="horizontal">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:onClick="@{()->clickListener.onTrackItemClicked(track)}"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/downloadIcon"
+                android:id="@+id/track_play_icon"
                 android:layout_width="@dimen/track_item_control_btn_size"
                 android:layout_height="@dimen/track_item_control_btn_size"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"
-                android:focusable="true"
-                android:src="@drawable/download_outline"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:onClick="@{()->downloadListener.onDownloadItemClicked(track)}"
-                android:contentDescription="@string/download_icon"/>
+                android:contentDescription="@string/play_icons"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:trackPlayingStatus="@{track}" />
 
-            <ProgressBar
-                android:id="@+id/download_progress"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+
+            <TextView
+                android:id="@+id/track_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_gravity="center_vertical"
-                android:visibility="gone"
-                android:indeterminate="false"
-                android:progressDrawable="@drawable/circular_progressbar"
-                android:background="@drawable/circle_shape"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:onClick="@{()->progressClickListener.onProgressbarItemClicked(track)}"
-                android:max="100" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+                app:layout_constraintBottom_toBottomOf="@+id/track_play_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/track_play_icon"
+                app:layout_constraintTop_toTopOf="@+id/track_play_icon"
+                app:layout_constraintVertical_bias="0.0"
+                app:trackTitle="@{track}" />
+
+            <ImageView
+                android:id="@+id/track_duration_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/clock_outline"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/track_title"
+                app:layout_constraintTop_toTopOf="@+id/track_duration" />
+
+            <TextView
+                android:id="@+id/track_duration"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/track_title"
+                app:layout_constraintStart_toEndOf="@+id/track_duration_icon"
+                app:layout_constraintTop_toBottomOf="@+id/track_title"
+                app:trackLength="@{track}" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/downloadIcon"
+            android:layout_width="@dimen/track_item_control_btn_size"
+            android:layout_height="@dimen/track_item_control_btn_size"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/download_outline"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:onClick="@{()->downloadListener.onDownloadItemClicked(track)}"
+            android:contentDescription="@string/download_icon"/>
+
+        <ProgressBar
+            android:id="@+id/download_progress"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_gravity="center_vertical"
+            android:visibility="gone"
+            android:indeterminate="false"
+            android:progressDrawable="@drawable/circular_progressbar"
+            android:background="@drawable/circle_shape"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:onClick="@{()->progressClickListener.onProgressbarItemClicked(track)}"
+            android:max="100" />
+    </LinearLayout>
 
 </layout>
