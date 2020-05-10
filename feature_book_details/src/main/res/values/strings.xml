@@ -17,6 +17,7 @@
     <string name="play_book">Play Book</string>
     <string name="chapter_count">Chapter count</string>
     <string name="book_play_time">Book Play time</string>
+    <string name="chapter_label">Here are the Chapters,</string>
 
     <string-array name="track_format_array">
         <item>Good</item>
