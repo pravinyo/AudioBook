@@ -8,7 +8,6 @@
             type="com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel"/>
     </data>
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -107,9 +106,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:translationY="-20dp"
-                    android:translationZ="10dp"
+                    android:translationY="@dimen/media_button_y_pos"
+                    android:translationZ="@dimen/media_button_z_pos"
                     android:gravity="center"
+                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
                     app:layout_constraintEnd_toEndOf="@+id/fl_book_image_holder"
                     app:layout_constraintStart_toStartOf="@+id/fl_book_image_holder"
                     app:layout_constraintTop_toBottomOf="@+id/fl_book_image_holder">
@@ -118,10 +118,10 @@
                         android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:paddingStart="16dp"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"
-                        android:paddingEnd="4dp"
+                        android:paddingStart="@dimen/padding_mid"
+                        android:paddingTop="@dimen/padding_min"
+                        android:paddingBottom="@dimen/padding_min"
+                        android:paddingEnd="@dimen/padding_normal"
                         android:background="@drawable/semi_circle_shape_left">
                         <ImageView
                             android:src="@drawable/ic_book_open_outline"
@@ -131,7 +131,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_marginStart="4dp"
+                            android:layout_marginStart="@dimen/margin_min"
                             android:textAppearance="@style/TextAppearance.AppCompat.Large"
                             android:text="@string/read"
                             android:textColor="@color/white" />
@@ -141,11 +141,10 @@
                         android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:paddingStart="4dp"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"
-                        android:paddingEnd="16dp"
-                        android:layout_marginStart="2dp"
+                        android:paddingStart="@dimen/padding_normal"
+                        android:paddingTop="@dimen/padding_min"
+                        android:paddingBottom="@dimen/padding_min"
+                        android:paddingEnd="@dimen/padding_mid"
                         android:background="@drawable/semi_circle_shape_right">
                         <ImageView
                             android:src="@drawable/ic_headphones"
@@ -155,7 +154,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_marginStart="4dp"
+                            android:layout_marginStart="@dimen/margin_min"
                             android:textAppearance="@style/TextAppearance.AppCompat.Large"
                             android:text="@string/play"
                             android:textColor="@color/white" />
@@ -166,9 +165,9 @@
                     android:id="@+id/textView_book_intro"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="30dp"
-                    android:paddingStart="@dimen/track_item_margin_start"
-                    android:paddingEnd="@dimen/track_item_margin_start"
+                    android:layout_marginStart="@dimen/margin_mid"
+                    android:layout_marginEnd="@dimen/margin_min"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     app:layout_constraintBottom_toTopOf="@+id/book_length"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -178,6 +177,7 @@
                 <View
                     android:id="@+id/divider1"
                     style="@style/Divider"
+                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView_book_intro"/>
@@ -187,28 +187,30 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_mid"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="@dimen/item_separator_size_normal"
+                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
                     app:layout_constraintTop_toBottomOf="@+id/divider1">
 
                     <ImageView
-                        android:layout_marginStart="16dp"
                         android:src="@drawable/clock_outline"
                         android:layout_gravity="center_vertical"
                         android:layout_width="@dimen/track_item_control_btn_size_small"
                         android:layout_height="@dimen/track_item_control_btn_size_small"
                         android:contentDescription="@string/book_play_time" />
                     <TextView
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="@dimen/margin_normal"
                         android:id="@+id/tv_book_play_time"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:bookPlayTime="@{audioBookDetailsViewModel.audioBookMetadata}"
                         tools:text="03:24:00"/>
 
                     <ImageView
-                        android:layout_marginStart="32dp"
+                        android:layout_marginStart="@dimen/margin_big"
                         android:layout_gravity="center_vertical"
                         android:src="@drawable/ic_format_list_bulleted"
                         android:layout_width="@dimen/track_item_control_btn_size_small"
@@ -216,10 +218,10 @@
                         android:contentDescription="@string/chapter_count" />
                     <TextView
                         android:id="@+id/tv_book_chapter_count"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="@dimen/margin_normal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         app:bookChapters="@{audioBookDetailsViewModel.audioBookMetadata}"
                         tools:text="10 Chapter"/>
                 </LinearLayout>
@@ -229,6 +231,7 @@
                     style="@style/Divider"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
                     app:layout_constraintTop_toBottomOf="@+id/book_length"/>
 
                 <LinearLayout
@@ -236,13 +239,15 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_mid"
+                    android:layout_marginTop="@dimen/item_separator_size_normal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
                     app:layout_constraintTop_toBottomOf="@+id/divider2">
 
                     <ImageView
                         android:src="@drawable/ic_tag_multiple_outline"
-                        android:layout_marginStart="16dp"
                         android:layout_gravity="center_vertical"
                         android:layout_width="@dimen/track_item_control_btn_size_small"
                         android:layout_height="@dimen/track_item_control_btn_size_small"
@@ -250,8 +255,8 @@
 
                     <TextView
                         android:id="@+id/tv_book_tags"
-                        android:layout_marginStart="8dp"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:layout_marginStart="@dimen/margin_mid"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:bookTags="@{audioBookDetailsViewModel.audioBookMetadata}"
@@ -263,18 +268,34 @@
                     style="@style/Divider"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
                     app:layout_constraintTop_toBottomOf="@+id/book_tag"/>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_marginBottom="@dimen/margin_bottom"
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/item_separator_size_normal"
+                    android:layout_marginStart="@dimen/margin_mid"
+                    android:layout_marginBottom="@dimen/margin_bottom"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
-                    app:layout_constraintTop_toBottomOf="@+id/divider3" />
+                    app:layout_constraintTop_toBottomOf="@+id/divider3">
+
+                    <TextView
+                        android:id="@+id/tv_book_chapter_label"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chapter_label"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
 
                 <ProgressBar
                     android:id="@+id/pb_content_loading"
