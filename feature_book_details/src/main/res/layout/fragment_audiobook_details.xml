@@ -206,7 +206,8 @@
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:bookPlayTime="@{audioBookDetailsViewModel.audioBookMetadata}"
+                        app:bookPlayTime1="@{audioBookDetailsViewModel.audioBookMetadata}"
+                        app:bookPlayTime2="@{audioBookDetailsViewModel.additionalBookDetails}"
                         tools:text="03:24:00"/>
 
                     <ImageView
@@ -222,7 +223,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        app:bookChapters="@{audioBookDetailsViewModel.audioBookMetadata}"
+                        app:bookChapters="@{audioBookDetailsViewModel.audioBookTracks}"
                         tools:text="10 Chapter"/>
                 </LinearLayout>
 
