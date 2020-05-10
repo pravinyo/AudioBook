@@ -45,15 +45,14 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:trackPlayingStatus="@{track}" />
 
-
             <TextView
                 android:id="@+id/track_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/margin_normal"
                 app:layout_constraintBottom_toBottomOf="@+id/track_play_icon"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 app:layout_constraintStart_toEndOf="@+id/track_play_icon"
                 app:layout_constraintTop_toTopOf="@+id/track_play_icon"
                 app:layout_constraintVertical_bias="0.0"
@@ -61,8 +60,8 @@
 
             <ImageView
                 android:id="@+id/track_duration_icon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="@dimen/track_timer_icon_size"
+                android:layout_height="@dimen/track_timer_icon_size"
                 android:src="@drawable/clock_outline"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/track_title"
@@ -72,7 +71,7 @@
                 android:id="@+id/track_duration"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
+                android:layout_marginStart="@dimen/margin_min"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/track_title"
                 app:layout_constraintStart_toEndOf="@+id/track_duration_icon"
@@ -84,8 +83,8 @@
             android:id="@+id/downloadIcon"
             android:layout_width="@dimen/track_item_control_btn_size"
             android:layout_height="@dimen/track_item_control_btn_size"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
             android:layout_gravity="center_vertical"
             android:clickable="true"
             android:focusable="true"
@@ -96,10 +95,10 @@
 
         <ProgressBar
             android:id="@+id/download_progress"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="@dimen/track_download_icon_size"
+            android:layout_height="@dimen/track_download_icon_size"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
             android:layout_gravity="center_vertical"
             android:visibility="gone"
             android:indeterminate="false"
