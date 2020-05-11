@@ -15,6 +15,7 @@ import com.allsoftdroid.feature.book_details.domain.repository.ITrackListReposit
 import com.allsoftdroid.feature.book_details.domain.usecase.GetDownloadUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
+import com.allsoftdroid.feature.book_details.domain.usecase.ListenLaterUsecase
 import com.allsoftdroid.feature.book_details.utils.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.hamcrest.Matchers.`is`
@@ -43,6 +44,7 @@ class BookDetailsViewModelTest{
     private lateinit var searchBookDetailsUsecase: SearchBookDetailsUsecase
     private lateinit var fetchAdditionBookDetailsUsecase: FetchAdditionalBookDetailsUsecase
     private lateinit var trackListUsecase: GetTrackListUsecase
+    private lateinit var listenLaterUsecase: ListenLaterUsecase
     private val bookId = "bookId"
 
     @Before
@@ -55,8 +57,10 @@ class BookDetailsViewModelTest{
         searchBookDetailsUsecase = SearchBookDetailsUsecase(FakeSearchBookDetailsRepository())
         fetchAdditionBookDetailsUsecase = FetchAdditionalBookDetailsUsecase(FakeFetchAdditionBookDetailsRepository())
         trackListUsecase = GetTrackListUsecase(FakeTrackListRepository())
+        listenLaterUsecase = ListenLaterUsecase(FakeListenLaterRepository())
     }
 
+    @ExperimentalCoroutinesApi
     @Test
     fun bookDetails_loading(){
 
@@ -70,7 +74,8 @@ class BookDetailsViewModelTest{
             downloadUsecase = downloadUsecase,
             searchBookDetailsUsecase = searchBookDetailsUsecase,
             getFetchAdditionalBookDetailsUseCase = fetchAdditionBookDetailsUsecase,
-            getTrackListUsecase = trackListUsecase
+            getTrackListUsecase = trackListUsecase,
+            listenLaterUsecase = listenLaterUsecase
         )
 
         assertThat(bookDetailsViewModel.networkResponse.getOrAwaitValue().peekContent(),`is`(NetworkState.LOADING))
