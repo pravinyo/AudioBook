@@ -225,6 +225,27 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                 }
             }
         })
+
+        bookDetailsViewModel.isAddedToListenLater.observe(viewLifecycleOwner, Observer {
+            it.getContentIfNotHandled()?.let { isAdded ->
+                dataBinding.imgViewBookListenLater.apply {
+                    setImageResource(when(isAdded){
+                        true -> R.drawable.ic_bookmark_minus
+                        else -> R.drawable.ic_bookmark_plus_outline
+                    })
+                }
+            }
+        })
+
+        dataBinding.imgViewBookListenLater.setOnClickListener {
+            bookDetailsViewModel.isAddedToListenLater.value?.let {
+                if(it.peekContent()){
+                    bookDetailsViewModel.removeFromListenLater()
+                }else{
+                    bookDetailsViewModel.addToListenLater()
+                }
+            }
+        }
     }
 
     private fun removeLoading() {
