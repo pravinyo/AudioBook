@@ -1,4 +1,5 @@
 private object TestLibraryVersion {
+    const val DATA_BINDING_COMPILER = "3.6.3"
     const val HAMCREST = "2.2"
     const val MOCKITO_CORE = "2.10.0"
     const val FRAGMENT_TEST = CoreVersion.FRAGMENT_KTX
@@ -48,4 +49,6 @@ object TestLibraryDependency {
     const val ANDROID_X_EXT_TESTING ="androidx.test.ext:junit:${TestLibraryVersion.EXT_KOTLIN_RUNNER}"
 
     const val ANDROID_X_CORE = "androidx.test:core:${TestLibraryVersion.ANDROID_X_TEST}"
+
+    const val DATA_BINDING_COMPILER = "androidx.databinding:databinding-compiler:${TestLibraryVersion.DATA_BINDING_COMPILER}"
 }

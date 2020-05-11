@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
@@ -21,6 +20,7 @@ import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContr
 import com.allsoftdroid.audiobook.feature_downloader.data.model.LocalFileDetails;
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloader;
 import com.allsoftdroid.audiobook.feature_downloader.utils.DownloadObserver;
+import com.allsoftdroid.audiobook.feature_downloader.utils.Utility;
 import com.allsoftdroid.audiobook.feature_downloader.utils.downloadUtils;
 import com.allsoftdroid.common.base.extension.Event;
 import com.allsoftdroid.common.base.network.ArchiveUtils;
@@ -32,6 +32,7 @@ import com.allsoftdroid.common.base.store.downloader.DownloadEventStore;
 import com.allsoftdroid.common.base.store.downloader.Downloaded;
 import com.allsoftdroid.common.base.store.downloader.Downloading;
 import com.allsoftdroid.common.base.store.downloader.Progress;
+import com.allsoftdroid.common.base.store.downloader.PullAndUpdateStatus;
 import com.allsoftdroid.common.base.store.downloader.Restart;
 
 import java.io.File;
@@ -112,6 +113,22 @@ public class Downloader implements IDownloader {
             Timber.d("Downloaded  event received for %s", downloaded.toString());
             downloadNext(downloaded.getUrl());
 
+        }else if(downloadEvent instanceof PullAndUpdateStatus){
+            //Pull status of download
+            PullAndUpdateStatus event = (PullAndUpdateStatus) downloadEvent;
+            String[] status = downloadUtils.Check_Status(downloadManager,event.getDownloadId());
+
+            //if successful do nothing else send cancel event for this downloadId
+            if (status == null || !status[0].equals(STATUS_SUCCESS)) {
+                if(mDownloadObserver!=null){
+                    mDownloadEventStore.publish(
+                            new Event<DownloadEvent>(new Cancel(
+                                    mDownloadObserver.getBookId(),
+                                    mDownloadObserver.getChapterIndex(),
+                                    mDownloadObserver.getUrl())));
+                    Timber.d("Send Cancel event for bookId:%s, bookUrl:%s",mDownloadObserver.getBookId(),mDownloadObserver.getUrl());
+                }
+            }
         }
         else{
             Timber.d("Download event value: %s", downloadEvent);
@@ -159,7 +176,8 @@ public class Downloader implements IDownloader {
             downloadId = download(download1.getUrl(),download1.getName(),download1.getDescription(),download1.getSubPath());
         }
 
-        File file = new File(Environment.DIRECTORY_DOWNLOADS,download1.getSubPath()+download1.getName());
+        String rootFolder = ArchiveUtils.Companion.getDownloadsRootFolder(this.mContext.getApplication());
+        File file = new File(rootFolder,download1.getSubPath()+download1.getName());
         Timber.d("File path:%s", file.getAbsolutePath());
 
         mDownloadObserver = new DownloadObserver(
@@ -191,7 +209,8 @@ public class Downloader implements IDownloader {
 
     private long download(String URL, String name, String description, String subPath){
 
-        String downloadFolder = ArchiveUtils.Companion.getDownloadsRootFolder(mContext.getApplication());
+        String downloadRootFolder = ArchiveUtils.Companion.getDownloadsRootFolder(mContext.getApplication());
+        Timber.d("Download Folder:%s", downloadRootFolder);
 
         //store downloadId to database for own reference
         long downloadId= downloadUtils.getDownloadIdIfIsDownloading(mContext,URL);
@@ -203,7 +222,7 @@ public class Downloader implements IDownloader {
                     uri,
                     name,
                     description,
-                    downloadFolder,
+                    downloadRootFolder,
                     subPath
             );
 

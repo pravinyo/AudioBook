@@ -16,6 +16,16 @@
             android:id="@+id/action_AudioBookListFragment_to_MainPlayerFragment"
             app:destination="@id/MainPlayerFragment" />
 
+        <action
+            android:id="@+id/action_AudioBookListFragment_to_SettingsFragment"
+            app:destination="@id/SettingsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/SettingsFragment"
+        android:name="com.allsoftdroid.audiobook.feature_settings.SettingsFragment"
+        android:label="SettingsFragment">
     </fragment>
 
     <fragment

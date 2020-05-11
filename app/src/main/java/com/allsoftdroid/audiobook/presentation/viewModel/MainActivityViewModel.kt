@@ -102,7 +102,7 @@ class MainActivityViewModel(application : Application,
         Timber.d("Next event occurred")
     }
 
-    fun previousTrack(event: Previous){
+    fun previousTrack(){
 
         audioManager.playPrevious()
 

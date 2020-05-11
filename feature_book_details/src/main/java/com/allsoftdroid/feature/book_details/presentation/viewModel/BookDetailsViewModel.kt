@@ -276,7 +276,7 @@ class BookDetailsViewModel(
                         val album = it.trackAlbum?:getMetadataUsecase.getBookIdentifier()
                         val desc  = "Downloading: chapter ${track.trackNumber} from $album"
                         val id = getMetadataUsecase.getBookIdentifier()
-                        download(
+                        downloaderAction(
                             Download(
                                 bookId = id,
                                 url = ArchiveUtils.getRemoteFilePath(filename = track.filename,identifier = id),
@@ -294,7 +294,15 @@ class BookDetailsViewModel(
         }
     }
 
-    private suspend fun download(event:DownloadEvent){
+    fun openDownloadsScreen(trackId:String){
+        if(trackId.isNotEmpty()){
+            viewModelScope.launch{
+                downloaderAction(OpenDownloadActivity())
+            }
+        }
+    }
+
+    private suspend fun downloaderAction(event:DownloadEvent){
         val requestValues = GetDownloadUsecase.RequestValues(event)
 
         useCaseHandler.execute(
@@ -415,7 +423,8 @@ class BookDetailsViewModel(
     }
 
     fun updateDownloadStatus(statusEvent:DownloadEvent) {
-        Timber.d(" download event received")
+
+        Timber.d(" download status event received")
         _audioBookTracks.value?.let {tracks ->
 
             Timber.d("List is non null and ready to update")
@@ -436,18 +445,24 @@ class BookDetailsViewModel(
                     PROGRESS(percent = statusEvent.percent.toFloat())
                 }
 
+                is Cancelled -> {
+                    Timber.d("Event is of type Cancelled:${statusEvent}")
+                    CANCELLED
+                }
+
                 else -> {
                     Timber.d("Event is of type Download:${statusEvent is Download}")
                     Timber.d("Event is of type Failed:${statusEvent is Failed}")
-                    Timber.d("Event is of type Cancel:${statusEvent is Cancel}")
                     Timber.d("Event is of type DownloadNothing:${statusEvent is DownloadNothing}")
                     NOTHING
                 }
             }
 
+            Timber.i("New Track set for UI")
             _audioBookTracks.value = tracks
+            if(statusEvent is Cancelled){
+                _newTrackStateEvent.value = Event(true)
+            }
         }
-
     }
-
 }

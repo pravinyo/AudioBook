@@ -6,10 +6,12 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.Environment;
+import android.text.TextUtils;
 
 import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import timber.log.Timber;
 
@@ -141,7 +143,16 @@ public class downloadUtils {
             request.setDescription(description);
 
             //Set the local destination for the downloaded file to a path within the application's external files directory
-            request.setDestinationInExternalPublicDir(root,subPath+name);
+            if(root.contains("/")){
+                String[] data = root.split("/");
+                String directory = data[0];
+                String subDir = "/"+TextUtils.join("/",Arrays.copyOfRange(data,1,data.length));
+                Timber.d("Path:%s",directory+subDir+subPath+name);
+                request.setDestinationInExternalPublicDir(directory,subDir+subPath+name);
+            }else{
+                Timber.d("Path:%s",root+subPath+name);
+                request.setDestinationInExternalPublicDir(root,subPath+name);
+            }
 
             //Show notification visibility
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
@@ -149,6 +160,7 @@ public class downloadUtils {
             //Enqueue download and save into referenceId
             downloadReference = downloadManager.enqueue(request);
         }catch (Exception e){
+            e.printStackTrace();
             downloadReference = DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
         }
 

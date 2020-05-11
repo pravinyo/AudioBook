@@ -1,10 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="book_details_banner_image_height">250dp</dimen>
-    <dimen name="track_item_control_btn_size">32dp</dimen>
+    <dimen name="track_item_control_btn_size">24dp</dimen>
+    <dimen name="track_item_control_btn_size_small">24dp</dimen>
+    <dimen name="track_item_control_btn_margin">16dp</dimen>
     <dimen name="track_item_element_spacing">2dp</dimen>
     <dimen name="track_item_margin_top">8dp</dimen>
     <dimen name="track_item_margin_start">8dp</dimen>
     <dimen name="track_item_margin_end">4dp</dimen>
+
+    <dimen name="book_details_book_image_length">180dp</dimen>
+    <dimen name="banner_image_margin_end_normal">8dp</dimen>
+    <dimen name="item_separator_size_normal">16dp</dimen>
+    <dimen name="media_button_z_pos">10dp</dimen>
+    <dimen name="media_button_y_pos">-20dp</dimen>
+
+    <dimen name="padding_mid">16dp</dimen>
+    <dimen name="padding_min">4dp</dimen>
+    <dimen name="padding_normal">8dp</dimen>
+
+    <dimen name="margin_min">4dp</dimen>
+    <dimen name="margin_normal">8dp</dimen>
+    <dimen name="margin_big">32dp</dimen>
     <dimen name="margin_bottom">16dp</dimen>
+    <dimen name="margin_mid">16dp</dimen>
+    <dimen name="track_timer_icon_size">16dp</dimen>
+    <dimen name="track_download_icon_size">32dp</dimen>
+    <dimen name="media_button_action_height">40dp</dimen>
 </resources>
