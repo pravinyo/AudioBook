@@ -18,13 +18,16 @@ import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.feature.book_details.data.databaseExtension.SaveMetadataInDatabase
 import com.allsoftdroid.feature.book_details.data.network.service.ArchiveMetadataApi
+import com.allsoftdroid.feature.book_details.data.repository.ListenLaterRepositoryImpl
 import com.allsoftdroid.feature.book_details.data.repository.MetadataRepositoryImpl
 import com.allsoftdroid.feature.book_details.data.repository.TrackListRepositoryImpl
+import com.allsoftdroid.feature.book_details.domain.repository.IListenLaterRepository
 import com.allsoftdroid.feature.book_details.domain.repository.IMetadataRepository
 import com.allsoftdroid.feature.book_details.domain.repository.ITrackListRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.GetDownloadUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetMetadataUsecase
 import com.allsoftdroid.feature.book_details.domain.usecase.GetTrackListUsecase
+import com.allsoftdroid.feature.book_details.domain.usecase.ListenLaterUsecase
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
@@ -58,6 +61,7 @@ object BookDetailsModule {
                 getMetadataUsecase = get(),
                 downloadUsecase = get(),
                 searchBookDetailsUsecase = get(),
+                listenLaterUsecase = get(),
                 getFetchAdditionalBookDetailsUseCase = get()
             )
         }
@@ -85,6 +89,12 @@ object BookDetailsModule {
         factory {
             FetchAdditionalBookDetailsUsecase(
                 fetchAdditionBookDetailsRepository = get()
+            )
+        }
+
+        factory {
+            ListenLaterUsecase(
+                listenLaterRepository = get()
             )
         }
     }
@@ -115,6 +125,10 @@ object BookDetailsModule {
             FetchAdditionalBookDetailsRepositoryImpl(storeCachingRepository = get(),
                 bookDetailsParser = get()) as IFetchAdditionBookDetailsRepository
         }
+
+        factory {
+            ListenLaterRepositoryImpl(listenLaterDao = get()) as IListenLaterRepository
+        }
     } @VisibleForTesting set
 
     private val networkModule : Module = module{
@@ -127,6 +141,11 @@ object BookDetailsModule {
     }
 
     var dataModule : Module = module {
+
+        single {
+            AudioBookDatabase.getDatabase(get()).listenLaterDao()
+        }
+
         single {
             AudioBookDatabase.getDatabase(get()).metadataDao()
         }
