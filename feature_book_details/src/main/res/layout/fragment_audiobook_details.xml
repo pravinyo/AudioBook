@@ -94,6 +94,8 @@
                         android:layout_marginEnd="@dimen/banner_image_margin_end_normal"
                         android:contentDescription="@string/banner_image_listen_later"
                         android:layout_marginTop="@dimen/track_item_control_btn_margin"
+                        android:clickable="true"
+                        android:focusable="true"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/imgView_book_image_card"
                         app:layout_constraintTop_toTopOf="parent" />
