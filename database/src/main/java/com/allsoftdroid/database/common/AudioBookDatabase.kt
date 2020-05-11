@@ -6,6 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.allsoftdroid.database.bookListDB.AudioBookDao
 import com.allsoftdroid.database.bookListDB.DatabaseAudioBook
+import com.allsoftdroid.database.listenLaterDB.ListenLaterDao
+import com.allsoftdroid.database.listenLaterDB.entity.DatabaseListenLaterEntity
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseAlbumEntity
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseMetadataEntity
@@ -22,9 +24,10 @@ import com.allsoftdroid.database.networkCacheDB.NetworkCacheDao
         DatabaseMetadataEntity::class,
         DatabaseAlbumEntity::class,
         DatabaseTrackEntity::class,
-        DatabaseNetworkResponseEntity::class
+        DatabaseNetworkResponseEntity::class,
+        DatabaseListenLaterEntity::class
     ],
-    version = 6 ,
+    version = 7 ,
     exportSchema = false)
 abstract class AudioBookDatabase : RoomDatabase(){
 
@@ -36,6 +39,9 @@ abstract class AudioBookDatabase : RoomDatabase(){
 
     //NetworkCache DAO
     abstract fun networkDao(): NetworkCacheDao
+
+    //ListenLater DAO
+    abstract fun listenLaterDao() : ListenLaterDao
 
 
     /**
