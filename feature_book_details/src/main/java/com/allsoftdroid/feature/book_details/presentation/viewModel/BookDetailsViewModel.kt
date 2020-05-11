@@ -19,7 +19,7 @@ import com.allsoftdroid.feature.book_details.utils.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-class BookDetailsViewModel(
+internal class BookDetailsViewModel(
     private val sharedPref: BookDetailsSharedPreferenceRepository,
     private val stateHandle : SavedStateHandle,
     private val useCaseHandler: UseCaseHandler,
@@ -27,6 +27,7 @@ class BookDetailsViewModel(
     private val downloadUsecase: GetDownloadUsecase,
     private val searchBookDetailsUsecase: SearchBookDetailsUsecase,
     private val getFetchAdditionalBookDetailsUseCase: FetchAdditionalBookDetailsUsecase,
+    private val listenLaterUsecase: ListenLaterUsecase,
     private val getTrackListUsecase : GetTrackListUsecase) : ViewModel(){
     /**
      * cancelling this job cancels all the job started by this viewmodel
@@ -52,6 +53,10 @@ class BookDetailsViewModel(
     private var _backArrowPressed = MutableLiveData<Event<Boolean>>()
     val backArrowPressed: LiveData<Event<Boolean>>
         get() = _backArrowPressed
+
+    private var _isAddedToListenLater = MutableLiveData<Event<Boolean>>()
+    val isAddedToListenLater: LiveData<Event<Boolean>>
+        get() = _isAddedToListenLater
 
     //book metadata state change event
     private val metadataStateChangeEvent = MutableLiveData<Event<Any>>()
@@ -124,6 +129,7 @@ class BookDetailsViewModel(
     init {
         initialLoad()
         showPrefStat()
+        isAddedToListenLater()
     }
 
     private fun initialLoad(){
@@ -412,6 +418,29 @@ class BookDetailsViewModel(
      */
     fun onBackArrowPressed(){
         _backArrowPressed.value = Event(true)
+    }
+
+    fun addToListenLater(){
+        audioBookMetadata.value?.let {
+            viewModelScope.launch {
+                listenLaterUsecase.addToListenLater(bookId = it.identifier,title = it.title,author = it.creator,duration = it.runtime)
+                _isAddedToListenLater.value = Event(true)
+            }
+        }
+    }
+
+    fun removeFromListenLater(){
+        viewModelScope.launch {
+            listenLaterUsecase.remove(getMetadataUsecase.getBookIdentifier())
+            _isAddedToListenLater.value = Event(false)
+        }
+    }
+
+    private fun isAddedToListenLater(){
+        viewModelScope.launch {
+            val isAdded = listenLaterUsecase.isAdded(getMetadataUsecase.getBookIdentifier())
+            _isAddedToListenLater.value = Event(isAdded)
+        }
     }
 
 

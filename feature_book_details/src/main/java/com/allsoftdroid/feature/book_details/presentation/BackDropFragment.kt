@@ -14,7 +14,7 @@ import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAdditionalDetailsBackdropBinding
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 
-class BackDropFragment : BaseContainerFragment() {
+internal class BackDropFragment : BaseContainerFragment() {
 
     /**
     Lazily initialize the view model
