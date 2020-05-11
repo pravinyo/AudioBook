@@ -8,9 +8,40 @@
             type="com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel"/>
     </data>
 
-    <RelativeLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:orientation="horizontal">
+                <ImageButton
+                    android:id="@+id/btn_toolbar_back_arrow"
+                    android:layout_width="@dimen/track_item_control_btn_size"
+                    android:layout_height="@dimen/track_item_control_btn_size"
+                    android:layout_marginStart="@dimen/margin_normal"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/transparent"
+                    android:onClick="@{()->audioBookDetailsViewModel.onBackArrowPressed()}"
+                    android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
+                    android:contentDescription="@string/back_screen_button" />
+
+                <TextView
+                    android:id="@+id/tv_toolbar_title"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    app:bookTitle="@{audioBookDetailsViewModel.audioBookMetadata}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <include android:id="@+id/network_no_connection"
             android:layout_width="match_parent"
@@ -95,6 +126,8 @@
                         android:layout_width="@dimen/track_item_control_btn_size"
                         android:layout_height="@dimen/track_item_control_btn_size"
                         android:layout_marginTop="@dimen/track_item_control_btn_margin"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:contentDescription="@string/banner_image_info"
                         app:layout_constraintEnd_toEndOf="@+id/imgView_book_listen_later"
                         app:layout_constraintStart_toStartOf="@+id/imgView_book_listen_later"
@@ -104,7 +137,7 @@
                 <LinearLayout
                     android:id="@+id/book_media_actions"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/media_button_action_height"
                     android:orientation="horizontal"
                     android:translationY="@dimen/media_button_y_pos"
                     android:translationZ="@dimen/media_button_z_pos"
@@ -127,11 +160,13 @@
                             android:src="@drawable/ic_book_open_outline"
                             android:layout_width="@dimen/track_item_control_btn_size"
                             android:layout_height="@dimen/track_item_control_btn_size"
+                            android:layout_gravity="center_vertical"
                             android:contentDescription="@string/read_text" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginStart="@dimen/margin_min"
+                            android:layout_gravity="center_vertical"
                             android:textAppearance="@style/TextAppearance.AppCompat.Large"
                             android:text="@string/read"
                             android:textColor="@color/white" />
@@ -150,11 +185,13 @@
                             android:src="@drawable/ic_headphones"
                             android:layout_width="@dimen/track_item_control_btn_size"
                             android:layout_height="@dimen/track_item_control_btn_size"
+                            android:layout_gravity="center_vertical"
                             android:contentDescription="@string/play_book" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginStart="@dimen/margin_min"
+                            android:layout_gravity="center_vertical"
                             android:textAppearance="@style/TextAppearance.AppCompat.Large"
                             android:text="@string/play"
                             android:textColor="@color/white" />
@@ -303,6 +340,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_marginTop="250dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -310,32 +348,17 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <LinearLayout
-            android:id="@+id/toolbar"
+        <fragment
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="0dp"
+            android:layout_marginTop="?attr/actionBarSize"
+            app:behavior_skipCollapsed="true"
+            android:id="@+id/filter_fragment"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:orientation="horizontal">
-            <ImageButton
-                android:id="@+id/btn_toolbar_back_arrow"
-                android:layout_width="@dimen/track_item_control_btn_size"
-                android:layout_height="@dimen/track_item_control_btn_size"
-                android:layout_marginStart="8dp"
-                android:layout_gravity="center_vertical"
-                android:background="@color/transparent"
-                android:onClick="@{()->audioBookDetailsViewModel.onBackArrowPressed()}"
-                android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
-                android:contentDescription="@string/back_screen_button" />
+            android:name="com.allsoftdroid.feature.book_details.presentation.BackDropFragment" />
 
-            <TextView
-                android:id="@+id/tv_toolbar_title"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                app:bookTitle="@{audioBookDetailsViewModel.audioBookMetadata}"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@color/white" />
-        </LinearLayout>
-    </RelativeLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>
