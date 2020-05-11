@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
-import com.allsoftdroid.common.base.fragment.BaseContainerFragment
+import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.allsoftdroid.common.base.store.downloader.*
 import com.allsoftdroid.feature.book_details.R
@@ -21,6 +22,7 @@ import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.T
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 import com.allsoftdroid.feature.book_details.utils.NetworkState
 import com.allsoftdroid.feature.book_details.utils.TextFormatter.formattedBookDetails
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -31,7 +33,7 @@ import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
 
-class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
+class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
 
     private lateinit var argBookId : String
@@ -45,14 +47,12 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
     private val bookDetailsViewModel: BookDetailsViewModel by viewModel{
         parametersOf(Bundle(), "vm1")
     }
-
     private val eventStore : AudioPlayerEventStore by inject()
     private val downloadStore : DownloadEventStore by inject()
-
-
     private val disposable : CompositeDisposable = CompositeDisposable()
-
     private lateinit var dataBindingReference : FragmentAudiobookDetailsBinding
+
+    private var mBottomSheetBehavior: BottomSheetBehavior<View?>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,12 +73,99 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
         dataBinding.lifecycleOwner = viewLifecycleOwner
         dataBinding.audioBookDetailsViewModel = bookDetailsViewModel
 
-        bookDetailsViewModel.backArrowPressed.observe(viewLifecycleOwner, Observer {
-            it.getContentIfNotHandled()?.let {
-                this.activity?.onBackPressed()
+        setupUI(dataBinding)
+        setupEventListener(dataBinding)
+        configureBackdrop(dataBinding)
+
+
+
+//        dataBinding.mstbTrackFormat.apply {
+//            setElements(R.array.track_format_array,bookDetailsViewModel.trackFormatIndex)
+//
+//            setOnValueChangedListener {
+//                bookDetailsViewModel.loadTrackWithFormat(it)
+//                Toast.makeText(activity,"Loading",Toast.LENGTH_SHORT).show()
+//            }
+//        }
+
+        dataBindingReference = dataBinding
+        return dataBinding.root
+    }
+
+    private fun configureBackdrop(dataBinding:FragmentAudiobookDetailsBinding) {
+        // Get the fragment reference
+        val fragment = this.childFragmentManager.findFragmentById(R.id.filter_fragment)
+
+        fragment?.let {
+
+            it.view?.let {view ->
+                // Get the BottomSheetBehavior from the fragment view
+                BottomSheetBehavior.from(view).let { bsb ->
+                    // Set the initial state of the BottomSheetBehavior to HIDDEN
+                    bsb.state = BottomSheetBehavior.STATE_HIDDEN
+
+                    // Set the trigger that will expand your view
+                    dataBinding.imgViewBookInfo.setOnClickListener {
+                        Timber.d("Info button clicked")
+                        bsb.state = BottomSheetBehavior.STATE_EXPANDED
+                    }
+
+                    Timber.d("Fragment filter listener attached")
+                    // Set the reference into class attribute (will be used latter)
+                    mBottomSheetBehavior = bsb
+                }
+            }?:Timber.d("Fragment filter view is null")
+        }?:Timber.d("Fragment filter is not found")
+    }
+
+    private fun setupEventListener(dataBinding: FragmentAudiobookDetailsBinding) {
+        disposable.add(
+            eventStore.observe()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    handleEvent(it)
+                }
+        )
+
+        disposable.add(
+            downloadStore.observe()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    handleDownloaderEvent(it)
+                }
+        )
+
+        bookDetailsViewModel.networkResponse.observe(this, Observer {
+            it.getContentIfNotHandled()?.let { networkState ->
+                when(networkState){
+                    NetworkState.LOADING -> {
+                        setVisibility(dataBinding.pbContentLoading,set = true)
+                        setVisibility(dataBinding.networkNoConnection,set = false)
+                        Timber.d("Loading")}
+                    NetworkState.COMPLETED -> {
+                        removeLoading()
+                        setVisibility(dataBindingReference.pbContentLoading,set = false)
+                        Timber.d("Completed")}
+                    NetworkState.ERROR -> {
+                        setVisibility(dataBinding.pbContentLoading,set = false)
+
+                        if(bookDetailsViewModel.audioBookTracks.value.isNullOrEmpty()){
+                            setVisibility(dataBinding.networkNoConnection,set = true)
+                        }
+                        Toast.makeText(activity,"Connection Error",Toast.LENGTH_SHORT).show()}
+                }
             }
         })
 
+        bookDetailsViewModel.backArrowPressed.observe(viewLifecycleOwner, Observer {
+            it.getContentIfNotHandled()?.let {
+                onBackPressed()
+            }
+        })
+    }
+
+    private fun setupUI(dataBinding: FragmentAudiobookDetailsBinding) {
         val trackAdapter = AudioBookTrackAdapter(
             downloadStore,
             argBookId,
@@ -87,7 +174,7 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
                     playSelectedTrackFile(it,bookDetailsViewModel.audioBookMetadata.value?.title?:"NA")
                     Timber.d("State change event sent: new pos:$it")
                 }?:Timber.d("State change event sent: new pos:$trackNumber")
-                }
+            }
             ,
             ProgressbarItemClickedListener {trackId ->
                 bookDetailsViewModel.openDownloadsScreen(trackId)
@@ -137,58 +224,6 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
                 }
             }
         })
-
-        disposable.add(
-            eventStore.observe()
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    handleEvent(it)
-                }
-        )
-
-        disposable.add(
-            downloadStore.observe()
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    handleDownloaderEvent(it)
-                }
-        )
-
-        dataBindingReference = dataBinding
-
-//        dataBinding.mstbTrackFormat.apply {
-//            setElements(R.array.track_format_array,bookDetailsViewModel.trackFormatIndex)
-//
-//            setOnValueChangedListener {
-//                bookDetailsViewModel.loadTrackWithFormat(it)
-//                Toast.makeText(activity,"Loading",Toast.LENGTH_SHORT).show()
-//            }
-//        }
-
-        bookDetailsViewModel.networkResponse.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { networkState ->
-                when(networkState){
-                    NetworkState.LOADING -> {
-                        setVisibility(dataBinding.pbContentLoading,set = true)
-                        setVisibility(dataBinding.networkNoConnection,set = false)
-                        Timber.d("Loading")}
-                    NetworkState.COMPLETED -> {
-                        removeLoading()
-                        setVisibility(dataBindingReference.pbContentLoading,set = false)
-                        Timber.d("Completed")}
-                    NetworkState.ERROR -> {
-                        setVisibility(dataBinding.pbContentLoading,set = false)
-
-                        if(bookDetailsViewModel.audioBookTracks.value.isNullOrEmpty()){
-                            setVisibility(dataBinding.networkNoConnection,set = true)
-                        }
-                        Toast.makeText(activity,"Connection Error",Toast.LENGTH_SHORT).show()}
-                }
-            }
-        })
-
-        return dataBinding.root
     }
 
     private fun removeLoading() {
@@ -266,6 +301,23 @@ class AudioBookDetailsFragment : BaseContainerFragment(),KoinComponent {
 
     private fun setVisibility(view:View,set:Boolean){
          view.visibility = if (set) View.VISIBLE else View.GONE
+    }
+
+    override fun handleBackPressEvent(callback: OnBackPressedCallback) {
+        // With the reference of the BottomSheetBehavior stored
+        if(mBottomSheetBehavior == null){
+            callback.isEnabled = false
+            this.requireActivity().onBackPressed()
+        }else{
+            mBottomSheetBehavior?.let {
+                if (it.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    it.state = BottomSheetBehavior.STATE_COLLAPSED
+                } else {
+                    callback.isEnabled = false
+                    this.requireActivity().onBackPressed()
+                }
+            }
+        }
     }
 
     override fun onDestroy() {

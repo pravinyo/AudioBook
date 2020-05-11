@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.annotation.VisibleForTesting
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
@@ -19,7 +18,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
-import com.allsoftdroid.common.base.fragment.BaseContainerFragment
+import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.common.base.store.downloader.OpenDownloadActivity
 import com.allsoftdroid.feature_book.R
@@ -36,7 +35,7 @@ import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 
-class AudioBookListFragment : BaseContainerFragment(){
+class AudioBookListFragment : BaseUIFragment(){
 
     /**
     Lazily initialize the view model
@@ -44,7 +43,6 @@ class AudioBookListFragment : BaseContainerFragment(){
     private val booksViewModel: AudioBookListViewModel by inject()
     @VisibleForTesting var bundleShared: Bundle = Bundle.EMPTY
 
-    private lateinit var callback:OnBackPressedCallback
     private lateinit var drawer: DrawerLayout
     private lateinit var navView : NavigationView
 
@@ -245,17 +243,7 @@ class AudioBookListFragment : BaseContainerFragment(){
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        callback = requireActivity().onBackPressedDispatcher.addCallback(this){
-            handleBackPressEvent()
-        }
-
-        callback.isEnabled = true
-    }
-
-    private fun handleBackPressEvent(){
+    override fun handleBackPressEvent(callback: OnBackPressedCallback) {
         Timber.d("backPress:Back pressed")
         when {
             drawer.isDrawerOpen(GravityCompat.START) -> {
