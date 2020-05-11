@@ -94,10 +94,11 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
     private fun configureBackdrop(dataBinding:FragmentAudiobookDetailsBinding) {
         // Get the fragment reference
-        val fragment = this.childFragmentManager.findFragmentById(R.id.filter_fragment)
+        val fragment = this.childFragmentManager.findFragmentById(R.id.filter_fragment) as BackDropFragment
 
-        fragment?.let {
+        fragment.setSharedViewModel(bookDetailsViewModel)
 
+        fragment.let {
             it.view?.let {view ->
                 // Get the BottomSheetBehavior from the fragment view
                 BottomSheetBehavior.from(view).let { bsb ->
@@ -115,7 +116,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                     mBottomSheetBehavior = bsb
                 }
             }?:Timber.d("Fragment filter view is null")
-        }?:Timber.d("Fragment filter is not found")
+        }
     }
 
     private fun setupEventListener(dataBinding: FragmentAudiobookDetailsBinding) {
