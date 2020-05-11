@@ -31,7 +31,7 @@ private object LibraryVersion {
     const val RECYCLER_VIEW = "1.1.0-beta04"
     const val COORDINATOR_LAYOUT = "1.0.0"
     // 1.1.x version is required in order to support the dark theme functionality in Android Q (adds Theme.MaterialComponents.DayNight)
-    const val MATERIAL = "1.1.0-alpha09"
+    const val MATERIAL = "1.2.0-alpha06"
     const val CONSTRAINT_LAYOUT = "1.1.3"
     const val CORE_KTX = "1.0.2"
     const val FRAGMENT_KTX = CoreVersion.FRAGMENT_KTX
@@ -95,7 +95,6 @@ object LibraryDependency {
     const val K_ANDROID = "com.pawegio.kandroid:kandroid:${LibraryVersion.K_ANDROID}"
     const val LOTTIE = "com.airbnb.android:lottie:${LibraryVersion.LOTTIE}"
     const val PALETTE = "androidx.palette:palette:${LibraryVersion.PALETTE}"
-
 
     const val ROOM_RUNTIME = "androidx.room:room-runtime:${LibraryVersion.ROOM}"
     const val ROOM_KTX = "androidx.room:room-ktx:${LibraryVersion.ROOM}"
