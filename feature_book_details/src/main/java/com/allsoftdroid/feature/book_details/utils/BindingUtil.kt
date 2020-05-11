@@ -174,7 +174,9 @@ Binding adapter for updating the title in list items
 @BindingAdapter("bookPlayTime1")
 fun TextView.setBookPlayTime1(item: AudioBookMetadataDomainModel?){
     item?.let {
-        text = it.runtime
+        if(text.isEmpty()){
+            text = it.runtime
+        }
     }
 }
 
@@ -184,9 +186,7 @@ Binding adapter for updating the title in list items
 @BindingAdapter("bookPlayTime2")
 fun TextView.setBookPlayTime2(item: BookDetails?){
     item?.let {
-        if(text == "NA") {
-            text = it.runtime
-        }
+        text = it.runtime
     }
 }
 
@@ -213,12 +213,3 @@ private fun getNormalizedText(text:String?,limit:Int):String{
 
     return text?:""
 }
-
-@Suppress("DEPRECATION")
-fun convertHtmlToText(text:String?) = text?.let {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        Html.fromHtml(it, Html.FROM_HTML_MODE_COMPACT)
-    } else {
-        Html.fromHtml(it)
-    }
-} .toString()
