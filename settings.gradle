@@ -10,5 +10,6 @@ include ':feature_downloader'
 include ':feature_audiobook_enhance_details'
 include ':feature_playerfullscreen'
 include ':feature_settings'
+include ':feature_listen_later_ui'
 
 rootProject.name='AudioBook'
