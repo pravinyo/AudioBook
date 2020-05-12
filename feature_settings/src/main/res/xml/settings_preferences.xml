@@ -9,8 +9,29 @@
             android:icon="@drawable/ic_folder_black_24dp"
             android:summary="@string/preference_summary"/>
         <Preference
-            android:key="downloads_help_key"
+            android:key="downloads_help_preference_key"
             android:icon="@drawable/ic_info_outline_black_24dp"
             android:summary="@string/preference_downloads_help"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/title_about">
+        <Preference
+            android:key="privacy_policy_preference_key"
+            android:title="@string/preference_title_privacy_policy"/>
+
+        <Preference
+            android:key="feedback_preference_key"
+            android:title="@string/preference_title_feedback"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/title_miscellaneous">
+        <Preference
+            android:key="version_preference_key"
+            android:title="@string/preference_title_version"/>
+        <Preference
+            android:key="licenses_preference_key"
+            android:title="@string/preference_title_licenses"/>
     </PreferenceCategory>
 </PreferenceScreen>
