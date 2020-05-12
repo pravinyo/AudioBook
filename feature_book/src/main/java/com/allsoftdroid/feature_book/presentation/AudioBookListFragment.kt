@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import com.allsoftdroid.common.base.store.userAction.OpenDownloadUI
-import com.allsoftdroid.common.base.store.userAction.OpenLicensesUI
 import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.data.network.Utils
@@ -81,8 +80,9 @@ class AudioBookListFragment : BaseUIFragment(){
                         .navigate(R.id.action_AudioBookListFragment_to_SettingsFragment)
                 }
 
-                R.id.nav_item_report -> {
-                    userActionEventStore.publish(Event(OpenLicensesUI(this::class.java.simpleName)))
+                R.id.nav_item_listen_later -> {
+                    this.findNavController()
+                        .navigate(R.id.action_AudioBookListFragment_to_ListenLaterFragment)
                 }
             }
 
