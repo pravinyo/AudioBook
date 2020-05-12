@@ -297,6 +297,7 @@ class MainActivity : BaseActivity() {
         stopAudioService()
         disposable.dispose()
         downloader.Destroy()
+        AppModule.unloadModule()
     }
 
     private fun stopAudioService(){
