@@ -9,6 +9,7 @@ apply plugin: GradlePluginId.ANDROID_APPLICATION
 apply plugin: GradlePluginId.KOTLIN_ANDROID
 apply plugin: GradlePluginId.KOTLIN_KAPT
 apply plugin: GradlePluginId.KOTLIN_ANDROID_EXTENSIONS
+apply plugin: GradlePluginId.OSS_LICENSES
 
 apply from: 'https://raw.githubusercontent.com/JakeWharton/SdkSearch/master/gradle/projectDependencyGraph.gradle'
 
@@ -77,6 +78,7 @@ dependencies {
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
     debugImplementation(LibraryDependency.LEAKY_CANARY)
     implementation(LibraryDependency.SUPPORT_V13)
+    implementation(LibraryDependency.OSS_LICENSES)
 
     //test
     testImplementation(TestLibraryDependency.JUNIT)
