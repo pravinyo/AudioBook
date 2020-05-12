@@ -31,6 +31,7 @@ import com.allsoftdroid.feature.book_details.domain.usecase.ListenLaterUsecase
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -38,6 +39,14 @@ import org.koin.dsl.module
 
 object BookDetailsModule {
     fun injectFeature() = loadFeature
+
+    fun unloadModule() = unloadKoinModules(listOf(
+        bookDetailsViewModelModule,
+        usecaseModule,
+        repositoryModule,
+        dataModule,
+        networkModule
+    ))
 
     private val loadFeature by lazy {
         loadKoinModules(listOf(
