@@ -71,7 +71,8 @@ object BookDetailsModule {
                 downloadUsecase = get(),
                 searchBookDetailsUsecase = get(),
                 listenLaterUsecase = get(),
-                getFetchAdditionalBookDetailsUseCase = get()
+                getFetchAdditionalBookDetailsUseCase = get(),
+                userActionEventStore = get()
             )
         }
     }
