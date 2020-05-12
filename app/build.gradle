@@ -73,6 +73,7 @@ dependencies {
     implementation(project(path: ModuleDependency.FEATURE_DOWNLOADER))
     implementation(project(path: ModuleDependency.FEATURE_PLAYER_FULL_SCREEN))
     implementation(project(path: ModuleDependency.FEATURE_SETTINGS))
+    implementation(project(path: ModuleDependency.FEATURE_LISTEN_LATER_UI))
     implementation(project(path: ModuleDependency.SERVICES))
 
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
