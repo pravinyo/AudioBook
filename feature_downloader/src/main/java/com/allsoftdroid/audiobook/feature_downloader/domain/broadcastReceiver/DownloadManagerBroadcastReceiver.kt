@@ -6,8 +6,9 @@ import android.content.Context
 import android.content.Intent
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
-import com.allsoftdroid.common.base.store.downloader.OpenDownloadActivity
 import com.allsoftdroid.common.base.store.downloader.PullAndUpdateStatus
+import com.allsoftdroid.common.base.store.userAction.OpenDownloadUI
+import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import timber.log.Timber
@@ -15,6 +16,7 @@ import timber.log.Timber
 class DownloadManagerBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
     private val downloadEventStore : DownloadEventStore by inject()
+    private val userActionEventStore : UserActionEventStore by inject()
 
     override fun onReceive(context: Context?, intent: Intent?) {
 
@@ -37,8 +39,8 @@ class DownloadManagerBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
                     DownloadManager.ACTION_VIEW_DOWNLOADS,
                     DownloadManager.ACTION_NOTIFICATION_CLICKED ->{
-                        downloadEventStore.publish(
-                            Event(OpenDownloadActivity())
+                        userActionEventStore.publish(
+                            Event(OpenDownloadUI(this::class.java.simpleName))
                         )
                     }
                 }
