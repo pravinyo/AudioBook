@@ -345,5 +345,6 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
     override fun onDestroy() {
         super.onDestroy()
         disposable.dispose()
+        BookDetailsModule.unloadModule()
     }
 }
