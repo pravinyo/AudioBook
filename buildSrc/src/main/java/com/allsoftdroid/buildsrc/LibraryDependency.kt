@@ -3,6 +3,7 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val OSS_LICENSES = "17.0.0"
     const val PALETTE = "1.0.0"
     const val PREFERENCE = "1.1.1"
     const val MOSHI = "1.9.2"
@@ -121,4 +122,6 @@ object LibraryDependency {
     const val JSOUP = "org.jsoup:jsoup:${LibraryVersion.JSOUP}"
 
     const val DROPBOX_STORE = "com.dropbox.mobile.store:store4:${LibraryVersion.DROPBOX_STORE}"
+
+    const val OSS_LICENSES = "com.google.android.gms:play-services-oss-licenses:${LibraryVersion.OSS_LICENSES}"
 }
