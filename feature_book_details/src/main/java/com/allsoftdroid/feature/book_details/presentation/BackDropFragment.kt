@@ -3,8 +3,6 @@ package com.allsoftdroid.feature.book_details.presentation
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
-import android.text.method.MovementMethod
-import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,19 +37,25 @@ internal class BackDropFragment : BaseContainerFragment() {
         binding.tvBookDescText.apply {
 
             bookDetailsViewModel.audioBookMetadata.observe(viewLifecycleOwner, Observer {
-                if(text.isEmpty()){
-                    text = convertHtmlToText(it.description)
+                it?.let{
+                    if(text.isEmpty()){
+                        text = convertHtmlToText(it.description)
+                    }
                 }
             })
 
             bookDetailsViewModel.additionalBookDetails.observe(viewLifecycleOwner, Observer {
-                text = convertHtmlToText(it.description)
+                it?.let{
+                    text = convertHtmlToText(it.description)
+                }
             })
         }
 
 
         bookDetailsViewModel.audioBookMetadata.observe(viewLifecycleOwner, Observer {
-            binding.tvBookPublisher.text = it.creator
+            it?.let{
+                binding.tvBookPublisher.text = it.creator
+            }
         })
     }
 
