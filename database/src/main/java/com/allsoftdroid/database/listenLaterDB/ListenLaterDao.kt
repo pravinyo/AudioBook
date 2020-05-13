@@ -1,6 +1,5 @@
 package com.allsoftdroid.database.listenLaterDB
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -17,13 +16,13 @@ interface ListenLaterDao {
     fun removeById(identifier:String):Int
 
     @Query("SELECT * FROM ListenLater_Table order by timestamp desc")
-    fun getBooksInLIFO():LiveData<List<DatabaseListenLaterEntity>>
+    fun getBooksInLIFO():List<DatabaseListenLaterEntity>
 
     @Query("SELECT * FROM ListenLater_Table order by timestamp asc")
-    fun getBooksInFIFO():LiveData<List<DatabaseListenLaterEntity>>
+    fun getBooksInFIFO():List<DatabaseListenLaterEntity>
 
     @Query("SELECT * FROM ListenLater_Table order by play_time")
-    fun getBooksInOrderOfLength():LiveData<List<DatabaseListenLaterEntity>>
+    fun getBooksInOrderOfLength():List<DatabaseListenLaterEntity>
 
     @Query("SELECT count(*) FROM ListenLater_Table where book_id = :bookId")
     fun getListenLaterStatusFor(bookId:String):Int
