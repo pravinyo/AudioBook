@@ -1,6 +1,7 @@
 package com.allsoftdroid.audiobook.feature_listen_later_ui.di
 
-import androidx.annotation.VisibleForTesting
+import com.allsoftdroid.audiobook.feature_listen_later_ui.data.repository.ListenLaterRepositoryImpl
+import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.IListenLaterRepository
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.ListenLaterViewModel
 import com.allsoftdroid.database.common.AudioBookDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -39,17 +40,19 @@ object FeatureListenLaterModule {
 
     var listenLaterViewModel : Module = module {
         viewModel {
-            ListenLaterViewModel()
+            ListenLaterViewModel(repository = get())
         }
     }
-        @VisibleForTesting set
 
     var dataModule : Module = module {
-        single {
+        single(named(name = BEAN_NAME)) {
             AudioBookDatabase.getDatabase(get()).listenLaterDao()
         }
+
+        factory {
+            ListenLaterRepositoryImpl(listenLaterDao = get(named(name = BEAN_NAME))) as IListenLaterRepository
+        }
     }
-        @VisibleForTesting set
 
     var jobModule : Module = module {
 
@@ -61,8 +64,8 @@ object FeatureListenLaterModule {
             CoroutineScope(get(named(name = SUPER_VISOR_JOB)) as CoroutineContext + Dispatchers.Main)
         }
     }
-        @VisibleForTesting set
 
-    const val SUPER_VISOR_JOB = "SuperVisorJob"
-    const val VIEW_MODEL_SCOPE = "ViewModelScope"
+    const val SUPER_VISOR_JOB = "SuperVisorJob_ListenLater"
+    const val VIEW_MODEL_SCOPE = "ViewModelScope_ListenLater"
+    const val BEAN_NAME = "ListenLaterFragment"
 }
