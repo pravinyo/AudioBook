@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature_listen_later_ui
+package com.allsoftdroid.audiobook.feature_listen_later_ui.presentation
 
 import androidx.lifecycle.ViewModel
 import com.allsoftdroid.audiobook.feature_listen_later_ui.di.FeatureListenLaterModule.SUPER_VISOR_JOB

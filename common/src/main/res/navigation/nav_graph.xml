@@ -34,7 +34,7 @@
 
     <fragment
         android:id="@+id/ListenLaterFragment"
-        android:name="com.allsoftdroid.audiobook.feature_listen_later_ui.ListenLaterFragment"
+        android:name="com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.ListenLaterFragment"
         android:label="ListenLaterFragment">
     </fragment>
 
