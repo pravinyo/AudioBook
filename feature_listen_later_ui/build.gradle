@@ -46,4 +46,7 @@ dependencies {
     implementation(project(path: ModuleDependency.DATABASE))
 
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
+    implementation(LibraryDependency.LOTTIE)
+    implementation(LibraryDependency.GLIDE)
+    kapt(LibraryDependency.GLIDE_COMPILER)
 }
