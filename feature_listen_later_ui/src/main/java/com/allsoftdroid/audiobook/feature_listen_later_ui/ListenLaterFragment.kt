@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import com.allsoftdroid.audiobook.feature_listen_later_ui.databinding.FragmentListenLaterLayoutBinding
+import com.allsoftdroid.audiobook.feature_listen_later_ui.di.FeatureListenLaterModule
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import org.koin.android.ext.android.inject
 

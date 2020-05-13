@@ -1,8 +1,8 @@
 package com.allsoftdroid.audiobook.feature_listen_later_ui
 
 import androidx.lifecycle.ViewModel
-import com.allsoftdroid.audiobook.feature_listen_later_ui.FeatureListenLaterModule.SUPER_VISOR_JOB
-import com.allsoftdroid.audiobook.feature_listen_later_ui.FeatureListenLaterModule.VIEW_MODEL_SCOPE
+import com.allsoftdroid.audiobook.feature_listen_later_ui.di.FeatureListenLaterModule.SUPER_VISOR_JOB
+import com.allsoftdroid.audiobook.feature_listen_later_ui.di.FeatureListenLaterModule.VIEW_MODEL_SCOPE
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineScope
 import org.koin.core.KoinComponent
