@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -20,6 +21,7 @@ import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.Success
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ItemClickedListener
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ListenLaterAdapter
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.OptionsClickedListener
+import com.allsoftdroid.audiobook.feature_listen_later_ui.utils.SortType
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import org.koin.android.ext.android.inject
 import org.koin.core.KoinComponent
@@ -81,6 +83,10 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
             onBackPressed()
         }
 
+        dataBinding.sortList.setOnClickListener {
+            showPopMenu(it)
+        }
+
         listenLaterViewModel.requestStatus.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let { request ->
                 when(request){
@@ -108,6 +114,36 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
         bindingRef = dataBinding
 
         return dataBinding.root
+    }
+
+    private fun showPopMenu(view: View?) {
+        view?.let {
+            val popUp = PopupMenu(requireContext(),it)
+            popUp.inflate(R.menu.sort_options_menu)
+
+            popUp.setOnMenuItemClickListener {item ->
+
+                listenLaterViewModel.setCurrentShortType(when(item.itemId){
+                    R.id.menu_options_sort_latest_first -> {
+                        SortType.LatestFirst
+                    }
+
+                    R.id.menu_options_sort_oldest_first -> {
+                        SortType.OldestFirst
+                    }
+
+                    R.id.menu_options_sort_shortest_first->{
+                        SortType.ShortestFirst
+                    }
+
+                    else -> SortType.LatestFirst
+                })
+
+                return@setOnMenuItemClickListener false
+            }
+            popUp.show()
+
+        }
     }
 
     private fun noDataUI() {
@@ -168,6 +204,6 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
 
     override fun onResume() {
         super.onResume()
-        listenLaterViewModel.loadDefault()
+        listenLaterViewModel.loadList()
     }
 }
