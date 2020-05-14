@@ -17,10 +17,10 @@ import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.Started
 import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.Success
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ItemClickedListener
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ListenLaterAdapter
+import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.OptionsClickedListener
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import org.koin.android.ext.android.inject
 import org.koin.core.KoinComponent
-import org.koin.core.qualifier.named
 
 class ListenLaterFragment : BaseUIFragment(),KoinComponent {
 
@@ -45,9 +45,23 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
         dataBinding.viewModel = listenLaterViewModel
 
         //val audio book adapter
-        val listenLaterAdapter = ListenLaterAdapter(ItemClickedListener {
-            Toast.makeText(this.requireActivity(),"Book Id:$it",Toast.LENGTH_SHORT).show()
-        })
+        val listenLaterAdapter = ListenLaterAdapter(
+            requireContext(),
+
+            ItemClickedListener {
+                Toast.makeText(this.requireActivity(),"Book Id:$it",Toast.LENGTH_SHORT).show()
+            },
+
+            OptionsClickedListener(
+                onRemove = {
+                    listenLaterViewModel.removeItem(it.identifier)
+                },
+
+                onShare = {
+
+                }
+            )
+        )
 
         //attach adapter to recycler view
         dataBinding.recyclerViewBooks.adapter = listenLaterAdapter
