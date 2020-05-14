@@ -3,6 +3,9 @@ package com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.store.audioPlayer.*
+import com.allsoftdroid.common.base.store.userAction.OpenMainPlayerUI
+import com.allsoftdroid.common.base.store.userAction.UserActionEventBus
+import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import com.allsoftdroid.common.test.getOrAwaitValue
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
@@ -18,11 +21,13 @@ class MiniPlayerViewModelTest{
 
     private lateinit var playerViewModel:MiniPlayerViewModel
     private lateinit var eventStore : AudioPlayerEventStore
+    private lateinit var userActionEventStore: UserActionEventStore
 
     @Before
     fun setup(){
         eventStore = AudioPlayerEventBus.getEventBusInstance()
-        playerViewModel = MiniPlayerViewModel(eventStore)
+        userActionEventStore = UserActionEventBus.getEventBusInstance()
+        playerViewModel = MiniPlayerViewModel(eventStore,userActionEventStore)
     }
 
     @Test
@@ -101,11 +106,11 @@ class MiniPlayerViewModelTest{
     fun openMainPlayer_sentEvent_returnNothing(){
         playerViewModel.openMainPlayer()
 
-        eventStore.observe().subscribe {
+        userActionEventStore.observe().subscribe {
             it.getContentIfNotHandled()?.let {event->
 
                 val eventType = when(event){
-                    is OpenMainPlayerEvent -> "MainPlayer"
+                    is OpenMainPlayerUI -> "MainPlayer"
                     else -> "Not MainPlayer"
                 }
                 assertThat(eventType, `is`("MainPlayer"))

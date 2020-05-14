@@ -20,6 +20,7 @@ import com.allsoftdroid.feature.book_details.di.BookDetailsModule
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import com.allsoftdroid.feature.book_details.presentation.BookDetailsDI.dataModule
 import com.allsoftdroid.feature.book_details.presentation.BookDetailsDI.repositoryModule
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.Matchers.`is`
 import org.junit.After
@@ -53,6 +54,7 @@ class AudioBookDetailsFragmentTest{
         }
     }
 
+    @ExperimentalCoroutinesApi
     @Test
     fun audioBookDetails_DisplayedInUi() {
         runBlockingTest {
@@ -69,7 +71,7 @@ class AudioBookDetailsFragmentTest{
             onView(withId(R.id.tv_toolbar_title)).check(matches(isDisplayed()))
             onView(withId(R.id.tv_toolbar_title)).check(matches(withText(title)))
 
-            onView(withId(R.id.textView_description)).check(matches(isDisplayed()))
+            onView(withId(R.id.tv_book_desc_text)).check(matches(isDisplayed()))
 
             onView(withId(R.id.btn_toolbar_back_arrow)).check(matches(isDisplayed()))
             onView(withId(R.id.btn_toolbar_back_arrow)).check(matches(isClickable()))
