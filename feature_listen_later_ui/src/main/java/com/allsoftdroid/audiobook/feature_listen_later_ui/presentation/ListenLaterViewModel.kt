@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.allsoftdroid.audiobook.feature_listen_later_ui.di.FeatureListenLaterModule.SUPER_VISOR_JOB
 import com.allsoftdroid.audiobook.feature_listen_later_ui.di.FeatureListenLaterModule.VIEW_MODEL_SCOPE
 import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.*
+import com.allsoftdroid.audiobook.feature_listen_later_ui.utils.SortType
 import com.allsoftdroid.common.base.extension.Event
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineScope
@@ -26,16 +27,33 @@ class ListenLaterViewModel(private val repository:IListenLaterRepository) : View
      */
     private val viewModelScope : CoroutineScope by inject(named(name = VIEW_MODEL_SCOPE))
 
+    private var currentShortType = SortType.LatestFirst
 
     private var _requestStatus = MutableLiveData<Event<RequestStatus>>()
     val requestStatus : LiveData<Event<RequestStatus>> = _requestStatus
 
-    fun loadDefault() {
+    fun setCurrentShortType(type:SortType){
+        currentShortType = type
+        loadList()
+    }
+
+    fun loadList() {
         viewModelScope.launch {
             _requestStatus.value = Event(Started)
 
-            val data =
-                withContext(coroutineContext) { repository.getBooksInLIFO() }
+            val data = when(currentShortType){
+                SortType.LatestFirst -> {
+                    withContext(coroutineContext) { repository.getBooksInLIFO() }
+                }
+
+                SortType.OldestFirst -> {
+                    withContext(coroutineContext) { repository.getBooksInFIFO() }
+                }
+
+                SortType.ShortestFirst -> {
+                    withContext(coroutineContext) { repository.getBooksInOrderOfLength() }
+                }
+            }
 
             if(!data.isNullOrEmpty()){
                 _requestStatus.value = Event(Success(data))
@@ -51,7 +69,7 @@ class ListenLaterViewModel(private val repository:IListenLaterRepository) : View
                 repository.removeBookById(identifier)
             }
 
-            loadDefault()
+            loadList()
         }
     }
 
