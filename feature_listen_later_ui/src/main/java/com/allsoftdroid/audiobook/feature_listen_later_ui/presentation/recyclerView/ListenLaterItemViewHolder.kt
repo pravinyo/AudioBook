@@ -1,6 +1,7 @@
 package com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.allsoftdroid.audiobook.feature_listen_later_ui.data.model.ListenLaterItemDomainModel
@@ -8,10 +9,12 @@ import com.allsoftdroid.audiobook.feature_listen_later_ui.databinding.LayoutList
 
 class ListenLaterItemViewHolder private constructor(private val binding : LayoutListenLaterItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
+    lateinit var buttonViewOptions:View
     // bind the data to the view
-    fun bind(item: ListenLaterItemDomainModel, listener: ItemClickedListener) {
+    fun bind(item: ListenLaterItemDomainModel, itemClickedListener: ItemClickedListener) {
         binding.book = item
-        binding.clickListener = listener
+        binding.clickListener = itemClickedListener
+        buttonViewOptions = binding.ListenLaterItemOptions
         binding.executePendingBindings()
     }
 
