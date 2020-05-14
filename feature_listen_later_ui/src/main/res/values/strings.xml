@@ -5,4 +5,7 @@
     <string name="sort">Sort</string>
     <string name="no_books_found">You have finished all the books !</string>
     <string name="thumbnail">listen later thumb nail</string>
+    <string name="remove">Remove</string>
+    <string name="share">Share</string>
+    <string name="colon_code">⋮</string>
 </resources>
