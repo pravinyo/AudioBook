@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.audiobook.feature_listen_later_ui.R
 import com.allsoftdroid.audiobook.feature_listen_later_ui.data.model.ListenLaterItemDomainModel
@@ -48,8 +50,12 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
         val listenLaterAdapter = ListenLaterAdapter(
             requireContext(),
 
-            ItemClickedListener {
-                Toast.makeText(this.requireActivity(),"Book Id:$it",Toast.LENGTH_SHORT).show()
+            ItemClickedListener {bookId->
+                //Navigate to display page
+                val bundle = bundleOf("bookId" to bookId)
+
+                this.findNavController()
+                    .navigate(R.id.action_ListenLaterFragment_to_AudioBookDetailsFragment,bundle)
             },
 
             OptionsClickedListener(
@@ -58,7 +64,7 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
                 },
 
                 onShare = {
-
+                    Toast.makeText(this.requireActivity(),"Implementation required",Toast.LENGTH_SHORT).show()
                 }
             )
         )
@@ -158,5 +164,10 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
     override fun handleBackPressEvent(callback: OnBackPressedCallback) {
         callback.isEnabled = false
         requireActivity().onBackPressed()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        listenLaterViewModel.loadDefault()
     }
 }
