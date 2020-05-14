@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_options_sort_latest_first"
+        android:title="@string/latest_first"
+        />
+    <item
+        android:id="@+id/menu_options_sort_oldest_first"
+        android:title="@string/oldest_first"
+        />
+    <item
+        android:id="@+id/menu_options_sort_shortest_first"
+        android:title="@string/shortest_first"
+        />
+</menu>
