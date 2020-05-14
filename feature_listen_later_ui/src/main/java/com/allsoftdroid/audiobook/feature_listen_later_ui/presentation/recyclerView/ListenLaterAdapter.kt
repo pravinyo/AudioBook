@@ -1,13 +1,22 @@
 package com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.allsoftdroid.audiobook.feature_listen_later_ui.R
 import com.allsoftdroid.audiobook.feature_listen_later_ui.data.model.ListenLaterItemDomainModel
+import timber.log.Timber
 
-class ListenLaterAdapter(private val listener: ItemClickedListener): ListAdapter<ListenLaterItemDomainModel, RecyclerView.ViewHolder>(RandomBookDiffCallback()) {
+class ListenLaterAdapter(
+    private val context: Context,
+    private val itemClickedListener: ItemClickedListener,
+    private val optionsClickedListener: OptionsClickedListener)
+    : ListAdapter<ListenLaterItemDomainModel, RecyclerView.ViewHolder>(RandomBookDiffCallback()) {
 
     /**
      * Create view Holder of type BookViewHolder
@@ -23,15 +32,39 @@ class ListenLaterAdapter(private val listener: ItemClickedListener): ListAdapter
         when(holder){
             is ListenLaterItemViewHolder ->{
                 val dataItem = getItem(position)
-                holder.bind(dataItem,listener)
+                holder.bind(dataItem,itemClickedListener)
+
+                holder.buttonViewOptions.setOnClickListener {
+                    showPopupMenu(dataItem,it)
+                }
             }
 
             else -> throw Exception("View Holder type is unknown:$holder")
         }
     }
+
+    private fun showPopupMenu(listenLater: ListenLaterItemDomainModel,view: View) {
+        val popUp = PopupMenu(context,view)
+        popUp.inflate(R.menu.options_menu)
+
+        popUp.setOnMenuItemClickListener {
+            when (it.itemId){
+                R.id.menu_options_remove -> {
+                    optionsClickedListener.onRemoveClicked(listenLater)
+                }
+
+                R.id.menu_options_share -> {
+
+                    optionsClickedListener.onShareClicked(listenLater)
+                    Timber.d("Share clicked for ${listenLater.title}")
+                }
+            }
+
+            return@setOnMenuItemClickListener false
+        }
+        popUp.show()
+    }
 }
-
-
 
 
 /**
@@ -64,4 +97,9 @@ listener to check for the click event
  */
 class ItemClickedListener(val clickListener : (identifier : String)->Unit){
     fun onItemClicked(listenLater : ListenLaterItemDomainModel) = clickListener(listenLater.identifier)
+}
+
+class OptionsClickedListener(val onRemove : (identifier : ListenLaterItemDomainModel)->Unit,val onShare : (identifier : ListenLaterItemDomainModel)->Unit){
+    fun onRemoveClicked(listenLater : ListenLaterItemDomainModel) = onRemove(listenLater)
+    fun onShareClicked(listenLater : ListenLaterItemDomainModel) = onShare(listenLater)
 }
