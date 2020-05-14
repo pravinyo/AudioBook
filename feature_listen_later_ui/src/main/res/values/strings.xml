@@ -8,4 +8,7 @@
     <string name="remove">Remove</string>
     <string name="share">Share</string>
     <string name="colon_code">⋮</string>
+    <string name="latest_first">Latest First</string>
+    <string name="oldest_first">Oldest First</string>
+    <string name="shortest_first">Shortest First</string>
 </resources>
