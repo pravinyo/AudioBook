@@ -39,13 +39,23 @@ class ListenLaterViewModel(private val repository:IListenLaterRepository) : View
             _requestStatus.value = Event(Started)
 
             val data =
-                withContext(viewModelScope.coroutineContext) { repository.getBooksInLIFO() }
+                withContext(coroutineContext) { repository.getBooksInLIFO() }
 
             if(!data.isNullOrEmpty()){
                 _requestStatus.value = Event(Success(data))
             }else{
                 _requestStatus.value = Event(Empty)
             }
+        }
+    }
+
+    fun removeItem(identifier:String){
+        viewModelScope.launch {
+            withContext(coroutineContext){
+                repository.removeBookById(identifier)
+            }
+
+            loadDefault()
         }
     }
 
