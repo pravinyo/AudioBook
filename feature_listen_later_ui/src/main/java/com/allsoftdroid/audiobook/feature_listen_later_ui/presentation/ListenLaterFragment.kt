@@ -21,6 +21,7 @@ import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.Success
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ItemClickedListener
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ListenLaterAdapter
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.OptionsClickedListener
+import com.allsoftdroid.audiobook.feature_listen_later_ui.utils.ShareUtils
 import com.allsoftdroid.audiobook.feature_listen_later_ui.utils.SortType
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import org.koin.android.ext.android.inject
@@ -65,8 +66,14 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
                     listenLaterViewModel.removeItem(it.identifier)
                 },
 
-                onShare = {
-                    Toast.makeText(this.requireActivity(),"Implementation required",Toast.LENGTH_SHORT).show()
+                onShare = {item->
+                    this.activity?.let {parent->
+                        ShareUtils.share(
+                            context = parent,
+                            subject = "${item.title} on AudioBook",
+                            txt = "Listen ${item.title} written by '${item.author}' on AudioBook App, Start Listening: http://www.allsoftdroid.com/"
+                        )
+                    }
                 }
             )
         )
