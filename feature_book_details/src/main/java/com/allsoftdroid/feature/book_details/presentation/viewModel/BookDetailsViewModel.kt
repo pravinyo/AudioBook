@@ -422,9 +422,17 @@ internal class BookDetailsViewModel(
     }
 
     fun addToListenLater(){
-        audioBookMetadata.value?.let {
+        var duration=""
+        additionalBookDetails.value?.let {details->
+            duration = details.runtime
+        }
+        audioBookMetadata.value?.let {metadata ->
             viewModelScope.launch {
-                listenLaterUsecase.addToListenLater(bookId = it.identifier,title = it.title,author = it.creator,duration = it.runtime)
+                listenLaterUsecase.addToListenLater(
+                    bookId = metadata.identifier,
+                    title = metadata.title,
+                    author = metadata.creator,
+                    duration = if(duration.isEmpty()) metadata.runtime else duration)
                 _isAddedToListenLater.value = Event(true)
             }
         }
