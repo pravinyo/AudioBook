@@ -30,11 +30,7 @@ class ListenLaterViewModel(private val repository:IListenLaterRepository) : View
     private var _requestStatus = MutableLiveData<Event<RequestStatus>>()
     val requestStatus : LiveData<Event<RequestStatus>> = _requestStatus
 
-    init {
-        loadDefault()
-    }
-
-    private fun loadDefault() {
+    fun loadDefault() {
         viewModelScope.launch {
             _requestStatus.value = Event(Started)
 
