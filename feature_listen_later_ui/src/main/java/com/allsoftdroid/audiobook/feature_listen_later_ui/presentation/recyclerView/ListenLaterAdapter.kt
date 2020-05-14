@@ -45,7 +45,7 @@ class ListenLaterAdapter(
 
     private fun showPopupMenu(listenLater: ListenLaterItemDomainModel,view: View) {
         val popUp = PopupMenu(context,view)
-        popUp.inflate(R.menu.options_menu)
+        popUp.inflate(R.menu.listen_later_options_menu)
 
         popUp.setOnMenuItemClickListener {
             when (it.itemId){
