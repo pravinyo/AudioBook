@@ -1,6 +1,7 @@
 package com.allsoftdroid.audiobook.feature_settings
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -11,6 +12,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.allsoftdroid.audiobook.feature_settings.model.Feedback
 import com.allsoftdroid.audiobook.feature_settings.utils.FileUtil
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
@@ -45,27 +47,80 @@ class SettingsFragment : PreferenceFragmentCompat(), KoinComponent {
         activity?.let {
             val privacyPref = findPreference<Preference>(SettingsPreferenceUtils.PRIVACY_POLICY)
 
-            privacyPref?.summary = "How your data is been used?"
+            privacyPref?.summary = getString(R.string.privacy_summary)
             privacyPref?.setOnPreferenceClickListener {
-                Toast.makeText(this.requireContext(),"Implementation required",Toast.LENGTH_SHORT).show()
+                openPrivacyPageOnBrowser()
                 return@setOnPreferenceClickListener true
             }
 
             val feedbackPref = findPreference<Preference>(SettingsPreferenceUtils.FEEDBACK_KEY)
 
-            feedbackPref?.summary = "Tell us what you liked/dislike about this App."
+            feedbackPref?.summary = getString(R.string.feedback_summary)
             feedbackPref?.setOnPreferenceClickListener {
-                Toast.makeText(this.requireContext(),"Implementation required",Toast.LENGTH_SHORT).show()
+                emailFeedback()
                 return@setOnPreferenceClickListener true
             }
         }
+    }
+
+    private fun emailFeedback() {
+        val fragmentManager = childFragmentManager
+
+        val oldFeedbackFragment = fragmentManager.findFragmentByTag(getString(R.string.feedback_fragment_tag_label))
+
+        oldFeedbackFragment?.let {
+            fragmentManager.beginTransaction().remove(oldFeedbackFragment).commit()
+        }
+
+        val feedbackFragment = FeedbackFragment(
+            context = this,
+            feedbackListener = object : FeedbackFragment.FeedbackListener{
+                override fun onFinishUserFeedback(data: Feedback?) {
+                    data?.let {
+                        val manufacturer = Build.MANUFACTURER
+                        val model = Build.MODEL
+                        val version = Build.VERSION.SDK_INT
+                        val versionRelease = Build.VERSION.RELEASE
+
+                        val bodyBuilder:StringBuilder = StringBuilder()
+
+                        bodyBuilder.apply {
+                            append(it.body)
+                            append("\n\n-----------------------------------------------------------------\n")
+                            append("\nUser Device Details:\n")
+                            append("\nManufacturer: $manufacturer")
+                            append("\nModel: $model")
+                            append("\nDevice OS:$version/$versionRelease")
+                            append("\nApp Version:${BuildConfig.VERSION_NAME}(${BuildConfig.VERSION_CODE})")
+                        }
+
+                        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                            this.data = Uri.parse("mailto:")
+                            putExtra(Intent.EXTRA_EMAIL,getString(R.string.developer_mail))
+                            putExtra(Intent.EXTRA_SUBJECT,it.title)
+                            putExtra(Intent.EXTRA_TEXT,bodyBuilder.toString())
+                        }
+
+                        startActivity(Intent.createChooser(emailIntent,getString(R.string.intent_chooser_send_mail_label)))
+                    }
+                }
+            }
+        )
+
+        feedbackFragment.show(fragmentManager,getString(R.string.feedback_fragment_tag_label))
+    }
+
+    private fun openPrivacyPageOnBrowser() {
+        val uri  = Uri.parse(getString(R.string.privacy_page_url))
+        val intent = Intent(Intent.ACTION_VIEW,uri)
+        startActivity(Intent.createChooser(intent,"Open URL with"))
     }
 
     private fun setupMiscellaneousPref() {
         activity?.let {
             val licensePref = findPreference<Preference>(SettingsPreferenceUtils.LICENSES_KEY)
 
-            licensePref?.summary = "Check Third Part Licenses"
+            licensePref?.summary = getString(R.string.licenses_summary)
             licensePref?.setOnPreferenceClickListener {
                 userActionEventStore.publish(Event(OpenLicensesUI(this::class.java.simpleName)))
                 return@setOnPreferenceClickListener true
