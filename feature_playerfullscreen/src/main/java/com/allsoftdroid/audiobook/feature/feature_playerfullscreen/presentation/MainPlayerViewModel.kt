@@ -48,6 +48,16 @@ class MainPlayerViewModel(
     var shouldItPlay  = MutableLiveData<Boolean>()
 
     private var _playingTrackDetails = MutableLiveData<PlayingTrackDetails>()
+//        .apply {
+//        this.value = PlayingTrackDetails(
+//            bookTitle = "Ingersoll on THE GREAT INFIDELS, from the Works of Robert G. Ingersoll, Volume 3, Lectures",
+//            bookIdentifier ="ingersoll_on_great_infidels_2005_librivox",
+//            trackName = "01-I Introduction",
+//            chapterIndex = 1,
+//            totalChapter = 10,
+//            isPlaying = false
+//        )
+//    }
     val playingTrackDetails : LiveData<PlayingTrackDetails> = _playingTrackDetails
 
     private var currentPlayingIndex = 0
