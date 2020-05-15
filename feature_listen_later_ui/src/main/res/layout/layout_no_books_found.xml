@@ -12,7 +12,7 @@
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_gravity="center"
-        app:lottie_rawRes="@raw/empty_list"
+        app:lottie_rawRes="@raw/no_activity"
         app:lottie_loop="true"
         app:lottie_autoPlay="true" />
 
