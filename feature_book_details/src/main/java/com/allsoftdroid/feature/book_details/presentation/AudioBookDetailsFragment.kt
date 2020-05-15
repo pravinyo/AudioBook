@@ -255,7 +255,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
     private fun handleDownloaderEvent(event: Event<DownloadEvent>) {
         event.peekContent().let {
-            if(it is DownloadNothing || it is OpenDownloadActivity || it is PullAndUpdateStatus) return
+            if(it is DownloadNothing || it is PullAndUpdateStatus) return
 
             Timber.d("Event is for book: ${it.bookId} - chapter:${it.chapterIndex}")
             bookDetailsViewModel.updateDownloadStatus(it)

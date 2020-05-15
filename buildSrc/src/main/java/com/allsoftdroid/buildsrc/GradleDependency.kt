@@ -16,6 +16,7 @@ object GradlePluginId {
     const val KOTLIN_ANDROID_EXTENSIONS = "kotlin-android-extensions"
     const val GRADLE_VERSION_PLUGIN = "com.github.ben-manes.versions"
     const val SAFE_ARGS = "androidx.navigation.safeargs"
+    const val OSS_LICENSES = "com.google.android.gms.oss-licenses-plugin"
 }
 
 object GradleDependency {
@@ -23,4 +24,5 @@ object GradleDependency {
     const val ANDROID_GRADLE = "com.android.tools.build:gradle:${GradlePluginVersion.ANDROID_GRADLE}"
     const val KTLINT_GRADLE = "org.jlleitschuh.gradle:ktlint-gradle:${GradlePluginVersion.KTLINT_GRADLE}"
     const val SAFE_ARGS = "androidx.navigation:navigation-safe-args-gradle-plugin:${CoreVersion.NAVIGATION}"
+    const val OSS_LICENSES = "com.google.android.gms:oss-licenses-plugin:${CoreVersion.OSS_LICENSES}"
 }

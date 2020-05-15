@@ -19,8 +19,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
-import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
-import com.allsoftdroid.common.base.store.downloader.OpenDownloadActivity
+import com.allsoftdroid.common.base.store.userAction.OpenDownloadUI
+import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.data.network.Utils
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
@@ -46,7 +46,7 @@ class AudioBookListFragment : BaseUIFragment(){
     private lateinit var drawer: DrawerLayout
     private lateinit var navView : NavigationView
 
-    private val downloadEventStore: DownloadEventStore by inject()
+    private val userActionEventStore: UserActionEventStore by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
@@ -78,6 +78,11 @@ class AudioBookListFragment : BaseUIFragment(){
                 R.id.nav_item_settings -> {
                     this.findNavController()
                         .navigate(R.id.action_AudioBookListFragment_to_SettingsFragment)
+                }
+
+                R.id.nav_item_listen_later -> {
+                    this.findNavController()
+                        .navigate(R.id.action_AudioBookListFragment_to_ListenLaterFragment)
                 }
             }
 
@@ -226,8 +231,8 @@ class AudioBookListFragment : BaseUIFragment(){
     }
 
     private fun navigateToDownloadsActivity() {
-        downloadEventStore.publish(
-            Event(OpenDownloadActivity())
+        userActionEventStore.publish(
+            Event(OpenDownloadUI(this::class.java.simpleName))
         )
     }
 
@@ -263,5 +268,10 @@ class AudioBookListFragment : BaseUIFragment(){
                 requireActivity().onBackPressed()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        FeatureBookModule.unLoadModules()
     }
 }

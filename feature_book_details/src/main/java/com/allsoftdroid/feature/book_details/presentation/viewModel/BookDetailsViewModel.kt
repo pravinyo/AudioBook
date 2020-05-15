@@ -9,6 +9,8 @@ import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
 import com.allsoftdroid.common.base.store.downloader.*
 import com.allsoftdroid.common.base.store.downloader.Progress
+import com.allsoftdroid.common.base.store.userAction.OpenDownloadUI
+import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature.book_details.data.model.TrackFormat
@@ -21,6 +23,7 @@ import timber.log.Timber
 
 internal class BookDetailsViewModel(
     private val sharedPref: BookDetailsSharedPreferenceRepository,
+    private val userActionEventStore: UserActionEventStore,
     private val stateHandle : SavedStateHandle,
     private val useCaseHandler: UseCaseHandler,
     private val getMetadataUsecase:GetMetadataUsecase,
@@ -302,9 +305,7 @@ internal class BookDetailsViewModel(
 
     fun openDownloadsScreen(trackId:String){
         if(trackId.isNotEmpty()){
-            viewModelScope.launch{
-                downloaderAction(OpenDownloadActivity())
-            }
+            userActionEventStore.publish(Event(OpenDownloadUI(this::class.java.simpleName)))
         }
     }
 
@@ -421,9 +422,17 @@ internal class BookDetailsViewModel(
     }
 
     fun addToListenLater(){
-        audioBookMetadata.value?.let {
+        var duration=""
+        additionalBookDetails.value?.let {details->
+            duration = details.runtime
+        }
+        audioBookMetadata.value?.let {metadata ->
             viewModelScope.launch {
-                listenLaterUsecase.addToListenLater(bookId = it.identifier,title = it.title,author = it.creator,duration = it.runtime)
+                listenLaterUsecase.addToListenLater(
+                    bookId = metadata.identifier,
+                    title = metadata.title,
+                    author = metadata.creator,
+                    duration = if(duration.isEmpty()) metadata.runtime else duration)
                 _isAddedToListenLater.value = Event(true)
             }
         }

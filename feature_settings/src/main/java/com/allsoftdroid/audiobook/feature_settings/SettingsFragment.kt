@@ -12,12 +12,19 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.allsoftdroid.audiobook.feature_settings.utils.FileUtil
+import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
+import com.allsoftdroid.common.base.store.userAction.OpenLicensesUI
+import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import com.allsoftdroid.common.base.utils.SettingsPreferenceUtils
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import timber.log.Timber
 
 
-class SettingsFragment : PreferenceFragmentCompat() {
+class SettingsFragment : PreferenceFragmentCompat(), KoinComponent {
+
+    private val userActionEventStore:UserActionEventStore by inject()
 
     private val DOWNLOADS_FOLDER_CODE = 9999
     private val standardDirectory = listOf<String>(
@@ -30,6 +37,43 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.settings_preferences,rootKey)
 
         setupDownloadPref()
+        setupAboutPref()
+        setupMiscellaneousPref()
+    }
+
+    private fun setupAboutPref() {
+        activity?.let {
+            val privacyPref = findPreference<Preference>(SettingsPreferenceUtils.PRIVACY_POLICY)
+
+            privacyPref?.summary = "How your data is been used?"
+            privacyPref?.setOnPreferenceClickListener {
+                Toast.makeText(this.requireContext(),"Implementation required",Toast.LENGTH_SHORT).show()
+                return@setOnPreferenceClickListener true
+            }
+
+            val feedbackPref = findPreference<Preference>(SettingsPreferenceUtils.FEEDBACK_KEY)
+
+            feedbackPref?.summary = "Tell us what you liked/dislike about this App."
+            feedbackPref?.setOnPreferenceClickListener {
+                Toast.makeText(this.requireContext(),"Implementation required",Toast.LENGTH_SHORT).show()
+                return@setOnPreferenceClickListener true
+            }
+        }
+    }
+
+    private fun setupMiscellaneousPref() {
+        activity?.let {
+            val licensePref = findPreference<Preference>(SettingsPreferenceUtils.LICENSES_KEY)
+
+            licensePref?.summary = "Check Third Part Licenses"
+            licensePref?.setOnPreferenceClickListener {
+                userActionEventStore.publish(Event(OpenLicensesUI(this::class.java.simpleName)))
+                return@setOnPreferenceClickListener true
+            }
+
+            val versionPref = findPreference<Preference>(SettingsPreferenceUtils.VERSION_KEY)
+            versionPref?.summary = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
+        }
     }
 
     private fun setupDownloadPref() {
@@ -53,7 +97,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun showAllowedFolderDialog() {
-        val builder = AlertDialog.Builder(this.requireContext())
+        val builder = AlertDialog.Builder(this.requireActivity())
 
         builder.setTitle("Folders allowed")
         builder.setMessage(TextUtils.join("\n",standardDirectory))

@@ -43,7 +43,8 @@ object FeatureMainPlayerModule {
                 eventStore = get(),
                 useCaseHandler = get(),
                 trackProgressUsecase = get(),
-                remainingTimeUsecase = get()
+                remainingTimeUsecase = get(),
+                userActionEventStore = get()
             )
         }
     }

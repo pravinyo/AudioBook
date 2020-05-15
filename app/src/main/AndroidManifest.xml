@@ -36,6 +36,14 @@
 
         <activity android:name=".feature_downloader.presentation.DownloadManagementActivity" />
 
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:theme="@style/LicenseTheme" />
+
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
+            android:theme="@style/LicenseTheme" />
+
         <service
             android:name=".services.audio.service.AudioService"
             android:enabled="true"/>

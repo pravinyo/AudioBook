@@ -4,4 +4,10 @@
     <string name="preference_title_downloads">Download Folder</string>
     <string name="preference_summary">default location</string>
     <string name="preference_downloads_help">check allowed folder</string>
+    <string name="title_about">About</string>
+    <string name="preference_title_privacy_policy">Privacy policy</string>
+    <string name="preference_title_feedback">Feedback</string>
+    <string name="title_miscellaneous">Miscellaneous</string>
+    <string name="preference_title_version">Version</string>
+    <string name="preference_title_licenses">Licenses</string>
 </resources>

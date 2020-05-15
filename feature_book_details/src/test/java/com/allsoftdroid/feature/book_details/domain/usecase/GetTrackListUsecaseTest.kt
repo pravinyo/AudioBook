@@ -6,15 +6,15 @@ import com.allsoftdroid.common.test.getOrAwaitValue
 import com.allsoftdroid.feature.book_details.data.model.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.repository.ITrackListRepository
 import com.allsoftdroid.feature.book_details.utils.FakeTrackListRepository
-import kotlinx.coroutines.*
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
-import org.junit.*
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import java.util.concurrent.TimeoutException
 
 
@@ -40,17 +40,19 @@ class GetTrackListUsecaseTest{
         trackListUsecase = GetTrackListUsecase(trackListRepository)
     }
 
+    @ExperimentalCoroutinesApi
     @Test
     fun trackListUsecase_EmptyList_returnsNothing(){
         mainCoroutineRule.runBlockingTest {
             try {
-                val list = trackListUsecase.getTrackListData().getOrAwaitValue()
+                trackListUsecase.getTrackListData().getOrAwaitValue()
             }catch (exception:TimeoutException){
                 Assert.assertThat(exception.message, CoreMatchers.`is`("LiveData value was never set."))
             }
         }
     }
 
+    @ExperimentalCoroutinesApi
     @Test
     fun trackListUsecase_PullTracks_returnsNonNullTrackList(){
         mainCoroutineRule.runBlockingTest {
@@ -65,6 +67,7 @@ class GetTrackListUsecaseTest{
         }
     }
 
+    @ExperimentalCoroutinesApi
     @Test
     fun trackListUsecase_PullTracks_returnsTrackList(){
         mainCoroutineRule.runBlockingTest {

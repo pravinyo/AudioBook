@@ -20,12 +20,26 @@
             android:id="@+id/action_AudioBookListFragment_to_SettingsFragment"
             app:destination="@id/SettingsFragment" />
 
+        <action
+            android:id="@+id/action_AudioBookListFragment_to_ListenLaterFragment"
+            app:destination="@id/ListenLaterFragment" />
+
     </fragment>
 
     <fragment
         android:id="@+id/SettingsFragment"
         android:name="com.allsoftdroid.audiobook.feature_settings.SettingsFragment"
         android:label="SettingsFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/ListenLaterFragment"
+        android:name="com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.ListenLaterFragment"
+        android:label="ListenLaterFragment">
+        <action
+            android:id="@+id/action_ListenLaterFragment_to_AudioBookDetailsFragment"
+            app:destination="@id/AudioBookDetailsFragment"
+            />
     </fragment>
 
     <fragment

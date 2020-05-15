@@ -6,10 +6,14 @@ import androidx.lifecycle.ViewModel
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.store.audioPlayer.*
+import com.allsoftdroid.common.base.store.userAction.OpenMainPlayerUI
+import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import io.reactivex.disposables.Disposable
 import timber.log.Timber
 
-class MiniPlayerViewModel(private val eventStore : AudioPlayerEventStore) : ViewModel(){
+class MiniPlayerViewModel(
+    private val eventStore : AudioPlayerEventStore,
+    private val userActionEventStore: UserActionEventStore) : ViewModel(){
 
     private var _shouldItPlay:Boolean = true
     var shouldItPlay  = MutableLiveData<Boolean>()
@@ -140,7 +144,7 @@ class MiniPlayerViewModel(private val eventStore : AudioPlayerEventStore) : View
 
     fun openMainPlayer(){
         Timber.d("Event sent for opening main player event")
-        eventStore.publish(Event(OpenMainPlayerEvent))
+        userActionEventStore.publish(Event(OpenMainPlayerUI(this::class.java.simpleName)))
     }
 
     private fun updateTrackDetails(title:String,bookId:String) {

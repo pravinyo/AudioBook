@@ -12,6 +12,8 @@ import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.domain.usecas
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.store.audioPlayer.*
+import com.allsoftdroid.common.base.store.userAction.OpenMiniPlayerUI
+import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import kotlinx.coroutines.CompletableJob
@@ -24,6 +26,7 @@ import timber.log.Timber
 
 class MainPlayerViewModel(
     private val eventStore : AudioPlayerEventStore,
+    private val userActionEventStore: UserActionEventStore,
     private val useCaseHandler : UseCaseHandler,
     private val trackProgressUsecase: GetPlayingTrackProgressUsecase,
     private val remainingTimeUsecase: GetTrackRemainingTimeUsecase) : ViewModel(), KoinComponent {
@@ -154,7 +157,7 @@ class MainPlayerViewModel(
     }
 
     fun showMiniPlayer(){
-        eventStore.publish(Event(OpenMiniPlayerEvent))
+        userActionEventStore.publish(Event(OpenMiniPlayerUI(this::class.java.simpleName)))
     }
 
     private suspend fun initTrackProgress() {

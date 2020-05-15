@@ -44,4 +44,9 @@ class MiniPlayerFragment : BaseContainerFragment() {
 
         return binding.root
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        FeatureMiniPlayerModule.unloadModule()
+    }
 }

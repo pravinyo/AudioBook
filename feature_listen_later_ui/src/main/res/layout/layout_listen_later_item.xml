@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="book" type="com.allsoftdroid.audiobook.feature_listen_later_ui.data.model.ListenLaterItemDomainModel"/>
+        <variable
+            name="clickListener"
+            type="com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ItemClickedListener" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_marginTop="@dimen/card_margin_top"
+        android:layout_marginStart="@dimen/card_margin_top"
+        android:layout_marginEnd="@dimen/card_margin_top"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false">
+
+            <RelativeLayout
+                android:background="@color/black"
+                android:onClick="@{()->clickListener.onItemClicked(book)}"
+                android:layout_width="@dimen/bookList_image_height"
+                android:layout_height="@dimen/bookList_image_height">
+
+                <ImageView
+                    android:id="@+id/item_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    app:bookImage="@{book}"
+                    android:contentDescription="@string/thumbnail"/>
+
+                <TextView
+                    android:background="@drawable/background_drawable_round_corner"
+                    android:padding="2dp"
+                    android:id="@+id/item_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    app:bookDuration="@{book}"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true"
+                    tools:text="03:30:00"/>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:onClick="@{()->clickListener.onItemClicked(book)}"
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:id="@+id/item_title"
+                    android:textStyle="bold"
+                    android:padding="@dimen/card_padding"
+                    app:bookTitle="@{book}"/>
+
+                <TextView
+                    android:id="@+id/item_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/card_padding"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    app:bookAuthor="@{book}"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/ListenLaterItemOptions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="2dp"
+                android:layout_gravity="top"
+                android:gravity="top"
+                android:text="@string/colon_code"
+                android:textColor="@color/black"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>

@@ -16,9 +16,5 @@ data class EmptyEvent(val default: AudioPlayerEventState):AudioPlayerEvent()
 data class PlaySelectedTrack(val trackList : List<AudioPlayListItem>,val bookId:String,val bookName:String, val position:Int) : AudioPlayerEvent()
 data class TrackDetails(val trackTitle:String,val bookId: String, val position: Int):AudioPlayerEvent()
 
-//Alert to UI for next screen Action event
-object OpenMainPlayerEvent : AudioPlayerEvent()
-object OpenMiniPlayerEvent : AudioPlayerEvent()
-
 //Player State event
 data class AudioPlayerPlayingState(val isReady:Boolean) : AudioPlayerEvent()
