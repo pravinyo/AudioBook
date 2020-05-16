@@ -12,6 +12,7 @@ import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.allsoftdroid.common.base.store.downloader.*
+import com.allsoftdroid.common.base.utils.ShareUtils
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
@@ -244,6 +245,17 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                 }else{
                     bookDetailsViewModel.addToListenLater()
                 }
+            }
+        }
+
+        dataBinding.imgViewBookShare.setOnClickListener {
+
+            bookDetailsViewModel.audioBookMetadata.value?.let {
+                ShareUtils.share(
+                    context = this.requireActivity(),
+                    subject = "${it.title} on AudioBook",
+                    txt = "Listen ${it.title} written by '${it.creator}' on AudioBook App, Start Listening: http://www.allsoftdroid.com/"
+                )
             }
         }
     }
