@@ -288,6 +288,18 @@ class MainActivity : BaseActivity() {
                 }
             }
 
+            is Rewind -> {
+                mainActivityViewModel.apply {
+                    rewindTrack()
+                }
+            }
+
+            is Forward ->{
+                mainActivityViewModel.apply {
+                    forwardTrack()
+                }
+            }
+
             else -> {
                 Timber.d("Unknown event received")
                 Timber.d("Unknown Event has message of type TrackDetails: ${event is TrackDetails}")
