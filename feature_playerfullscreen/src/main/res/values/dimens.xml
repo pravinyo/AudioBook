@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="action_btn_size">32dp</dimen>
+
+    <dimen name="padding_normal">16dp</dimen>
+
+    <dimen name="cardview_radius_big">20dp</dimen>
+    <dimen name="image_card_size">180dp</dimen>
+    <dimen name="image_card_radius">16dp</dimen>
+    <dimen name="image_card_elevation">8dp</dimen>
+
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_big">32dp</dimen>
+    <dimen name="margin_normal">16dp</dimen>
+
+    <dimen name="player_control_size_1">40dp</dimen>
+    <dimen name="player_control_size_2">48dp</dimen>
+    <dimen name="player_control_size_3">86dp</dimen>
+</resources>
