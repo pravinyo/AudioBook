@@ -7,29 +7,20 @@ import androidx.databinding.BindingAdapter
 import com.allsoftdroid.audiobook.feature_mini_player.R
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.common.base.network.ArchiveUtils
+import com.allsoftdroid.common.base.utils.BindingUtils.getNormalizedText
+import com.allsoftdroid.common.base.utils.BindingUtils.getSignatureForImageLoading
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import timber.log.Timber
 
 
 @BindingAdapter("trackTitle")
 fun TextView.setTrackTitle(item: String?){
     item?.let {
-        text =
-            getNormalizedText(
-                item,
-                30
-            )
+        text = getNormalizedText(item,30)
     }
-}
-
-private fun getNormalizedText(text:String?,limit:Int):String{
-    if(text?.length?:0>limit){
-        return text?.substring(0,limit-3)+"..."
-    }
-
-    return text?:""
 }
 
 @BindingAdapter("controlIconPlayPause")
@@ -56,10 +47,10 @@ fun setImageUrl(imageView: ImageView, bookId:String?) {
             .asBitmap()
             .load(url)
             .override(250,250)
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-            .dontAnimate()
             .apply(
                 RequestOptions()
+                    .signature(ObjectKey(getSignatureForImageLoading(bookId)))
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .placeholder(R.drawable.loading_animation)
                     .error(
                         CreateImageOverlay
@@ -67,6 +58,7 @@ fun setImageUrl(imageView: ImageView, bookId:String?) {
                             .buildOverlay(front = R.drawable.ic_book_play,back = R.drawable.gradiant_background)
                     )
             )
+            .dontAnimate()
             .into(imageView)
     }
 }
