@@ -260,4 +260,14 @@ class AudioBookPlayer(private val context:Application,
             this.trackList = trackList
         }
     }
+
+    /**
+     * change player current playing position
+     * @param millis time to be changed by
+     */
+    fun seekByPosition(millis:Int){
+        exoPlayer?.apply {
+            this.seekTo(this.currentWindowIndex,this.currentPosition+millis)
+        }
+    }
 }
