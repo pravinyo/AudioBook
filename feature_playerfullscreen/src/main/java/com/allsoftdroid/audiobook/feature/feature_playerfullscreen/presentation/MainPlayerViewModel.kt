@@ -75,11 +75,13 @@ class MainPlayerViewModel(
     }
 
     fun goBackward(){
-
+        Timber.d("Sending new Rewind event")
+        playerEventStore.publish(Event(Rewind))
     }
 
     fun goForward(){
-
+        Timber.d("Sending new Forward event")
+        playerEventStore.publish(Event(Forward))
     }
 
     fun playNext(){
