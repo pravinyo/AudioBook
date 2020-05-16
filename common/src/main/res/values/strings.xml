@@ -3,4 +3,5 @@
     <string name="no_connection_found">No Internet Connection!</string>
     <string name="downloads_root_directory_key">dowloads_root_directory_for_downloads</string>
     <string name="downloads_path">local_downloads_path</string>
+    <string name="share_using">Share using</string>
 </resources>

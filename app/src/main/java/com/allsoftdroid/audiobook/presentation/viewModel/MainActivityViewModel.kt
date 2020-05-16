@@ -125,6 +125,18 @@ class MainActivityViewModel(application : Application,
         Timber.d("pause event")
     }
 
+    fun rewindTrack(){
+        audioManager.rewindPlayer(30*1000)
+        _playingTrackDetails.isPlaying = true
+        Timber.d("rewind event")
+    }
+
+    fun forwardTrack(){
+        audioManager.forwardPlayer(30*1000)
+        _playingTrackDetails.isPlaying = true
+        Timber.d("forward event")
+    }
+
     fun resumeOrPlayTrack(){
         if(this::_playingTrackDetails.isInitialized){
             audioManager.resumeTrack()

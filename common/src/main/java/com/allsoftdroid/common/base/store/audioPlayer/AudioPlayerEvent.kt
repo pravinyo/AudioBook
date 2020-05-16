@@ -11,6 +11,8 @@ data class Previous(val result: AudioPlayerEventState) : AudioPlayerEvent()
 data class Play(val result: AudioPlayerEventState) : AudioPlayerEvent()
 data class Pause(val result: AudioPlayerEventState) : AudioPlayerEvent()
 data class EmptyEvent(val default: AudioPlayerEventState):AudioPlayerEvent()
+object Rewind : AudioPlayerEvent()
+object Forward : AudioPlayerEvent()
 
 //Details or information event for the player and UI
 data class PlaySelectedTrack(val trackList : List<AudioPlayListItem>,val bookId:String,val bookName:String, val position:Int) : AudioPlayerEvent()

@@ -40,7 +40,7 @@ object FeatureMainPlayerModule {
     var mainPlayerViewModelModule : Module = module {
         viewModel{
             MainPlayerViewModel(
-                eventStore = get(),
+                playerEventStore = get(),
                 useCaseHandler = get(),
                 trackProgressUsecase = get(),
                 remainingTimeUsecase = get(),

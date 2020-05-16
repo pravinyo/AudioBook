@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -9,9 +10,9 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/parentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black"
         android:orientation="vertical">
 
         <LinearLayout
@@ -25,76 +26,84 @@
 
             <ImageView
                 android:id="@+id/toolbar_back_button"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/action_btn_size"
+                android:layout_height="@dimen/action_btn_size"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/margin_normal"
                 android:clickable="true"
                 android:contentDescription="@string/close_player"
                 android:focusable="true"
                 android:src="@drawable/ic_keyboard_arrow_left_black_24dp" />
 
-            <TextView
-                android:id="@+id/tv_book_title"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                app:trackBookTitle="@{viewModel.playingTrackDetails}"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@color/white" />
-
-            <ImageView
-                android:id="@+id/toolbar_downloads"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="16dp"
-                android:clickable="true"
-                android:contentDescription="@string/share_book"
-                android:focusable="true"
-                android:src="@drawable/share_outline" />
-
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/iv_book_cover"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/book_banner"
+            app:cardCornerRadius="@dimen/cardview_radius_big"
+            android:layout_margin="@dimen/margin_normal"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
-            app:trackBookImage="@{viewModel.playingTrackDetails}"
-            android:background="@color/colorAccent"
-            android:contentDescription="@string/book_cover_photo"
+            android:layout_height="wrap_content"
+            app:trackBookBanner="@{viewModel.playingTrackDetails}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv_book_title"
+                    android:padding="@dimen/padding_normal"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:trackBookTitle="@{viewModel.playingTrackDetails}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    tools:text="The great book title"/>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="@dimen/image_card_size"
+                    android:layout_height="@dimen/image_card_size"
+                    android:layout_margin="@dimen/margin_big"
+                    android:layout_gravity="center"
+                    app:cardCornerRadius="@dimen/image_card_radius"
+                    app:cardElevation="@dimen/image_card_elevation">
+                    <ImageView
+                        android:id="@+id/book_thumbnail"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/book_thumbnail_image"/>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/tv_book_progress_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_big"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginBottom="@dimen/margin_small"
             app:bookChapterProgressTitle="@{viewModel.playingTrackDetails}"
-            android:textColor="@color/white"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_book_cover" />
+            app:layout_constraintTop_toBottomOf="@id/book_banner" />
 
         <TextView
             android:id="@+id/tv_book_chapter_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginBottom="@dimen/margin_small"
             app:trackTitle="@{viewModel.playingTrackDetails}"
-            android:textColor="@color/white"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -106,11 +115,10 @@
             android:layout_height="wrap_content"
             style="?android:attr/progressBarStyleHorizontal"
             android:max="100"
-            android:progress="45"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginBottom="@dimen/margin_small"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_book_chapter_name" />
@@ -119,12 +127,11 @@
             android:id="@+id/tv_book_progress_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginBottom="@dimen/margin_small"
             android:gravity="center_horizontal"
-            android:textColor="@color/white"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -135,9 +142,9 @@
             android:id="@+id/playerControl"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginBottom="@dimen/margin_big"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -145,32 +152,48 @@
 
             <ImageView
                 android:id="@+id/iv_book_chapter_previous"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:padding="8dp"
-                android:layout_margin="16dp"
+                android:layout_width="@dimen/player_control_size_1"
+                android:layout_height="@dimen/player_control_size_1"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/play_previous"
                 android:onClick="@{() -> viewModel.playPrevious()}"
                 android:src="@drawable/skip_previous_outline" />
 
             <ImageView
+                android:id="@+id/iv_book_chapter_rewind"
+                android:layout_width="@dimen/player_control_size_2"
+                android:layout_height="@dimen/player_control_size_2"
+                android:layout_marginStart="@dimen/margin_big"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/rewind"
+                android:onClick="@{() -> viewModel.goBackward()}"
+                android:src="@drawable/ic_rewind_30" />
+
+            <ImageView
                 android:id="@+id/iv_book_chapter_playpause"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:padding="8dp"
-                android:layout_margin="16dp"
+                android:layout_width="@dimen/player_control_size_3"
+                android:layout_height="@dimen/player_control_size_3"
+                android:layout_marginStart="@dimen/margin_normal"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/play_pause_control"
                 android:onClick="@{() -> viewModel.playPause()}"
                 android:src="@drawable/play_circle" />
 
             <ImageView
+                android:id="@+id/iv_book_chapter_forward"
+                android:layout_width="@dimen/player_control_size_2"
+                android:layout_height="@dimen/player_control_size_2"
+                android:layout_marginStart="@dimen/margin_normal"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/fast_forward"
+                android:onClick="@{() -> viewModel.goForward()}"
+                android:src="@drawable/ic_fast_forward_30" />
+
+            <ImageView
                 android:id="@+id/iv_book_chapter_next"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:padding="8dp"
-                android:layout_margin="16dp"
+                android:layout_width="@dimen/player_control_size_1"
+                android:layout_height="@dimen/player_control_size_1"
+                android:layout_marginStart="@dimen/margin_big"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/play_next"
                 android:onClick="@{() -> viewModel.playNext()}"

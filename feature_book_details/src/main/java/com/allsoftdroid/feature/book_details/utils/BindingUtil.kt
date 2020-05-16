@@ -1,8 +1,6 @@
 package com.allsoftdroid.feature.book_details.utils
 
 import android.graphics.Bitmap
-import android.os.Build
-import android.text.Html
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,6 +9,9 @@ import androidx.databinding.BindingAdapter
 import androidx.palette.graphics.Palette
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.BookDetails
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
+import com.allsoftdroid.common.base.utils.BindingUtils.getNormalizedText
+import com.allsoftdroid.common.base.utils.BindingUtils.getSignatureForImageLoading
+import com.allsoftdroid.common.base.utils.BindingUtils.getThumbnail
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
@@ -21,6 +22,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.signature.ObjectKey
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
@@ -96,10 +98,11 @@ fun setBookBanner(layout: ConstraintLayout, item: AudioBookMetadataDomainModel?)
             .with(imageView.context)
             .asBitmap()
             .load(url)
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .dontAnimate()
             .apply(
                 RequestOptions()
+                    .signature(ObjectKey(getSignatureForImageLoading(item.date)))
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .placeholder(R.drawable.loading_animation)
                     .error(
                         CreateImageOverlay
@@ -204,12 +207,3 @@ fun TextView.setBookTags(item: AudioBookMetadataDomainModel?){
     }
 }
 
-private fun getThumbnail(imageId: String?) = "https://archive.org/services/img/$imageId/"
-
-private fun getNormalizedText(text:String?,limit:Int):String{
-    if(text?.length?:0>limit){
-        return text?.substring(0,limit-3)+"..."
-    }
-
-    return text?:""
-}

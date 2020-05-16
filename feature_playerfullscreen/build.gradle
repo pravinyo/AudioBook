@@ -36,6 +36,10 @@ android {
         }
     }
 
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
     dataBinding{
         enabled = DataBinding.IS_ENABLED
     }
@@ -51,6 +55,7 @@ dependencies {
     }
     implementation(LibraryDependency.GLIDE)
     kapt(LibraryDependency.GLIDE_COMPILER)
+    implementation(LibraryDependency.PALETTE)
 
     //Test
     testImplementation(TestLibraryDependency.JUNIT)
