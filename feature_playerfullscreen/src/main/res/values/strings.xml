@@ -7,4 +7,6 @@
     <string name="play_previous">Play previous</string>
     <string name="play_pause_control">play pause control</string>
     <string name="book_thumbnail_image">Book Thumbnail Image</string>
+    <string name="rewind">rewind by 30</string>
+    <string name="fast_forward">fast forward by 30</string>
 </resources>
