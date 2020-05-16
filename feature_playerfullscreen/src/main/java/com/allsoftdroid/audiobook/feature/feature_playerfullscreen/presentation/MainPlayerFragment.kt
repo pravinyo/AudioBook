@@ -140,9 +140,4 @@ class MainPlayerFragment : BaseContainerFragment(){
         super.onResume()
         mainPlayerViewModel.resumeProgressTracking()
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        FeatureMainPlayerModule.unLoadModules()
-    }
 }
