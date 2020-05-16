@@ -1,8 +1,8 @@
-package com.allsoftdroid.audiobook.feature_listen_later_ui.utils
+package com.allsoftdroid.common.base.utils
 
 import android.app.Activity
 import android.content.Intent
-import com.allsoftdroid.audiobook.feature_listen_later_ui.R
+import com.allsoftdroid.common.R
 
 object ShareUtils {
 
