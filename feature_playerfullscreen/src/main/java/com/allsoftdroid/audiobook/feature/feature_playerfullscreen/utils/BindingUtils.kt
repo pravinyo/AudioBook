@@ -10,7 +10,8 @@ import androidx.palette.graphics.Palette
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.R
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.data.PlayingTrackDetails
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
-import com.allsoftdroid.common.base.network.ArchiveUtils.Companion.getThumbnail
+import com.allsoftdroid.common.base.utils.BindingUtils.getSignatureForImageLoading
+import com.allsoftdroid.common.base.utils.BindingUtils.getThumbnail
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -61,11 +62,10 @@ fun setTrackBookBanner(cardView: CardView, item: PlayingTrackDetails?) {
             .with(imageView.context)
             .asBitmap()
             .load(url)
-            .signature(ObjectKey(System.currentTimeMillis().toString()))
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-            .dontAnimate()
             .apply(
                 RequestOptions()
+                    .signature(ObjectKey(getSignatureForImageLoading(item.bookIdentifier)))
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .placeholder(R.drawable.loading_animation)
                     .error(
                         CreateImageOverlay
@@ -73,6 +73,7 @@ fun setTrackBookBanner(cardView: CardView, item: PlayingTrackDetails?) {
                             .buildOverlay(front = R.drawable.ic_book_play,back = R.drawable.gradiant_background)
                     )
             )
+            .dontAnimate()
             .listener(object : RequestListener<Bitmap> {
                 override fun onLoadFailed(
                     e: GlideException?,
