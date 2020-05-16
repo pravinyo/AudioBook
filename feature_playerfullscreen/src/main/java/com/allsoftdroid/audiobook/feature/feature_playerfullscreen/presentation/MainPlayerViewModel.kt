@@ -129,7 +129,7 @@ class MainPlayerViewModel(
         }
     }
 
-    fun setShouldPlay(play:Boolean){
+    private fun setShouldPlay(play:Boolean){
         _shouldItPlay = play
         shouldItPlay.value = _shouldItPlay
     }
