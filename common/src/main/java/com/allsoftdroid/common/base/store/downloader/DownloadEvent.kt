@@ -60,3 +60,9 @@ data class PullAndUpdateStatus(
     val downloadId:Long) : DownloadEvent()
 
 data class DownloadNothing(override val bookId: String="",override val chapterIndex: Int=-1) : DownloadEvent()
+
+data class MultiDownload(
+    override val bookId:String="",
+    override val chapterIndex: Int =-1,
+    val downloads:List<Download>
+) : DownloadEvent()
