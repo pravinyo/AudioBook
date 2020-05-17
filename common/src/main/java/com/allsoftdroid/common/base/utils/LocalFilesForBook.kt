@@ -13,7 +13,6 @@ import java.util.*
 
 class LocalFilesForBook(private val app:Application) {
 
-    @VisibleForTesting
     fun getDownloadedFilesList(bookId:String):List<String>?{
         val directory = Environment.getExternalStoragePublicDirectory(ArchiveUtils.getDownloadsRootFolder(context = app))
 
