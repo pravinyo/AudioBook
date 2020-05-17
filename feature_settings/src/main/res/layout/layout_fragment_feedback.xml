@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/fragment_popup_margin"
+        android:minWidth="@dimen/fragment_popup_minWidth"
+        android:layout_marginEnd="@dimen/fragment_popup_margin"
+        android:padding="@dimen/padding_standard"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:text="@string/fragment_feedback_subject"
+                android:textColor="?attr/colorPrimaryDark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/fragment_feedback_subject"
+                android:layout_width="match_parent"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="?attr/colorPrimary"
+                android:layout_height="wrap_content">
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:text="@string/fragment_feedback_body"
+                android:textColor="?attr/colorPrimaryDark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/fragment_feedback_body"
+                android:layout_width="match_parent"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="?attr/colorPrimary"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/fragmentDialog_send_btn"
+                android:backgroundTint="?attr/colorPrimaryDark"
+                android:textColor="@color/white"
+                android:clickable="true"
+                android:text="@string/fragmentDialog_send_btn"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:focusable="true" />
+
+            <Button
+                android:id="@+id/fragmentDialog_cancel_btn"
+                android:backgroundTint="?attr/colorPrimaryDark"
+                android:textColor="@color/white"
+                android:clickable="true"
+                android:text="@string/fragmentDialog_cancel_btn"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:focusable="true" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

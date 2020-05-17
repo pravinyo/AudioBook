@@ -26,6 +26,18 @@ public class DownloadObserver{
         Timber.d("File path:%s", path);
     }
 
+    public String getBookId() {
+        return mBookId;
+    }
+
+    public int getChapterIndex() {
+        return mChapterIndex;
+    }
+
+    public String getUrl() {
+        return mUrl;
+    }
+
     public void startWatching(){
         handler = new Handler();
 

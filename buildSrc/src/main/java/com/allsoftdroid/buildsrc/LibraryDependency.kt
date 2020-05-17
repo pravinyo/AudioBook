@@ -3,6 +3,9 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val OSS_LICENSES = "17.0.0"
+    const val PALETTE = "1.0.0"
+    const val PREFERENCE = "1.1.1"
     const val MOSHI = "1.9.2"
     const val DROPBOX_STORE = "4.0.0-alpha03"
     const val JSOUP = "1.12.1"
@@ -29,7 +32,7 @@ private object LibraryVersion {
     const val RECYCLER_VIEW = "1.1.0-beta04"
     const val COORDINATOR_LAYOUT = "1.0.0"
     // 1.1.x version is required in order to support the dark theme functionality in Android Q (adds Theme.MaterialComponents.DayNight)
-    const val MATERIAL = "1.1.0-alpha09"
+    const val MATERIAL = "1.2.0-alpha06"
     const val CONSTRAINT_LAYOUT = "1.1.3"
     const val CORE_KTX = "1.0.2"
     const val FRAGMENT_KTX = CoreVersion.FRAGMENT_KTX
@@ -79,6 +82,7 @@ object LibraryDependency {
 
     const val CORE_KTX = "androidx.core:core-ktx:${LibraryVersion.CORE_KTX}"
     const val FRAGMENT_KTX = "androidx.fragment:fragment-ktx:${LibraryVersion.FRAGMENT_KTX}"
+    const val PREFERENCE = "androidx.preference:preference:${LibraryVersion.PREFERENCE}"
 
     const val LIFECYCLE_EXTENSIONS = "androidx.lifecycle:lifecycle-extensions:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
     const val LIFECYCLE_COMPILER ="androidx.lifecycle:lifecycle-compiler:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
@@ -91,7 +95,7 @@ object LibraryDependency {
     const val COIL = "io.coil-kt:coil:${LibraryVersion.COIL}"
     const val K_ANDROID = "com.pawegio.kandroid:kandroid:${LibraryVersion.K_ANDROID}"
     const val LOTTIE = "com.airbnb.android:lottie:${LibraryVersion.LOTTIE}"
-
+    const val PALETTE = "androidx.palette:palette:${LibraryVersion.PALETTE}"
 
     const val ROOM_RUNTIME = "androidx.room:room-runtime:${LibraryVersion.ROOM}"
     const val ROOM_KTX = "androidx.room:room-ktx:${LibraryVersion.ROOM}"
@@ -118,4 +122,6 @@ object LibraryDependency {
     const val JSOUP = "org.jsoup:jsoup:${LibraryVersion.JSOUP}"
 
     const val DROPBOX_STORE = "com.dropbox.mobile.store:store4:${LibraryVersion.DROPBOX_STORE}"
+
+    const val OSS_LICENSES = "com.google.android.gms:play-services-oss-licenses:${LibraryVersion.OSS_LICENSES}"
 }

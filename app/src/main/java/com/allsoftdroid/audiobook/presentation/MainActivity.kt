@@ -26,11 +26,12 @@ import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.allsoftdroid.common.base.store.downloader.DownloadEvent
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.common.base.store.downloader.DownloadNothing
-import com.allsoftdroid.common.base.store.downloader.OpenDownloadActivity
+import com.allsoftdroid.common.base.store.userAction.*
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -47,15 +48,11 @@ class MainActivity : BaseActivity() {
     }
 
     private val mainActivityViewModel : MainActivityViewModel by viewModel()
-
     private val connectionListener: ConnectionLiveData by inject{parametersOf(this)}
-
     private val downloadEventStore:DownloadEventStore by inject()
-
     private val downloader: IDownloaderCore by inject{parametersOf(this)}
-
-    private lateinit var disposable:Disposable
-
+    private val userActionEventStore:UserActionEventStore by inject()
+    private val disposables = CompositeDisposable()
 
 
     private val snackBar by lazy {
@@ -127,7 +124,7 @@ class MainActivity : BaseActivity() {
                     try{
                         mainActivityViewModel.playIfAnyTrack()
                     }catch (exception:Exception){
-                        Timber.e("Error occurred when resuming: ${exception.printStackTrace().toString()}")
+                        Timber.e("Error occurred when resuming: ${exception.printStackTrace()}")
                     }
                 }
             }
@@ -148,12 +145,37 @@ class MainActivity : BaseActivity() {
             }
         }
 
-        disposable = downloadEventStore.observe()
+        disposables.add(downloadEventStore.observe()
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 handleDownloadEvent(it)
-            }
+            })
+
+        disposables.add(userActionEventStore.observe()
+            .subscribe{
+                it.getContentIfNotHandled()?.let {action ->
+                    when(action){
+                        is OpenDownloadUI -> {
+                            navigateToDownloadManagementActivity()
+                        }
+
+                        is OpenLicensesUI -> {
+                            navigateToLicensesActivity()
+                        }
+
+                        is OpenMainPlayerUI ->{
+                            mainActivityViewModel.playerStatus(showPlayer = false)
+                            navigateToMainPlayerScreen()
+                        }
+
+                        is OpenMiniPlayerUI ->{
+                            Timber.d("mini player opening event received")
+                            mainActivityViewModel.playerStatus(showPlayer = true)
+                        }
+                    }
+                }
+            })
     }
 
     private fun handleDownloadEvent(event: Event<DownloadEvent>) {
@@ -165,12 +187,7 @@ class MainActivity : BaseActivity() {
             if(!StoragePermissionHandler.isPermissionGranted(this)){
                 StoragePermissionHandler.requestPermission(this)
             }else{
-                when (it) {
-                    is OpenDownloadActivity -> {
-                        navigateToDownloadManagementActivity()
-                    }
-                    else -> downloader.handleDownloadEvent(it)
-                }
+                downloader.handleDownloadEvent(it)
             }
         }
     }
@@ -192,6 +209,11 @@ class MainActivity : BaseActivity() {
         val intent = Intent(this,
             DownloadManagementActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun navigateToLicensesActivity(){
+        OssLicensesMenuActivity.setActivityTitle("Third-party Licenses")
+        startActivity(Intent(this,OssLicensesMenuActivity::class.java))
     }
 
     private fun miniPlayerViewState(shouldShow: Boolean) {
@@ -247,7 +269,7 @@ class MainActivity : BaseActivity() {
             }
 
             is Previous -> {
-                mainActivityViewModel.previousTrack(event)
+                mainActivityViewModel.previousTrack()
             }
 
             is Play -> {
@@ -266,20 +288,22 @@ class MainActivity : BaseActivity() {
                 }
             }
 
-            is OpenMainPlayerEvent ->{
-                mainActivityViewModel.playerStatus(showPlayer = false)
-                navigateToMainPlayerScreen()
+            is Rewind -> {
+                mainActivityViewModel.apply {
+                    rewindTrack()
+                }
             }
 
-            is OpenMiniPlayerEvent ->{
-                Timber.d("mini player opening event received")
-                mainActivityViewModel.playerStatus(showPlayer = true)
+            is Forward ->{
+                mainActivityViewModel.apply {
+                    forwardTrack()
+                }
             }
 
             else -> {
                 Timber.d("Unknown event received")
-                Timber.d("Unknown Event has message of type TrackDetails: "+(event is TrackDetails))
-                Timber.d("Unknown Event has message of type Initial: "+(event is EmptyEvent))
+                Timber.d("Unknown Event has message of type TrackDetails: ${event is TrackDetails}")
+                Timber.d("Unknown Event has message of type Initial: ${event is EmptyEvent}")
             }
         }
     }
@@ -295,8 +319,9 @@ class MainActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         stopAudioService()
-        disposable.dispose()
+        disposables.dispose()
         downloader.Destroy()
+        AppModule.unloadModule()
     }
 
     private fun stopAudioService(){

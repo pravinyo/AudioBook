@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="toolbar_back_arrow">Navigate to previous screen</string>
+    <string name="toolbar_title_text">Listen later</string>
+    <string name="sort">Sort</string>
+    <string name="no_books_found">You have finished all the books !</string>
+    <string name="thumbnail">listen later thumb nail</string>
+    <string name="remove">Remove</string>
+    <string name="share">Share</string>
+    <string name="colon_code">⋮</string>
+    <string name="latest_first">Latest First</string>
+    <string name="oldest_first">Oldest First</string>
+    <string name="shortest_first">Shortest First</string>
+</resources>

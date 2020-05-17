@@ -9,6 +9,8 @@ import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
 import com.allsoftdroid.common.base.store.downloader.*
 import com.allsoftdroid.common.base.store.downloader.Progress
+import com.allsoftdroid.common.base.store.userAction.OpenDownloadUI
+import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.feature.book_details.data.model.TrackFormat
@@ -19,14 +21,16 @@ import com.allsoftdroid.feature.book_details.utils.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-class BookDetailsViewModel(
+internal class BookDetailsViewModel(
     private val sharedPref: BookDetailsSharedPreferenceRepository,
+    private val userActionEventStore: UserActionEventStore,
     private val stateHandle : SavedStateHandle,
     private val useCaseHandler: UseCaseHandler,
     private val getMetadataUsecase:GetMetadataUsecase,
     private val downloadUsecase: GetDownloadUsecase,
     private val searchBookDetailsUsecase: SearchBookDetailsUsecase,
     private val getFetchAdditionalBookDetailsUseCase: FetchAdditionalBookDetailsUsecase,
+    private val listenLaterUsecase: ListenLaterUsecase,
     private val getTrackListUsecase : GetTrackListUsecase) : ViewModel(){
     /**
      * cancelling this job cancels all the job started by this viewmodel
@@ -52,6 +56,10 @@ class BookDetailsViewModel(
     private var _backArrowPressed = MutableLiveData<Event<Boolean>>()
     val backArrowPressed: LiveData<Event<Boolean>>
         get() = _backArrowPressed
+
+    private var _isAddedToListenLater = MutableLiveData<Event<Boolean>>()
+    val isAddedToListenLater: LiveData<Event<Boolean>>
+        get() = _isAddedToListenLater
 
     //book metadata state change event
     private val metadataStateChangeEvent = MutableLiveData<Event<Any>>()
@@ -124,6 +132,7 @@ class BookDetailsViewModel(
     init {
         initialLoad()
         showPrefStat()
+        isAddedToListenLater()
     }
 
     private fun initialLoad(){
@@ -276,7 +285,7 @@ class BookDetailsViewModel(
                         val album = it.trackAlbum?:getMetadataUsecase.getBookIdentifier()
                         val desc  = "Downloading: chapter ${track.trackNumber} from $album"
                         val id = getMetadataUsecase.getBookIdentifier()
-                        download(
+                        downloaderAction(
                             Download(
                                 bookId = id,
                                 url = ArchiveUtils.getRemoteFilePath(filename = track.filename,identifier = id),
@@ -294,7 +303,13 @@ class BookDetailsViewModel(
         }
     }
 
-    private suspend fun download(event:DownloadEvent){
+    fun openDownloadsScreen(trackId:String){
+        if(trackId.isNotEmpty()){
+            userActionEventStore.publish(Event(OpenDownloadUI(this::class.java.simpleName)))
+        }
+    }
+
+    private suspend fun downloaderAction(event:DownloadEvent){
         val requestValues = GetDownloadUsecase.RequestValues(event)
 
         useCaseHandler.execute(
@@ -406,6 +421,37 @@ class BookDetailsViewModel(
         _backArrowPressed.value = Event(true)
     }
 
+    fun addToListenLater(){
+        var duration=""
+        additionalBookDetails.value?.let {details->
+            duration = details.runtime
+        }
+        audioBookMetadata.value?.let {metadata ->
+            viewModelScope.launch {
+                listenLaterUsecase.addToListenLater(
+                    bookId = metadata.identifier,
+                    title = metadata.title,
+                    author = metadata.creator,
+                    duration = if(duration.isEmpty()) metadata.runtime else duration)
+                _isAddedToListenLater.value = Event(true)
+            }
+        }
+    }
+
+    fun removeFromListenLater(){
+        viewModelScope.launch {
+            listenLaterUsecase.remove(getMetadataUsecase.getBookIdentifier())
+            _isAddedToListenLater.value = Event(false)
+        }
+    }
+
+    private fun isAddedToListenLater(){
+        viewModelScope.launch {
+            val isAdded = listenLaterUsecase.isAdded(getMetadataUsecase.getBookIdentifier())
+            _isAddedToListenLater.value = Event(isAdded)
+        }
+    }
+
 
     //cancel the job when viewmodel is not longer in use
     override fun onCleared() {
@@ -415,7 +461,8 @@ class BookDetailsViewModel(
     }
 
     fun updateDownloadStatus(statusEvent:DownloadEvent) {
-        Timber.d(" download event received")
+
+        Timber.d(" download status event received")
         _audioBookTracks.value?.let {tracks ->
 
             Timber.d("List is non null and ready to update")
@@ -436,18 +483,24 @@ class BookDetailsViewModel(
                     PROGRESS(percent = statusEvent.percent.toFloat())
                 }
 
+                is Cancelled -> {
+                    Timber.d("Event is of type Cancelled:${statusEvent}")
+                    CANCELLED
+                }
+
                 else -> {
                     Timber.d("Event is of type Download:${statusEvent is Download}")
                     Timber.d("Event is of type Failed:${statusEvent is Failed}")
-                    Timber.d("Event is of type Cancel:${statusEvent is Cancel}")
                     Timber.d("Event is of type DownloadNothing:${statusEvent is DownloadNothing}")
                     NOTHING
                 }
             }
 
+            Timber.i("New Track set for UI")
             _audioBookTracks.value = tracks
+            if(statusEvent is Cancelled){
+                _newTrackStateEvent.value = Event(true)
+            }
         }
-
     }
-
 }

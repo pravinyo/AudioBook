@@ -7,6 +7,19 @@
     <string name="playpause">pp</string>
     <string name="next">nex</string>
     <string name="download_icon">download icon</string>
+    <string name="banner_image_info">more information</string>
+    <string name="banner_image_share">Share book details</string>
+    <string name="banner_image_download">Download Book</string>
+    <string name="banner_image_listen_later">Listen later</string>
+    <string name="read">Read</string>
+    <string name="play">Play</string>
+    <string name="read_text">Read text</string>
+    <string name="play_book">Play Book</string>
+    <string name="chapter_count">Chapter count</string>
+    <string name="book_play_time">Book Play time</string>
+    <string name="chapter_label">Here are the Chapters,</string>
+    <string name="what_is_this_book_based_on">What is this book based on?</string>
+    <string name="publisher_account_name">publisher account name</string>
 
     <string-array name="track_format_array">
         <item>Good</item>

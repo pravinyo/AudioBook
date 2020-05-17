@@ -102,7 +102,7 @@ class MainActivityViewModel(application : Application,
         Timber.d("Next event occurred")
     }
 
-    fun previousTrack(event: Previous){
+    fun previousTrack(){
 
         audioManager.playPrevious()
 
@@ -123,6 +123,18 @@ class MainActivityViewModel(application : Application,
         audioManager.pauseTrack()
         _playingTrackDetails.isPlaying = false
         Timber.d("pause event")
+    }
+
+    fun rewindTrack(){
+        audioManager.rewindPlayer(30*1000)
+        _playingTrackDetails.isPlaying = true
+        Timber.d("rewind event")
+    }
+
+    fun forwardTrack(){
+        audioManager.forwardPlayer(30*1000)
+        _playingTrackDetails.isPlaying = true
+        Timber.d("forward event")
     }
 
     fun resumeOrPlayTrack(){

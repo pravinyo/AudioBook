@@ -204,4 +204,20 @@ class AudioManager private constructor(context: Context):KoinComponent{
 
         return milliSecondsLeft/1000
     }
+
+    /**
+     * Rewind player by time provided in milliseconds
+     * @param millis time to be changed
+     */
+    fun rewindPlayer(millis:Int){
+        audioService.setPlayerRewindBy(millis)
+    }
+
+    /**
+     * forward player by time provided in milliseconds
+     * @param millis time to be changed
+     */
+    fun forwardPlayer(millis:Int){
+        audioService.setPlayerForwardBy(millis)
+    }
 }

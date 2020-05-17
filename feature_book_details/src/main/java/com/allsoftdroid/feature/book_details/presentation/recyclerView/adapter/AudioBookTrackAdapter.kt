@@ -18,6 +18,7 @@ class AudioBookTrackAdapter(
     private val downloadEventStore: DownloadEventStore,
     private val bookId:String,
     private val clickedListener: TrackItemClickedListener,
+    private val progressbarItemClickedListener: ProgressbarItemClickedListener,
     private val downloadItemClickedListener: DownloadItemClickedListener): ListAdapter<AudioBookTrackDomainModel, RecyclerView.ViewHolder>(TrackDiffCallback()) {
 
     /**
@@ -34,7 +35,7 @@ class AudioBookTrackAdapter(
         when(holder){
             is TrackItemViewHolder ->{
                 val dataItem = getItem(position)
-                holder.bind(downloadEventStore,bookId,dataItem,clickedListener,downloadItemClickedListener)
+                holder.bind(downloadEventStore,bookId,dataItem,clickedListener,progressbarItemClickedListener,downloadItemClickedListener)
             }
 
             else -> throw Exception("View Holder type is unknown:$holder")
@@ -77,6 +78,16 @@ class TrackItemClickedListener(val clickListener : (trackNumber : Int?,filename:
     fun onTrackItemClicked(track : AudioBookTrackDomainModel) = clickListener(track.trackNumber,track.filename,track.title)
 }
 
+/**
+ * Download button listener
+ */
 class DownloadItemClickedListener(val clickListener : (trackId : String)->Unit){
     fun onDownloadItemClicked(track : AudioBookTrackDomainModel) = clickListener(track.trackId)
+}
+
+/**
+ * Cancel running download listener
+ */
+class ProgressbarItemClickedListener(val clickListener : (trackId : String)->Unit){
+    fun onProgressbarItemClicked(track : AudioBookTrackDomainModel) = clickListener(track.trackId)
 }

@@ -10,17 +10,17 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.annotation.VisibleForTesting
 import androidx.core.os.bundleOf
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
-import com.allsoftdroid.common.base.fragment.BaseContainerFragment
-import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
-import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus
-import com.allsoftdroid.common.base.store.downloader.OpenDownloadActivity
+import com.allsoftdroid.common.base.fragment.BaseUIFragment
+import com.allsoftdroid.common.base.store.userAction.OpenDownloadUI
+import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import com.allsoftdroid.feature_book.R
 import com.allsoftdroid.feature_book.data.network.Utils
 import com.allsoftdroid.feature_book.databinding.FragmentAudiobookListBinding
@@ -30,11 +30,12 @@ import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.AudioBook
 import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.PaginationListener
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
 import com.allsoftdroid.feature_book.utils.NetworkState
+import com.google.android.material.navigation.NavigationView
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 
-class AudioBookListFragment : BaseContainerFragment(){
+class AudioBookListFragment : BaseUIFragment(){
 
     /**
     Lazily initialize the view model
@@ -42,9 +43,10 @@ class AudioBookListFragment : BaseContainerFragment(){
     private val booksViewModel: AudioBookListViewModel by inject()
     @VisibleForTesting var bundleShared: Bundle = Bundle.EMPTY
 
-    private lateinit var callback:OnBackPressedCallback
+    private lateinit var drawer: DrawerLayout
+    private lateinit var navView : NavigationView
 
-    private val downloadEventStore: DownloadEventStore  = DownloaderEventBus.getEventBusInstance()
+    private val userActionEventStore: UserActionEventStore by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
@@ -54,6 +56,75 @@ class AudioBookListFragment : BaseContainerFragment(){
 
         binding.lifecycleOwner = viewLifecycleOwner
         binding.audioBookListViewModel = booksViewModel
+        drawer = binding.drawerLayout
+        navView = binding.navView
+
+        setupUI(binding)
+
+        return binding.root
+    }
+
+    private fun setupDrawer() {
+        navView.setNavigationItemSelectedListener {
+
+            drawer.closeDrawer(GravityCompat.START)
+
+            when(it.itemId){
+                R.id.nav_item_downloads -> {
+                    navigateToDownloadsActivity()
+                    return@setNavigationItemSelectedListener true
+                }
+
+                R.id.nav_item_settings -> {
+                    this.findNavController()
+                        .navigate(R.id.action_AudioBookListFragment_to_SettingsFragment)
+                }
+
+                R.id.nav_item_listen_later -> {
+                    this.findNavController()
+                        .navigate(R.id.action_AudioBookListFragment_to_ListenLaterFragment)
+                }
+            }
+
+            return@setNavigationItemSelectedListener false
+        }
+    }
+
+    private fun setupToolbar(binding:FragmentAudiobookListBinding){
+        binding.toolbarBookSearch.setOnClickListener{
+            binding.etToolbarSearch.text.clear()
+            booksViewModel.onSearchItemPressed()
+        }
+
+        binding.etToolbarSearch.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                s?.let {
+                    booksViewModel.setSearchOrClose(isSearchBtn = it.isNotEmpty() && it.length>3)
+                }
+            }
+        })
+
+        binding.ivSearchCancel.setOnClickListener {
+            binding.etToolbarSearch.clearFocus()
+            hideKeyboard()
+
+            booksViewModel.onSearchFinished()
+        }
+
+        binding.toolbarNavHamburger.setOnClickListener {
+            drawer.openDrawer(GravityCompat.START)
+        }
+    }
+
+    private fun setupUI(binding:FragmentAudiobookListBinding){
+        setupToolbar(binding)
+        setupDrawer()
 
         //val audio book adapter
         val bookAdapter = AudioBookAdapter(AudioBookItemClickedListener {
@@ -131,43 +202,6 @@ class AudioBookListFragment : BaseContainerFragment(){
             }
         })
 
-        binding.toolbarBookSearch.setOnClickListener{
-            binding.etToolbarSearch.text.clear()
-            booksViewModel.onSearchItemPressed()
-        }
-
-        binding.etToolbarSearch.addTextChangedListener(object : TextWatcher{
-            override fun afterTextChanged(p0: Editable?) {
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                s?.let {
-                    booksViewModel.setSearchOrClose(isSearchBtn = it.isNotEmpty() && it.length>3)
-                }
-            }
-        })
-
-        binding.ivSearchCancel.setOnClickListener {
-            binding.etToolbarSearch.clearFocus()
-            hideKeyboard()
-
-            booksViewModel.onSearchFinished()
-        }
-
-        binding.ivSearch.setOnClickListener {
-            val searchText = binding.etToolbarSearch.text.trim().toString()
-            binding.etToolbarSearch.clearFocus()
-            hideKeyboard()
-
-            if(searchText.length>3){
-                bookAdapter.submitList(null)
-                booksViewModel.search(query = searchText)
-            }
-        }
-
         booksViewModel.searchBooks.observe(this, Observer {
             it.map {book ->
                 Timber.d("Fetched: ${book.mId}")
@@ -184,16 +218,21 @@ class AudioBookListFragment : BaseContainerFragment(){
             }
         })
 
-        binding.toolbarDownloads.setOnClickListener {
-            navigateToDownloadsActivity()
-        }
+        binding.ivSearch.setOnClickListener {
+            val searchText = binding.etToolbarSearch.text.trim().toString()
+            binding.etToolbarSearch.clearFocus()
+            hideKeyboard()
 
-        return binding.root
+            if(searchText.length>3){
+                bookAdapter.submitList(null)
+                booksViewModel.search(query = searchText)
+            }
+        }
     }
 
     private fun navigateToDownloadsActivity() {
-        downloadEventStore.publish(
-            Event(OpenDownloadActivity())
+        userActionEventStore.publish(
+            Event(OpenDownloadUI(this::class.java.simpleName))
         )
     }
 
@@ -209,29 +248,30 @@ class AudioBookListFragment : BaseContainerFragment(){
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun handleBackPressEvent(callback: OnBackPressedCallback) {
+        Timber.d("backPress:Back pressed")
+        when {
+            drawer.isDrawerOpen(GravityCompat.START) -> {
+                drawer.closeDrawer(drawer)
+            }
 
-        callback = requireActivity().onBackPressedDispatcher.addCallback(this){
-            handleBackPressEvent()
+            booksViewModel.isSearching -> {
+                booksViewModel.apply {
+                    cancelSearchRequest()
+                    onSearchFinished()
+                    loadRecentBookList()
+                }
+            }
+
+            else -> {
+                callback.isEnabled = false
+                requireActivity().onBackPressed()
+            }
         }
-
-        callback.isEnabled = true
     }
 
-    private fun handleBackPressEvent(){
-
-        Timber.d("backPress:Back pressed")
-        if (booksViewModel.isSearching) {
-
-            booksViewModel.apply {
-                cancelSearchRequest()
-                onSearchFinished()
-                loadRecentBookList()
-            }
-        }else{
-            callback.isEnabled = false
-            requireActivity().onBackPressed()
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        FeatureBookModule.unLoadModules()
     }
 }

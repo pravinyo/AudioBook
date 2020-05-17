@@ -19,8 +19,10 @@
             <option value="$PROJECT_DIR$/feature_book" />
             <option value="$PROJECT_DIR$/feature_book_details" />
             <option value="$PROJECT_DIR$/feature_downloader" />
+            <option value="$PROJECT_DIR$/feature_listen_later_ui" />
             <option value="$PROJECT_DIR$/feature_mini_player" />
             <option value="$PROJECT_DIR$/feature_playerfullscreen" />
+            <option value="$PROJECT_DIR$/feature_settings" />
             <option value="$PROJECT_DIR$/services" />
           </set>
         </option>

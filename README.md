@@ -23,9 +23,29 @@ This App is based on Single Activity Navigation. Each Fragment screen is develop
 * `feature_playerfullscreen Module` - This module contains full screen player UI/logic code and resource need to display this component. It shows the various progress and details for currently playing track
 * `feature_downloader Module` - This module contains code save and download requested file locally
 * `feature_audiobook_enhance_details Module` - This module provides additional api service to fetch  more details related to audiobook.
+* `feature_settings Module` - This module enable user to change app default settings and other details.
+* `feature_listen_later_ui Module` - This module contains UI, domain and data logic required to display bookmarked books. It displays data from the local database.
 
 # Dependency Graph of the Project:
 ![AudioBook](/photos/dependencies_graph.png)
+
+# Release: 5.5.2
+## :star: New Features
+
+- Main player ui redesigned and rewind, forward event added [#98](https://github.com/pravinyo/AudioBook/pull/98)
+- Privacy and Feedback Option added [#97](https://github.com/pravinyo/AudioBook/pull/97)
+- Listen later feature added  [#95](https://github.com/pravinyo/AudioBook/pull/95), [#96](https://github.com/pravinyo/AudioBook/pull/96), [#54](https://github.com/pravinyo/AudioBook/issues/54)
+- Nav drawer improved  [#94](https://github.com/pravinyo/AudioBook/pull/94)
+- Download Location settings included [#79](https://github.com/pravinyo/AudioBook/issues/79)
+- Book Detail UI improvement [#64](https://github.com/pravinyo/AudioBook/issues/64)
+- Main Player UI enhancement [#58](https://github.com/pravinyo/AudioBook/issues/58)
+- Feature for checking downloads, help [#56](https://github.com/pravinyo/AudioBook/issues/56)
+
+## :heart: Contributors
+
+We'd like to thank all the contributors who worked on this release!
+
+- [@pravinyo](https://github.com/pravinyo)
 
 # Release: 4.3.0
 ## :star: New Features/Fixes

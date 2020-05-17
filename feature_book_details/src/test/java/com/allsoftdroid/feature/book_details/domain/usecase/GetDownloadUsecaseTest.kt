@@ -5,14 +5,14 @@ import com.allsoftdroid.common.base.store.downloader.Download
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus
 import com.allsoftdroid.common.test.MainCoroutineRule
-import kotlinx.coroutines.*
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers
 import org.hamcrest.core.IsEqual
-import org.junit.*
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 
 
 class GetDownloadUsecaseTest{
@@ -35,6 +35,7 @@ class GetDownloadUsecaseTest{
         downloadUsecase = GetDownloadUsecase(eventStore)
     }
 
+    @ExperimentalCoroutinesApi
     @Test
     fun downloadUsecase_eventPublished_returnsNothing(){
         mainCoroutineRule.runBlockingTest {
@@ -59,6 +60,7 @@ class GetDownloadUsecaseTest{
         }
     }
 
+    @ExperimentalCoroutinesApi
     @Test
     fun downloadUsecase_eventReceived_returnsNothing(){
         mainCoroutineRule.runBlockingTest {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="fragment_popup_margin">32dp</dimen>
+    <dimen name="fragment_popup_minWidth">800dp</dimen>
+    <dimen name="fragment_popup_minHeight">400dp</dimen>
+    <dimen name="padding_standard">16dp</dimen>
+</resources>

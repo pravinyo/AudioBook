@@ -1,19 +1,28 @@
 package com.allsoftdroid.feature.book_details.utils
 
-import android.os.Build
-import android.text.Html
+import android.graphics.Bitmap
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
+import androidx.palette.graphics.Palette
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.BookDetails
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
+import com.allsoftdroid.common.base.utils.BindingUtils.getNormalizedText
+import com.allsoftdroid.common.base.utils.BindingUtils.getSignatureForImageLoading
+import com.allsoftdroid.common.base.utils.BindingUtils.getThumbnail
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
-import timber.log.Timber
+import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.signature.ObjectKey
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
@@ -76,21 +85,24 @@ load images using glide library
 If content is not yet available to be displayed show loading animation
 If content is not there show broken image
  */
-@BindingAdapter("bookImage")
-fun setImageUrl(imageView: ImageView, item: AudioBookMetadataDomainModel?) {
+@BindingAdapter("bookBanner")
+fun setBookBanner(layout: ConstraintLayout, item: AudioBookMetadataDomainModel?) {
 
     item?.let {
         val url =
             getThumbnail(item.identifier)
 
+        val imageView = layout.findViewById<ImageView>(R.id.imgView_book_image)
+
         Glide
             .with(imageView.context)
             .asBitmap()
             .load(url)
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .dontAnimate()
             .apply(
                 RequestOptions()
+                    .signature(ObjectKey(getSignatureForImageLoading(item.date)))
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .placeholder(R.drawable.loading_animation)
                     .error(
                         CreateImageOverlay
@@ -98,6 +110,50 @@ fun setImageUrl(imageView: ImageView, item: AudioBookMetadataDomainModel?) {
                             .buildOverlay(front = R.drawable.ic_book_play,back = R.drawable.gradiant_background)
                     )
             )
+            .listener(object : RequestListener<Bitmap>{
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Bitmap?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+
+                    resource?.let {
+                        val paletteBuilder = Palette.from(resource)
+                        paletteBuilder.maximumColorCount(4)
+
+                        paletteBuilder.generate{
+                            it?.let {
+                                val dark = it.getDarkMutedColor(it.getMutedColor(0))
+                                val dominant = it.getDominantColor(it.getVibrantColor(0))
+                                val light = it.getLightMutedColor(it.getLightVibrantColor(0))
+
+                                layout.setBackgroundColor(dominant)
+
+                                with(layout.rootView.findViewById<View>(R.id.toolbar)){
+                                    setBackgroundColor(dark)
+
+                                    this.findViewById<TextView>(R.id.tv_toolbar_title).apply {
+                                        this.setTextColor(light)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return false
+                }
+            })
             .into(imageView)
     }
 }
@@ -115,21 +171,39 @@ fun TextView.setBookTitle(item: AudioBookMetadataDomainModel?){
     }
 }
 
-private fun getThumbnail(imageId: String?) = "https://archive.org/services/img/$imageId/"
-
-private fun getNormalizedText(text:String?,limit:Int):String{
-    if(text?.length?:0>limit){
-        return text?.substring(0,limit-3)+"..."
+/*
+Binding adapter for updating the title in list items
+ */
+@BindingAdapter("bookPlayTime1")
+fun TextView.setBookPlayTime1(item: AudioBookMetadataDomainModel?){
+    item?.let {
+        if(text.isEmpty()){
+            text = it.runtime
+        }
     }
-
-    return text?:""
 }
 
-@Suppress("DEPRECATION")
-fun convertHtmlToText(text:String?) = text?.let {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        Html.fromHtml(it, Html.FROM_HTML_MODE_COMPACT)
-    } else {
-        Html.fromHtml(it)
+/*
+Binding adapter for updating the title in list items
+ */
+@BindingAdapter("bookPlayTime2")
+fun TextView.setBookPlayTime2(item: BookDetails?){
+    item?.let {
+        text = it.runtime
     }
-} .toString()
+}
+
+@BindingAdapter("bookChapters")
+fun TextView.setBookChapterCount(items: List<AudioBookTrackDomainModel>?){
+    items?.let {
+        text = if(it.isNotEmpty()) "${it.size} Chapters" else "NA"
+    }
+}
+
+@BindingAdapter("bookTags")
+fun TextView.setBookTags(item: AudioBookMetadataDomainModel?){
+    item?.let {
+        text = it.tag
+    }
+}
+

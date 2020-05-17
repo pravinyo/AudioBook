@@ -1,17 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:mstb="http://schemas.android.com/apk/res-auto">
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable name="audioBookDetailsViewModel"
             type="com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel"/>
     </data>
 
-
-    <RelativeLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:orientation="horizontal">
+                <ImageButton
+                    android:id="@+id/btn_toolbar_back_arrow"
+                    android:layout_width="@dimen/track_item_control_btn_size"
+                    android:layout_height="@dimen/track_item_control_btn_size"
+                    android:layout_marginStart="@dimen/margin_normal"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/transparent"
+                    android:onClick="@{()->audioBookDetailsViewModel.onBackArrowPressed()}"
+                    android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
+                    android:contentDescription="@string/back_screen_button" />
+
+                <TextView
+                    android:id="@+id/tv_toolbar_title"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    app:bookTitle="@{audioBookDetailsViewModel.audioBookMetadata}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <include android:id="@+id/network_no_connection"
             android:layout_width="match_parent"
@@ -27,93 +57,309 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/imgView_book_image"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/fl_book_image_holder"
+                    android:layout_marginTop="?actionBarSize"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/book_details_banner_image_height"
-                    android:scaleType="centerCrop"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:bookBanner="@{audioBookDetailsViewModel.audioBookMetadata}"
+                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:bookImage="@{audioBookDetailsViewModel.audioBookMetadata}"
-                    android:contentDescription="@string/banner_image_for_audio_book" />
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/imgView_book_image_card"
+                        android:layout_width="@dimen/book_details_book_image_length"
+                        android:layout_height="@dimen/book_details_book_image_length"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+                        <ImageView
+                            android:id="@+id/imgView_book_image"
+                            android:contentDescription="@string/banner_image_for_audio_book"
+                            android:scaleType="centerCrop"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </androidx.cardview.widget.CardView>
+
+                    <ImageView
+                        android:id="@+id/imgView_book_listen_later"
+                        android:src="@drawable/ic_bookmark_plus_outline"
+                        android:layout_width="@dimen/track_item_control_btn_size"
+                        android:layout_height="@dimen/track_item_control_btn_size"
+                        android:layout_marginEnd="@dimen/banner_image_margin_end_normal"
+                        android:contentDescription="@string/banner_image_listen_later"
+                        android:layout_marginTop="@dimen/track_item_control_btn_margin"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/imgView_book_image_card"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/imgView_book_download"
+                        android:src="@drawable/arrow_collapse_down"
+                        android:layout_width="@dimen/track_item_control_btn_size"
+                        android:layout_height="@dimen/track_item_control_btn_size"
+                        android:layout_marginTop="@dimen/track_item_control_btn_margin"
+                        android:contentDescription="@string/banner_image_download"
+                        app:layout_constraintEnd_toEndOf="@+id/imgView_book_listen_later"
+                        app:layout_constraintStart_toStartOf="@+id/imgView_book_listen_later"
+                        app:layout_constraintTop_toBottomOf="@+id/imgView_book_listen_later" />
+
+                    <ImageView
+                        android:id="@+id/imgView_book_share"
+                        android:src="@drawable/share_outline"
+                        android:layout_width="@dimen/track_item_control_btn_size"
+                        android:layout_height="@dimen/track_item_control_btn_size"
+                        android:layout_marginTop="@dimen/track_item_control_btn_margin"
+                        android:contentDescription="@string/banner_image_share"
+                        app:layout_constraintEnd_toEndOf="@+id/imgView_book_listen_later"
+                        app:layout_constraintStart_toStartOf="@+id/imgView_book_listen_later"
+                        app:layout_constraintTop_toBottomOf="@+id/imgView_book_download" />
+
+                    <ImageView
+                        android:id="@+id/imgView_book_info"
+                        android:src="@drawable/ic_information_variant"
+                        android:layout_width="@dimen/track_item_control_btn_size"
+                        android:layout_height="@dimen/track_item_control_btn_size"
+                        android:layout_marginTop="@dimen/track_item_control_btn_margin"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:contentDescription="@string/banner_image_info"
+                        app:layout_constraintEnd_toEndOf="@+id/imgView_book_listen_later"
+                        app:layout_constraintStart_toStartOf="@+id/imgView_book_listen_later"
+                        app:layout_constraintTop_toBottomOf="@+id/imgView_book_share" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:id="@+id/book_media_actions"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/media_button_action_height"
+                    android:orientation="horizontal"
+                    android:translationY="@dimen/media_button_y_pos"
+                    android:translationZ="@dimen/media_button_z_pos"
+                    android:gravity="center"
+                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
+                    app:layout_constraintEnd_toEndOf="@+id/fl_book_image_holder"
+                    app:layout_constraintStart_toStartOf="@+id/fl_book_image_holder"
+                    app:layout_constraintTop_toBottomOf="@+id/fl_book_image_holder">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingStart="@dimen/padding_mid"
+                        android:paddingTop="@dimen/padding_min"
+                        android:paddingBottom="@dimen/padding_min"
+                        android:paddingEnd="@dimen/padding_normal"
+                        android:background="@drawable/semi_circle_shape_left">
+                        <ImageView
+                            android:src="@drawable/ic_book_open_outline"
+                            android:layout_width="@dimen/track_item_control_btn_size"
+                            android:layout_height="@dimen/track_item_control_btn_size"
+                            android:layout_gravity="center_vertical"
+                            android:contentDescription="@string/read_text" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/margin_min"
+                            android:layout_gravity="center_vertical"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                            android:text="@string/read"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingStart="@dimen/padding_normal"
+                        android:paddingTop="@dimen/padding_min"
+                        android:paddingBottom="@dimen/padding_min"
+                        android:paddingEnd="@dimen/padding_mid"
+                        android:background="@drawable/semi_circle_shape_right">
+                        <ImageView
+                            android:src="@drawable/ic_headphones"
+                            android:layout_width="@dimen/track_item_control_btn_size"
+                            android:layout_height="@dimen/track_item_control_btn_size"
+                            android:layout_gravity="center_vertical"
+                            android:contentDescription="@string/play_book" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/margin_min"
+                            android:layout_gravity="center_vertical"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                            android:text="@string/play"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textView_book_intro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_mid"
+                    android:layout_marginEnd="@dimen/margin_min"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    app:layout_constraintBottom_toTopOf="@+id/book_length"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fl_book_image_holder"
+                    tools:text="@tools:sample/lorem/random" />
+
+                <View
+                    android:id="@+id/divider1"
+                    style="@style/Divider"
+                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_book_intro"/>
+
+                <LinearLayout
+                    android:id="@+id/book_length"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_mid"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="@dimen/item_separator_size_normal"
+                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
+                    app:layout_constraintTop_toBottomOf="@+id/divider1">
+
+                    <ImageView
+                        android:src="@drawable/clock_outline"
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="@dimen/track_item_control_btn_size_small"
+                        android:layout_height="@dimen/track_item_control_btn_size_small"
+                        android:contentDescription="@string/book_play_time" />
+                    <TextView
+                        android:layout_marginStart="@dimen/margin_normal"
+                        android:id="@+id/tv_book_play_time"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:bookPlayTime1="@{audioBookDetailsViewModel.audioBookMetadata}"
+                        app:bookPlayTime2="@{audioBookDetailsViewModel.additionalBookDetails}"
+                        tools:text="03:24:00"/>
+
+                    <ImageView
+                        android:layout_marginStart="@dimen/margin_big"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_format_list_bulleted"
+                        android:layout_width="@dimen/track_item_control_btn_size_small"
+                        android:layout_height="@dimen/track_item_control_btn_size_small"
+                        android:contentDescription="@string/chapter_count" />
+                    <TextView
+                        android:id="@+id/tv_book_chapter_count"
+                        android:layout_marginStart="@dimen/margin_normal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        app:bookChapters="@{audioBookDetailsViewModel.audioBookTracks}"
+                        tools:text="10 Chapter"/>
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/divider2"
+                    style="@style/Divider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
+                    app:layout_constraintTop_toBottomOf="@+id/book_length"/>
+
+                <LinearLayout
+                    android:id="@+id/book_tag"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_mid"
+                    android:layout_marginTop="@dimen/item_separator_size_normal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
+                    app:layout_constraintTop_toBottomOf="@+id/divider2">
+
+                    <ImageView
+                        android:src="@drawable/ic_tag_multiple_outline"
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="@dimen/track_item_control_btn_size_small"
+                        android:layout_height="@dimen/track_item_control_btn_size_small"
+                        android:contentDescription="@string/book_play_time" />
+
+                    <TextView
+                        android:id="@+id/tv_book_tags"
+                        android:layout_marginStart="@dimen/margin_mid"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:bookTags="@{audioBookDetailsViewModel.audioBookMetadata}"
+                        tools:text="Solo, English, Historical"/>
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/divider3"
+                    style="@style/Divider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
+                    app:layout_constraintTop_toBottomOf="@+id/book_tag"/>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/item_separator_size_normal"
+                    android:layout_marginStart="@dimen/margin_mid"
+                    android:layout_marginBottom="@dimen/margin_bottom"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
+                    app:layout_constraintTop_toBottomOf="@+id/divider3">
+
+                    <TextView
+                        android:id="@+id/tv_book_chapter_label"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chapter_label"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
 
                 <ProgressBar
                     android:id="@+id/pb_content_loading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_marginTop="250dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textView_description"
-                    android:layout_margin="@dimen/track_item_margin_start"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imgView_book_image" />
-
-                <org.honorato.multistatetogglebutton.MultiStateToggleButton
-                    android:id="@+id/mstb_trackFormat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_description"
-                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
-                    mstb:mstbPrimaryColor="@color/blue"
-                    mstb:mstbSecondaryColor="@color/gray"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_marginBottom="@dimen/margin_bottom"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:goneIfNull="@{audioBookDetailsViewModel.audioBookMetadata}"
-                    app:layout_constraintTop_toBottomOf="@+id/mstb_trackFormat" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <LinearLayout
-            android:id="@+id/toolbar"
+        <fragment
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="0dp"
+            app:behavior_skipCollapsed="true"
+            android:id="@+id/filter_fragment"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:background="@drawable/background_gradient_top_bottom"
-            android:orientation="horizontal">
-            <ImageButton
-                android:id="@+id/btn_toolbar_back_arrow"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@color/transparent"
-                android:onClick="@{()->audioBookDetailsViewModel.onBackArrowPressed()}"
-                android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
-                android:contentDescription="@string/back_screen_button" />
+            android:name="com.allsoftdroid.feature.book_details.presentation.BackDropFragment" />
 
-            <TextView
-                android:id="@+id/tv_toolbar_title"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                app:bookTitle="@{audioBookDetailsViewModel.audioBookMetadata}"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@color/white" />
-        </LinearLayout>
-    </RelativeLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

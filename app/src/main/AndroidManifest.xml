@@ -36,6 +36,14 @@
 
         <activity android:name=".feature_downloader.presentation.DownloadManagementActivity" />
 
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:theme="@style/LicenseTheme" />
+
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
+            android:theme="@style/LicenseTheme" />
+
         <service
             android:name=".services.audio.service.AudioService"
             android:enabled="true"/>
@@ -49,6 +57,13 @@
 
         <receiver android:name=".services.audio.broadcastReceivers.NotificationPlayerEventBroadcastReceiver"
             android:enabled="true"/>
+        <receiver android:name=".feature_downloader.domain.broadcastReceiver.DownloadManagerBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+                <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
 
         <provider
             android:name=".feature_downloader.data.database.downloadProvider"

@@ -15,6 +15,8 @@ object ModuleDependency {
     const val FEATURE_DOWNLOADER=":feature_downloader"
     const val FEATURE_AUDIOBOOK_ENHANCE_DETAILS = ":feature_audiobook_enhance_details"
     const val FEATURE_PLAYER_FULL_SCREEN = ":feature_playerfullscreen"
+    const val FEATURE_SETTINGS = ":feature_settings"
+    const val FEATURE_LISTEN_LATER_UI = ":feature_listen_later_ui"
 
     const val LIBRARY_COMMON = ":common"
 
