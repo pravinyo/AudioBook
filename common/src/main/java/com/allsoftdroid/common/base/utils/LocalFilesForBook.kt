@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.services.audio.utils
+package com.allsoftdroid.common.base.utils
 
 import android.app.Application
 import android.net.Uri

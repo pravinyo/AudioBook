@@ -1,6 +1,7 @@
 package com.allsoftdroid.audiobook.services.audio.utils
 
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
+import com.allsoftdroid.common.base.utils.LocalFilesForBook
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Before
