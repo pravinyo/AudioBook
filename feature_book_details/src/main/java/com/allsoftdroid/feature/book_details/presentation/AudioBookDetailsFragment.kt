@@ -271,7 +271,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
     private fun removeLoading() {
         setVisibility(dataBindingReference.networkNoConnection,set = false)
-//        setVisibility(dataBindingReference.pbContentLoading,set = false)
+        setVisibility(dataBindingReference.pbContentLoading,set = false)
     }
 
     private fun handleDownloaderEvent(event: Event<DownloadEvent>) {
