@@ -258,6 +258,15 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                 )
             }
         }
+
+        dataBinding.imgViewBookDownload.setOnClickListener {
+            val isSent = bookDetailsViewModel.downloadAllChapters()
+            if (!isSent) {
+                Toast.makeText(this.requireActivity(),"Download will soon start...",Toast.LENGTH_SHORT).show()
+            }
+
+            it.setBackgroundResource(R.drawable.gradiant_background)
+        }
     }
 
     private fun removeLoading() {
@@ -267,7 +276,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
     private fun handleDownloaderEvent(event: Event<DownloadEvent>) {
         event.peekContent().let {
-            if(it is DownloadNothing || it is PullAndUpdateStatus) return
+            if(it is DownloadNothing || it is PullAndUpdateStatus || it is MultiDownload) return
 
             Timber.d("Event is for book: ${it.bookId} - chapter:${it.chapterIndex}")
             bookDetailsViewModel.updateDownloadStatus(it)
