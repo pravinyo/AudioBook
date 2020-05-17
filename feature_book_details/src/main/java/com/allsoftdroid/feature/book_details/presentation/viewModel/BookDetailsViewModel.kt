@@ -503,4 +503,30 @@ internal class BookDetailsViewModel(
             }
         }
     }
+
+    fun downloadAllChapters() {
+        viewModelScope.launch {
+            val downloads = mutableListOf<Download>()
+
+            audioBookMetadata.value?.let {metadata->
+                audioBookTracks.value?.let {trackList->
+                    trackList.map { track ->
+                        downloads.add(
+                            Download(
+                                bookId = metadata.identifier,
+                                url = ArchiveUtils.getRemoteFilePath(filename = track.filename,identifier = metadata.identifier),
+                                name = track.filename,
+                                chapter = track.title?:"",
+                                description = "Downloading chapters for ${metadata.title}",
+                                subPath = ArchiveUtils.getLocalSavePath(metadata.identifier),
+                                chapterIndex = track.trackNumber?:0
+                            )
+                        )
+                    }
+                }
+            }
+
+            downloaderAction(MultiDownload(downloads = downloads))
+        }
+    }
 }
