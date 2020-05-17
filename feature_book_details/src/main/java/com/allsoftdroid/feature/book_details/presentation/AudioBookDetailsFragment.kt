@@ -199,7 +199,6 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                 Timber.d("list size received is ${it.size}")
                 if(it.isNotEmpty()){
                     trackAdapter.submitList(it)
-                    removeLoading()
 
                     if(argBookTrackNumber>0){
                         Timber.d("Book Track number is $argBookTrackNumber")
@@ -219,12 +218,15 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                         formattedBookDetails(it)
                     }
                 }else formattedBookDetails(bookDetails)
+
             }catch ( e:Exception){
                 e.printStackTrace()
                 bookDetailsViewModel.audioBookMetadata.value?.let {
                     dataBinding.textViewBookIntro.text = formattedBookDetails(it)
                 }
             }
+
+            removeLoading()
         })
 
         bookDetailsViewModel.isAddedToListenLater.observe(viewLifecycleOwner, Observer {
