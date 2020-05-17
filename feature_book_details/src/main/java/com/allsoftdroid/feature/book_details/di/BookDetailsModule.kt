@@ -13,6 +13,7 @@ import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.doma
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.IStoreRepository
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.FetchAdditionalBookDetailsUsecase
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.SearchBookDetailsUsecase
+import com.allsoftdroid.common.base.utils.LocalFilesForBook
 import com.allsoftdroid.database.common.AudioBookDatabase
 import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
@@ -72,7 +73,8 @@ object BookDetailsModule {
                 searchBookDetailsUsecase = get(),
                 listenLaterUsecase = get(),
                 getFetchAdditionalBookDetailsUseCase = get(),
-                userActionEventStore = get()
+                userActionEventStore = get(),
+                localFilesForBook = get()
             )
         }
     }
