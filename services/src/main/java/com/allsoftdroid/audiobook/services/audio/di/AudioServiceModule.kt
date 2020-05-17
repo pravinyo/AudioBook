@@ -54,9 +54,5 @@ object AudioServiceModule {
         single {
             PrepareMediaHandler(context = get(),localStorageFiles = get())
         }
-
-        single {
-            LocalFilesForBook(app = get())
-        }
     }
 }
