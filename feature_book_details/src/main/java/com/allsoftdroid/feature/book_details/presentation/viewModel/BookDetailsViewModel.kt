@@ -54,6 +54,7 @@ internal class BookDetailsViewModel(
 
 
     private var currentPlayingTrack : Int = /*state.trackPlaying*/ 0
+    fun getCurrentPlayingTrack() = if (currentPlayingTrack<1) 1 else currentPlayingTrack
 
     private var isMultiDownloadEventSent:Boolean = false /* status of multi download event*/
 
