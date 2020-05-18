@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="toolbar_title_text">My Books</string>
+    <string name="navigate_to_previous_screen">navigate to previous screen</string>
+    <string name="no_books_found">No Books found in Storage</string>
+    <string name="thumbnail">book thumbnail image</string>
+    <string name="three_dot">⋮</string>
+</resources>
