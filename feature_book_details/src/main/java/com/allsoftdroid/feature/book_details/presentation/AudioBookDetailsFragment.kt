@@ -12,6 +12,7 @@ import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.allsoftdroid.common.base.store.downloader.*
+import com.allsoftdroid.common.base.utils.BindingUtils.getNormalizedText
 import com.allsoftdroid.common.base.utils.ShareUtils
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
@@ -302,13 +303,17 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
                     is PlaySelectedTrack -> {
                         Timber.d("Play selected track event occurred, updating ui")
-                        dataBindingReference.tvToolbarTitle.text = event.trackList[event.position-1].title
+                        dataBindingReference.tvToolbarTitle.apply {
+                            text = getNormalizedText(text = event.trackList[event.position-1].title,limit = 30)
+                        }
                         bookDetailsViewModel.onPlayItemClicked(event.position)
 
                     }
 
                     is TrackDetails -> {
-                        dataBindingReference.tvToolbarTitle.text = event.trackTitle
+                        dataBindingReference.tvToolbarTitle.apply {
+                            text = getNormalizedText(text = event.trackTitle,limit = 30)
+                        }
                         bookDetailsViewModel.onPlayItemClicked(event.position)
                     }
 
