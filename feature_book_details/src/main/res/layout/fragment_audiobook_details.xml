@@ -150,6 +150,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/fl_book_image_holder">
 
                     <LinearLayout
+                        android:id="@+id/book_media_actions_listen"
                         android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
@@ -175,6 +176,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/book_media_actions_play"
                         android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
