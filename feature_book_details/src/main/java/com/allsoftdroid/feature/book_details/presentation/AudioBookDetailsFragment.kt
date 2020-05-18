@@ -1,5 +1,7 @@
 package com.allsoftdroid.feature.book_details.presentation
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -269,6 +271,24 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
             }
 
             it.setBackgroundResource(R.drawable.gradiant_background)
+        }
+
+        dataBinding.bookMediaActionsPlay.setOnClickListener {
+            resumeOrPlayFromStart()
+        }
+
+        dataBinding.bookMediaActionsListen.setOnClickListener {
+            bookDetailsViewModel.additionalBookDetails.value?.let {
+                val uri  = Uri.parse(it.gutenbergUrl)
+                val intent = Intent(Intent.ACTION_VIEW,uri)
+                startActivity(Intent.createChooser(intent,"Open with"))
+            }?:Toast.makeText(this.requireActivity(),"No Link Found",Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun resumeOrPlayFromStart() {
+        bookDetailsViewModel.audioBookMetadata.value?.let {
+            playSelectedTrackFile(bookDetailsViewModel.getCurrentPlayingTrack(),it.title)
         }
     }
 
