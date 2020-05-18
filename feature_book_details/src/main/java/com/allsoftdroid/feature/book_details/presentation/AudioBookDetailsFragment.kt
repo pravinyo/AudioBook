@@ -1,5 +1,7 @@
 package com.allsoftdroid.feature.book_details.presentation
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.allsoftdroid.common.base.store.downloader.*
+import com.allsoftdroid.common.base.utils.BindingUtils.getNormalizedText
 import com.allsoftdroid.common.base.utils.ShareUtils
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
@@ -199,7 +202,6 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                 Timber.d("list size received is ${it.size}")
                 if(it.isNotEmpty()){
                     trackAdapter.submitList(it)
-                    removeLoading()
 
                     if(argBookTrackNumber>0){
                         Timber.d("Book Track number is $argBookTrackNumber")
@@ -219,12 +221,15 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                         formattedBookDetails(it)
                     }
                 }else formattedBookDetails(bookDetails)
+
             }catch ( e:Exception){
                 e.printStackTrace()
                 bookDetailsViewModel.audioBookMetadata.value?.let {
                     dataBinding.textViewBookIntro.text = formattedBookDetails(it)
                 }
             }
+
+            removeLoading()
         })
 
         bookDetailsViewModel.isAddedToListenLater.observe(viewLifecycleOwner, Observer {
@@ -258,16 +263,43 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                 )
             }
         }
+
+        dataBinding.imgViewBookDownload.setOnClickListener {
+            val isSent = bookDetailsViewModel.downloadAllChapters()
+            if (!isSent) {
+                Toast.makeText(this.requireActivity(),"Download will soon start...",Toast.LENGTH_SHORT).show()
+            }
+
+            it.setBackgroundResource(R.drawable.gradiant_background)
+        }
+
+        dataBinding.bookMediaActionsPlay.setOnClickListener {
+            resumeOrPlayFromStart()
+        }
+
+        dataBinding.bookMediaActionsListen.setOnClickListener {
+            bookDetailsViewModel.additionalBookDetails.value?.let {
+                val uri  = Uri.parse(it.gutenbergUrl)
+                val intent = Intent(Intent.ACTION_VIEW,uri)
+                startActivity(Intent.createChooser(intent,"Open with"))
+            }?:Toast.makeText(this.requireActivity(),"No Link Found",Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun resumeOrPlayFromStart() {
+        bookDetailsViewModel.audioBookMetadata.value?.let {
+            playSelectedTrackFile(bookDetailsViewModel.getCurrentPlayingTrack(),it.title)
+        }
     }
 
     private fun removeLoading() {
         setVisibility(dataBindingReference.networkNoConnection,set = false)
-//        setVisibility(dataBindingReference.pbContentLoading,set = false)
+        setVisibility(dataBindingReference.pbContentLoading,set = false)
     }
 
     private fun handleDownloaderEvent(event: Event<DownloadEvent>) {
         event.peekContent().let {
-            if(it is DownloadNothing || it is PullAndUpdateStatus) return
+            if(it is DownloadNothing || it is PullAndUpdateStatus || it is MultiDownload) return
 
             Timber.d("Event is for book: ${it.bookId} - chapter:${it.chapterIndex}")
             bookDetailsViewModel.updateDownloadStatus(it)
@@ -291,13 +323,17 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
                     is PlaySelectedTrack -> {
                         Timber.d("Play selected track event occurred, updating ui")
-                        dataBindingReference.tvToolbarTitle.text = event.trackList[event.position-1].title
+                        dataBindingReference.tvToolbarTitle.apply {
+                            text = getNormalizedText(text = event.trackList[event.position-1].title,limit = 30)
+                        }
                         bookDetailsViewModel.onPlayItemClicked(event.position)
 
                     }
 
                     is TrackDetails -> {
-                        dataBindingReference.tvToolbarTitle.text = event.trackTitle
+                        dataBindingReference.tvToolbarTitle.apply {
+                            text = getNormalizedText(text = event.trackTitle,limit = 30)
+                        }
                         bookDetailsViewModel.onPlayItemClicked(event.position)
                     }
 

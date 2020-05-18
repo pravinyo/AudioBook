@@ -84,6 +84,11 @@ class AudioBookListFragment : BaseUIFragment(){
                     this.findNavController()
                         .navigate(R.id.action_AudioBookListFragment_to_ListenLaterFragment)
                 }
+
+                R.id.nav_item_my_book -> {
+                    this.findNavController()
+                        .navigate(R.id.action_AudioBookListFragment_to_MyBooksFragment)
+                }
             }
 
             return@setNavigationItemSelectedListener false

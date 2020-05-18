@@ -20,7 +20,6 @@ import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContr
 import com.allsoftdroid.audiobook.feature_downloader.data.model.LocalFileDetails;
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloader;
 import com.allsoftdroid.audiobook.feature_downloader.utils.DownloadObserver;
-import com.allsoftdroid.audiobook.feature_downloader.utils.Utility;
 import com.allsoftdroid.audiobook.feature_downloader.utils.downloadUtils;
 import com.allsoftdroid.common.base.extension.Event;
 import com.allsoftdroid.common.base.network.ArchiveUtils;
@@ -31,14 +30,15 @@ import com.allsoftdroid.common.base.store.downloader.DownloadEvent;
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore;
 import com.allsoftdroid.common.base.store.downloader.Downloaded;
 import com.allsoftdroid.common.base.store.downloader.Downloading;
+import com.allsoftdroid.common.base.store.downloader.MultiDownload;
 import com.allsoftdroid.common.base.store.downloader.Progress;
 import com.allsoftdroid.common.base.store.downloader.PullAndUpdateStatus;
 import com.allsoftdroid.common.base.store.downloader.Restart;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Objects;
 
 import timber.log.Timber;
@@ -129,6 +129,10 @@ public class Downloader implements IDownloader {
                     Timber.d("Send Cancel event for bookId:%s, bookUrl:%s",mDownloadObserver.getBookId(),mDownloadObserver.getUrl());
                 }
             }
+        }else if(downloadEvent instanceof MultiDownload){
+            MultiDownload multiDownload = (MultiDownload) downloadEvent;
+            bulkDownload(multiDownload.getDownloads());
+            Timber.d("Multi download event received for %s chapters",multiDownload.getDownloads().size());
         }
         else{
             Timber.d("Download event value: %s", downloadEvent);
@@ -378,11 +382,9 @@ public class Downloader implements IDownloader {
     }
 
     @Override
-    public void bulkDownload(String[] urls, String[] names, String subPath, String title){
-
-        ArrayList<Long> ids = downloadUtils.bulkDownload(mContext,downloadManager,urls,names,subPath,title);
-        for(int i=0;i<ids.size();i++){
-            insertDownloadDatabase(ids.get(i),names[i],urls[i]);
+    public void bulkDownload(List<Download> downloads){
+        for(Download download : downloads){
+            addToDownloadQueueRequest(download);
         }
     }
 

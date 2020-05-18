@@ -13,6 +13,7 @@ import com.allsoftdroid.common.base.store.userAction.OpenDownloadUI
 import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
+import com.allsoftdroid.common.base.utils.LocalFilesForBook
 import com.allsoftdroid.feature.book_details.data.model.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
@@ -20,8 +21,10 @@ import com.allsoftdroid.feature.book_details.domain.usecase.*
 import com.allsoftdroid.feature.book_details.utils.*
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.util.*
 
 internal class BookDetailsViewModel(
+    private val localFilesForBook:LocalFilesForBook,
     private val sharedPref: BookDetailsSharedPreferenceRepository,
     private val userActionEventStore: UserActionEventStore,
     private val stateHandle : SavedStateHandle,
@@ -51,6 +54,9 @@ internal class BookDetailsViewModel(
 
 
     private var currentPlayingTrack : Int = /*state.trackPlaying*/ 0
+    fun getCurrentPlayingTrack() = if (currentPlayingTrack<1) 1 else currentPlayingTrack
+
+    private var isMultiDownloadEventSent:Boolean = false /* status of multi download event*/
 
     // when back button is pressed in the UI
     private var _backArrowPressed = MutableLiveData<Event<Boolean>>()
@@ -363,8 +369,8 @@ internal class BookDetailsViewModel(
                 override suspend fun onSuccess(response: GetTrackListUsecase.ResponseValues) {
 
                     getTrackListUsecase.getTrackListData().observeForever {
-                        _audioBookTracks.value = it
-                        _newTrackStateEvent.value = response.event
+
+                        checkLocalDownloadedFiles(it)
                         restorePreviousStateIfAny()
                     }
 
@@ -411,6 +417,40 @@ internal class BookDetailsViewModel(
             val newTrack =  if (currentPlayingTrack>1)(currentPlayingTrack-1)%audioBookTracks.value!!.size else 1
             Timber.d("Previous Track is $newTrack")
             onPlayItemClicked(newTrack)
+        }
+    }
+
+    private fun checkLocalDownloadedFiles(tracks: List<AudioBookTrackDomainModel>) {
+        viewModelScope.launch {
+            audioBookMetadata.value?.let { metadata ->
+
+                val list = withContext(Dispatchers.IO){
+                    localFilesForBook.getDownloadedFilesList(metadata.identifier)
+                }
+
+                list?.let {localFiles ->
+
+                    Timber.d("Found local files: ${localFiles.size}")
+                    val names = localFiles.map {
+                        it.split("/").last().toLowerCase(Locale.ROOT)
+                    }
+
+                    val updatedTracks = tracks.map { track->
+                        if(names.contains(track.filename.toLowerCase(Locale.ROOT))){
+                            track.downloadStatus = DOWNLOADED
+                        }
+                        track
+                    }
+                    _audioBookTracks.value = updatedTracks
+                }
+
+                if(list.isNullOrEmpty()){
+                    Timber.d("List is empty resetting to original value")
+                    _audioBookTracks.value = tracks
+                }
+
+                _newTrackStateEvent.value = Event(true)
+            }
         }
     }
 
@@ -502,5 +542,38 @@ internal class BookDetailsViewModel(
                 _newTrackStateEvent.value = Event(true)
             }
         }
+    }
+
+    fun downloadAllChapters():Boolean {
+
+        if (isMultiDownloadEventSent) return false
+
+        viewModelScope.launch {
+            val downloads = mutableListOf<Download>()
+
+            audioBookMetadata.value?.let {metadata->
+                audioBookTracks.value?.let {trackList->
+
+                    trackList.map { track ->
+                        downloads.add(
+                            Download(
+                                bookId = metadata.identifier,
+                                url = ArchiveUtils.getRemoteFilePath(filename = track.filename,identifier = metadata.identifier),
+                                name = track.filename,
+                                chapter = track.title?:"",
+                                description = "Downloading chapters for ${metadata.title}",
+                                subPath = ArchiveUtils.getLocalSavePath(metadata.identifier),
+                                chapterIndex = track.trackNumber?:0
+                            )
+                        )
+                    }
+                }
+            }
+
+            downloaderAction(MultiDownload(downloads = downloads))
+            isMultiDownloadEventSent = true
+        }
+
+        return isMultiDownloadEventSent
     }
 }

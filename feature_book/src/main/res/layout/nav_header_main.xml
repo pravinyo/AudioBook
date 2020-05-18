@@ -2,19 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/nav_header"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
+    android:layout_height="@dimen/nav_header_height"
     android:background="@color/colorPrimaryDark"
     android:clickable="true"
     android:focusable="true"
     android:gravity="bottom"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="@dimen/nav_padding_normal"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
         android:id="@+id/nav_header_imageView"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="@dimen/nav_image_size"
+        android:layout_height="@dimen/nav_image_size"
         android:src="@drawable/ic_jellyfish"
         android:contentDescription="@string/profile_picture" />
 
@@ -22,7 +22,7 @@
         android:id="@+id/nav_header_textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
+        android:paddingTop="@dimen/nav_padding_normal"
         android:text="@string/guest_user"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 </LinearLayout>

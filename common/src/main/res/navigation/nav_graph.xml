@@ -24,12 +24,22 @@
             android:id="@+id/action_AudioBookListFragment_to_ListenLaterFragment"
             app:destination="@id/ListenLaterFragment" />
 
+        <action
+            android:id="@+id/action_AudioBookListFragment_to_MyBooksFragment"
+            app:destination="@id/MyBooksFragment" />
+
     </fragment>
 
     <fragment
         android:id="@+id/SettingsFragment"
         android:name="com.allsoftdroid.audiobook.feature_settings.SettingsFragment"
         android:label="SettingsFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/MyBooksFragment"
+        android:name="com.allsoftdroid.audiobook.feature_mybooks.MyBooksFragment"
+        android:label="MyBooksFragment">
     </fragment>
 
     <fragment

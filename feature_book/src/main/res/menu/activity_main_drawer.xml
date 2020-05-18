@@ -14,26 +14,17 @@
         </menu>
     </item>
 
-    <item android:title="@string/user_data">
+    <item android:title="@string/menu_others">
         <menu>
             <item android:id="@+id/nav_item_history"
                 android:icon="@drawable/ic_history"
                 android:title="@string/history" />
-            <item android:id="@+id/nav_item_statistics"
-                android:icon="@drawable/ic_gauge"
-                android:title="@string/statistics" />
             <item android:id="@+id/nav_item_settings"
                 android:icon="@drawable/ic_cog_outline"
                 android:title="@string/settings" />
+            <item android:id="@+id/nav_item_rate"
+                android:icon="@drawable/ic_star"
+                android:title="@string/rate" />
         </menu>
     </item>
-
-    <group android:id="@+id/group_support">
-        <item android:id="@+id/nav_item_report"
-            android:icon="@drawable/ic_bug"
-            android:title="@string/report" />
-        <item android:id="@+id/nav_item_rate"
-            android:icon="@drawable/ic_star"
-            android:title="@string/rate" />
-    </group>
 </menu>

@@ -3,4 +3,10 @@
     <dimen name="card_margin_top">8dp</dimen>
     <dimen name="card_padding">4dp</dimen>
     <dimen name="bookList_image_height">90dp</dimen>
+    <dimen name="margin_normal">16dp</dimen>
+    <dimen name="control_icon_size">24dp</dimen>
+    <dimen name="padding_min">4dp</dimen>
+    <dimen name="nav_header_height">160dp</dimen>
+    <dimen name="nav_padding_normal">16dp</dimen>
+    <dimen name="nav_image_size">64dp</dimen>
 </resources>

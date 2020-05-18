@@ -55,7 +55,7 @@ class TrackDiffCallback : DiffUtil.ItemCallback<AudioBookTrackDomainModel>(){
      * Compare items based on name field as it is unique among track
      */
     override fun areItemsTheSame(oldItem: AudioBookTrackDomainModel, newItem: AudioBookTrackDomainModel): Boolean {
-        return oldItem.filename==newItem.filename && oldItem.isPlaying != newItem.isPlaying && oldItem.downloadStatus != newItem.downloadStatus
+        return oldItem.filename==newItem.filename && oldItem.isPlaying != newItem.isPlaying && oldItem.downloadStatus == newItem.downloadStatus
     }
 
     /**
