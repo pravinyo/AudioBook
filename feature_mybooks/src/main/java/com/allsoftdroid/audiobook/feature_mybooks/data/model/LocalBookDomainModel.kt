@@ -4,6 +4,7 @@ data class LocalBookDomainModel (
     val bookTitle:String,
     val bookIdentifier:String,
     val bookAuthor:String,
-    val bookChaptersDownloaded:String,
+    val bookChaptersDownloaded:Int,
+    val totalChapters:Int,
     val fileNames:List<String>
 )
