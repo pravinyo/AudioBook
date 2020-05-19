@@ -20,6 +20,7 @@ import com.allsoftdroid.audiobook.feature_mybooks.utils.Success
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import timber.log.Timber
 
 class MyBooksFragment : BaseUIFragment(),KoinComponent {
 
@@ -70,6 +71,7 @@ class MyBooksFragment : BaseUIFragment(),KoinComponent {
             it.getContentIfNotHandled()?.let { status->
                 when(status){
                     is Empty -> {
+                        Timber.d("Empty result")
                         dataBinding.loadingProgressbar.visibility = View.GONE
                         dataBinding.noLocalBooks.visibility = View.VISIBLE
                         dataBinding.bookCount.visibility = View.GONE
@@ -77,6 +79,7 @@ class MyBooksFragment : BaseUIFragment(),KoinComponent {
                     }
 
                     is Started -> {
+                        Timber.d("Started the request")
                         dataBinding.loadingProgressbar.visibility = View.VISIBLE
                         dataBinding.noLocalBooks.visibility = View.GONE
                         dataBinding.bookCount.visibility = View.GONE
@@ -84,6 +87,7 @@ class MyBooksFragment : BaseUIFragment(),KoinComponent {
                     }
 
                     is Success -> {
+                        Timber.d("Received result:${status.list}")
                         dataBinding.loadingProgressbar.visibility = View.GONE
                         dataBinding.noLocalBooks.visibility = View.GONE
                         dataBinding.bookCount.visibility = View.VISIBLE
