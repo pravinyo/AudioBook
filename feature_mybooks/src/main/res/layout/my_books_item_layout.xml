@@ -2,6 +2,16 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="book"
+            type="com.allsoftdroid.audiobook.feature_mybooks.data.model.LocalBookDomainModel" />
+
+        <variable
+            name="clickListener"
+            type="com.allsoftdroid.audiobook.feature_mybooks.presentation.recyclerView.ItemClickedListener" />
+    </data>
+
     <androidx.cardview.widget.CardView
         android:layout_marginTop="@dimen/card_margin_top"
         android:layout_marginStart="@dimen/card_margin_top"
@@ -19,6 +29,7 @@
                 android:layout_width="@dimen/book_image_height"
                 android:layout_height="@dimen/book_image_height"
                 android:adjustViewBounds="true"
+                android:onClick="@{()->clickListener.onItemClicked(book)}"
                 android:contentDescription="@string/thumbnail"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -31,6 +42,7 @@
                 android:id="@+id/item_title"
                 android:textStyle="bold"
                 android:padding="@dimen/card_padding"
+                android:onClick="@{()->clickListener.onItemClicked(book)}"
                 app:layout_constraintEnd_toStartOf="@id/ItemOptions"
                 app:layout_constraintStart_toEndOf="@id/item_image"
                 app:layout_constraintTop_toTopOf="@id/item_image"/>
@@ -40,6 +52,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/card_padding"
+                android:onClick="@{()->clickListener.onItemClicked(book)}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 app:layout_constraintStart_toStartOf="@id/item_title"
                 app:layout_constraintTop_toBottomOf="@+id/item_title"
@@ -50,6 +63,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/card_padding"
+                android:onClick="@{()->clickListener.onItemClicked(book)}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 app:layout_constraintEnd_toEndOf="@id/item_title"
                 app:layout_constraintStart_toEndOf="@id/item_author"
