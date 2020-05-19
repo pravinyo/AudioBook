@@ -115,7 +115,7 @@ object BookDetailsModule {
 
         factory {
             MetadataRepositoryImpl(
-                metadataDao = get(),
+                metadataDao = get(named(name = METADATA_DAO)),
                 bookId = getProperty(PROPERTY_BOOK_ID),
                 metadataDataSource = get(),
                 saveInDatabase = get(named(name = METADATA_DATABASE))) as IMetadataRepository
@@ -123,7 +123,7 @@ object BookDetailsModule {
 
         factory {
             TrackListRepositoryImpl(
-                metadataDao = get(),
+                metadataDao = get(named(name = METADATA_DAO)),
                 bookId = getProperty(PROPERTY_BOOK_ID)
             ) as ITrackListRepository
         }
@@ -158,7 +158,7 @@ object BookDetailsModule {
             AudioBookDatabase.getDatabase(get()).listenLaterDao()
         }
 
-        single {
+        single(named(name = METADATA_DAO)) {
             AudioBookDatabase.getDatabase(get()).metadataDao()
         }
 
@@ -167,7 +167,7 @@ object BookDetailsModule {
         }
 
         single(named(name = METADATA_DATABASE)) {
-            SaveMetadataInDatabase.setup(metadataDao = get()) as SaveInDatabase<MetadataDao,SaveMetadataInDatabase>
+            SaveMetadataInDatabase.setup(metadataDao = get(named(name = METADATA_DAO))) as SaveInDatabase<MetadataDao,SaveMetadataInDatabase>
         }
 
         single {
@@ -185,4 +185,5 @@ object BookDetailsModule {
 
     const val PROPERTY_BOOK_ID = "bookDetails_book_id"
     private const val METADATA_DATABASE = "SaveMetadataInDatabase"
+    private const val METADATA_DAO ="MetadataDao_BookDetailsModule"
 }
