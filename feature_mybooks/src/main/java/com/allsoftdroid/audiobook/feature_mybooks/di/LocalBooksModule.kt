@@ -1,6 +1,14 @@
 package com.allsoftdroid.audiobook.feature_mybooks.di
 
+import com.allsoftdroid.audiobook.feature_mybooks.data.repository.BookMetadataRepositoryImpl
+import com.allsoftdroid.audiobook.feature_mybooks.data.repository.LocalBooksRepositoryImpl
+import com.allsoftdroid.audiobook.feature_mybooks.domain.IBookMetadataRepository
+import com.allsoftdroid.audiobook.feature_mybooks.domain.ILocalBooksRepository
+import com.allsoftdroid.audiobook.feature_mybooks.domain.LocalBookListUsecase
 import com.allsoftdroid.audiobook.feature_mybooks.presentation.LocalBooksViewModel
+import com.allsoftdroid.database.bookListDB.DatabaseAudioBook
+import com.allsoftdroid.database.common.AudioBookDatabase
+import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,6 +29,7 @@ object LocalBooksModule {
         unloadKoinModules(
             listOf(
                 localBooksViewModel,
+                dataModule,
                 jobModule
             )
         )
@@ -29,13 +38,44 @@ object LocalBooksModule {
     private val loadFeature by lazy {
         loadKoinModules(listOf(
             localBooksViewModel,
+            usecaseModule,
+            dataModule,
             jobModule
         ))
     }
 
     var localBooksViewModel : Module = module {
         viewModel {
-            LocalBooksViewModel()
+            LocalBooksViewModel(
+                bookListUsecase = get()
+            )
+        }
+    }
+
+    var usecaseModule : Module = module {
+        factory {
+            LocalBookListUsecase(
+                localBooksRepository = get(),
+                bookMetadataRepository = get()
+            )
+        }
+    }
+
+    var dataModule : Module = module {
+        factory {
+            LocalBooksRepositoryImpl(
+                application = get()
+            ) as ILocalBooksRepository
+        }
+
+        factory {
+            BookMetadataRepositoryImpl(
+                metadataDao = get(named(name = BEAN_NAME))
+            ) as IBookMetadataRepository
+        }
+
+        single(named(name = BEAN_NAME)) {
+            AudioBookDatabase.getDatabase(get()).metadataDao() as MetadataDao
         }
     }
 
@@ -52,5 +92,5 @@ object LocalBooksModule {
 
     const val SUPER_VISOR_JOB = "SuperVisorJob_LocalBooks"
     const val VIEW_MODEL_SCOPE = "ViewModelScope_LocalBooks"
-    const val BEAN_NAME = "LocalBooksFragment"
+    private const val BEAN_NAME = "LocalBooksFragment"
 }
