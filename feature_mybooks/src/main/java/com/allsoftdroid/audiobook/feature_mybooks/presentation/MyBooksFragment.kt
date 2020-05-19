@@ -88,6 +88,8 @@ class MyBooksFragment : BaseUIFragment(),KoinComponent {
                         dataBinding.noLocalBooks.visibility = View.GONE
                         dataBinding.bookCount.visibility = View.VISIBLE
                         dataBinding.recyclerViewBooks.visibility = View.VISIBLE
+
+                        adapter.submitList(status.list)
                     }
                 }
             }
