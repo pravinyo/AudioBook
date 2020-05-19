@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import org.koin.core.qualifier.named
+import timber.log.Timber
 
 class LocalBooksViewModel(
     private val bookListUsecase: LocalBookListUsecase
@@ -40,12 +41,15 @@ class LocalBooksViewModel(
 
     fun loadBooks(){
         viewModelScope.launch {
+            Timber.d("sending started response")
             _requestStatus.value = Event(Started)
 
             val books = bookListUsecase.getBookList()
             if(books.isEmpty()){
+                Timber.d("books is empty sending empty response")
                 _requestStatus.value = Event(Empty)
             }else{
+                Timber.d("books is not empty sending response")
                 _requestStatus.value = Event(Success(books))
             }
         }
