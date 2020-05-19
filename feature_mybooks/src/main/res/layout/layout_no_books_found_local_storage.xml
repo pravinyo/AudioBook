@@ -24,5 +24,5 @@
         android:textStyle="bold"
         android:layout_gravity="center_horizontal"
         android:textColor="@color/black"
-        android:text="@string/no_books_found"/>
+        android:text="@string/myBooks_no_books_found"/>
 </LinearLayout>
