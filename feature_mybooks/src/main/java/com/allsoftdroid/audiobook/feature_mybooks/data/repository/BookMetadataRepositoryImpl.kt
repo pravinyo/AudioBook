@@ -11,16 +11,17 @@ class BookMetadataRepositoryImpl(
     private val metadataDao: MetadataDao,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ):IBookMetadataRepository {
-    override suspend fun getBookMetadata(identifier: String): BookMetadata  =
-        withContext(dispatcher){
-            val metadata = metadataDao.getMetadata(identifier)
-            val tracks = metadataDao.getTrackDetails(metadata_id = identifier,formatContains = "64")
+    override suspend fun getBookMetadata(identifier: String): BookMetadata {
 
-            metadata.value?.let { dbMetadata ->
-                tracks.value?.let { dbTracks->
-                    return@withContext BookMetadata(title = dbMetadata.title,author = dbMetadata.creator,totalTracks = dbTracks.size)
-                }
-            }
-            return@withContext BookMetadata(title ="",author = "",totalTracks = 0)
+       return withContext(dispatcher){
+            val metadata = metadataDao.getMetadataNonLive(identifier)
+            val tracks = metadataDao.getTrackDetailsNonLive(metadata_id = identifier,formatContains = "64")
+
+           if(metadata==null || tracks.isEmpty()) {
+               return@withContext BookMetadata(title ="",author = "",totalTracks =0)
+           }else{
+               return@withContext BookMetadata(title =metadata.title,author = metadata.creator,totalTracks = tracks.size)
+           }
         }
+    }
 }
