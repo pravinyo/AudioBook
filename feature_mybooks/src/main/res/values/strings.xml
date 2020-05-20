@@ -8,4 +8,6 @@
     <string name="remove_all_chapters">Remove All Chapters</string>
     <string name="remove_book">Delete Book</string>
     <string name="number_of_chapters_available_locally">Number of chapters available locally</string>
+    <string name="books_in_storage"> %1d Books in Storage</string>
+    <string name="chapters_label"> %d/%d Chapters</string>
 </resources>
