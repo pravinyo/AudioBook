@@ -90,10 +90,14 @@ class MyBooksFragment : BaseUIFragment(),KoinComponent {
                         Timber.d("Received result:${status.list}")
                         dataBinding.loadingProgressbar.visibility = View.GONE
                         dataBinding.noLocalBooks.visibility = View.GONE
-                        dataBinding.bookCount.visibility = View.VISIBLE
-                        dataBinding.recyclerViewBooks.visibility = View.VISIBLE
 
                         adapter.submitList(status.list)
+                        dataBinding.recyclerViewBooks.visibility = View.VISIBLE
+
+                        dataBinding.bookCount.apply {
+                            visibility = View.VISIBLE
+                            text = requireActivity().getString(R.string.books_in_storage,status.list.size)
+                        }
                     }
                 }
             }
