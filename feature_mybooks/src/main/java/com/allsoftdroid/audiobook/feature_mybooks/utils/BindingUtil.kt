@@ -60,6 +60,6 @@ fun TextView.setBookAuthor(item: LocalBookDomainModel?){
 @BindingAdapter("bookChapterCount")
 fun TextView.setBookDuration(item: LocalBookDomainModel?){
     item?.let {
-        text = "${it.bookChaptersDownloaded}/${it.totalChapters} Chapters"
+        text = context.getString(R.string.chapters_label,it.bookChaptersDownloaded,it.totalChapters)
     }
 }
