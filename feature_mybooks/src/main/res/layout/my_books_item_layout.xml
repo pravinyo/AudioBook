@@ -15,7 +15,6 @@
     <androidx.cardview.widget.CardView
         android:layout_marginTop="@dimen/card_margin_top"
         android:layout_marginStart="@dimen/card_margin_top"
-        android:layout_marginEnd="@dimen/card_margin_top"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
 
@@ -29,8 +28,11 @@
                 android:layout_width="@dimen/book_image_height"
                 android:layout_height="@dimen/book_image_height"
                 android:adjustViewBounds="true"
+                android:background="@drawable/background_round_corner_dark_border"
+                android:padding="@dimen/padding_min"
                 android:onClick="@{()->clickListener.onItemClicked(book)}"
                 android:contentDescription="@string/thumbnail"
+                app:bookImage="@{book}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
@@ -41,8 +43,11 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:id="@+id/item_title"
                 android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginStart="@dimen/card_margin_end"
                 android:padding="@dimen/card_padding"
                 android:onClick="@{()->clickListener.onItemClicked(book)}"
+                app:bookTitle="@{book}"
                 app:layout_constraintEnd_toStartOf="@id/ItemOptions"
                 app:layout_constraintStart_toEndOf="@id/item_image"
                 app:layout_constraintTop_toTopOf="@id/item_image"/>
@@ -51,30 +56,45 @@
                 android:id="@+id/item_author"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 android:padding="@dimen/card_padding"
                 android:onClick="@{()->clickListener.onItemClicked(book)}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                app:bookAuthor="@{book}"
                 app:layout_constraintStart_toStartOf="@id/item_title"
                 app:layout_constraintTop_toBottomOf="@+id/item_title"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
+            <ImageView
+                android:id="@+id/downloadedChapters"
+                android:src="@drawable/arrow_collapse_down"
+                android:background="@drawable/background_round_corner_dark_border"
+                android:layout_width="@dimen/item_icon_size"
+                android:layout_height="@dimen/item_icon_size"
+                android:paddingBottom="@dimen/padding_min"
+                app:layout_constraintStart_toEndOf="@id/item_author"
+                app:layout_constraintTop_toTopOf="@id/item_author"
+                app:layout_constraintBottom_toBottomOf="@id/item_author"
+                android:contentDescription="@string/number_of_chapters_available_locally" />
+            
             <TextView
                 android:id="@+id/item_mediaCount"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 android:padding="@dimen/card_padding"
                 android:onClick="@{()->clickListener.onItemClicked(book)}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                app:bookChapterCount="@{book}"
                 app:layout_constraintEnd_toEndOf="@id/item_title"
-                app:layout_constraintStart_toEndOf="@id/item_author"
-                app:layout_constraintTop_toTopOf="@id/item_author"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintStart_toEndOf="@id/downloadedChapters"
+                app:layout_constraintTop_toTopOf="@id/downloadedChapters"
+                app:layout_constraintBottom_toBottomOf="@id/downloadedChapters"/>
 
             <TextView
                 android:id="@+id/ItemOptions"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/margin_normal"
                 android:paddingStart="@dimen/card_padding"
                 android:paddingEnd="@dimen/padding_mid"
                 android:paddingTop="@dimen/padding_min"
