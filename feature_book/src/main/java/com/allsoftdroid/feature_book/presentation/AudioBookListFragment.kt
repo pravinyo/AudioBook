@@ -274,9 +274,4 @@ class AudioBookListFragment : BaseUIFragment(){
             }
         }
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        FeatureBookModule.unLoadModules()
-    }
 }

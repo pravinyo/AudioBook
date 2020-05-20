@@ -259,7 +259,6 @@ class MainActivity : BaseActivity() {
                 layoutParams = layout
             }
         }
-
     }
 
     private fun performAction(event: AudioPlayerEvent){
@@ -321,7 +320,6 @@ class MainActivity : BaseActivity() {
         stopAudioService()
         disposables.dispose()
         downloader.Destroy()
-        AppModule.unloadModule()
     }
 
     private fun stopAudioService(){
