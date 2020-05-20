@@ -6,7 +6,6 @@ import com.allsoftdroid.audiobook.feature_mybooks.domain.IBookMetadataRepository
 import com.allsoftdroid.audiobook.feature_mybooks.domain.ILocalBooksRepository
 import com.allsoftdroid.audiobook.feature_mybooks.domain.LocalBookListUsecase
 import com.allsoftdroid.audiobook.feature_mybooks.presentation.LocalBooksViewModel
-import com.allsoftdroid.database.bookListDB.DatabaseAudioBook
 import com.allsoftdroid.database.common.AudioBookDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import kotlinx.coroutines.CoroutineScope
@@ -64,7 +63,8 @@ object LocalBooksModule {
     var dataModule : Module = module {
         factory {
             LocalBooksRepositoryImpl(
-                application = get()
+                application = get(),
+                localFilesForBook = get()
             ) as ILocalBooksRepository
         }
 

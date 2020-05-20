@@ -14,10 +14,9 @@ import java.io.File
 
 class LocalBooksRepositoryImpl(
     private val dispatcher: CoroutineDispatcher=Dispatchers.IO,
-    private val application: Application
+    private val application: Application,
+    private val localFilesForBook:LocalFilesForBook
 ) : ILocalBooksRepository {
-
-    private val localFilesForBook = LocalFilesForBook(application)
 
     override suspend fun getLocalBookFiles(): List<LocalBookFiles> =
         withContext(dispatcher){
