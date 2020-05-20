@@ -38,4 +38,12 @@ class LocalBookListUsecase(
 
         return localBooks
     }
+
+    suspend fun removeBook(bookId:String){
+        localBooksRepository.removeBook(bookId)
+    }
+
+    suspend fun removeChapters(bookId: String){
+        localBooksRepository.deleteAllChapters(bookId)
+    }
 }
