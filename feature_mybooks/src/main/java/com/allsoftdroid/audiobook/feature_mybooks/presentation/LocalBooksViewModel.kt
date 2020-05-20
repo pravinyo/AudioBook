@@ -67,6 +67,20 @@ class LocalBooksViewModel(
         }
     }
 
+    fun removeBook(identifier:String){
+        viewModelScope.launch {
+            bookListUsecase.removeBook(identifier)
+            loadBooks()
+        }
+    }
+
+    fun removeAllChapters(identifier: String){
+        viewModelScope.launch {
+            bookListUsecase.removeChapters(identifier)
+            loadBooks()
+        }
+    }
+
     //cancel the job when viewmodel is not longer in use
     override fun onCleared() {
         super.onCleared()
