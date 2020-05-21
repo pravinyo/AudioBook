@@ -23,6 +23,9 @@ interface MetadataDao{
     @Query("SELECT * FROM metadata_table where metadata_id=:bookId")
     fun getMetadata( bookId : String):LiveData<DatabaseMetadataEntity>
 
+    @Query("SELECT * FROM metadata_table where metadata_id=:bookId")
+    fun getMetadataNonLive( bookId : String):DatabaseMetadataEntity
+
     /**
      * Get album details for the specified audio book
      * @param metadata_id unique id given to audio book
@@ -49,6 +52,9 @@ interface MetadataDao{
      */
     @Query("SELECT * FROM MediaTrack_Table where track_album_id=:metadata_id and format like '%' || :formatContains || '%'")
     fun getTrackDetails(metadata_id:String,formatContains:String):LiveData<List<DatabaseTrackEntity>>
+
+    @Query("SELECT * FROM MediaTrack_Table where track_album_id=:metadata_id and format like '%' || :formatContains || '%'")
+    fun getTrackDetailsNonLive(metadata_id:String,formatContains:String):List<DatabaseTrackEntity>
 
     /**
      * get list of  media VBR track files for the given album id . here album id is same as metadata id so we will

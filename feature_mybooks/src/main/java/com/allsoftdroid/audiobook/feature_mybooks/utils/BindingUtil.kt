@@ -1,10 +1,10 @@
-package com.allsoftdroid.audiobook.feature_listen_later_ui.utils
+package com.allsoftdroid.audiobook.feature_mybooks.utils
 
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.allsoftdroid.audiobook.feature_listen_later_ui.R
-import com.allsoftdroid.audiobook.feature_listen_later_ui.data.model.ListenLaterItemDomainModel
+import com.allsoftdroid.audiobook.feature_mybooks.R
+import com.allsoftdroid.audiobook.feature_mybooks.data.model.LocalBookDomainModel
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
 import com.allsoftdroid.common.base.network.ArchiveUtils
 import com.allsoftdroid.common.base.utils.BindingUtils.getNormalizedText
@@ -12,12 +12,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 
-
 @BindingAdapter("bookImage")
-fun setImageUrl(imageView: ImageView, item: ListenLaterItemDomainModel?) {
+fun setImageUrl(imageView: ImageView, item: LocalBookDomainModel?) {
 
     item?.let {
-        val url = ArchiveUtils.getThumbnail(item.identifier)
+        val url = ArchiveUtils.getThumbnail(item.bookIdentifier)
 
         Glide
             .with(imageView.context)
@@ -44,24 +43,23 @@ fun setImageUrl(imageView: ImageView, item: ListenLaterItemDomainModel?) {
 Binding adapter for updating the title in list items
  */
 @BindingAdapter("bookTitle")
-fun TextView.setBookTitle(item: ListenLaterItemDomainModel?){
+fun TextView.setBookTitle(item: LocalBookDomainModel?){
     item?.let {
-        text =
-            getNormalizedText(item.title, 30)
+        text = getNormalizedText(item.bookTitle, 30)
     }
 }
 
 @BindingAdapter("bookAuthor")
-fun TextView.setBookAuthor(item: ListenLaterItemDomainModel?){
+fun TextView.setBookAuthor(item: LocalBookDomainModel?){
     item?.let {
         text =
-            getNormalizedText(item.author, 30)
+            getNormalizedText(item.bookAuthor, 30)
     }
 }
 
-@BindingAdapter("bookDuration")
-fun TextView.setBookDuration(item: ListenLaterItemDomainModel?){
+@BindingAdapter("bookChapterCount")
+fun TextView.setBookDuration(item: LocalBookDomainModel?){
     item?.let {
-        text = it.duration
+        text = context.getString(R.string.chapters_label,it.bookChaptersDownloaded,it.totalChapters)
     }
 }

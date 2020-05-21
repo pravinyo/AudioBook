@@ -47,6 +47,5 @@ class MiniPlayerFragment : BaseContainerFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        FeatureMiniPlayerModule.unloadModule()
     }
 }

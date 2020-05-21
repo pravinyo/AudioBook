@@ -38,8 +38,11 @@
 
     <fragment
         android:id="@+id/MyBooksFragment"
-        android:name="com.allsoftdroid.audiobook.feature_mybooks.MyBooksFragment"
+        android:name="com.allsoftdroid.audiobook.feature_mybooks.presentation.MyBooksFragment"
         android:label="MyBooksFragment">
+        <action
+            android:id="@+id/action_MyBooksFragment_to_AudioBookDetailsFragment"
+            app:destination="@id/AudioBookDetailsFragment"/>
     </fragment>
 
     <fragment

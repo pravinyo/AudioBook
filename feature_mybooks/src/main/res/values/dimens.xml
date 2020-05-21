@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_min">4dp</dimen>
+    <dimen name="margin_normal">16dp</dimen>
+    <dimen name="margin_big">24dp</dimen>
+
+    <dimen name="padding_min">2dp</dimen>
+    <dimen name="padding_mid">8dp</dimen>
+
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="card_margin_top">16dp</dimen>
+    <dimen name="card_margin_end">8dp</dimen>
+
+    <dimen name="book_image_height">90dp</dimen>
+
+    <dimen name="item_icon_size">16dp</dimen>
+    <dimen name="icon_size">24dp</dimen>
+</resources>

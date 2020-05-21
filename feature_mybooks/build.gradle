@@ -43,8 +43,10 @@ android {
 
 dependencies {
     implementation(project(path: ModuleDependency.LIBRARY_COMMON))
+    implementation(project(path: ModuleDependency.DATABASE))
 
     implementation(LibraryDependency.GLIDE)
     kapt(LibraryDependency.GLIDE_COMPILER)
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
+    implementation(LibraryDependency.LOTTIE)
 }
