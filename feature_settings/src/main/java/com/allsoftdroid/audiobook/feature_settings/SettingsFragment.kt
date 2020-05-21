@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.allsoftdroid.audiobook.feature_settings.model.Feedback
-import com.allsoftdroid.audiobook.feature_settings.utils.FileUtil
+import com.allsoftdroid.audiobook.feature_settings.utils.FilePath
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
 import com.allsoftdroid.common.base.store.userAction.OpenLicensesUI
@@ -183,24 +183,25 @@ class SettingsFragment : PreferenceFragmentCompat(), KoinComponent {
                     val treeUri = intent.data
                     Timber.d("URL is $treeUri")
 
-                    activity?.let {activity ->
-                        val path = FileUtil.getFullPathFromTreeUri(treeUri,activity)
+                    treeUri?.let {folderUri ->
+                        activity?.let {activity ->
 
-                        path?.let {
-                            val root = Environment.getExternalStorageDirectory().path
-                            val folder = path.substring(root.length+1)
-                            Timber.d("Path returned: $folder")
-                            Timber.d("Path root older api: $root")
-                            val directory = folder.split("/")[0]
+                            val path = FilePath.getPath(folderUri)
+                            Timber.d("Path from callback is : $path")
 
-                            if(inStandardDirectory(directory)){
-                                ArchiveUtils.setDownloadsRootFolder(activity.application,folder)
-                                this.findNavController()
-                                    .navigate(R.id.SettingsFragment,null,NavOptions.Builder()
-                                        .setPopUpTo(R.id.SettingsFragment,true)
-                                        .build())
-                            }else{
-                                Toast.makeText(activity,"Please Press i for allowed directory",Toast.LENGTH_SHORT).show()
+                            path.let {
+                                val folder = FilePath.subDirectory(path)
+                                val directory = folder.split("/")[0]
+
+                                if(inStandardDirectory(directory)){
+                                    ArchiveUtils.setDownloadsRootFolder(activity.application,folder)
+                                    this.findNavController()
+                                        .navigate(R.id.SettingsFragment,null,NavOptions.Builder()
+                                            .setPopUpTo(R.id.SettingsFragment,true)
+                                            .build())
+                                }else{
+                                    Toast.makeText(activity,"Please Press i for allowed directory",Toast.LENGTH_SHORT).show()
+                                }
                             }
                         }
                     }
