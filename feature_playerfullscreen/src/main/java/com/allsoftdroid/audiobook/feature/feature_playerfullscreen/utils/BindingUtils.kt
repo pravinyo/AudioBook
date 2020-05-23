@@ -10,6 +10,7 @@ import androidx.palette.graphics.Palette
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.R
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.data.PlayingTrackDetails
 import com.allsoftdroid.common.base.extension.CreateImageOverlay
+import com.allsoftdroid.common.base.utils.BindingUtils.getNormalizedText
 import com.allsoftdroid.common.base.utils.BindingUtils.getSignatureForImageLoading
 import com.allsoftdroid.common.base.utils.BindingUtils.getThumbnail
 import com.bumptech.glide.Glide
@@ -25,21 +26,21 @@ import com.bumptech.glide.signature.ObjectKey
 @BindingAdapter("trackTitle")
 fun TextView.setTrackTitle(item : PlayingTrackDetails?){
     item?.let {
-        text = item.trackName
+        text = getNormalizedText(item.trackName,94)
     }
 }
 
 @BindingAdapter("trackBookTitle")
 fun TextView.setTrackBookTitle(item : PlayingTrackDetails?){
     item?.let {
-        text = item.bookTitle
+        text = getNormalizedText(item.bookTitle,30)
     }
 }
 
 @BindingAdapter("bookChapterProgressTitle")
 fun TextView.setBookChapterProgressTitle(item : PlayingTrackDetails?){
     item?.let {
-        text = "Section ${item.chapterIndex} of ${item.totalChapter}"
+        text = context.getString(R.string.book_chapter_progress_title,item.chapterIndex,item.totalChapter)
     }
 }
 
@@ -108,7 +109,11 @@ fun setTrackBookBanner(cardView: CardView, item: PlayingTrackDetails?) {
                                     setBackgroundColor(dark)
 
                                     cardView.findViewById<TextView>(R.id.tv_book_title).apply {
-                                        this.setTextColor(light)
+                                        if(dark == light){
+                                            this.setTextColor(context.resources.getColor(R.color.colorAccent))
+                                        }else{
+                                            this.setTextColor(light)
+                                        }
                                     }
 
                                     this.findViewById<TextView>(R.id.tv_book_progress_title).apply {
