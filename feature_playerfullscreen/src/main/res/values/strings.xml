@@ -9,4 +9,5 @@
     <string name="book_thumbnail_image">Book Thumbnail Image</string>
     <string name="rewind">rewind by 30</string>
     <string name="fast_forward">fast forward by 30</string>
+    <string name="book_chapter_progress_title">Section %d of %d</string>
 </resources>
