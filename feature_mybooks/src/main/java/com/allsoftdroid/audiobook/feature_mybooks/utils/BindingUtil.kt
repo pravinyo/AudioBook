@@ -53,7 +53,7 @@ fun TextView.setBookTitle(item: LocalBookDomainModel?){
 fun TextView.setBookAuthor(item: LocalBookDomainModel?){
     item?.let {
         text =
-            getNormalizedText(item.bookAuthor, 30)
+            getNormalizedText(item.bookAuthor, 15)
     }
 }
 
