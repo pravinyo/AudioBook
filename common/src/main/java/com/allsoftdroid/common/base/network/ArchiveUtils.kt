@@ -10,6 +10,7 @@ class ArchiveUtils {
 
         private const val BASE_DOWNLOAD_URL = "https://archive.org/download"
         private const val BASE_IMAGE_URL = "https://archive.org/services/img"
+        const val AppFolderName = "AudioBooks"
 
         /**
          * This function generated the file path on the remote server
@@ -22,7 +23,7 @@ class ArchiveUtils {
 
         fun getThumbnail(imageId: String?) = "$BASE_IMAGE_URL/$imageId/"
 
-        fun getLocalSavePath(bookId:String) = "/AudioBooks/$bookId/"
+        fun getLocalSavePath(bookId:String) = "/$AppFolderName/$bookId/"
 
         fun setDownloadsRootFolder(context: Application, root:String){
             val sharedPref = context.getSharedPreferences(context.getString(R.string.downloads_path),Context.MODE_PRIVATE) ?: return
