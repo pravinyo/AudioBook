@@ -1,10 +1,7 @@
 package com.allsoftdroid.audiobook.presentation.viewModel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.allsoftdroid.audiobook.domain.model.LastPlayedTrack
 import com.allsoftdroid.audiobook.domain.usecase.GetLastPlayedUsecase
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.data.PlayingTrackDetails
@@ -22,14 +19,19 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class MainActivityViewModel(application : Application,
+                            private val stateHandle : SavedStateHandle,
                             private val handler: UseCaseHandler,
                             private val lastPlayedUsecase: GetLastPlayedUsecase,
                             private val sharedPref: BookDetailsSharedPreferenceRepository,
                             private val eventStore : AudioPlayerEventStore,
                             private val audioManager : AudioManager) : AndroidViewModel(application){
 
+    companion object{
+        private const val MINI_PLAYER_KEY = "MiniPlayerKey"
+    }
+
     private val _showMiniPlayer = MutableLiveData<Event<Boolean>>()
-    val showPlayer :LiveData<Event<Boolean>> = _showMiniPlayer
+    val showPlayer :LiveData<Boolean> = stateHandle.getLiveData(MINI_PLAYER_KEY)
 
     private var disposable : Disposable
 
@@ -41,10 +43,11 @@ class MainActivityViewModel(application : Application,
 
     private lateinit var _playingTrackDetails:PlayingTrackDetails
 
-    fun getPlayingTrack() = _playingTrackDetails
+    fun getPlayingTrack():PlayingTrackDetails? = _playingTrackDetails
 
     fun playerStatus( showPlayer : Boolean){
         _showMiniPlayer.value = Event(showPlayer)
+        stateHandle.set(MINI_PLAYER_KEY,showPlayer)
     }
 
     init {
