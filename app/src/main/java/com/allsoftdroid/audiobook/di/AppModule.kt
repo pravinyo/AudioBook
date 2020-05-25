@@ -1,6 +1,7 @@
 package com.allsoftdroid.audiobook.di
 
 import android.app.Activity
+import androidx.lifecycle.SavedStateHandle
 import com.allsoftdroid.audiobook.domain.usecase.GetLastPlayedUsecase
 import com.allsoftdroid.audiobook.feature_downloader.data.Downloader
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloaderCore
@@ -41,7 +42,9 @@ object AppModule {
 
     private val viewModelModule: Module = module{
         viewModel {
+            (state: SavedStateHandle) ->
             MainActivityViewModel(
+                stateHandle = state,
                 application = get(),
                 sharedPref = get(),
                 audioManager = get(),
