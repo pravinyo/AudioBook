@@ -49,7 +49,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
     Lazily initialize the view model
      */
     private val bookDetailsViewModel: BookDetailsViewModel by viewModel{
-        parametersOf(Bundle(), "vm1")
+        parametersOf(Bundle(), "vm_audio_book_details")
     }
     private val eventStore : AudioPlayerEventStore by inject()
     private val downloadStore : DownloadEventStore by inject()
