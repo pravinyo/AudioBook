@@ -245,8 +245,8 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
             it.getContentIfNotHandled()?.let { isAdded ->
                 dataBinding.imgViewBookListenLater.apply {
                     setImageResource(when(isAdded){
-                        true -> R.drawable.ic_bookmark_minus
-                        else -> R.drawable.ic_bookmark_plus_outline
+                        true -> R.drawable.ic_clock
+                        else -> R.drawable.ic_clock_outline
                     })
                 }
             }
