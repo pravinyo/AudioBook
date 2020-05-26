@@ -3,6 +3,7 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val TOOL_TIP = "2.0.3"
     const val FIREBASE_CRASHLYTICS = "17.0.0"
     const val FIREBASE_VERSION = "17.4.2"
     const val OSS_LICENSES = "17.0.0"
@@ -125,4 +126,6 @@ object LibraryDependency {
     const val FIREBASE_ANALYTICS = "com.google.firebase:firebase-analytics:${LibraryVersion.FIREBASE_VERSION}"
     const val FIREBASE_ANALYTICS_KTX = "com.google.firebase:firebase-analytics-ktx:${LibraryVersion.FIREBASE_VERSION}"
     const val FIREBASE_CRASHLYTICS = "com.google.firebase:firebase-crashlytics:${LibraryVersion.FIREBASE_CRASHLYTICS}"
+
+    const val TOOL_TIP = "it.sephiroth.android.library.targettooltip:target-tooltip-library:${LibraryVersion.TOOL_TIP}"
 }
