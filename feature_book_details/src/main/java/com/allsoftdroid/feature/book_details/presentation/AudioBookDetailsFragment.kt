@@ -276,7 +276,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         dataBinding.imgViewBookDownload.setOnClickListener {
             val isSent = bookDetailsViewModel.downloadAllChapters()
             if (!isSent) {
-                Toast.makeText(this.requireActivity(),"Download will soon start...",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this.requireActivity(),getString(R.string.download_soon_start),Toast.LENGTH_SHORT).show()
             }
 
             it.setBackgroundResource(R.drawable.gradiant_background)
@@ -288,10 +288,14 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
         dataBinding.bookMediaActionsRead.setOnClickListener {
             bookDetailsViewModel.additionalBookDetails.value?.let {
-                val uri  = Uri.parse(it.gutenbergUrl)
-                val intent = Intent(Intent.ACTION_VIEW,uri)
-                startActivity(Intent.createChooser(intent,"Open with"))
-            }?:Toast.makeText(this.requireActivity(),"No Link Found",Toast.LENGTH_SHORT).show()
+                if (it.archiveUrl.isEmpty()){
+                    Toast.makeText(this.requireActivity(),getString(R.string.no_link_found),Toast.LENGTH_SHORT).show()
+                }else{
+                    val uri  = Uri.parse(it.gutenbergUrl)
+                    val intent = Intent(Intent.ACTION_VIEW,uri)
+                    startActivity(Intent.createChooser(intent,getString(R.string.open_with_label)))
+                }
+            }?:Toast.makeText(this.requireActivity(),getString(R.string.wait_message),Toast.LENGTH_SHORT).show()
         }
     }
 
