@@ -20,6 +20,7 @@
     <string name="chapter_label">Here are the Chapters,</string>
     <string name="what_is_this_book_based_on">What is this book based on?</string>
     <string name="publisher_account_name">publisher account name</string>
+    <string name="server_error">Something went wrong!</string>
 
     <string-array name="track_format_array">
         <item>Good</item>
