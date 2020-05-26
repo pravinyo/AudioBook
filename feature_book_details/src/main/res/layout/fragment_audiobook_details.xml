@@ -94,7 +94,7 @@
 
                     <ImageView
                         android:id="@+id/imgView_book_listen_later"
-                        android:src="@drawable/ic_bookmark_plus_outline"
+                        android:src="@drawable/ic_clock_outline"
                         android:layout_width="@dimen/track_item_control_btn_size"
                         android:layout_height="@dimen/track_item_control_btn_size"
                         android:layout_marginEnd="@dimen/banner_image_margin_end_normal"
