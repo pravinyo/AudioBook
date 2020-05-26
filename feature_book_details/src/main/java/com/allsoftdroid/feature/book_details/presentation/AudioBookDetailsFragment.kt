@@ -286,7 +286,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
             resumeOrPlayFromStart()
         }
 
-        dataBinding.bookMediaActionsListen.setOnClickListener {
+        dataBinding.bookMediaActionsRead.setOnClickListener {
             bookDetailsViewModel.additionalBookDetails.value?.let {
                 val uri  = Uri.parse(it.gutenbergUrl)
                 val intent = Intent(Intent.ACTION_VIEW,uri)
