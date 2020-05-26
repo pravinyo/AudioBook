@@ -152,13 +152,22 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                         removeLoading()
                         setVisibility(dataBindingReference.pbContentLoading,set = false)
                         Timber.d("Completed")}
-                    NetworkState.ERROR -> {
+                    NetworkState.CONNECTION_ERROR -> {
                         setVisibility(dataBinding.pbContentLoading,set = false)
 
                         if(bookDetailsViewModel.audioBookTracks.value.isNullOrEmpty()){
                             setVisibility(dataBinding.networkNoConnection,set = true)
                         }
-                        Toast.makeText(activity,"Connection Error",Toast.LENGTH_SHORT).show()}
+                        Toast.makeText(activity,"Connection Error",Toast.LENGTH_SHORT).show()
+                    }
+                    NetworkState.SERVER_ERROR -> {
+                        setVisibility(dataBinding.pbContentLoading,set = false)
+
+                        if(bookDetailsViewModel.audioBookTracks.value.isNullOrEmpty()){
+                            setVisibility(dataBinding.serverError,set = true)
+                        }
+                        Toast.makeText(activity,"Server Error",Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         })

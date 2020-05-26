@@ -273,7 +273,11 @@ internal class BookDetailsViewModel(
                 }
 
                 override suspend fun onError(t: Throwable) {
-                    _networkResponse.value = Event(NetworkState.ERROR)
+                    _networkResponse.value = when(t.message){
+                        NetworkState.CONNECTION_ERROR.value -> Event(NetworkState.CONNECTION_ERROR)
+                        else -> Event(NetworkState.SERVER_ERROR)
+                    }
+
                     metadataStateChangeEvent.value = Event(Unit)
                 }
             }
