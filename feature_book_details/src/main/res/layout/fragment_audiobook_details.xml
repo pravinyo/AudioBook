@@ -49,6 +49,12 @@
             android:visibility="gone"
             layout="@layout/layout_no_connection"/>
 
+        <include android:id="@+id/server_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            layout="@layout/layout_server_error"/>
+
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
