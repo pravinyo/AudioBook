@@ -49,6 +49,7 @@ dependencies {
     implementation(LibraryDependency.GLIDE)
     kapt(LibraryDependency.GLIDE_COMPILER)
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
+    implementation(LibraryDependency.TOOL_TIP)
 
     //Test
     testImplementation(TestLibraryDependency.JUNIT)
