@@ -190,7 +190,9 @@ Binding adapter for updating the title in list items
 fun TextView.setBookPlayTime2(item: BookDetails?){
     item?.let {
         if(text=="NA"){
-            text = it.runtime
+            if(it.runtime.isNotEmpty()){
+                text = it.runtime
+            }
         }
     }
 }

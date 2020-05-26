@@ -192,6 +192,7 @@ internal class BookDetailsViewModel(
                 }
 
                 override suspend fun onError(t: Throwable) {
+                    _additionalBookDetails.value = BookDetails(chapters = emptyList())
                     Timber.d("Enhanced Error:${t.message}")
                 }
             }
@@ -210,7 +211,7 @@ internal class BookDetailsViewModel(
                     it.webDocument = webDocument
                         _additionalBookDetails.value = it
                 }else{
-                    _additionalBookDetails.value = null
+                    _additionalBookDetails.value = BookDetails(chapters = emptyList())
                 }
             }
 
@@ -273,7 +274,11 @@ internal class BookDetailsViewModel(
                 }
 
                 override suspend fun onError(t: Throwable) {
-                    _networkResponse.value = Event(NetworkState.ERROR)
+                    _networkResponse.value = when(t.message){
+                        NetworkState.CONNECTION_ERROR.value -> Event(NetworkState.CONNECTION_ERROR)
+                        else -> Event(NetworkState.SERVER_ERROR)
+                    }
+
                     metadataStateChangeEvent.value = Event(Unit)
                 }
             }

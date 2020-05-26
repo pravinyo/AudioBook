@@ -20,6 +20,11 @@
     <string name="chapter_label">Here are the Chapters,</string>
     <string name="what_is_this_book_based_on">What is this book based on?</string>
     <string name="publisher_account_name">publisher account name</string>
+    <string name="server_error">Something went wrong!</string>
+    <string name="no_link_found">No Link Found</string>
+    <string name="download_soon_start">Download will soon start...</string>
+    <string name="open_with_label">Open with</string>
+    <string name="wait_message">Please Wait</string>
 
     <string-array name="track_format_array">
         <item>Good</item>

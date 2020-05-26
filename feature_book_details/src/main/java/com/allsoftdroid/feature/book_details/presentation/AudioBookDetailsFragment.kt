@@ -152,13 +152,22 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                         removeLoading()
                         setVisibility(dataBindingReference.pbContentLoading,set = false)
                         Timber.d("Completed")}
-                    NetworkState.ERROR -> {
+                    NetworkState.CONNECTION_ERROR -> {
                         setVisibility(dataBinding.pbContentLoading,set = false)
 
                         if(bookDetailsViewModel.audioBookTracks.value.isNullOrEmpty()){
                             setVisibility(dataBinding.networkNoConnection,set = true)
                         }
-                        Toast.makeText(activity,"Connection Error",Toast.LENGTH_SHORT).show()}
+                        Toast.makeText(activity,"Connection Error",Toast.LENGTH_SHORT).show()
+                    }
+                    NetworkState.SERVER_ERROR -> {
+                        setVisibility(dataBinding.pbContentLoading,set = false)
+
+                        if(bookDetailsViewModel.audioBookTracks.value.isNullOrEmpty()){
+                            setVisibility(dataBinding.serverError,set = true)
+                        }
+                        Toast.makeText(activity,"Server Error",Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         })
@@ -236,8 +245,8 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
             it.getContentIfNotHandled()?.let { isAdded ->
                 dataBinding.imgViewBookListenLater.apply {
                     setImageResource(when(isAdded){
-                        true -> R.drawable.ic_bookmark_minus
-                        else -> R.drawable.ic_bookmark_plus_outline
+                        true -> R.drawable.ic_clock
+                        else -> R.drawable.ic_clock_outline
                     })
                 }
             }
@@ -267,7 +276,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         dataBinding.imgViewBookDownload.setOnClickListener {
             val isSent = bookDetailsViewModel.downloadAllChapters()
             if (!isSent) {
-                Toast.makeText(this.requireActivity(),"Download will soon start...",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this.requireActivity(),getString(R.string.download_soon_start),Toast.LENGTH_SHORT).show()
             }
 
             it.setBackgroundResource(R.drawable.gradiant_background)
@@ -277,12 +286,16 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
             resumeOrPlayFromStart()
         }
 
-        dataBinding.bookMediaActionsListen.setOnClickListener {
+        dataBinding.bookMediaActionsRead.setOnClickListener {
             bookDetailsViewModel.additionalBookDetails.value?.let {
-                val uri  = Uri.parse(it.gutenbergUrl)
-                val intent = Intent(Intent.ACTION_VIEW,uri)
-                startActivity(Intent.createChooser(intent,"Open with"))
-            }?:Toast.makeText(this.requireActivity(),"No Link Found",Toast.LENGTH_SHORT).show()
+                if (it.archiveUrl.isEmpty()){
+                    Toast.makeText(this.requireActivity(),getString(R.string.no_link_found),Toast.LENGTH_SHORT).show()
+                }else{
+                    val uri  = Uri.parse(it.gutenbergUrl)
+                    val intent = Intent(Intent.ACTION_VIEW,uri)
+                    startActivity(Intent.createChooser(intent,getString(R.string.open_with_label)))
+                }
+            }?:Toast.makeText(this.requireActivity(),getString(R.string.wait_message),Toast.LENGTH_SHORT).show()
         }
     }
 

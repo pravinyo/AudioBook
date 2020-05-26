@@ -1,7 +1,6 @@
 package com.allsoftdroid.feature.book_details.data.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.Variable
@@ -10,12 +9,9 @@ import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.feature.book_details.data.databaseExtension.SaveMetadataInDatabase
 import com.allsoftdroid.feature.book_details.data.databaseExtension.asMetadataDomainModel
-import com.allsoftdroid.feature.book_details.data.databaseExtension.asTrackDomainModel
-import com.allsoftdroid.feature.book_details.data.model.TrackFormat
 import com.allsoftdroid.feature.book_details.data.network.response.GetAudioBookMetadataResponse
 import com.allsoftdroid.feature.book_details.data.network.service.ArchiveMetadataService
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
-import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.IMetadataRepository
 import com.allsoftdroid.feature.book_details.utils.NetworkState
 import com.google.gson.Gson
@@ -68,7 +64,7 @@ class MetadataRepositoryImpl(
                 metadataDataSource.getMetadata(bookId).enqueue(object : Callback<String> {
                     override fun onFailure(call: Call<String>, t: Throwable) {
                         Timber.i("Failure occur:${t.message}")
-                        _networkResponse.value= Event(NetworkState.ERROR)
+                        _networkResponse.value= Event(NetworkState.CONNECTION_ERROR)
                     }
 
                     override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -86,9 +82,13 @@ class MetadataRepositoryImpl(
                              * Run with application scope
                              */
                             GlobalScope.launch {
-                                saveInDatabase
+                                val dbResponse = saveInDatabase
                                     .addData(result)
                                     .execute()
+
+                                if (dbResponse!=0){
+                                    _networkResponse.value = Event(NetworkState.SERVER_ERROR)
+                                }
                             }
                         }
                     }
