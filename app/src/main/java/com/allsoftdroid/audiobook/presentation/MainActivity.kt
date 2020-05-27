@@ -18,7 +18,7 @@ import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManage
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.utility.MovableFrameLayout
-import com.allsoftdroid.audiobook.utility.StoragePermissionHandler
+import com.allsoftdroid.common.base.utils.StoragePermissionHandler
 import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ConnectionLiveData
