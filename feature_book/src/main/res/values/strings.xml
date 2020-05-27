@@ -21,4 +21,5 @@
     <string name="library">Library</string>
     <string name="profile_picture">profile picture</string>
     <string name="guest_user">Guest User</string>
+    <string name="audiobook_refresh">Refresh list</string>
 </resources>
