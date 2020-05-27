@@ -83,6 +83,7 @@ class AudioBookListViewModel(
 
     private var mSearchQuery:String = ""
     private var searchJob:Job? = null
+    private var refreshJob:Job? = null
 
     private var _searchError = MutableLiveData<Boolean>()
     val searchError : LiveData<Boolean> = _searchError
@@ -95,13 +96,20 @@ class AudioBookListViewModel(
 
     fun loadRecentBookList(){
         if(networkResponse.value?.peekContent() != NetworkState.LOADING){
-            viewModelScope.launch {
+            refreshJob = viewModelScope.launch {
                 Timber.i("Starting to fetch new content from Remote repository")
                 if(audioBooks.value==null || _isSearching){
                     _isSearching = false
                     fetchBookList()
                 }
             }
+        }
+    }
+
+    fun refresh(){
+        refreshJob?.cancel()
+        refreshJob = viewModelScope.launch {
+            fetchBookList()
         }
     }
 
