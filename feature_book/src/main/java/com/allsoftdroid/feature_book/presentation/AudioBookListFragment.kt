@@ -125,6 +125,10 @@ class AudioBookListFragment : BaseUIFragment(){
         binding.toolbarNavHamburger.setOnClickListener {
             drawer.openDrawer(GravityCompat.START)
         }
+
+        binding.toolbarBookRefresh.setOnClickListener {
+            booksViewModel.refresh()
+        }
     }
 
     private fun setupUI(binding:FragmentAudiobookListBinding){
@@ -160,7 +164,7 @@ class AudioBookListFragment : BaseUIFragment(){
         booksViewModel.audioBooks.observe(viewLifecycleOwner, Observer {
             it?.let {
                 if(!booksViewModel.isSearching){
-                    setVisibility(binding.networkNoConnection,set=false)
+//                    setVisibility(binding.networkNoConnection,set=false)
                     bookAdapter.submitList(it)
                 }
             }
