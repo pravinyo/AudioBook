@@ -56,8 +56,6 @@ internal class BookDetailsViewModel(
     private var currentPlayingTrack : Int = /*state.trackPlaying*/ 0
     fun getCurrentPlayingTrack() = if (currentPlayingTrack<1) 1 else currentPlayingTrack
 
-    private var isMultiDownloadEventSent:Boolean = false /* status of multi download event*/
-
     // when back button is pressed in the UI
     private var _backArrowPressed = MutableLiveData<Event<Boolean>>()
     val backArrowPressed: LiveData<Event<Boolean>>
@@ -549,10 +547,7 @@ internal class BookDetailsViewModel(
         }
     }
 
-    fun downloadAllChapters():Boolean {
-
-        if (isMultiDownloadEventSent) return false
-
+    fun downloadAllChapters() {
         viewModelScope.launch {
             val downloads = mutableListOf<Download>()
 
@@ -571,14 +566,11 @@ internal class BookDetailsViewModel(
                                 chapterIndex = track.trackNumber?:0
                             )
                         )
+
+                        downloaderAction(MultiDownload(downloads = downloads))
                     }
                 }
             }
-
-            downloaderAction(MultiDownload(downloads = downloads))
-            isMultiDownloadEventSent = true
         }
-
-        return isMultiDownloadEventSent
     }
 }
