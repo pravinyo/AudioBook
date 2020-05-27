@@ -16,6 +16,7 @@ import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.allsoftdroid.common.base.store.downloader.*
 import com.allsoftdroid.common.base.utils.BindingUtils.getNormalizedText
 import com.allsoftdroid.common.base.utils.ShareUtils
+import com.allsoftdroid.common.base.utils.StoragePermissionHandler
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
@@ -274,12 +275,12 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         }
 
         dataBinding.imgViewBookDownload.setOnClickListener {
-            val isSent = bookDetailsViewModel.downloadAllChapters()
-            if (!isSent) {
-                Toast.makeText(this.requireActivity(),getString(R.string.download_soon_start),Toast.LENGTH_SHORT).show()
+            if(StoragePermissionHandler.isPermissionGranted(requireActivity())){
+                bookDetailsViewModel.downloadAllChapters()
+                it.setBackgroundResource(R.drawable.gradiant_background)
+            }else{
+                StoragePermissionHandler.requestPermission(requireActivity())
             }
-
-            it.setBackgroundResource(R.drawable.gradiant_background)
         }
 
         dataBinding.bookMediaActionsPlay.setOnClickListener {
