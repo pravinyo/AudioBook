@@ -566,9 +566,10 @@ internal class BookDetailsViewModel(
                                 chapterIndex = track.trackNumber?:0
                             )
                         )
-
-                        downloaderAction(MultiDownload(downloads = downloads))
                     }
+
+                    Timber.d("Total chapters to be downloaded is ${downloads.size}")
+                    downloaderAction(MultiDownload(downloads = downloads))
                 }
             }
         }
