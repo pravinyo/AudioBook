@@ -276,8 +276,13 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
         dataBinding.imgViewBookDownload.setOnClickListener {
             if(StoragePermissionHandler.isPermissionGranted(requireActivity())){
-                bookDetailsViewModel.downloadAllChapters()
-                it.setBackgroundResource(R.drawable.gradiant_background)
+                val isSent = bookDetailsViewModel.downloadAllChapters()
+                if(!isSent){
+                    Toast.makeText(requireActivity(),getText(R.string.download_soon_start),Toast.LENGTH_SHORT).show()
+                }else{
+                    dataBinding.imgViewBookDownload.setBackgroundResource(R.drawable.gradiant_background)
+                }
+
             }else{
                 StoragePermissionHandler.requestPermission(requireActivity())
             }
