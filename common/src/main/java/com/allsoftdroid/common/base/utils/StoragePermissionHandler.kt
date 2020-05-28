@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.utility
+package com.allsoftdroid.common.base.utils
 
 import android.Manifest
 import android.app.Activity
@@ -22,7 +22,8 @@ class StoragePermissionHandler {
         fun requestPermission(context: Activity){
             ActivityCompat.requestPermissions(context,
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                MY_PERMISSIONS_REQUEST_READ_WRITE_STORAGE)
+                MY_PERMISSIONS_REQUEST_READ_WRITE_STORAGE
+            )
         }
 
         fun isRequestGrantedFor(requestCode:Int,grantResults: IntArray):Boolean{

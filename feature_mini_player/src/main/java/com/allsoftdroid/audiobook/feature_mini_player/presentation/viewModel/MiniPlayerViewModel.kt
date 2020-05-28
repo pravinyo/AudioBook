@@ -47,6 +47,10 @@ class MiniPlayerViewModel(
                             currentPlayingIndex = event.position
                         }
 
+                        is PlaySelectedTrack -> {
+                            setShouldPlay(play = true)
+                        }
+
                         is Play -> {
                             setShouldPlay(play = true)
                         }

@@ -35,6 +35,8 @@ internal class BookDetailsViewModel(
     private val getFetchAdditionalBookDetailsUseCase: FetchAdditionalBookDetailsUsecase,
     private val listenLaterUsecase: ListenLaterUsecase,
     private val getTrackListUsecase : GetTrackListUsecase) : ViewModel(){
+    private var isMultiDownloadEventSent: Boolean = false
+
     /**
      * cancelling this job cancels all the job started by this viewmodel
      */
@@ -55,8 +57,6 @@ internal class BookDetailsViewModel(
 
     private var currentPlayingTrack : Int = /*state.trackPlaying*/ 0
     fun getCurrentPlayingTrack() = if (currentPlayingTrack<1) 1 else currentPlayingTrack
-
-    private var isMultiDownloadEventSent:Boolean = false /* status of multi download event*/
 
     // when back button is pressed in the UI
     private var _backArrowPressed = MutableLiveData<Event<Boolean>>()
@@ -553,6 +553,8 @@ internal class BookDetailsViewModel(
 
         if (isMultiDownloadEventSent) return false
 
+        isMultiDownloadEventSent = true
+
         viewModelScope.launch {
             val downloads = mutableListOf<Download>()
 
@@ -572,11 +574,11 @@ internal class BookDetailsViewModel(
                             )
                         )
                     }
+
+                    Timber.d("Total chapters to be downloaded is ${downloads.size}")
+                    downloaderAction(MultiDownload(downloads = downloads))
                 }
             }
-
-            downloaderAction(MultiDownload(downloads = downloads))
-            isMultiDownloadEventSent = true
         }
 
         return isMultiDownloadEventSent
