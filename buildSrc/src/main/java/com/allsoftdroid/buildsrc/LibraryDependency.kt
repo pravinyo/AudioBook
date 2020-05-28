@@ -3,6 +3,9 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val TOOL_TIP = "2.0.3"
+    const val FIREBASE_CRASHLYTICS = "17.0.0"
+    const val FIREBASE_VERSION = "17.4.2"
     const val OSS_LICENSES = "17.0.0"
     const val PALETTE = "1.0.0"
     const val PREFERENCE = "1.1.1"
@@ -112,16 +115,17 @@ object LibraryDependency {
     const val RX_RELAY = "com.jakewharton.rxrelay2:rxrelay:${LibraryVersion.RX_RELAY}"
 
     const val EXOPLAYER = "com.google.android.exoplayer:exoplayer:${LibraryVersion.EXOPLAYER}"
-
     const val LEAKY_CANARY = "com.squareup.leakcanary:leakcanary-android:${LibraryVersion.LEAKY_CANARY}"
-
     const val MULTISTAGE_TOGGLE_BUTTON = "org.honorato.multistatetogglebutton:multistatetogglebutton:${LibraryVersion.MULTISTAGE_TOGGLE_BTN}"
 
     const val SUPPORT_V13 = "com.android.support:support-v13:${LibraryVersion.SUPPORT_V13}"
-
     const val JSOUP = "org.jsoup:jsoup:${LibraryVersion.JSOUP}"
-
     const val DROPBOX_STORE = "com.dropbox.mobile.store:store4:${LibraryVersion.DROPBOX_STORE}"
-
     const val OSS_LICENSES = "com.google.android.gms:play-services-oss-licenses:${LibraryVersion.OSS_LICENSES}"
+
+    const val FIREBASE_ANALYTICS = "com.google.firebase:firebase-analytics:${LibraryVersion.FIREBASE_VERSION}"
+    const val FIREBASE_ANALYTICS_KTX = "com.google.firebase:firebase-analytics-ktx:${LibraryVersion.FIREBASE_VERSION}"
+    const val FIREBASE_CRASHLYTICS = "com.google.firebase:firebase-crashlytics:${LibraryVersion.FIREBASE_CRASHLYTICS}"
+
+    const val TOOL_TIP = "it.sephiroth.android.library.targettooltip:target-tooltip-library:${LibraryVersion.TOOL_TIP}"
 }

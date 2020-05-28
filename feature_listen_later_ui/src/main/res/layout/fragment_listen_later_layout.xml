@@ -17,7 +17,7 @@
             android:layout_height="?actionBarSize"
             app:layout_constraintEnd_toEndOf="parent"
             android:background="@color/black"
-            android:padding="2dp"
+            android:padding="@dimen/padding_min"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/toolbar"
@@ -25,11 +25,11 @@
 
             <ImageView
                 android:id="@+id/toolbar_back_arrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/margin_normal"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
                 android:contentDescription="@string/toolbar_back_arrow" />
@@ -38,8 +38,9 @@
                 android:id="@+id/toolbar_title"
                 android:textColor="@color/white"
                 android:layout_width="0dp"
+                android:layout_marginStart="@dimen/margin_normal"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:gravity="center"
+                android:gravity="start|center_vertical"
                 android:text="@string/toolbar_title_text"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
@@ -47,7 +48,7 @@
 
 
         <LinearLayout
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/margin_normal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -59,7 +60,7 @@
             <TextView
                 android:id="@+id/bookStats_count"
                 android:textColor="@color/black"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/margin_normal"
                 android:layout_width="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:gravity="center"
@@ -73,14 +74,14 @@
                 android:gravity="center"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/margin_normal"
                 android:orientation="horizontal">
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="true"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/margin_normal"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_sort_black_24dp"
                     android:contentDescription="@string/sort" />

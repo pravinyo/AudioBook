@@ -4,7 +4,7 @@ import android.content.Intent
 import com.allsoftdroid.audiobook.services.audio.service.AudioService
 import com.allsoftdroid.audiobook.services.audio.service.AudioServiceBinder
 import com.allsoftdroid.audiobook.services.audio.utils.AudioBookPlayer
-import com.allsoftdroid.audiobook.services.audio.utils.LocalFilesForBook
+import com.allsoftdroid.common.base.utils.LocalFilesForBook
 import com.allsoftdroid.audiobook.services.audio.utils.PrepareMediaHandler
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
@@ -53,10 +53,6 @@ object AudioServiceModule {
 
         single {
             PrepareMediaHandler(context = get(),localStorageFiles = get())
-        }
-
-        single {
-            LocalFilesForBook(app = get())
         }
     }
 }

@@ -13,6 +13,7 @@ import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.doma
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.IStoreRepository
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.FetchAdditionalBookDetailsUsecase
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.SearchBookDetailsUsecase
+import com.allsoftdroid.common.base.utils.LocalFilesForBook
 import com.allsoftdroid.database.common.AudioBookDatabase
 import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
@@ -72,7 +73,8 @@ object BookDetailsModule {
                 searchBookDetailsUsecase = get(),
                 listenLaterUsecase = get(),
                 getFetchAdditionalBookDetailsUseCase = get(),
-                userActionEventStore = get()
+                userActionEventStore = get(),
+                localFilesForBook = get()
             )
         }
     }
@@ -113,7 +115,7 @@ object BookDetailsModule {
 
         factory {
             MetadataRepositoryImpl(
-                metadataDao = get(),
+                metadataDao = get(named(name = METADATA_DAO)),
                 bookId = getProperty(PROPERTY_BOOK_ID),
                 metadataDataSource = get(),
                 saveInDatabase = get(named(name = METADATA_DATABASE))) as IMetadataRepository
@@ -121,7 +123,7 @@ object BookDetailsModule {
 
         factory {
             TrackListRepositoryImpl(
-                metadataDao = get(),
+                metadataDao = get(named(name = METADATA_DAO)),
                 bookId = getProperty(PROPERTY_BOOK_ID)
             ) as ITrackListRepository
         }
@@ -156,7 +158,7 @@ object BookDetailsModule {
             AudioBookDatabase.getDatabase(get()).listenLaterDao()
         }
 
-        single {
+        single(named(name = METADATA_DAO)) {
             AudioBookDatabase.getDatabase(get()).metadataDao()
         }
 
@@ -165,7 +167,7 @@ object BookDetailsModule {
         }
 
         single(named(name = METADATA_DATABASE)) {
-            SaveMetadataInDatabase.setup(metadataDao = get()) as SaveInDatabase<MetadataDao,SaveMetadataInDatabase>
+            SaveMetadataInDatabase.setup(metadataDao = get(named(name = METADATA_DAO))) as SaveInDatabase<MetadataDao,SaveMetadataInDatabase>
         }
 
         single {
@@ -183,4 +185,5 @@ object BookDetailsModule {
 
     const val PROPERTY_BOOK_ID = "bookDetails_book_id"
     private const val METADATA_DATABASE = "SaveMetadataInDatabase"
+    private const val METADATA_DAO ="MetadataDao_BookDetailsModule"
 }

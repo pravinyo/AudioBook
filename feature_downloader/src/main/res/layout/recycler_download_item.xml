@@ -15,7 +15,8 @@
             android:id="@+id/textView_download_file_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:layout_width="0dp"
-            android:textColor="@color/colorItem"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
             android:layout_weight="1"
             android:layout_height="wrap_content" />
         <ImageView
@@ -33,7 +34,7 @@
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/textView_download_progress_details"
-            android:textColor="@color/colorItem"
+            android:textColor="@color/colorPrimary"
             android:text="@string/calculating"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -48,6 +49,7 @@
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="0dp"
                 android:paddingEnd="@dimen/padding_standard"
+                android:paddingStart="@dimen/standard_padding_min"
                 android:layout_weight="3"
                 android:layout_gravity="center"
                 android:layout_height="wrap_content" />

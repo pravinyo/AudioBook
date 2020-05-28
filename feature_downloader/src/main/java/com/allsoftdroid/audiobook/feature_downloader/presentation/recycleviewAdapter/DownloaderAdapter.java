@@ -129,8 +129,6 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         })
                 );
 
-
-
         if(mDownloader.getStatusByDownloadId(holder.downloadId)==null){
             downloadInterrupted(holder);
         }else if(mDownloader.getStatusByDownloadId(holder.downloadId).length>0 &&
@@ -180,7 +178,10 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         holder.mDeleteButton.setVisibility(View.VISIBLE);
         holder.mDeleteButton.setOnClickListener(view -> DeleteFileHandler(mDownloader,holder.downloadId));
         holder.mProgressBar.setVisibility(View.GONE);
-        holder.mProgressDetails.setText(Utility.bytes2String(mDownloader.getProgress(downloadId)[1]));
+        long[] progress = mDownloader.getProgress(downloadId);
+        if(progress != null){
+            holder.mProgressDetails.setText(Utility.bytes2String(progress[1]));
+        }
         holder.mFileName.setOnClickListener(view -> mDownloader.openDownloadedFile(mContext,holder.downloadId));
     }
 
@@ -210,6 +211,9 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();
+        }else {
+            downloader.removeFromDownloadDatabase(downloadId);
+            mDownloaderRefresh.ReloadAdapter();
         }
     }
 

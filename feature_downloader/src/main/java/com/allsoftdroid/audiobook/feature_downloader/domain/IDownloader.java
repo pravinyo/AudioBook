@@ -2,13 +2,17 @@ package com.allsoftdroid.audiobook.feature_downloader.domain;
 
 import android.content.Context;
 
+import com.allsoftdroid.common.base.store.downloader.Download;
+
+import java.util.List;
+
 public interface IDownloader extends IDownloaderCore {
 
     void updateDownloaded(String mUrl,String mBookId,int mChapterIndex);
     void updateProgress(String mUrl,String mBookId,int mChapterIndex,long progress);
 
     long[] getProgress(long downloadId);
-    void bulkDownload(String[] urls, String[] names, String subPath, String title);
+    void bulkDownload(List<Download> downloads);
 
     void removeFromDownloadDatabase(long downloadId);
 

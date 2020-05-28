@@ -20,7 +20,7 @@
         android:text="@string/emptyView_download_message"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:layout_width="wrap_content"
-        android:textColor="@color/colorItem"
+        android:textColor="@color/colorPrimary"
         android:layout_marginBottom="@dimen/margin_standard"
         android:layout_height="wrap_content" />
 </LinearLayout>

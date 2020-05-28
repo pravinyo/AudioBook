@@ -84,6 +84,11 @@ class AudioBookListFragment : BaseUIFragment(){
                     this.findNavController()
                         .navigate(R.id.action_AudioBookListFragment_to_ListenLaterFragment)
                 }
+
+                R.id.nav_item_my_book -> {
+                    this.findNavController()
+                        .navigate(R.id.action_AudioBookListFragment_to_MyBooksFragment)
+                }
             }
 
             return@setNavigationItemSelectedListener false
@@ -120,6 +125,10 @@ class AudioBookListFragment : BaseUIFragment(){
         binding.toolbarNavHamburger.setOnClickListener {
             drawer.openDrawer(GravityCompat.START)
         }
+
+        binding.toolbarBookRefresh.setOnClickListener {
+            booksViewModel.refresh()
+        }
     }
 
     private fun setupUI(binding:FragmentAudiobookListBinding){
@@ -155,7 +164,7 @@ class AudioBookListFragment : BaseUIFragment(){
         booksViewModel.audioBooks.observe(viewLifecycleOwner, Observer {
             it?.let {
                 if(!booksViewModel.isSearching){
-                    setVisibility(binding.networkNoConnection,set=false)
+                    if(it.isNotEmpty()) setVisibility(binding.networkNoConnection,set=false)
                     bookAdapter.submitList(it)
                 }
             }
@@ -268,10 +277,5 @@ class AudioBookListFragment : BaseUIFragment(){
                 requireActivity().onBackPressed()
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        FeatureBookModule.unLoadModules()
     }
 }

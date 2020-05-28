@@ -24,15 +24,16 @@ class GetMetadataUsecase( private val metadataRepository: IMetadataRepository) :
             it.getContentIfNotHandled()?.let { networkState ->
                 when(networkState){
 
-                    NetworkState.ERROR -> {
+                    NetworkState.SERVER_ERROR,
+                    NetworkState.CONNECTION_ERROR -> {
                         GlobalScope.launch(Dispatchers.Main) {
-                            useCaseCallback?.onError(Error("Network Error"))
+                            useCaseCallback?.onError(Error(networkState.value))
                         }
                     }
 
                     NetworkState.COMPLETED->{
                         GlobalScope.launch(Dispatchers.Main) {
-                            val responseValues = ResponseValues(Event(Unit))
+                            val responseValues = ResponseValues(Event(networkState.value))
                             useCaseCallback?.onSuccess(responseValues)
                         }
                     }

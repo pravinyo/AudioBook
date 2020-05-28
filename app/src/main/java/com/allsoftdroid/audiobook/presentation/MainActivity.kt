@@ -18,7 +18,7 @@ import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManage
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.utility.MovableFrameLayout
-import com.allsoftdroid.audiobook.utility.StoragePermissionHandler
+import com.allsoftdroid.common.base.utils.StoragePermissionHandler
 import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ConnectionLiveData
@@ -47,7 +47,9 @@ class MainActivity : BaseActivity() {
         const val MINI_PLAYER_TAG = "MiniPlayer"
     }
 
-    private val mainActivityViewModel : MainActivityViewModel by viewModel()
+    private val mainActivityViewModel : MainActivityViewModel by viewModel{
+        parametersOf(Bundle(), "vm_main")
+    }
     private val connectionListener: ConnectionLiveData by inject{parametersOf(this)}
     private val downloadEventStore:DownloadEventStore by inject()
     private val downloader: IDownloaderCore by inject{parametersOf(this)}
@@ -132,7 +134,7 @@ class MainActivity : BaseActivity() {
 
         Timber.d("Main Activity  start")
         mainActivityViewModel.showPlayer.observe(this, Observer {
-            it.peekContent().let { shouldShow ->
+            it.let { shouldShow ->
                 Timber.d("Player state event received from view model:shouldShow->$shouldShow")
                 miniPlayerViewState(shouldShow)
             }
@@ -259,7 +261,6 @@ class MainActivity : BaseActivity() {
                 layoutParams = layout
             }
         }
-
     }
 
     private fun performAction(event: AudioPlayerEvent){
@@ -321,7 +322,6 @@ class MainActivity : BaseActivity() {
         stopAudioService()
         disposables.dispose()
         downloader.Destroy()
-        AppModule.unloadModule()
     }
 
     private fun stopAudioService(){
@@ -336,29 +336,32 @@ class MainActivity : BaseActivity() {
         val controller = findNavController(R.id.navHostFragment)
         val playingTrackDetails = mainActivityViewModel.getPlayingTrack()
 
-        val bundle = bundleOf(
-            "bookId" to playingTrackDetails.bookIdentifier,
-            "bookTitle" to playingTrackDetails.bookTitle,
-            "trackName" to playingTrackDetails.trackName,
-            "chapterIndex" to playingTrackDetails.chapterIndex,
-            "totalChapter" to playingTrackDetails.totalChapter,
-            "isPlaying" to playingTrackDetails.isPlaying)
+        playingTrackDetails?.let {trackDetails ->
+            val bundle = bundleOf(
+                "bookId" to trackDetails.bookIdentifier,
+                "bookTitle" to trackDetails.bookTitle,
+                "trackName" to trackDetails.trackName,
+                "chapterIndex" to trackDetails.chapterIndex,
+                "totalChapter" to trackDetails.totalChapter,
+                "isPlaying" to trackDetails.isPlaying)
 
-        controller.currentDestination?.let {
-            when(it.id){
-                R.id.AudioBookDetailsFragment ->{
-                    controller.navigate(R.id.action_AudioBookDetailsFragment_to_MainPlayerFragment,bundle)
-                }
+            controller.currentDestination?.let {
+                when(it.id){
+                    R.id.AudioBookDetailsFragment ->{
+                        controller.navigate(R.id.action_AudioBookDetailsFragment_to_MainPlayerFragment,bundle)
+                    }
 
-                R.id.AudioBookListFragment ->{
-                    controller.navigate(R.id.action_AudioBookListFragment_to_MainPlayerFragment,bundle)
-                }
+                    R.id.AudioBookListFragment ->{
+                        controller.navigate(R.id.action_AudioBookListFragment_to_MainPlayerFragment,bundle)
+                    }
 
-                else -> {
-                    Timber.d("Operation not allowed")
-                    Toast.makeText(this,"Can't navigate to Player",Toast.LENGTH_SHORT).show()
+                    else -> {
+                        Timber.d("Operation not allowed")
+                        Toast.makeText(this,"Can't navigate to Player",Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
+
     }
 }

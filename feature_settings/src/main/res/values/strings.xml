@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_storage">Storage</string>
-    <string name="preference_title_downloads">Download Folder</string>
+    <string name="preference_title_downloads">Storage Folder</string>
     <string name="preference_summary">default location</string>
     <string name="preference_downloads_help">check allowed folder</string>
     <string name="title_about">About</string>

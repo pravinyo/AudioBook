@@ -49,6 +49,12 @@
             android:visibility="gone"
             layout="@layout/layout_no_connection"/>
 
+        <include android:id="@+id/server_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            layout="@layout/layout_server_error"/>
+
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -88,10 +94,11 @@
 
                     <ImageView
                         android:id="@+id/imgView_book_listen_later"
-                        android:src="@drawable/ic_bookmark_plus_outline"
+                        android:src="@drawable/ic_clock_outline"
                         android:layout_width="@dimen/track_item_control_btn_size"
                         android:layout_height="@dimen/track_item_control_btn_size"
                         android:layout_marginEnd="@dimen/banner_image_margin_end_normal"
+                        android:padding="@dimen/padding_min"
                         android:contentDescription="@string/banner_image_listen_later"
                         android:layout_marginTop="@dimen/track_item_control_btn_margin"
                         android:clickable="true"
@@ -106,6 +113,7 @@
                         android:layout_width="@dimen/track_item_control_btn_size"
                         android:layout_height="@dimen/track_item_control_btn_size"
                         android:layout_marginTop="@dimen/track_item_control_btn_margin"
+                        android:padding="@dimen/padding_min"
                         android:contentDescription="@string/banner_image_download"
                         app:layout_constraintEnd_toEndOf="@+id/imgView_book_listen_later"
                         app:layout_constraintStart_toStartOf="@+id/imgView_book_listen_later"
@@ -117,6 +125,7 @@
                         android:layout_width="@dimen/track_item_control_btn_size"
                         android:layout_height="@dimen/track_item_control_btn_size"
                         android:layout_marginTop="@dimen/track_item_control_btn_margin"
+                        android:padding="@dimen/padding_min"
                         android:contentDescription="@string/banner_image_share"
                         app:layout_constraintEnd_toEndOf="@+id/imgView_book_listen_later"
                         app:layout_constraintStart_toStartOf="@+id/imgView_book_listen_later"
@@ -128,6 +137,7 @@
                         android:layout_width="@dimen/track_item_control_btn_size"
                         android:layout_height="@dimen/track_item_control_btn_size"
                         android:layout_marginTop="@dimen/track_item_control_btn_margin"
+                        android:padding="@dimen/padding_min"
                         android:clickable="true"
                         android:focusable="true"
                         android:contentDescription="@string/banner_image_info"
@@ -150,6 +160,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/fl_book_image_holder">
 
                     <LinearLayout
+                        android:id="@+id/book_media_actions_read"
                         android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
@@ -175,6 +186,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/book_media_actions_play"
                         android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"

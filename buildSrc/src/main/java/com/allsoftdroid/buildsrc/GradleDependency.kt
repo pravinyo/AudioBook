@@ -1,4 +1,6 @@
 object GradlePluginVersion {
+    const val FIREBASE_CRASHLYTICS ="2.1.1"
+    const val GOOGLE_SERVICES = "4.3.3"
     const val ANDROID_GRADLE = "3.5.0"
     const val KTLINT_GRADLE = "8.2.0"
     const val DETEKT = "1.0.1"
@@ -17,6 +19,8 @@ object GradlePluginId {
     const val GRADLE_VERSION_PLUGIN = "com.github.ben-manes.versions"
     const val SAFE_ARGS = "androidx.navigation.safeargs"
     const val OSS_LICENSES = "com.google.android.gms.oss-licenses-plugin"
+    const val GOOGLE_SERVICES ="com.google.gms.google-services"
+    const val FIREBASE_CRASHLYTICS = "com.google.firebase.crashlytics"
 }
 
 object GradleDependency {
@@ -25,4 +29,6 @@ object GradleDependency {
     const val KTLINT_GRADLE = "org.jlleitschuh.gradle:ktlint-gradle:${GradlePluginVersion.KTLINT_GRADLE}"
     const val SAFE_ARGS = "androidx.navigation:navigation-safe-args-gradle-plugin:${CoreVersion.NAVIGATION}"
     const val OSS_LICENSES = "com.google.android.gms:oss-licenses-plugin:${CoreVersion.OSS_LICENSES}"
+    const val GOOGLE_SERVICES = "com.google.gms:google-services:${GradlePluginVersion.GOOGLE_SERVICES}"
+    const val FIREBASE_CRASHLYTICS = "com.google.firebase:firebase-crashlytics-gradle:${GradlePluginVersion.FIREBASE_CRASHLYTICS}"
 }

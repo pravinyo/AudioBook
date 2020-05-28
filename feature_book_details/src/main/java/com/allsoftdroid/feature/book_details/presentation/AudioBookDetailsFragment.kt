@@ -1,5 +1,7 @@
 package com.allsoftdroid.feature.book_details.presentation
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +14,9 @@ import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.allsoftdroid.common.base.store.downloader.*
+import com.allsoftdroid.common.base.utils.BindingUtils.getNormalizedText
 import com.allsoftdroid.common.base.utils.ShareUtils
+import com.allsoftdroid.common.base.utils.StoragePermissionHandler
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAudiobookDetailsBinding
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
@@ -46,7 +50,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
     Lazily initialize the view model
      */
     private val bookDetailsViewModel: BookDetailsViewModel by viewModel{
-        parametersOf(Bundle(), "vm1")
+        parametersOf(Bundle(), "vm_audio_book_details")
     }
     private val eventStore : AudioPlayerEventStore by inject()
     private val downloadStore : DownloadEventStore by inject()
@@ -149,13 +153,22 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                         removeLoading()
                         setVisibility(dataBindingReference.pbContentLoading,set = false)
                         Timber.d("Completed")}
-                    NetworkState.ERROR -> {
+                    NetworkState.CONNECTION_ERROR -> {
                         setVisibility(dataBinding.pbContentLoading,set = false)
 
                         if(bookDetailsViewModel.audioBookTracks.value.isNullOrEmpty()){
                             setVisibility(dataBinding.networkNoConnection,set = true)
                         }
-                        Toast.makeText(activity,"Connection Error",Toast.LENGTH_SHORT).show()}
+                        Toast.makeText(activity,"Connection Error",Toast.LENGTH_SHORT).show()
+                    }
+                    NetworkState.SERVER_ERROR -> {
+                        setVisibility(dataBinding.pbContentLoading,set = false)
+
+                        if(bookDetailsViewModel.audioBookTracks.value.isNullOrEmpty()){
+                            setVisibility(dataBinding.serverError,set = true)
+                        }
+                        Toast.makeText(activity,"Server Error",Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         })
@@ -199,7 +212,6 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                 Timber.d("list size received is ${it.size}")
                 if(it.isNotEmpty()){
                     trackAdapter.submitList(it)
-                    removeLoading()
 
                     if(argBookTrackNumber>0){
                         Timber.d("Book Track number is $argBookTrackNumber")
@@ -219,20 +231,23 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                         formattedBookDetails(it)
                     }
                 }else formattedBookDetails(bookDetails)
+
             }catch ( e:Exception){
                 e.printStackTrace()
                 bookDetailsViewModel.audioBookMetadata.value?.let {
                     dataBinding.textViewBookIntro.text = formattedBookDetails(it)
                 }
             }
+
+            removeLoading()
         })
 
         bookDetailsViewModel.isAddedToListenLater.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let { isAdded ->
                 dataBinding.imgViewBookListenLater.apply {
                     setImageResource(when(isAdded){
-                        true -> R.drawable.ic_bookmark_minus
-                        else -> R.drawable.ic_bookmark_plus_outline
+                        true -> R.drawable.ic_clock
+                        else -> R.drawable.ic_clock_outline
                     })
                 }
             }
@@ -258,16 +273,52 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                 )
             }
         }
+
+        dataBinding.imgViewBookDownload.setOnClickListener {
+            if(StoragePermissionHandler.isPermissionGranted(requireActivity())){
+                val isSent = bookDetailsViewModel.downloadAllChapters()
+                if(!isSent){
+                    Toast.makeText(requireActivity(),getText(R.string.download_soon_start),Toast.LENGTH_SHORT).show()
+                }else{
+                    dataBinding.imgViewBookDownload.setBackgroundResource(R.drawable.gradiant_background)
+                }
+
+            }else{
+                StoragePermissionHandler.requestPermission(requireActivity())
+            }
+        }
+
+        dataBinding.bookMediaActionsPlay.setOnClickListener {
+            resumeOrPlayFromStart()
+        }
+
+        dataBinding.bookMediaActionsRead.setOnClickListener {
+            bookDetailsViewModel.additionalBookDetails.value?.let {
+                if (it.archiveUrl.isEmpty()){
+                    Toast.makeText(this.requireActivity(),getString(R.string.no_link_found),Toast.LENGTH_SHORT).show()
+                }else{
+                    val uri  = Uri.parse(it.gutenbergUrl)
+                    val intent = Intent(Intent.ACTION_VIEW,uri)
+                    startActivity(Intent.createChooser(intent,getString(R.string.open_with_label)))
+                }
+            }?:Toast.makeText(this.requireActivity(),getString(R.string.wait_message),Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun resumeOrPlayFromStart() {
+        bookDetailsViewModel.audioBookMetadata.value?.let {
+            playSelectedTrackFile(bookDetailsViewModel.getCurrentPlayingTrack(),it.title)
+        }
     }
 
     private fun removeLoading() {
         setVisibility(dataBindingReference.networkNoConnection,set = false)
-//        setVisibility(dataBindingReference.pbContentLoading,set = false)
+        setVisibility(dataBindingReference.pbContentLoading,set = false)
     }
 
     private fun handleDownloaderEvent(event: Event<DownloadEvent>) {
         event.peekContent().let {
-            if(it is DownloadNothing || it is PullAndUpdateStatus) return
+            if(it is DownloadNothing || it is PullAndUpdateStatus || it is MultiDownload) return
 
             Timber.d("Event is for book: ${it.bookId} - chapter:${it.chapterIndex}")
             bookDetailsViewModel.updateDownloadStatus(it)
@@ -291,13 +342,17 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
                     is PlaySelectedTrack -> {
                         Timber.d("Play selected track event occurred, updating ui")
-                        dataBindingReference.tvToolbarTitle.text = event.trackList[event.position-1].title
+                        dataBindingReference.tvToolbarTitle.apply {
+                            text = getNormalizedText(text = event.trackList[event.position-1].title,limit = 30)
+                        }
                         bookDetailsViewModel.onPlayItemClicked(event.position)
 
                     }
 
                     is TrackDetails -> {
-                        dataBindingReference.tvToolbarTitle.text = event.trackTitle
+                        dataBindingReference.tvToolbarTitle.apply {
+                            text = getNormalizedText(text = event.trackTitle,limit = 30)
+                        }
                         bookDetailsViewModel.onPlayItemClicked(event.position)
                     }
 

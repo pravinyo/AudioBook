@@ -31,16 +31,17 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
             <LinearLayout
                 android:id="@+id/toolbar_side_1"
                 android:orientation="horizontal"
+                android:layout_marginStart="@dimen/margin_normal"
+                android:layout_marginEnd="@dimen/margin_normal"
                 app:toolbarItemVisibility="@{audioBookListViewModel.displaySearch}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <ImageView
                     android:id="@+id/toolbar_nav_hamburger"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/control_icon_size"
+                    android:layout_height="@dimen/control_icon_size"
                     android:clickable="true"
                     android:focusable="true"
-                    android:layout_marginStart="16dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_toolbar_menu_hamburger"
                     android:contentDescription="@string/toolbar_nav_hamburger" />
@@ -57,14 +58,24 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
 
                 <ImageView
                     android:id="@+id/toolbar_book_search"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/control_icon_size"
+                    android:layout_height="@dimen/control_icon_size"
+                    android:layout_marginEnd="@dimen/margin_normal"
                     android:clickable="true"
                     android:focusable="true"
-                    android:layout_marginEnd="16dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/book_search_outline"
                     android:contentDescription="@string/audiobook_search" />
+
+                <ImageView
+                    android:id="@+id/toolbar_book_refresh"
+                    android:layout_width="@dimen/control_icon_size"
+                    android:layout_height="@dimen/control_icon_size"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_refresh"
+                    android:contentDescription="@string/audiobook_refresh" />
             </LinearLayout>
 
             <LinearLayout
@@ -72,12 +83,13 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
                 android:id="@+id/toolbar_side_2"
                 app:toolbarItemVisibility="@{audioBookListViewModel.displaySearch}"
                 android:orientation="horizontal"
+                android:layout_marginStart="@dimen/margin_normal"
+                android:layout_marginEnd="@dimen/margin_normal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_width="@dimen/control_icon_size"
+                    android:layout_height="@dimen/control_icon_size"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_search_web"
                     android:contentDescription="@string/web_search_icon" />
@@ -97,9 +109,8 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
 
                 <ImageView
                     android:id="@+id/iv_search"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
+                    android:layout_width="@dimen/control_icon_size"
+                    android:layout_height="@dimen/control_icon_size"
                     android:src="@drawable/ic_arrow_chevron_right"
                     android:layout_gravity="center_vertical"
                     app:searchOrClose="@{audioBookListViewModel.searchOrClose}"
@@ -109,9 +120,8 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
 
                 <ImageView
                     android:id="@+id/iv_search_cancel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
+                    android:layout_width="@dimen/control_icon_size"
+                    android:layout_height="@dimen/control_icon_size"
                     android:src="@drawable/close"
                     app:searchOrClose="@{audioBookListViewModel.searchOrClose}"
                     android:layout_gravity="center_vertical"
@@ -126,7 +136,6 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:clipToPadding="false"
-            android:padding="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

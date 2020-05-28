@@ -20,7 +20,6 @@ import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContr
 import com.allsoftdroid.audiobook.feature_downloader.data.model.LocalFileDetails;
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloader;
 import com.allsoftdroid.audiobook.feature_downloader.utils.DownloadObserver;
-import com.allsoftdroid.audiobook.feature_downloader.utils.Utility;
 import com.allsoftdroid.audiobook.feature_downloader.utils.downloadUtils;
 import com.allsoftdroid.common.base.extension.Event;
 import com.allsoftdroid.common.base.network.ArchiveUtils;
@@ -31,14 +30,15 @@ import com.allsoftdroid.common.base.store.downloader.DownloadEvent;
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore;
 import com.allsoftdroid.common.base.store.downloader.Downloaded;
 import com.allsoftdroid.common.base.store.downloader.Downloading;
+import com.allsoftdroid.common.base.store.downloader.MultiDownload;
 import com.allsoftdroid.common.base.store.downloader.Progress;
 import com.allsoftdroid.common.base.store.downloader.PullAndUpdateStatus;
 import com.allsoftdroid.common.base.store.downloader.Restart;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Objects;
 
 import timber.log.Timber;
@@ -129,6 +129,10 @@ public class Downloader implements IDownloader {
                     Timber.d("Send Cancel event for bookId:%s, bookUrl:%s",mDownloadObserver.getBookId(),mDownloadObserver.getUrl());
                 }
             }
+        }else if(downloadEvent instanceof MultiDownload){
+            MultiDownload multiDownload = (MultiDownload) downloadEvent;
+            bulkDownload(multiDownload.getDownloads());
+            Timber.d("Multi download event received for %s chapters",multiDownload.getDownloads().size());
         }
         else{
             Timber.d("Download event value: %s", downloadEvent);
@@ -136,19 +140,19 @@ public class Downloader implements IDownloader {
     }
 
     private void addToDownloadQueueRequest(Download obj) {
+
         mDownloadQueue.put(obj.getUrl(),obj);
 
-        if(mDownloadQueue.size()==1){
-            Timber.d("Downloading as it is first request");
-            downloadOldestRequest();
-        }else{
-            insertDownloadDatabase(DOWNLOADER_PENDING_ID,obj.getName(),obj.getUrl());
-            Timber.d("Added to download queue");
-        }
+        insertDownloadDatabase(DOWNLOADER_PENDING_ID,obj.getName(),obj.getUrl());
 
         mDownloadEventStore.publish(
                 new Event<DownloadEvent>(new Downloading(obj.getUrl(),obj.getBookId(),obj.getChapterIndex()))
         );
+
+        if(mDownloadQueue.size()==1){
+            Timber.d("Downloading as it is first request");
+            downloadOldestRequest();
+        }
     }
 
     private void downloadNext(String removeUrl) {
@@ -156,7 +160,7 @@ public class Downloader implements IDownloader {
         mDownloadObserver.stopWatching();
         isDownloading = false;
 
-        if(mDownloadQueue.size()>0){
+        if(!mDownloadQueue.isEmpty()){
             downloadOldestRequest();
         }
 
@@ -228,7 +232,7 @@ public class Downloader implements IDownloader {
 
 
             if(downloadId !=DOWNLOADER_PROTOCOL_NOT_SUPPORTED){
-                Timber.d("Downloader doesn't support this protocol for file from URL: =>%s", URL);
+                Timber.d("Downloader support this protocol for file from URL: =>%s", URL);
                 insertDownloadDatabase(downloadId,name,URL);
             }else {
 
@@ -378,11 +382,14 @@ public class Downloader implements IDownloader {
     }
 
     @Override
-    public void bulkDownload(String[] urls, String[] names, String subPath, String title){
-
-        ArrayList<Long> ids = downloadUtils.bulkDownload(mContext,downloadManager,urls,names,subPath,title);
-        for(int i=0;i<ids.size();i++){
-            insertDownloadDatabase(ids.get(i),names[i],urls[i]);
+    public void bulkDownload(List<Download> downloads){
+        if(!downloads.isEmpty()){
+            Timber.d("Received bulk download request:%s", downloads.size());
+            for(Download download : downloads){
+                addToDownloadQueueRequest(download);
+            }
+        }else {
+            Timber.d("Empty multi download request");
         }
     }
 

@@ -1,5 +1,6 @@
 package com.allsoftdroid.feature.book_details.presentation.viewModel
 
+import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase.FetchAdditionalBookDetailsUsecase
@@ -7,6 +8,7 @@ import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.doma
 import com.allsoftdroid.common.base.store.downloader.DownloaderEventBus
 import com.allsoftdroid.common.base.store.userAction.UserActionEventBus
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
+import com.allsoftdroid.common.base.utils.LocalFilesForBook
 import com.allsoftdroid.common.test.MainCoroutineRule
 import com.allsoftdroid.common.test.getOrAwaitValue
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
@@ -21,6 +23,8 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mock
+import org.mockito.Mockito.mock
 
 
 class BookDetailsViewModelTest{
@@ -44,6 +48,9 @@ class BookDetailsViewModelTest{
     private lateinit var trackListUsecase: GetTrackListUsecase
     private lateinit var listenLaterUsecase: ListenLaterUsecase
     private val bookId = "bookId"
+
+    @Mock
+    private val app:Application = mock(Application::class.java)
 
     @Before
     fun setup(){
@@ -74,7 +81,8 @@ class BookDetailsViewModelTest{
             getFetchAdditionalBookDetailsUseCase = fetchAdditionBookDetailsUsecase,
             getTrackListUsecase = trackListUsecase,
             listenLaterUsecase = listenLaterUsecase,
-            userActionEventStore = UserActionEventBus.getEventBusInstance()
+            userActionEventStore = UserActionEventBus.getEventBusInstance(),
+            localFilesForBook = LocalFilesForBook(app)
         )
 
         assertThat(bookDetailsViewModel.networkResponse.getOrAwaitValue().peekContent(),`is`(NetworkState.LOADING))

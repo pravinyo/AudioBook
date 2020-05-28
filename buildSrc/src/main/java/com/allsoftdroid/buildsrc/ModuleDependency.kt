@@ -17,6 +17,7 @@ object ModuleDependency {
     const val FEATURE_PLAYER_FULL_SCREEN = ":feature_playerfullscreen"
     const val FEATURE_SETTINGS = ":feature_settings"
     const val FEATURE_LISTEN_LATER_UI = ":feature_listen_later_ui"
+    const val FEATURE_MY_BOOKS_UI = ":feature_mybooks"
 
     const val LIBRARY_COMMON = ":common"
 

@@ -5,12 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
-import android.os.Environment;
 import android.text.TextUtils;
 
 import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import timber.log.Timber;
@@ -193,25 +191,6 @@ public class downloadUtils {
 
         return DOWNLOADER_NOT_DOWNLOADING;
     }
-
-    public static ArrayList<Long> bulkDownload(Context context, DownloadManager downloadManager,
-                                               String[] urls, String[] names, String subPath, String title){
-        ArrayList<Long> ids=new ArrayList<>();
-
-        for(int i=0;i<urls.length;i++){
-
-            if (getDownloadIdIfIsDownloading(context,urls[i])>0)
-                continue;
-
-            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(urls[i]));
-            request.setTitle(title);
-
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,subPath+names[i]);
-            ids.add(downloadManager.enqueue(request));
-        }
-        return ids;
-    }
-
 
     public static MatrixCursor getCustomCursor(Context context){
         MatrixCursor customCursor;

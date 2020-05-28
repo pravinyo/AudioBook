@@ -55,7 +55,7 @@
 
                 <TextView
                     android:id="@+id/tv_book_title"
-                    android:padding="@dimen/padding_normal"
+                    android:padding="@dimen/standard_padding_min"
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="@dimen/image_card_size"
                     android:layout_height="@dimen/image_card_size"
-                    android:layout_margin="@dimen/margin_big"
+                    android:layout_margin="@dimen/margin_small"
                     android:layout_gravity="center"
                     app:cardCornerRadius="@dimen/image_card_radius"
                     app:cardElevation="@dimen/image_card_elevation">
@@ -86,14 +86,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_normal"
-            android:layout_marginTop="@dimen/margin_big"
+            android:layout_marginTop="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginBottom="@dimen/margin_small"
             app:bookChapterProgressTitle="@{viewModel.playingTrackDetails}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/book_banner" />
+            app:layout_constraintTop_toBottomOf="@id/book_banner"
+            app:layout_constraintBottom_toTopOf="@id/tv_book_chapter_name"/>
 
         <TextView
             android:id="@+id/tv_book_chapter_name"
@@ -107,7 +108,8 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_book_progress_title" />
+            app:layout_constraintTop_toBottomOf="@id/tv_book_progress_title"
+            app:layout_constraintBottom_toTopOf="@id/pb_book_chapter_progress"/>
 
         <ProgressBar
             android:id="@+id/pb_book_chapter_progress"
@@ -116,12 +118,13 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:max="100"
             android:layout_marginStart="@dimen/margin_normal"
-            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_small"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginBottom="@dimen/margin_small"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_book_chapter_name" />
+            app:layout_constraintTop_toBottomOf="@id/tv_book_chapter_name"
+            app:layout_constraintBottom_toTopOf="@id/tv_book_progress_time"/>
 
         <TextView
             android:id="@+id/tv_book_progress_time"
@@ -146,6 +149,7 @@
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginBottom="@dimen/margin_big"
             android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/tv_book_progress_time"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
