@@ -35,6 +35,8 @@ internal class BookDetailsViewModel(
     private val getFetchAdditionalBookDetailsUseCase: FetchAdditionalBookDetailsUsecase,
     private val listenLaterUsecase: ListenLaterUsecase,
     private val getTrackListUsecase : GetTrackListUsecase) : ViewModel(){
+    private var isMultiDownloadEventSent: Boolean = false
+
     /**
      * cancelling this job cancels all the job started by this viewmodel
      */
@@ -547,7 +549,12 @@ internal class BookDetailsViewModel(
         }
     }
 
-    fun downloadAllChapters() {
+    fun downloadAllChapters():Boolean {
+
+        if (isMultiDownloadEventSent) return false
+
+        isMultiDownloadEventSent = true
+
         viewModelScope.launch {
             val downloads = mutableListOf<Download>()
 
@@ -573,5 +580,7 @@ internal class BookDetailsViewModel(
                 }
             }
         }
+
+        return isMultiDownloadEventSent
     }
 }
