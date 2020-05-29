@@ -76,8 +76,6 @@ class MetadataRepositoryImpl(
                             Timber.i("Response file size: ${result.item_size}")
                             _networkResponse.value = Event(NetworkState.COMPLETED)
 
-                            Timber.i("Size:${result.metadata.title}")
-
                             /**
                              * Run with application scope
                              */
