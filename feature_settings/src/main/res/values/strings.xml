@@ -10,7 +10,7 @@
     <string name="title_miscellaneous">Miscellaneous</string>
     <string name="preference_title_version">Version</string>
     <string name="preference_title_licenses">Licenses</string>
-    <string name="privacy_page_url">https://github.com/pravinyo/AudioBook/blob/release/todo.txt</string>
+    <string name="privacy_page_url">http://privacy.audiobooks.allsoftdroid.com</string>
     <string name="feedback_summary">Tell us what you liked/dislike about this App.</string>
     <string name="privacy_summary">How your data is been used?</string>
     <string name="licenses_summary">Check Third Part Licenses</string>
@@ -23,6 +23,6 @@
     <string name="title_error_message">Title need at least 10 character long</string>
     <string name="body_error_message">Description need at least 15 character long</string>
     <string name="developer_mail">allsoftdroid@gmail.com</string>
-    <string name="intent_chooser_send_mail_label">Send Mail...</string>
+    <string name="intent_chooser_send_mail_label">Send Mail…</string>
     <string name="feedback_fragment_tag_label">fragment_feedback</string>
 </resources>
