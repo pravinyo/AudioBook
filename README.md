@@ -34,10 +34,10 @@ This App is based on Single Activity Navigation. Each Fragment screen is develop
 # Release: 6.2.0
 ## :star: New Features
 
-- Add tooltip [#127](https://github.com/pravinyo/AudioBook/pull/127)
+- Added tooltip [#127](https://github.com/pravinyo/AudioBook/pull/127)
 - Feature added for offline book playing and feature improvement [#116](https://github.com/pravinyo/AudioBook/pull/116)
 - Crashlytics support [#113](https://github.com/pravinyo/AudioBook/pull/113), [#112](https://github.com/pravinyo/AudioBook/issues/112)
-- My books ui added [#103](https://github.com/pravinyo/AudioBook/pull/103)
+- My books UI added [#103](https://github.com/pravinyo/AudioBook/pull/103)
 - Book details improved [#101](https://github.com/pravinyo/AudioBook/pull/101)
 - Book management screen [#62](https://github.com/pravinyo/AudioBook/issues/62), [#57](https://github.com/pravinyo/AudioBook/issues/57), [#55](https://github.com/pravinyo/AudioBook/issues/55)
 
