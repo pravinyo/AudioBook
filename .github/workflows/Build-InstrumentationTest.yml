@@ -3,9 +3,7 @@ name: AudioBook InstrumentationTest
 on:
   push:
     branches:
-      - '*'
-      - '!master'
-      - '!release*'
+      - 'ci_instrumentation_test'
 
 jobs:
   instrumentationJob:
