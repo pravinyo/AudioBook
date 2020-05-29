@@ -1,5 +1,5 @@
 # AudioBook App
--> `Current Major Version : 6` , -> [Privacy Policy for Published App](http://privacy.audiobooks.allsoftdroid.com/)
+`Current Major Version : 6` , `[Privacy Policy for Published App](http://privacy.audiobooks.allsoftdroid.com/)`
 
 ![AudioBook Feature UnitTest](https://github.com/pravinyo/AudioBook/workflows/AudioBook%20Feature%20UnitTest/badge.svg) ![AudioBook Dependency Graph Generator](https://github.com/pravinyo/AudioBook/workflows/AudioBook%20Dependency%20Graph%20Generator/badge.svg) ![Issues](https://img.shields.io/github/issues-closed/pravinyo/AudioBook)  ![Closed Pull Request](https://img.shields.io/github/issues-pr-closed/pravinyo/AudioBook) ![top language](https://img.shields.io/github/languages/top/pravinyo/AudioBook) ![license](https://img.shields.io/github/license/pravinyo/AudioBook)
 
