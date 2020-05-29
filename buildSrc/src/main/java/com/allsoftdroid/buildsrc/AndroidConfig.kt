@@ -6,10 +6,10 @@ object AndroidConfig {
     const val TARGET_SDK_VERSION = 29
     const val BUILD_TOOLS_VERSION = "29.0.0"
 
-    const val versionMajor = 5
-    const val versionMinor = 5
-    const val versionPatch = 2
-    var versionClassifier = "alpha"
+    const val versionMajor = 6
+    const val versionMinor = 2
+    const val versionPatch = 0
+    var versionClassifier = "SNAPSHOT"
     const val isSnapshot = false
 
     val VERSION_CODE = CodeVersionGenerator.generateVersionCode()
