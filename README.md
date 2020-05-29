@@ -29,6 +29,47 @@ This App is based on Single Activity Navigation. Each Fragment screen is develop
 # Dependency Graph of the Project:
 ![AudioBook](/photos/dependencies_graph.png)
 
+# Release: 6.2.0
+## :star: New Features
+
+- Add tooltip [#127](https://github.com/pravinyo/AudioBook/pull/127)
+- Feature added for offline book playing and feature improvement [#116](https://github.com/pravinyo/AudioBook/pull/116)
+- Crashlytics support [#113](https://github.com/pravinyo/AudioBook/pull/113), [#112](https://github.com/pravinyo/AudioBook/issues/112)
+- My books ui added [#103](https://github.com/pravinyo/AudioBook/pull/103)
+- Book details improved [#101](https://github.com/pravinyo/AudioBook/pull/101)
+- Book management screen [#62](https://github.com/pravinyo/AudioBook/issues/62), [#57](https://github.com/pravinyo/AudioBook/issues/57), [#55](https://github.com/pravinyo/AudioBook/issues/55)
+
+## :beetle: Bug Fixes
+
+- multiple bug fixes [#126](https://github.com/pravinyo/AudioBook/pull/126)
+- Fix downloads not clearing 120 issue [#130](https://github.com/pravinyo/AudioBook/pull/130)
+- Fix booklist refresh [#129](https://github.com/pravinyo/AudioBook/pull/129)
+- app is not loading list  [#128](https://github.com/pravinyo/AudioBook/issues/128)
+- read button is not working [#125](https://github.com/pravinyo/AudioBook/issues/125)
+- button clicks are not responding [#124](https://github.com/pravinyo/AudioBook/issues/124)
+- no visual indication for opening player screen [#123](https://github.com/pravinyo/AudioBook/issues/123)
+- book time text is blank in book details [#122](https://github.com/pravinyo/AudioBook/issues/122)
+- information bottom sheet is floating upward [#121](https://github.com/pravinyo/AudioBook/issues/121)
+- Downloads are not clearing from downloads screen [#120](https://github.com/pravinyo/AudioBook/issues/120)
+- App crash when canceling multiple downloads  [#119](https://github.com/pravinyo/AudioBook/issues/119)
+- replaced icon for listen later from book details [#118](https://github.com/pravinyo/AudioBook/issues/118)
+- App state is lost when app is stopped by system [#114](https://github.com/pravinyo/AudioBook/issues/114)
+- App crash on downloading [#108](https://github.com/pravinyo/AudioBook/issues/108)
+- Main PLayer Ui bug [#107](https://github.com/pravinyo/AudioBook/issues/107)
+- Downloads location issue [#106](https://github.com/pravinyo/AudioBook/issues/106), [#102](https://github.com/pravinyo/AudioBook/issues/102)
+- UI bug in My Books screen [#105](https://github.com/pravinyo/AudioBook/issues/105)
+- Fix remove download folder choice [#111](https://github.com/pravinyo/AudioBook/pull/111)
+- fixed UI element bug [#110](https://github.com/pravinyo/AudioBook/pull/110)
+- Fix main player ui issue [#109](https://github.com/pravinyo/AudioBook/pull/109)
+- Fix issue 102 download location [#104](https://github.com/pravinyo/AudioBook/pull/104)
+- Fix save state bug [#115](https://github.com/pravinyo/AudioBook/pull/115)
+
+## :heart: Contributors
+
+We'd like to thank all the contributors who worked on this release!
+
+- [@pravinyo](https://github.com/pravinyo)
+
 # Release: 5.5.2
 ## :star: New Features
 
