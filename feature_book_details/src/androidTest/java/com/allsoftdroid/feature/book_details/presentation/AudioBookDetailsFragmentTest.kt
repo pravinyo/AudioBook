@@ -14,6 +14,7 @@ import androidx.test.filters.MediumTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.allsoftdroid.common.base.store.audioPlayer.AudioPlayerEventBus
 import com.allsoftdroid.common.base.store.audioPlayer.PlaySelectedTrack
+import com.allsoftdroid.common.base.utils.LocalFilesForBook
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.data.repository.BookDetailsSharedPreferencesRepositoryImpl
 import com.allsoftdroid.feature.book_details.di.BookDetailsModule
@@ -46,11 +47,17 @@ class AudioBookDetailsFragmentTest{
             }
         }
 
+        val localFileModule: Module = module {
+            single {
+                LocalFilesForBook(app = application)
+            }
+        }
+
         BookDetailsModule.dataModule = dataModule
         BookDetailsModule.repositoryModule = repositoryModule
 
         startKoin {
-            modules(storageModule)
+            modules(storageModule,localFileModule)
         }
     }
 
@@ -67,11 +74,11 @@ class AudioBookDetailsFragmentTest{
             //action - Details fragment launched to display task
             launchFragmentInContainer<AudioBookDetailsFragment>(bundle, R.style.AppTheme)
 
+            Thread.sleep(1000)
+
             //Assert
             onView(withId(R.id.tv_toolbar_title)).check(matches(isDisplayed()))
             onView(withId(R.id.tv_toolbar_title)).check(matches(withText(title)))
-
-            onView(withId(R.id.tv_book_desc_text)).check(matches(isDisplayed()))
 
             onView(withId(R.id.btn_toolbar_back_arrow)).check(matches(isDisplayed()))
             onView(withId(R.id.btn_toolbar_back_arrow)).check(matches(isClickable()))

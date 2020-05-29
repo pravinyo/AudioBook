@@ -7,6 +7,7 @@ import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.NavigationViewActions
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.contrib.RecyclerViewActions.scrollToPosition
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -46,7 +47,10 @@ class MainActivityTest{
 
         onView(withId(R.id.toolbar_title)).check(matches(withText("Latest Audio Books")))
 
-        onView(withId(R.id.toolbar_downloads)).perform(click())
+        onView(withId(R.id.toolbar_nav_hamburger)).perform(click())
+
+        onView(withId(R.id.nav_view))
+            .perform(NavigationViewActions.navigateTo(R.id.nav_item_downloads))
 
         pressBack()
 
@@ -76,7 +80,7 @@ class MainActivityTest{
         onView(withId(R.id.iv_search)).perform(click())
 
 
-        Thread.sleep(7000)
+        Thread.sleep(4000)
         onView(withId(R.id.recycler_view_books))
             .check(matches(hasMinimumChildCount(1)))
 
@@ -96,7 +100,7 @@ class MainActivityTest{
 
         onView(withId(R.id.btn_toolbar_back_arrow)).check(matches(isDisplayed()))
 
-        onView(withId(R.id.textView_description)).check(matches(isDisplayed()))
+        onView(withId(R.id.textView_book_intro)).check(matches(isDisplayed()))
 
         pressBack()
 
@@ -132,7 +136,7 @@ class MainActivityTest{
 
         onView(withId(R.id.btn_toolbar_back_arrow)).check(matches(isDisplayed()))
 
-        onView(withId(R.id.textView_description)).check(matches(isDisplayed()))
+        onView(withId(R.id.textView_book_intro)).check(matches(isDisplayed()))
 
         Thread.sleep(4000)
         onView(withId(R.id.recyclerView))
