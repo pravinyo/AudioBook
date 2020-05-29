@@ -164,7 +164,7 @@ class AudioBookListFragment : BaseUIFragment(){
         booksViewModel.audioBooks.observe(viewLifecycleOwner, Observer {
             it?.let {
                 if(!booksViewModel.isSearching){
-//                    setVisibility(binding.networkNoConnection,set=false)
+                    if(it.isNotEmpty()) setVisibility(binding.networkNoConnection,set=false)
                     bookAdapter.submitList(it)
                 }
             }

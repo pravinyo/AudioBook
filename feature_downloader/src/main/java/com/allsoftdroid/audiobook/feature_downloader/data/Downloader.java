@@ -140,19 +140,19 @@ public class Downloader implements IDownloader {
     }
 
     private void addToDownloadQueueRequest(Download obj) {
+
         mDownloadQueue.put(obj.getUrl(),obj);
 
-        if(mDownloadQueue.size()==1){
-            Timber.d("Downloading as it is first request");
-            downloadOldestRequest();
-        }else{
-            insertDownloadDatabase(DOWNLOADER_PENDING_ID,obj.getName(),obj.getUrl());
-            Timber.d("Added to download queue");
-        }
+        insertDownloadDatabase(DOWNLOADER_PENDING_ID,obj.getName(),obj.getUrl());
 
         mDownloadEventStore.publish(
                 new Event<DownloadEvent>(new Downloading(obj.getUrl(),obj.getBookId(),obj.getChapterIndex()))
         );
+
+        if(mDownloadQueue.size()==1){
+            Timber.d("Downloading as it is first request");
+            downloadOldestRequest();
+        }
     }
 
     private void downloadNext(String removeUrl) {
@@ -160,7 +160,7 @@ public class Downloader implements IDownloader {
         mDownloadObserver.stopWatching();
         isDownloading = false;
 
-        if(mDownloadQueue.size()>0){
+        if(!mDownloadQueue.isEmpty()){
             downloadOldestRequest();
         }
 
@@ -232,7 +232,7 @@ public class Downloader implements IDownloader {
 
 
             if(downloadId !=DOWNLOADER_PROTOCOL_NOT_SUPPORTED){
-                Timber.d("Downloader doesn't support this protocol for file from URL: =>%s", URL);
+                Timber.d("Downloader support this protocol for file from URL: =>%s", URL);
                 insertDownloadDatabase(downloadId,name,URL);
             }else {
 
@@ -383,8 +383,13 @@ public class Downloader implements IDownloader {
 
     @Override
     public void bulkDownload(List<Download> downloads){
-        for(Download download : downloads){
-            addToDownloadQueueRequest(download);
+        if(!downloads.isEmpty()){
+            Timber.d("Received bulk download request:%s", downloads.size());
+            for(Download download : downloads){
+                addToDownloadQueueRequest(download);
+            }
+        }else {
+            Timber.d("Empty multi download request");
         }
     }
 
