@@ -14,6 +14,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.allsoftdroid.audiobook.R
+import com.allsoftdroid.audiobook.presentation.utils.TakeScreenshotUtils.takeScreenshot
 import com.allsoftdroid.common.test.DataBindingIdlingResource
 import com.allsoftdroid.common.test.EspressoIdlingResource
 import com.allsoftdroid.common.test.monitorActivity
@@ -74,13 +75,16 @@ class MainActivityTest{
         onView(withId(R.id.toolbar_book_search)).perform(click())
 
         onView(withId(R.id.et_toolbar_search)).check(matches(isDisplayed()))
-        onView(withId(R.id.et_toolbar_search)).perform(clearText(), typeText("poem"))
+        onView(withId(R.id.et_toolbar_search)).perform(clearText(), typeText("penny catechism"))
 
         onView(withId(R.id.iv_search)).check(matches(isDisplayed()))
         onView(withId(R.id.iv_search)).perform(click())
 
 
         Thread.sleep(4000)
+
+        takeScreenshot(parentFolderPath = "Search", screenShotName = "search_results")
+
         onView(withId(R.id.recycler_view_books))
             .check(matches(hasMinimumChildCount(1)))
 
@@ -93,14 +97,20 @@ class MainActivityTest{
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
         Thread.sleep(10000)
+
+        takeScreenshot(parentFolderPath = "MainScreen", screenShotName = "MainScreen")
+
         onView(withId(R.id.recycler_view_books))
-            .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(0,click()))
+            .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(3,click()))
 
         onView(withId(R.id.tv_toolbar_title)).check(matches(isDisplayed()))
 
         onView(withId(R.id.btn_toolbar_back_arrow)).check(matches(isDisplayed()))
 
         onView(withId(R.id.textView_book_intro)).check(matches(isDisplayed()))
+
+        Thread.sleep(4000)
+        takeScreenshot(parentFolderPath = "Book details", screenShotName = "BookDetails")
 
         pressBack()
 
@@ -130,7 +140,7 @@ class MainActivityTest{
 
         Thread.sleep(10000)
         onView(withId(R.id.recycler_view_books))
-            .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(0,click()))
+            .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(3,click()))
 
         onView(withId(R.id.tv_toolbar_title)).check(matches(isDisplayed()))
 
@@ -144,8 +154,24 @@ class MainActivityTest{
 
 
         Thread.sleep(2000)
-        onView(withId(R.id.miniPlayerContainer)).check(matches(isDisplayed()))
+        takeScreenshot(parentFolderPath = "MiniPlayer", screenShotName = "MiniPlayer")
 
+        activityScenario.close()
+    }
+
+    @Test
+    fun listen_later_from_BookDetailsScreen_DisplayInUi(){
+        val activityScenario = ActivityScenario.launch(MainActivity::class.java)
+        dataBindingIdlingResource.monitorActivity(activityScenario)
+
+        onView(withId(R.id.toolbar_nav_hamburger)).perform(click())
+
+        onView(withId(R.id.nav_view))
+            .perform(NavigationViewActions.navigateTo(R.id.nav_item_listen_later))
+
+        Thread.sleep(2000)
+
+        takeScreenshot(parentFolderPath = "Listenlater", screenShotName = "listen_later")
 
         activityScenario.close()
     }
