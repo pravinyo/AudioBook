@@ -36,7 +36,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="@color/colorPrimary"
                     tools:text="Publisher by Librivox on 2020-05-01"/>
             </LinearLayout>
 
@@ -83,7 +83,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="@color/colorPrimary"
                     tools:text="Book Description"/>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
