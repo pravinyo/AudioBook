@@ -22,7 +22,6 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
             android:layout_width="0dp"
             android:layout_height="?actionBarSize"
             app:layout_constraintEnd_toEndOf="parent"
-            android:background="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/toolbar"
@@ -48,7 +47,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
 
                 <TextView
                     android:id="@+id/toolbar_title"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorPrimary"
                     android:layout_width="0dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:gravity="center"
@@ -102,7 +101,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
                     android:ellipsize="end"
                     android:inputType="text"
                     android:layout_gravity="center_vertical"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorPrimaryDark"
                     android:layout_height="wrap_content"
                     android:hint="@string/type_here"
                     android:importantForAutofill="no" />
