@@ -55,6 +55,7 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
 
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.download_status);
 
         mRecyclerView = findViewById(R.id.download_recyclerView);
         LinearLayoutManager mLinearLayout = new LinearLayoutManager(this);
