@@ -2,6 +2,7 @@ package com.allsoftdroid.feature.book_details.presentation.utils
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.allsoftdroid.common.test.getOrAwaitValue
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseAlbumEntity
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseMetadataEntity
@@ -15,6 +16,10 @@ class FakeMetadataSource(private val _metadataLiveData: MutableLiveData<Database
 
     override fun getMetadata(bookId: String): LiveData<DatabaseMetadataEntity> {
         return _metadataLiveData
+    }
+
+    override fun getMetadataNonLive(bookId: String): DatabaseMetadataEntity {
+        return _metadataLiveData.getOrAwaitValue()
     }
 
     override fun getAlbumDetails(metadata_id: String): LiveData<DatabaseAlbumEntity> {
@@ -32,6 +37,13 @@ class FakeMetadataSource(private val _metadataLiveData: MutableLiveData<Database
         formatContains: String
     ): LiveData<List<DatabaseTrackEntity>> {
         return _tracks
+    }
+
+    override fun getTrackDetailsNonLive(
+        metadata_id: String,
+        formatContains: String
+    ): List<DatabaseTrackEntity> {
+        return _tracks.getOrAwaitValue()
     }
 
     override fun getTrackDetailsVBR(metadata_id: String): LiveData<List<DatabaseTrackEntity>> {

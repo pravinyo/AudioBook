@@ -7,7 +7,7 @@
         android:id="@+id/checkbox"
         style="?android:attr/textAppearanceMedium"
         android:layout_width="fill_parent"
-        android:textColor="?attr/colorPrimaryDark"
+        android:textColor="@color/black"
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:text="@string/don_t_show_this"

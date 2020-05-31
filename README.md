@@ -1,5 +1,5 @@
 # AudioBook App
-`Current Major Version : 6` , [`Privacy Policy for Published App`](http://privacy.audiobooks.allsoftdroid.com/)`
+`Current Major Version : 6` , [`Privacy Policy for Published App`](http://privacy.audiobooks.allsoftdroid.com/)
 
 ![AudioBook Feature UnitTest](https://github.com/pravinyo/AudioBook/workflows/AudioBook%20Feature%20UnitTest/badge.svg) ![AudioBook Dependency Graph Generator](https://github.com/pravinyo/AudioBook/workflows/AudioBook%20Dependency%20Graph%20Generator/badge.svg) ![Issues](https://img.shields.io/github/issues-closed/pravinyo/AudioBook)  ![Closed Pull Request](https://img.shields.io/github/issues-pr-closed/pravinyo/AudioBook) ![top language](https://img.shields.io/github/languages/top/pravinyo/AudioBook) ![license](https://img.shields.io/github/license/pravinyo/AudioBook)
 
@@ -30,6 +30,26 @@ This App is based on Single Activity Navigation. Each Fragment screen is develop
 
 # Dependency Graph of the Project:
 ![AudioBook](/photos/dependencies_graph.png)
+
+# Screenshots
+<p float="left">
+  <img src="/photos/mainscreen.png" width="200" />
+  <img src="/photos/bookdetails.png" width="200" />
+  <img src="/photos/listen_later.png" width="200" />
+  <img src="/photos/mybooks.png" width="200" />
+</p>
+
+
+# Release: 6.2.2
+## :beetle: Bug Fixes
+
+- UI fixes and testing enhancement [#133](https://github.com/pravinyo/AudioBook/pull/133)
+
+## :heart: Contributors
+
+We'd like to thank all the contributors who worked on this release!
+
+- [@pravinyo](https://github.com/pravinyo)
 
 # Release: 6.2.0
 ## :star: New Features

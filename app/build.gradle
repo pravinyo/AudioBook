@@ -56,6 +56,10 @@ android {
         returnDefaultValues = true
     }
 
+    adbOptions {
+        installOptions '-g', '-r'
+    }
+
 //    dynamicFeatures = [":feature_book", ":feature_book_details"]
 
 
@@ -99,4 +103,38 @@ dependencies {
     androidTestImplementation(TestLibraryDependency.ANDROID_X_EXT_TESTING)
     androidTestImplementation(TestLibraryDependency.ESPRESSO_CORE)
     androidTestImplementation(TestLibraryDependency.ESPRESSO_CONTRIB)
+}
+
+def reportsDirectory = "$buildDir/reports/androidTests/connected"
+
+def clearScreenshotsTask = task('clearScreenshots', type: Exec) {
+    executable "${android.getAdbExe().toString()}"
+    args 'shell', 'rm', '-r', '/sdcard/Pictures/audioBook_test_folder'
+}
+
+def createScreenshotDirectoryTask = task('createScreenshotDirectory', type: Exec, group: 'reporting') {
+    executable "${android.getAdbExe().toString()}"
+    args 'shell', 'mkdir', '-p', '/sdcard/Pictures/audioBook_test_folder'
+}
+
+def fetchScreenshotsTask = task('fetchScreenshots', type: Exec, group: 'reporting') {
+    executable "${android.getAdbExe().toString()}"
+    args 'pull', '/sdcard/Pictures/audioBook_test_folder/.', reportsDirectory
+    finalizedBy {
+        clearScreenshotsTask
+    }
+
+    dependsOn {
+        createScreenshotDirectoryTask
+    }
+
+    doFirst {
+        new File(reportsDirectory).mkdirs()
+    }
+}
+
+task copyScreenshotToMachine{ task ->
+    task.finalizedBy {
+        fetchScreenshotsTask
+    }
 }
