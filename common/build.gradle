@@ -85,6 +85,8 @@ dependencies {
 
     api(LibraryDependency.KOIN)
 
+    implementation(LibraryDependency.LOTTIE)
+
     //test rules
     implementation(TestLibraryDependency.JUNIT)
     implementation(TestLibraryDependency.COROUTINES_TEST)

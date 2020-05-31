@@ -60,7 +60,7 @@ class MiniPlayerFragment : BaseContainerFragment() {
             .maxWidth(metrics.widthPixels / 2)
             .arrow(true)
             .floatingAnimation(Tooltip.Animation.DEFAULT)
-            .showDuration(4000)
+            .showDuration(3000)
             .overlay(true)
             .create()
 

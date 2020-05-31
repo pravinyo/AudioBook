@@ -28,7 +28,7 @@
                     android:layout_gravity="center_vertical"
                     android:background="@color/transparent"
                     android:onClick="@{()->audioBookDetailsViewModel.onBackArrowPressed()}"
-                    android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
+                    android:src="@drawable/ic_keyboard_arrow_left_white"
                     android:contentDescription="@string/back_screen_button" />
 
                 <TextView

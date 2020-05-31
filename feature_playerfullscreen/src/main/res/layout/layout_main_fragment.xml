@@ -33,7 +33,7 @@
                 android:clickable="true"
                 android:contentDescription="@string/close_player"
                 android:focusable="true"
-                android:src="@drawable/ic_keyboard_arrow_left_black_24dp" />
+                android:src="@drawable/ic_keyboard_arrow_left_white" />
 
         </LinearLayout>
 
