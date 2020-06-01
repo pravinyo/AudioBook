@@ -141,6 +141,28 @@ internal class BookDetailsViewModel(
         isAddedToListenLater()
     }
 
+    fun resetUI(){
+        _audioBookTracks.value?.let {
+
+            val list = it
+            if(list.isNotEmpty()){
+                var currentPlaying = if(currentPlayingTrack>1) currentPlayingTrack else 1
+                if(currentPlaying>list.size){
+                    currentPlaying = 1
+                    currentPlayingTrack = 1
+                }
+
+                Timber.d("Current Track is $currentPlaying")
+                list[currentPlaying-1].isPlaying = false
+
+                _audioBookTracks.value=list.toList()
+            }
+        }
+
+        currentPlayingTrack = 0
+        sharedPref.clear()
+    }
+
     private fun initialLoad(){
         if(_audioBookTracks.value.isNullOrEmpty()){
             viewModelScope.launch {
