@@ -102,11 +102,12 @@ internal class BookDetailsViewModel(
                         currentPlayingTrack = 1
                     }
 
-                    Timber.d("Current Track is $currentPlaying")
+                    Timber.d("Previous track was $currentPlaying")
 
                     list[currentPlaying-1].isPlaying = false
                     list[trackNumber-1].isPlaying = true
 
+                    currentPlayingTrack = trackNumber
 
                     _audioBookTracks.value=list.toList()
 
@@ -152,7 +153,7 @@ internal class BookDetailsViewModel(
                     currentPlayingTrack = 1
                 }
 
-                Timber.d("Current Track is $currentPlaying")
+                Timber.d("Reset track  pos is $currentPlaying")
                 list[currentPlaying-1].isPlaying = false
 
                 _audioBookTracks.value=list.toList()
@@ -417,7 +418,7 @@ internal class BookDetailsViewModel(
     fun onPlayItemClicked(trackNumber: Int){
         Timber.d("Track number pressed for playing is :$trackNumber")
         _newTrackStateEvent.value = Event(trackNumber)
-        currentPlayingTrack = trackNumber
+//        currentPlayingTrack = trackNumber
         stateHandle.set(StateKey.CurrentPlayingTrack.key,currentPlayingTrack)
     }
 
