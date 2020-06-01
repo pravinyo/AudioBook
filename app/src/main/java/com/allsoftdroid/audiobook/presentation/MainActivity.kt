@@ -301,6 +301,10 @@ class MainActivity : BaseActivity() {
                 }
             }
 
+            is Finished -> {
+                mainActivityViewModel.playerStatus(showPlayer = false)
+            }
+
             else -> {
                 Timber.d("Unknown event received")
                 Timber.d("Unknown Event has message of type TrackDetails: ${event is TrackDetails}")

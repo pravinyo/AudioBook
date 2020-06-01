@@ -367,6 +367,12 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                     is EmptyEvent -> {
                         Timber.d("Initial event received")
                     }
+
+                    is Finished -> {
+                        Timber.d("Finished event received: Resetting list")
+                        bookDetailsViewModel.resetUI()
+                    }
+
                     else -> Timber.d("Unknown Pressed Details Fragment")
                 }
             }
