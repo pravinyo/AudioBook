@@ -87,6 +87,10 @@ class MainPlayerFragment : BaseContainerFragment(){
                                 setImageResource(R.drawable.play_circle_green)
                             }
                         }
+
+                        is Finished -> {
+                            mainPlayerViewModel.bookFinished()
+                        }
                         else -> Timber.d("Ignore event $event")
                     }
                 }
