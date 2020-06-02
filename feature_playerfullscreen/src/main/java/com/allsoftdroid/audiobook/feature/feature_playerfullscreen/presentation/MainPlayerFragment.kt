@@ -127,7 +127,7 @@ class MainPlayerFragment : BaseContainerFragment(){
 
     private fun handleBackPressEvent(){
         this.findNavController().navigateUp()
-        mainPlayerViewModel.showMiniPlayer()
+        mainPlayerViewModel.showMiniPlayerIfPlaying()
     }
 
     override fun onDestroyView() {

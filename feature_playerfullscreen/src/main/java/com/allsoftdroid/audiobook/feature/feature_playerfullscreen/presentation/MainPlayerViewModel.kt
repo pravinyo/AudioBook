@@ -171,7 +171,7 @@ class MainPlayerViewModel(
         }
     }
 
-    fun showMiniPlayer(){
+    fun showMiniPlayerIfPlaying(){
         if (!isBookFinished){
             Timber.d("Book is not finished: Sending open mini player")
             userActionEventStore.publish(Event(OpenMiniPlayerUI(this::class.java.simpleName)))
