@@ -103,7 +103,7 @@ fun setTrackBookBanner(cardView: CardView, item: PlayingTrackDetails?) {
                                 val dominant = it.getDominantColor(it.getVibrantColor(0))
                                 val light = it.getLightMutedColor(it.getLightVibrantColor(0))
 
-                                cardView.setBackgroundColor(dominant)
+//                                cardView.setBackgroundColor(dominant)
 
                                 with(cardView.rootView.findViewById<View>(R.id.parentContainer)){
                                     setBackgroundColor(dark)
