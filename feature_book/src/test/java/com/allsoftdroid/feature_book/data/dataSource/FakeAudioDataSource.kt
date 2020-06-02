@@ -19,7 +19,7 @@ class FakeAudioDataSource(var bookList: MutableList<DatabaseAudioBook> = mutable
             if(it.identifier == identifier) return it
         }
 
-        return DatabaseAudioBook(identifier="",title = "",creator = "",date = "")
+        return DatabaseAudioBook(identifier="",title = "",creator = "",date = "",addeddate = "")
     }
 
     override fun insert(book: DatabaseAudioBook) {
