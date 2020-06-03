@@ -18,7 +18,7 @@ import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManage
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.utility.MovableFrameLayout
-import com.allsoftdroid.common.base.utils.StoragePermissionHandler
+import com.allsoftdroid.audiobook.utility.OnSwipeTouchListener
 import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ConnectionLiveData
@@ -27,6 +27,7 @@ import com.allsoftdroid.common.base.store.downloader.DownloadEvent
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.common.base.store.downloader.DownloadNothing
 import com.allsoftdroid.common.base.store.userAction.*
+import com.allsoftdroid.common.base.utils.StoragePermissionHandler
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -233,7 +234,17 @@ class MainActivity : BaseActivity() {
                     .commit()
             }
 
-            findViewById<MovableFrameLayout>(R.id.miniPlayerContainer).visibility = View.VISIBLE
+            findViewById<MovableFrameLayout>(R.id.miniPlayerContainer).apply {
+                visibility = View.VISIBLE
+                setOnTouchListener(object : OnSwipeTouchListener(context) {
+
+                    override fun onSwipeTop() {
+                        super.onSwipeTop()
+                        Timber.d("Event sent for opening main player event")
+                        userActionEventStore.publish(Event(OpenMainPlayerUI(this::class.java.simpleName)))
+                    }
+                })
+            }
 
             findViewById<View>(R.id.navHostFragment).apply {
 
