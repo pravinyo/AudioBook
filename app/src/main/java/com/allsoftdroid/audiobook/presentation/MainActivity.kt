@@ -34,6 +34,7 @@ import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import it.sephiroth.android.library.xtooltip.Tooltip
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -56,6 +57,7 @@ class MainActivity : BaseActivity() {
     private val downloader: IDownloaderCore by inject{parametersOf(this)}
     private val userActionEventStore:UserActionEventStore by inject()
     private val disposables = CompositeDisposable()
+    private var isShownTooltip = false
 
 
     private val snackBar by lazy {
@@ -244,6 +246,8 @@ class MainActivity : BaseActivity() {
                         userActionEventStore.publish(Event(OpenMainPlayerUI(this::class.java.simpleName)))
                     }
                 })
+            }.post {
+                if(!isShownTooltip) showToolTipForMiniPlayer()
             }
 
             findViewById<View>(R.id.navHostFragment).apply {
@@ -253,6 +257,8 @@ class MainActivity : BaseActivity() {
 
                 layoutParams = layout
             }
+
+
 
         }else{
             val fragment = supportFragmentManager.findFragmentByTag(MINI_PLAYER_TAG)
@@ -378,5 +384,29 @@ class MainActivity : BaseActivity() {
             }
         }
 
+    }
+
+    private fun showToolTipForMiniPlayer(){
+        val containerView:View = findViewById<MovableFrameLayout>(R.id.miniPlayerContainer)
+
+        val metrics = resources.displayMetrics
+        val gravity = Tooltip.Gravity.TOP
+
+        var tooltip:Tooltip? = Tooltip.Builder(containerView.context)
+            .anchor(containerView,100,70,false)
+            .text(getString(R.string.tooltip_open_player_message))
+            .maxWidth(metrics.widthPixels / 2)
+            .arrow(false)
+            .floatingAnimation(Tooltip.Animation.DEFAULT)
+            .showDuration(3000)
+            .overlay(true)
+            .create()
+
+        tooltip
+            ?.doOnHidden {
+                tooltip = null
+                isShownTooltip = true
+            }
+            ?.show(containerView.rootView, gravity, true)
     }
 }
