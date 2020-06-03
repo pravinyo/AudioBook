@@ -36,6 +36,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.KoinComponent
 import org.koin.core.parameter.parametersOf
 import timber.log.Timber
+import java.util.*
 
 
 class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
@@ -294,15 +295,29 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
         dataBinding.bookMediaActionsRead.setOnClickListener {
             bookDetailsViewModel.additionalBookDetails.value?.let {
-                if (it.archiveUrl.isEmpty()){
-                    Toast.makeText(this.requireActivity(),getString(R.string.no_link_found),Toast.LENGTH_SHORT).show()
-                }else{
+                if(it.gutenbergUrl.isNotEmpty() && isLinkValid(it.gutenbergUrl)){
                     val uri  = Uri.parse(it.gutenbergUrl)
                     val intent = Intent(Intent.ACTION_VIEW,uri)
                     startActivity(Intent.createChooser(intent,getString(R.string.open_with_label)))
+                }else if (it.archiveUrl.isNotEmpty() && isLinkValid(it.archiveUrl)){
+                    val uri  = Uri.parse(it.archiveUrl)
+                    val intent = Intent(Intent.ACTION_VIEW,uri)
+                    startActivity(Intent.createChooser(intent,getString(R.string.open_with_label)))
+                }else{
+                    Toast.makeText(this.requireActivity(),getString(R.string.no_link_found),Toast.LENGTH_SHORT).show()
                 }
             }?:Toast.makeText(this.requireActivity(),getString(R.string.wait_message),Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun isLinkValid(archiveUrl: String): Boolean {
+        if (archiveUrl.toLowerCase(Locale.ROOT).contains("archive.org"))
+            return true
+
+        if (archiveUrl.toLowerCase(Locale.ROOT).contains("gutenberg.org"))
+            return true
+
+        return false
     }
 
     private fun resumeOrPlayFromStart() {
