@@ -11,7 +11,6 @@ import com.allsoftdroid.audiobook.feature_mini_player.databinding.FragmentMiniPl
 import com.allsoftdroid.audiobook.feature_mini_player.di.FeatureMiniPlayerModule
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.viewModel.MiniPlayerViewModel
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
-import it.sephiroth.android.library.xtooltip.Tooltip
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
