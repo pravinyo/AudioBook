@@ -101,21 +101,4 @@ class MiniPlayerViewModelTest{
             }
         }
     }
-
-    @Test
-    fun openMainPlayer_sentEvent_returnNothing(){
-        playerViewModel.openMainPlayer()
-
-        userActionEventStore.observe().subscribe {
-            it.getContentIfNotHandled()?.let {event->
-
-                val eventType = when(event){
-                    is OpenMainPlayerUI -> "MainPlayer"
-                    else -> "Not MainPlayer"
-                }
-                assertThat(eventType, `is`("MainPlayer"))
-            }
-        }
-    }
-
 }
