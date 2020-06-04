@@ -37,7 +37,11 @@ class MiniPlayerFragment : BaseContainerFragment() {
 
         miniPlayerViewModel.shouldWaitForPlayer.observe(viewLifecycleOwner, Observer { waitForPlayer ->
             if(waitForPlayer){
-                Toast.makeText(this.activity,"Please wait, Preparing",Toast.LENGTH_SHORT).show()
+                binding.btnMiniPlayerProgress.visibility = View.VISIBLE
+                binding.btnMiniPlayerPlayPause.visibility = View.GONE
+            }else{
+                binding.btnMiniPlayerProgress.visibility = View.GONE
+                binding.btnMiniPlayerPlayPause.visibility = View.VISIBLE
             }
         })
 
