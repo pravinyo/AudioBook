@@ -146,6 +146,11 @@ class MiniPlayerViewModel(
         shouldItPlay.value = _shouldItPlay
     }
 
+    fun openMainPlayer(){
+        Timber.d("Event sent for opening main player event")
+        userActionEventStore.publish(Event(OpenMainPlayerUI(this::class.java.simpleName)))
+    }
+
     private fun updateTrackDetails(title:String,bookId:String) {
         setTrackTitle(title)
         setBookId(bookId)

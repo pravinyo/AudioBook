@@ -13,8 +13,7 @@ fun List<DatabaseAudioBook>.asBookDomainModel():List<AudioBookDomainModel>{
             mId = it.identifier,
             title = it.title,
             creator = it.creator,
-            date = it.date,
-            addeddate = it.addeddate?:""
+            date = it.date
         )
     }
 }
@@ -24,7 +23,6 @@ fun DatabaseAudioBook.toBookDomainModel():AudioBookDomainModel{
         mId = identifier,
         title = title,
         creator = creator,
-        date = date,
-        addeddate = addeddate?:""
+        date = date
     )
 }

@@ -51,7 +51,6 @@ class MainPlayerViewModel(
     val playingTrackDetails : LiveData<PlayingTrackDetails> = _playingTrackDetails
 
     private var currentPlayingIndex = 0
-    private var isBookFinished:Boolean = false
 
     val trackProgress:LiveData<Int>
     get() = trackProgressUsecase.trackProgress
@@ -105,10 +104,6 @@ class MainPlayerViewModel(
         setShouldPlay(!_shouldItPlay)
         _playerControlState.value = Event(PlayerControlState(shouldItPlay = _shouldItPlay))
         shouldPlayEvent()
-    }
-
-    fun bookFinished(isFinished: Boolean = true){
-        isBookFinished = isFinished
     }
 
     fun setBookDetails(bookId:String, bookName:String, trackName:String, currentPlayingTrack: Int, totalChapter:Int,isPlaying:Boolean){
@@ -171,13 +166,8 @@ class MainPlayerViewModel(
         }
     }
 
-    fun showMiniPlayerIfPlaying(){
-        if (!isBookFinished){
-            Timber.d("Book is not finished: Sending open mini player")
-            userActionEventStore.publish(Event(OpenMiniPlayerUI(this::class.java.simpleName)))
-        }else{
-            Timber.d("Book is finished: No action required")
-        }
+    fun showMiniPlayer(){
+        userActionEventStore.publish(Event(OpenMiniPlayerUI(this::class.java.simpleName)))
     }
 
     private suspend fun initTrackProgress() {

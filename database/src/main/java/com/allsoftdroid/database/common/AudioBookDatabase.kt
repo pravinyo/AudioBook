@@ -27,7 +27,7 @@ import com.allsoftdroid.database.networkCacheDB.NetworkCacheDao
         DatabaseNetworkResponseEntity::class,
         DatabaseListenLaterEntity::class
     ],
-    version = 8 ,
+    version = 7 ,
     exportSchema = false)
 abstract class AudioBookDatabase : RoomDatabase(){
 

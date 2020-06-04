@@ -18,10 +18,6 @@ class AudioBookPlayer(private val context:Application,
     val trackTitle : Variable<String>
         get() = _trackTitle
 
-    private var _playerState = Variable(Event(PlayerState.PlayerIdle))
-    val playerState : Variable<Event<PlayerState>>
-        get() = _playerState
-
     private lateinit var trackList: List<AudioPlayListItem>
     private lateinit var bookId:String
 
@@ -42,29 +38,26 @@ class AudioBookPlayer(private val context:Application,
                 exoPlayer?.playbackError?.let {
                     when(it.type){
                         ExoPlaybackException.TYPE_SOURCE->{
-                            _playerState.value = Event(PlayerState.SourceError)
                             Timber.d("Source Error detected :${it.message}")
                         }
                         ExoPlaybackException.TYPE_REMOTE->{
-                            _playerState.value = Event(PlayerState.SourceError)
                             Timber.d("Remote Error detected :${it.message}")
                         }
                         ExoPlaybackException.TYPE_OUT_OF_MEMORY->{
-                            _playerState.value = Event(PlayerState.SystemError)
                             Timber.d("Memory Error detected :${it.message}")
                         }
                         ExoPlaybackException.TYPE_RENDERER->{
-                            _playerState.value = Event(PlayerState.SystemError)
                             Timber.d("Renderer Error detected :${it.message}")
                         }
                         ExoPlaybackException.TYPE_UNEXPECTED->{
-                            _playerState.value = Event(PlayerState.SystemError)
                             Timber.d("Unexpected Error detected :${it.message}")
                         }
                     }
                 }
 
+                errorEvent.value = Event(true)
                 Timber.d("Is playing :${exoPlayer?.isPlaying}")
+                isPlayerReadyEvent.value = Event(false)
                 Timber.d("Player is not ready to play")
                 return
             }
@@ -82,24 +75,22 @@ class AudioBookPlayer(private val context:Application,
             when(playbackState){
                 Player.STATE_ENDED -> {
                     Timber.d("ENDED")
-                    _playerState.value = Event(PlayerState.PlayerFinished)
+                    errorEvent.value = Event(true)
                 }
 
                 Player.STATE_IDLE -> {
                     Timber.d("IDLE")
-                    _playerState.value = Event(PlayerState.PlayerIdle)
+                    isPlayerReadyEvent.value = Event(false)
                     Timber.d("Player is not ready to play")
                 }
-
                 Player.STATE_BUFFERING -> {
                     Timber.d("Buffering")
-                    _playerState.value = Event(PlayerState.PlayerBusy)
+                    isPlayerReadyEvent.value = Event(false)
                     Timber.d("Player is still bufferring")
                 }
-
                 Player.STATE_READY -> {
                     Timber.d("Ready")
-                    _playerState.value  = Event(PlayerState.PlayerReady)
+                    isPlayerReadyEvent.value = Event(true)
                     Timber.d("Player is ready to play")
                 }
             }
@@ -110,13 +101,18 @@ class AudioBookPlayer(private val context:Application,
             exoPlayer?.let {
                 Timber.d("Event ended audio about to start new")
                 if(trackPos != it.currentWindowIndex){
-                    _playerState.value = Event(PlayerState.PlayingNext)
+                    nextTrackEvent.value= Event(true)
                     _trackTitle.value = trackList[it.currentWindowIndex].title?:"NA"
                     trackPos = it.currentWindowIndex
                 }
             }
         }
     }
+
+
+    val nextTrackEvent = Variable(Event(false))
+    val errorEvent = Variable(Event(false))
+    val isPlayerReadyEvent = Variable(Event(false))
 
     fun createPlayer(){
         Timber.d("Created")

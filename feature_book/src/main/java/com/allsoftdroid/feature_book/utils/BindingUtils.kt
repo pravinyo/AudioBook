@@ -81,7 +81,7 @@ fun TextView.setBookDescription(item: AudioBookDomainModel?){
     item?.let {
         text = getNormalizedText(
             "- by ${formattedCreators(it.creator)},  ${convertDateToTime(
-                it.addeddate?:it.date,
+                it.date,
                 this.context
             )}", 70
         )

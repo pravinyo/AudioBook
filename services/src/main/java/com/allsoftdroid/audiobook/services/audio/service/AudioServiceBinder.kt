@@ -2,7 +2,6 @@ package com.allsoftdroid.audiobook.services.audio.service
 
 import android.os.Binder
 import com.allsoftdroid.audiobook.services.audio.utils.AudioBookPlayer
-import com.allsoftdroid.audiobook.services.audio.utils.PlayerState
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.Variable
@@ -28,9 +27,9 @@ class AudioServiceBinder(private val player: AudioBookPlayer) : Binder(){
     val trackTitle : Variable<String>
         get() = _trackTitle
 
-    private var _playerState = Variable(Event(PlayerState.PlayerIdle))
-    val playerState : Variable<Event<PlayerState>>
-        get() = _playerState
+    val nextTrackEvent = Variable(Event(false))
+    val errorEvent = Variable(Event(false))
+    val isPlayerReadyEvent = Variable(Event(false))
 
     private var disposable:CompositeDisposable = CompositeDisposable()
 
@@ -40,8 +39,16 @@ class AudioServiceBinder(private val player: AudioBookPlayer) : Binder(){
             _trackTitle.value = it
         })
 
-        disposable.add(player.playerState.observable.subscribe { state->
-            _playerState.value = state
+        disposable.add(player.nextTrackEvent.observable.subscribe {
+            nextTrackEvent.value = it
+        })
+
+        disposable.add(player.errorEvent.observable.subscribe {
+            errorEvent.value = it
+        })
+
+        disposable.add(player.isPlayerReadyEvent.observable.subscribe{
+            isPlayerReadyEvent.value = it
         })
     }
 

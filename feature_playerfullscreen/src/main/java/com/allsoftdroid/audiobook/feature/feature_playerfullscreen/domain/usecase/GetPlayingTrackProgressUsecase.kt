@@ -28,9 +28,7 @@ class GetPlayingTrackProgressUsecase(private val audioManager: AudioManager) :
 
             Timber.d("Current Progress is $progress")
 
-            if(progress<100){
-                mainHandler.postDelayed(this, 1000)
-            }
+            mainHandler.postDelayed(this, 1000)
         }
     }
 

@@ -17,7 +17,7 @@ object BindingUtils {
     }
 
     private fun getCurrentDate():String{
-        val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val format = SimpleDateFormat("yyyy.MM.dd")
         return format.format(date)
     }
 
@@ -57,10 +57,8 @@ object BindingUtils {
                 "${result.year - 70}y"
             } else if (result.month > 0) {
                 "${1 + result.month}m"
-            } else if (result.date>1){
-                "${result.date-1}d"
-            }else {
-                "${result.hours}hr"
+            } else {
+                "${result.date}d"
             }
 
         } catch (e: Exception) {

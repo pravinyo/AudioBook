@@ -25,6 +25,4 @@
     <string name="developer_mail">allsoftdroid@gmail.com</string>
     <string name="intent_chooser_send_mail_label">Send Mail…</string>
     <string name="feedback_fragment_tag_label">fragment_feedback</string>
-    <string name="close_settings">close settings</string>
-    <string name="toolbar_title_text">Settings</string>
 </resources>

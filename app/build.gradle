@@ -86,7 +86,6 @@ dependencies {
     debugImplementation(LibraryDependency.LEAKY_CANARY)
     implementation(LibraryDependency.SUPPORT_V13)
     implementation(LibraryDependency.OSS_LICENSES)
-    implementation(LibraryDependency.TOOL_TIP)
 
     //crash analytics report
     implementation(LibraryDependency.FIREBASE_ANALYTICS)

@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.media.session.MediaButtonReceiver
 import com.allsoftdroid.audiobook.services.audio.di.AudioServiceModule
 import com.allsoftdroid.audiobook.services.audio.utils.NotificationUtils.Companion.sendNotification
-import com.allsoftdroid.audiobook.services.audio.utils.PlayerState
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.PlayingState
 import com.allsoftdroid.common.base.store.audioPlayer.*
@@ -120,33 +119,30 @@ class AudioService : Service(),KoinComponent{
             if(it.isNotEmpty()) buildNotification(isItFirst = true)
         })
 
-        disposable.add(audioServiceBinder.playerState.observable.subscribe { stateEvent ->
-            stateEvent.getContentIfNotHandled()?.let {state->
-                when(state){
-                    PlayerState.SourceError,
-                    PlayerState.SystemError -> {
-                        notifyPlayerStateEvent(isReady = false)
-                        pauseEvent()
-                    }
-
-                    PlayerState.PlayerBusy,
-                    PlayerState.PlayerIdle -> {
-                        notifyPlayerStateEvent(isReady = false)
-                    }
-
-                    PlayerState.PlayerFinished -> {
-                        pauseEvent()
-                        finishEvent()
-                    }
-
-                    PlayerState.PlayerReady -> {
-                        notifyPlayerStateEvent(isReady = true)
-                    }
-
-                    PlayerState.PlayingNext -> {
-                        playNextEvent()
-                    }
+        disposable.add(audioServiceBinder.nextTrackEvent.observable.subscribe {
+            it.getContentIfNotHandled()?.let {nextEvent ->
+                Timber.d("Received next event from AudioService binder")
+                if(nextEvent){
+                    Timber.d("Sending next Event")
+                    playNextEvent()
                 }
+            }
+        })
+
+        disposable.add(audioServiceBinder.errorEvent.observable.subscribe {
+            it.getContentIfNotHandled()?.let {errorEvent ->
+                Timber.d("Received error event from AudioService binder")
+                if(errorEvent){
+                    Timber.d("Sending pause Event")
+                    pauseEvent()
+                }
+            }
+        })
+
+        disposable.add(audioServiceBinder.isPlayerReadyEvent.observable.subscribe {
+            it.getContentIfNotHandled()?.let { readyStateEvent->
+                Timber.d("Received player ready state event, isReady:$readyStateEvent")
+                notifyPlayerStateEvent(readyStateEvent)
             }
         })
 
@@ -165,7 +161,6 @@ class AudioService : Service(),KoinComponent{
     }
 
     private fun playNextEvent() {
-        Timber.d("Received next event from AudioService binder")
         eventStore.publish(Event(
             Next(
                 result = PlayingState(
@@ -199,7 +194,6 @@ class AudioService : Service(),KoinComponent{
     }
 
     private fun pauseEvent(){
-        Timber.d("Sending pause Event")
         eventStore.publish(Event(
             Pause(
                 result = PlayingState(
@@ -211,7 +205,6 @@ class AudioService : Service(),KoinComponent{
     }
 
     private fun playEvent(){
-        Timber.d("Audio Service is sending play event")
         eventStore.publish(Event(
             Play(
                 result = PlayingState(
@@ -222,14 +215,7 @@ class AudioService : Service(),KoinComponent{
         ))
     }
 
-    private fun finishEvent(){
-        Timber.d("Player has completed all the track")
-        eventStore.publish(Event(Finished))
-    }
-
     private fun notifyPlayerStateEvent(isReady:Boolean){
-        Timber.d("Received player ready state event, isReady:$isReady")
-
         eventStore.publish(Event(
             AudioPlayerPlayingState(
                 isReady = isReady
