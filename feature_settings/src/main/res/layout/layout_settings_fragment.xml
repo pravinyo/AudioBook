@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/parentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/toolbar_back_button"
+                android:layout_width="@dimen/action_btn_size"
+                android:layout_height="@dimen/action_btn_size"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/margin_normal"
+                android:clickable="true"
+                android:contentDescription="@string/close_settings"
+                android:focusable="true"
+                android:src="@drawable/ic_keyboard_arrow_left_black_24dp" />
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:textColor="@color/black"
+                android:layout_width="0dp"
+                android:layout_marginStart="@dimen/margin_normal"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:gravity="start|center_vertical"
+                android:text="@string/toolbar_title_text"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragment_container"
+            android:layout_margin="@dimen/margin_normal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
+        </androidx.fragment.app.FragmentContainerView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
