@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">feature_mini_player</string>
     <string name="audio_book_album_art">audio book album art</string>
-    <string name="tooltip_open_player_message">Open Player</string>
 </resources>

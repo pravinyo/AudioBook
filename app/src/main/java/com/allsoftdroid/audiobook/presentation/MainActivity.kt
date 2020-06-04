@@ -18,7 +18,7 @@ import com.allsoftdroid.audiobook.feature_downloader.presentation.DownloadManage
 import com.allsoftdroid.audiobook.feature_mini_player.presentation.MiniPlayerFragment
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.utility.MovableFrameLayout
-import com.allsoftdroid.common.base.utils.StoragePermissionHandler
+import com.allsoftdroid.audiobook.utility.OnSwipeTouchListener
 import com.allsoftdroid.common.base.activity.BaseActivity
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ConnectionLiveData
@@ -27,12 +27,14 @@ import com.allsoftdroid.common.base.store.downloader.DownloadEvent
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.common.base.store.downloader.DownloadNothing
 import com.allsoftdroid.common.base.store.userAction.*
+import com.allsoftdroid.common.base.utils.StoragePermissionHandler
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import it.sephiroth.android.library.xtooltip.Tooltip
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -55,6 +57,7 @@ class MainActivity : BaseActivity() {
     private val downloader: IDownloaderCore by inject{parametersOf(this)}
     private val userActionEventStore:UserActionEventStore by inject()
     private val disposables = CompositeDisposable()
+    private var isShownTooltip = false
 
 
     private val snackBar by lazy {
@@ -233,7 +236,19 @@ class MainActivity : BaseActivity() {
                     .commit()
             }
 
-            findViewById<MovableFrameLayout>(R.id.miniPlayerContainer).visibility = View.VISIBLE
+            findViewById<MovableFrameLayout>(R.id.miniPlayerContainer).apply {
+                visibility = View.VISIBLE
+                setOnTouchListener(object : OnSwipeTouchListener(context) {
+
+                    override fun onSwipeTop() {
+                        super.onSwipeTop()
+                        Timber.d("Event sent for opening main player event")
+                        userActionEventStore.publish(Event(OpenMainPlayerUI(this::class.java.simpleName)))
+                    }
+                })
+            }.post {
+                if(!isShownTooltip) showToolTipForMiniPlayer()
+            }
 
             findViewById<View>(R.id.navHostFragment).apply {
 
@@ -242,6 +257,8 @@ class MainActivity : BaseActivity() {
 
                 layoutParams = layout
             }
+
+
 
         }else{
             val fragment = supportFragmentManager.findFragmentByTag(MINI_PLAYER_TAG)
@@ -367,5 +384,29 @@ class MainActivity : BaseActivity() {
             }
         }
 
+    }
+
+    private fun showToolTipForMiniPlayer(){
+        val containerView:View = findViewById<MovableFrameLayout>(R.id.miniPlayerContainer)
+
+        val metrics = resources.displayMetrics
+        val gravity = Tooltip.Gravity.TOP
+
+        var tooltip:Tooltip? = Tooltip.Builder(containerView.context)
+            .anchor(containerView,100,70,false)
+            .text(getString(R.string.tooltip_open_player_message))
+            .maxWidth(metrics.widthPixels / 2)
+            .arrow(false)
+            .floatingAnimation(Tooltip.Animation.DEFAULT)
+            .showDuration(3000)
+            .overlay(true)
+            .create()
+
+        tooltip
+            ?.doOnHidden {
+                tooltip = null
+                isShownTooltip = true
+            }
+            ?.show(containerView.rootView, gravity, true)
     }
 }
