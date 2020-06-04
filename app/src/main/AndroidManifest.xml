@@ -34,7 +34,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".feature_downloader.presentation.DownloadManagementActivity" />
+        <activity
+            android:launchMode= "singleTop"
+            android:name=".feature_downloader.presentation.DownloadManagementActivity" />
 
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
