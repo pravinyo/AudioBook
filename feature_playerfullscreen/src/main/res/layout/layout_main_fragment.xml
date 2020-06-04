@@ -183,6 +183,14 @@
                 android:onClick="@{() -> viewModel.playPause()}"
                 android:src="@drawable/play_circle" />
 
+            <ProgressBar
+                android:id="@+id/pb_book_chapter_buffer_progress"
+                android:layout_width="@dimen/player_control_size_3"
+                android:layout_height="@dimen/player_control_size_3"
+                android:layout_marginStart="@dimen/margin_normal"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone"/>
+
             <ImageView
                 android:id="@+id/iv_book_chapter_forward"
                 android:layout_width="@dimen/player_control_size_2"
