@@ -21,7 +21,10 @@ data class DatabaseAudioBook(
     var creator : String?,
 
     @ColumnInfo(name = "published_date")
-    var date: String?
+    var date: String?,
+
+    @ColumnInfo(name = "added_date")
+    var addeddate: String?
 ){
-    constructor() : this("","","","")
+    constructor() : this("","","","","")
 }

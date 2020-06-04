@@ -3,7 +3,7 @@ package com.allsoftdroid.feature_book.data.network
 class Utils {
     object Books{
         private const val BASE_URL = "https://archive.org/"
-        private const val FILTER_MOST_RECENT = "+AND+mediatype%3A(audio)&fl[]=creator,date,identifier,title&sort[]=-date&output=json"
+        private const val FILTER_MOST_RECENT = "+AND+mediatype%3A(audio)&fl[]=creator,date,identifier,title,addeddate&sort[]=-date&output=json"
         private const val QUERY="librivox"
         private const val COLLECTIONS="librivoxaudio"
         private const val OUTPUT_FIELDS = "fl[]=creator,date,identifier,title&sort[]=-date&output=json"
