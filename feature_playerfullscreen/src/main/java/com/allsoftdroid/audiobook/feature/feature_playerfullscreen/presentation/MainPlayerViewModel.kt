@@ -59,6 +59,8 @@ class MainPlayerViewModel(
     val trackRemainingTime:LiveData<String>
     get() = remainingTimeUsecase.trackRemainingTime
 
+    private var _isPlayerBusy : Boolean = true
+
     fun playPrevious(){
         _playerControlState.value = Event(PlayerControlState(playPrevious = true))
 
@@ -215,6 +217,12 @@ class MainPlayerViewModel(
         trackProgressUsecase.cancel()
         remainingTimeUsecase.cancel()
     }
+
+    fun setPlayerBusy(status:Boolean){
+        _isPlayerBusy = status
+    }
+
+    fun isPlayerBusy() = _isPlayerBusy
 
     override fun onCleared() {
         super.onCleared()
