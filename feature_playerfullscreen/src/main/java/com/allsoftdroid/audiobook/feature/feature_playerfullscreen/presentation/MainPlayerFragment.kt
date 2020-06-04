@@ -88,8 +88,16 @@ class MainPlayerFragment : BaseContainerFragment(){
                             }
                         }
 
+                        is Buffering -> {
+                            playerState(binding,ready = false)
+                        }
+
                         is Finished -> {
                             mainPlayerViewModel.bookFinished()
+                        }
+
+                        is AudioPlayerPlayingState -> {
+                            playerState(binding,ready = event.isReady)
                         }
                         else -> Timber.d("Ignore event $event")
                     }
@@ -105,14 +113,35 @@ class MainPlayerFragment : BaseContainerFragment(){
         })
 
         mainPlayerViewModel.trackRemainingTime.observe(viewLifecycleOwner, Observer {
-            binding.tvBookProgressTime.apply {
-                this.text = it
+
+            if (!mainPlayerViewModel.isPlayerBusy()){
+                binding.tvBookProgressTime.apply {
+                    text = it
+                }
+            }else{
+                binding.tvBookProgressTime.apply {
+                    text = getText(R.string.buffer_text)
+                }
             }
 
             Timber.d("Remaining time received is $it")
         })
 
         return binding.root
+    }
+
+    private fun playerState(binding: LayoutMainFragmentBinding, ready: Boolean) {
+        if (ready){
+            binding.ivBookChapterPlaypause.visibility = View.VISIBLE
+            binding.pbBookChapterBufferProgress.visibility = View.GONE
+
+            mainPlayerViewModel.setPlayerBusy(status = false)
+        }else{
+            binding.ivBookChapterPlaypause.visibility = View.GONE
+            binding.pbBookChapterBufferProgress.visibility = View.VISIBLE
+
+            mainPlayerViewModel.setPlayerBusy(status = true)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
