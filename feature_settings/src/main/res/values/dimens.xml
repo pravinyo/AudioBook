@@ -4,4 +4,6 @@
     <dimen name="fragment_popup_minWidth">800dp</dimen>
     <dimen name="fragment_popup_minHeight">400dp</dimen>
     <dimen name="padding_standard">16dp</dimen>
+    <dimen name="action_btn_size">32dp</dimen>
+    <dimen name="margin_normal">16dp</dimen>
 </resources>
