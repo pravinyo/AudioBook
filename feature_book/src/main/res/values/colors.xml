@@ -2,4 +2,5 @@
 <resources>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
+    <color name="nav_header_color">#1a1a1a</color>
 </resources>
