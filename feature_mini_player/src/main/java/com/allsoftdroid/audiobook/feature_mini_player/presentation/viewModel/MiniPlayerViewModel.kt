@@ -68,6 +68,8 @@ class MiniPlayerViewModel(
                         }
 
                         is AudioPlayerPlayingState -> setPlayerReady(event.isReady)
+
+                        is Buffering -> setPlayerReady(isReady = false)
                     }
                 }
             }
