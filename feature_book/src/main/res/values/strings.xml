@@ -20,6 +20,7 @@
     <string name="rate">Rate</string>
     <string name="library">Library</string>
     <string name="profile_picture">profile picture</string>
-    <string name="guest_user">Guest User</string>
+    <string name="guest_user">by AllSoftDroid</string>
     <string name="audiobook_refresh">Refresh list</string>
+    <string name="pic_attribution">Animal Face Vectors by Vecteezy</string>
 </resources>
