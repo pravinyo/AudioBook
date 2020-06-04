@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.VisibleForTesting
@@ -92,6 +93,13 @@ class AudioBookListFragment : BaseUIFragment(){
             }
 
             return@setNavigationItemSelectedListener false
+        }
+
+        val headerView = navView.getHeaderView(0)
+
+        val profilePic = headerView.findViewById<ImageView>(R.id.nav_header_imageView)
+        profilePic.setOnClickListener {
+            Toast.makeText(it.context,getString(R.string.pic_attribution),Toast.LENGTH_SHORT).show()
         }
     }
 

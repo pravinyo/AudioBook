@@ -3,7 +3,7 @@
     android:id="@+id/nav_header"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
-    android:background="@color/colorPrimary"
+    android:background="@color/nav_header_color"
     android:clickable="true"
     android:focusable="true"
     android:gravity="bottom"
@@ -15,7 +15,7 @@
         android:id="@+id/nav_header_imageView"
         android:layout_width="@dimen/nav_image_size"
         android:layout_height="@dimen/nav_image_size"
-        android:src="@drawable/ic_jellyfish"
+        android:src="@drawable/animal_face"
         android:contentDescription="@string/profile_picture" />
 
     <TextView
