@@ -13,6 +13,7 @@ data class Pause(val result: AudioPlayerEventState) : AudioPlayerEvent()
 data class EmptyEvent(val default: AudioPlayerEventState):AudioPlayerEvent()
 object Rewind : AudioPlayerEvent()
 object Forward : AudioPlayerEvent()
+object Buffering : AudioPlayerEvent()
 object Finished : AudioPlayerEvent()
 
 //Details or information event for the player and UI

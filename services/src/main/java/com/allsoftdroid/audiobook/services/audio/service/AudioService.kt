@@ -129,7 +129,11 @@ class AudioService : Service(),KoinComponent{
                         pauseEvent()
                     }
 
-                    PlayerState.PlayerBusy,
+                    PlayerState.PlayerBusy -> {
+                        notifyPlayerStateEvent(isReady = false)
+                        bufferingEvent()
+                    }
+
                     PlayerState.PlayerIdle -> {
                         notifyPlayerStateEvent(isReady = false)
                     }
@@ -162,6 +166,11 @@ class AudioService : Service(),KoinComponent{
 
         initMediaSession()
         initNoisyReceiver()
+    }
+
+    private fun bufferingEvent() {
+        Timber.d("Received buffering event from AudioService binder")
+        eventStore.publish(Event(Buffering))
     }
 
     private fun playNextEvent() {

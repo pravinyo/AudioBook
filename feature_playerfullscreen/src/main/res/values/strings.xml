@@ -10,4 +10,5 @@
     <string name="rewind">rewind by 30</string>
     <string name="fast_forward">fast forward by 30</string>
     <string name="book_chapter_progress_title">Section %d of %d</string>
+    <string name="buffer_text">Buffering ...</string>
 </resources>
