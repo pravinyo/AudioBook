@@ -17,9 +17,9 @@
             android:id="@+id/iv_miniPlayer_album_art"
             android:layout_width="@dimen/mini_player_icon_size"
             android:layout_height="@dimen/mini_player_icon_size"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="@dimen/margin_min"
+            android:layout_marginTop="@dimen/margin_min"
+            android:layout_marginBottom="@dimen/margin_min"
             android:contentDescription="@string/audio_book_album_art"
             android:padding="@dimen/mini_player_icon_padding"
             app:bookImage="@{viewModel.bookId}"
@@ -31,8 +31,8 @@
             android:id="@+id/tv_miniPlayer_trackTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="@dimen/margin_min"
+            android:layout_marginEnd="@dimen/margin_min"
             android:textColor="@color/white"
             android:gravity="center_horizontal"
             app:layout_constraintEnd_toEndOf="parent"
@@ -45,9 +45,9 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="@dimen/mini_player_control_btn"
             android:layout_height="@dimen/mini_player_control_btn"
-            android:layout_marginStart="64dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_min"
+            android:layout_marginBottom="@dimen/margin_min"
             android:background="@drawable/ic_skip_previous_white_24dp"
             android:onClick="@{() -> viewModel.playPrevious()}"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -59,26 +59,39 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="@dimen/mini_player_control_btn"
             android:layout_height="@dimen/mini_player_control_btn"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="@dimen/margin_big"
             android:background="@drawable/ic_skip_next_white_24dp"
             android:onClick="@{() -> viewModel.playNext()}"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_miniPlayer_PlayPause"
-            app:layout_constraintStart_toEndOf="@+id/btn_miniPlayer_PlayPause"
-            app:layout_constraintTop_toTopOf="@+id/btn_miniPlayer_PlayPause"
+            app:layout_constraintBottom_toBottomOf="@+id/view_PlayPause_wait"
+            app:layout_constraintStart_toEndOf="@+id/view_PlayPause_wait"
+            app:layout_constraintTop_toTopOf="@+id/view_PlayPause_wait"
             app:layout_constraintVertical_bias="0.0" />
 
-        <Button
-            android:id="@+id/btn_miniPlayer_PlayPause"
-            style="?android:attr/buttonBarButtonStyle"
+        <LinearLayout
+            android:id="@+id/view_PlayPause_wait"
             android:layout_width="@dimen/mini_player_control_btn"
             android:layout_height="@dimen/mini_player_control_btn"
-            android:layout_marginStart="32dp"
-            android:onClick="@{() -> viewModel.playPause()}"
-            app:controlIconPlayPause="@{viewModel.shouldItPlay}"
+            android:layout_marginStart="@dimen/margin_big"
             app:layout_constraintBottom_toBottomOf="@+id/btn_miniPlayer_previous"
             app:layout_constraintStart_toEndOf="@+id/btn_miniPlayer_previous"
             app:layout_constraintTop_toTopOf="@+id/btn_miniPlayer_previous"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0">
+
+            <Button
+                android:id="@+id/btn_miniPlayer_PlayPause"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="@dimen/mini_player_control_btn"
+                android:layout_height="@dimen/mini_player_control_btn"
+                app:controlIconPlayPause="@{viewModel.shouldItPlay}"
+                android:onClick="@{() -> viewModel.playPause()}"
+                android:visibility="gone"/>
+
+            <ProgressBar
+                android:id="@+id/btn_miniPlayer_Progress"
+                android:layout_width="@dimen/mini_player_control_btn"
+                android:layout_height="@dimen/mini_player_control_btn"/>
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
