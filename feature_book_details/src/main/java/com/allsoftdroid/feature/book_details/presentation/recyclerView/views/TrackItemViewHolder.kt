@@ -66,6 +66,8 @@ class TrackItemViewHolder private constructor(private val binding : BookMediaTra
             }
         }
 
+        setItemIcon(item.downloadStatus)
+
         binding.executePendingBindings()
     }
 
