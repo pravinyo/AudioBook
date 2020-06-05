@@ -39,6 +39,33 @@ This App is based on Single Activity Navigation. Each Fragment screen is develop
   <img src="/photos/mybooks.png" width="200" />
 </p>
 
+# Release: 6.4.3
+## :star: New Features
+
+- launcher updated [#154](https://github.com/pravinyo/AudioBook/pull/154)
+- Fix downloaded chapters ui bug [#153](https://github.com/pravinyo/AudioBook/pull/153)
+- Player buffering state ui element [#152](https://github.com/pravinyo/AudioBook/pull/152)
+- Change profile pic [#151](https://github.com/pravinyo/AudioBook/pull/151)
+- Fix setting screen bug [#147](https://github.com/pravinyo/AudioBook/pull/147)
+- profile icon change [#146](https://github.com/pravinyo/AudioBook/issues/146)
+- Miniplayer swipe feature [#142](https://github.com/pravinyo/AudioBook/pull/142)
+- url opening bug fixed [#141](https://github.com/pravinyo/AudioBook/pull/141)
+- Fix time bug [#140](https://github.com/pravinyo/AudioBook/pull/140)
+
+## :beetle: Bug Fixes
+
+- fixed multiple download screen bug [#150](https://github.com/pravinyo/AudioBook/pull/150)
+- Fix multi download screen [#148](https://github.com/pravinyo/AudioBook/pull/148)
+- Multiple download screen is created [#145](https://github.com/pravinyo/AudioBook/issues/145)
+- notification when clicked app is not appearing [#144](https://github.com/pravinyo/AudioBook/issues/144)
+- settings screen back button not showing [#143](https://github.com/pravinyo/AudioBook/issues/143)
+- Book details ui bug [#139](https://github.com/pravinyo/AudioBook/pull/139)
+
+## :heart: Contributors
+
+We'd like to thank all the contributors who worked on this release!
+
+- [@pravinyo](https://github.com/pravinyo)
 
 # Release: 6.2.2
 ## :beetle: Bug Fixes
