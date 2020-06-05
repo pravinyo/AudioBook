@@ -59,7 +59,7 @@ class MainPlayerViewModel(
     val trackRemainingTime:LiveData<String>
     get() = remainingTimeUsecase.trackRemainingTime
 
-    private var _isPlayerBusy : Boolean = true
+    private var _isPlayerBusy : Boolean = false
 
     fun playPrevious(){
         _playerControlState.value = Event(PlayerControlState(playPrevious = true))
