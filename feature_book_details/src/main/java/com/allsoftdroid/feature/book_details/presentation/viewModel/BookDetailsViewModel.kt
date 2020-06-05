@@ -418,7 +418,6 @@ internal class BookDetailsViewModel(
     fun onPlayItemClicked(trackNumber: Int){
         Timber.d("Track number pressed for playing is :$trackNumber")
         _newTrackStateEvent.value = Event(trackNumber)
-//        currentPlayingTrack = trackNumber
         stateHandle.set(StateKey.CurrentPlayingTrack.key,currentPlayingTrack)
     }
 
