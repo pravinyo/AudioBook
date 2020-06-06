@@ -83,7 +83,6 @@ dependencies {
     implementation(project(path: ModuleDependency.SERVICES))
 
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
-    debugImplementation(LibraryDependency.LEAKY_CANARY)
     implementation(LibraryDependency.SUPPORT_V13)
     implementation(LibraryDependency.OSS_LICENSES)
     implementation(LibraryDependency.TOOL_TIP)
