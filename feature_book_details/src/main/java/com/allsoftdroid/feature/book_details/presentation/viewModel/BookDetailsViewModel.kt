@@ -583,7 +583,9 @@ internal class BookDetailsViewModel(
             audioBookMetadata.value?.let {metadata->
                 audioBookTracks.value?.let {trackList->
 
-                    trackList.map { track ->
+                    trackList
+                        .filter { it.downloadStatus != DOWNLOADED }
+                        .map { track ->
                         downloads.add(
                             Download(
                                 bookId = metadata.identifier,
