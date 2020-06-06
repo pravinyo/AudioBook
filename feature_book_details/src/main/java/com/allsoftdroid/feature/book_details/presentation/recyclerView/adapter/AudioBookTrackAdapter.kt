@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.allsoftdroid.common.base.store.downloader.DownloadEventStore
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.views.TrackItemViewHolder
+import com.allsoftdroid.feature.book_details.utils.DownloadStatusEvent
 
 /**
  * Recycler Adapter uses efficient way to find the change in the list item.
@@ -81,8 +82,8 @@ class TrackItemClickedListener(val clickListener : (trackNumber : Int?,filename:
 /**
  * Download button listener
  */
-class DownloadItemClickedListener(val clickListener : (trackId : String)->Unit){
-    fun onDownloadItemClicked(track : AudioBookTrackDomainModel) = clickListener(track.trackId)
+class DownloadItemClickedListener(val clickListener : (trackId : String,downloadStatus: DownloadStatusEvent)->Unit){
+    fun onDownloadItemClicked(track : AudioBookTrackDomainModel) = clickListener(track.trackId,track.downloadStatus)
 }
 
 /**
