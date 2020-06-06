@@ -14,6 +14,8 @@ import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.allsoftdroid.common.base.store.downloader.*
+import com.allsoftdroid.common.base.store.userAction.OpenDownloadUI
+import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import com.allsoftdroid.common.base.utils.BindingUtils.getNormalizedText
 import com.allsoftdroid.common.base.utils.ShareUtils
 import com.allsoftdroid.common.base.utils.StoragePermissionHandler
@@ -25,7 +27,7 @@ import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.D
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.ProgressbarItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.recyclerView.adapter.TrackItemClickedListener
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
-import com.allsoftdroid.feature.book_details.utils.NetworkState
+import com.allsoftdroid.feature.book_details.utils.*
 import com.allsoftdroid.feature.book_details.utils.TextFormatter.formattedBookDetails
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -55,6 +57,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
     }
     private val eventStore : AudioPlayerEventStore by inject()
     private val downloadStore : DownloadEventStore by inject()
+    private val userActionStore : UserActionEventStore by inject()
     private val disposable : CompositeDisposable = CompositeDisposable()
     private lateinit var dataBindingReference : FragmentAudiobookDetailsBinding
 
@@ -196,9 +199,20 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                 bookDetailsViewModel.openDownloadsScreen(trackId)
             }
             ,
-            DownloadItemClickedListener { trackId ->
-                bookDetailsViewModel.downloadSelectedItemWith(trackId)
-                Timber.d("Download Track with $trackId")
+            DownloadItemClickedListener { trackId, downloadStatus ->
+
+                when(downloadStatus){
+                    is DOWNLOADING,is PROGRESS -> {
+                        userActionStore.publish(Event(OpenDownloadUI(this::class.java.simpleName)))
+                    }
+
+                    is NOTHING,is CANCELLED -> {
+                        bookDetailsViewModel.downloadSelectedItemWith(trackId)
+                        Timber.d("Download Track with $trackId")
+                    }
+
+                    else -> Timber.d("Ignored $trackId having download status $downloadStatus")
+                }
             }
         )
 

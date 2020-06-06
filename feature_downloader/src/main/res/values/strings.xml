@@ -5,7 +5,7 @@
     <string name="emptyView_download_message">No Downloads…</string>
     <string name="download_activity_clear_all_value">clear all downloaded</string>
     <string name="description_file_Icon">file icon</string>
-    <string name="calculating">calculating</string>
+    <string name="calculating">waiting…</string>
     <string name="description_download_cancel_Icon">cancel download</string>
     <string name="description_delete_Icon">delete</string>
     <string name="delete">DELETE</string>
