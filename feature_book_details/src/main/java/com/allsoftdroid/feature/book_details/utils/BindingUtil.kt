@@ -46,7 +46,18 @@ fun TextView.setTrackLength(item : AudioBookTrackDomainModel?){
             text = if(!length.contains(":")){
                 val timeInSec = length.toFloat().toInt().seconds
                 timeInSec.toComponents { minutes, seconds, _ ->
-                    "$minutes:$seconds"
+                    var sec = seconds.toString()
+                    var min = minutes.toString()
+
+                    if(seconds.toString().length==1){
+                        sec = "0$seconds"
+                    }
+
+                    if (minutes.toString().length==1){
+                        min = "0$minutes"
+                    }
+
+                    "$min:$sec"
                 }
             } else length
         }
