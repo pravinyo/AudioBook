@@ -134,7 +134,7 @@ fun setBookBanner(layout: ConstraintLayout, item: AudioBookMetadataDomainModel?)
 
                         paletteBuilder.generate{
                             it?.let {
-                                val dark = it.getDarkMutedColor(it.getMutedColor(0))
+                                val dark = it.getDarkMutedColor(it.getDarkVibrantColor(0))
                                 val dominant = it.getDominantColor(it.getVibrantColor(0))
                                 val light = it.getLightMutedColor(it.getLightVibrantColor(0))
 
@@ -143,8 +143,10 @@ fun setBookBanner(layout: ConstraintLayout, item: AudioBookMetadataDomainModel?)
                                 with(layout.rootView.findViewById<View>(R.id.toolbar)){
                                     setBackgroundColor(dark)
 
-                                    this.findViewById<TextView>(R.id.tv_toolbar_title).apply {
-                                        this.setTextColor(light)
+                                    if(dark!=light){
+                                        this.findViewById<TextView>(R.id.tv_toolbar_title).apply {
+                                            this.setTextColor(light)
+                                        }
                                     }
                                 }
                             }
