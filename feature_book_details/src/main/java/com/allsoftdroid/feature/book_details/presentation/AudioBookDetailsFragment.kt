@@ -62,6 +62,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
     private lateinit var dataBindingReference : FragmentAudiobookDetailsBinding
 
     private var mBottomSheetBehavior: BottomSheetBehavior<View?>? = null
+    private var mDescriptionLoadingAnimation:ViewLoadingAnimation?=null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -185,6 +186,10 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
     }
 
     private fun setupUI(dataBinding: FragmentAudiobookDetailsBinding) {
+
+        mDescriptionLoadingAnimation = ViewLoadingAnimation(dataBinding.textViewBookIntro)
+        mDescriptionLoadingAnimation?.colorize()
+
         val trackAdapter = AudioBookTrackAdapter(
             downloadStore,
             argBookId,
@@ -255,6 +260,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
             }
 
             removeLoading()
+            mDescriptionLoadingAnimation?.stop()
         })
 
         bookDetailsViewModel.isAddedToListenLater.observe(viewLifecycleOwner, Observer {
