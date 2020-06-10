@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 /feature_main_player/build/
+/.idea/jarRepositories.xml
+/buildSource/build/
