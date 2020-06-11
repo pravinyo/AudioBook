@@ -1,6 +1,5 @@
 package com.allsoftdroid.audiobook.feature_downloader.presentation.recycleviewAdapter;
 
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -28,11 +27,15 @@ import com.allsoftdroid.common.base.store.downloader.DownloadEventStore;
 import com.allsoftdroid.common.base.store.downloader.Downloaded;
 import com.allsoftdroid.common.base.store.downloader.Progress;
 import com.allsoftdroid.common.base.store.downloader.Restart;
+import com.liulishuo.filedownloader.model.FileDownloadStatus;
 
 import io.reactivex.disposables.CompositeDisposable;
 import timber.log.Timber;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID;
+import static com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract.downloadEntry.COLUMN_DOWNLOAD_NAME;
+import static com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract.downloadEntry.COLUMN_DOWNLOAD_URL;
 
 public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -75,12 +78,12 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         mCursor.moveToPosition(position);
 
-        holder.mFileName.setText(mCursor.getString(mCursor.getColumnIndex(DownloadManager.COLUMN_TITLE)));
-        holder.mIcon.setImageResource(getAppropriateFileIconFromFormat(mCursor.getString(mCursor.getColumnIndex(DownloadManager.COLUMN_MEDIA_TYPE))));
-        holder.downloadId = mCursor.getLong(mCursor.getColumnIndex(DownloadManager.COLUMN_ID));
+        holder.mFileName.setText(mCursor.getString(mCursor.getColumnIndex(COLUMN_DOWNLOAD_NAME)));
+        holder.mIcon.setImageResource(R.drawable.ic_file_music);
+        holder.downloadId = mCursor.getLong(mCursor.getColumnIndex(COLUMN_DOWNLOAD_ID));
         holder.mCancelButton.setClickable(true);
 
-        String uri = mCursor.getString(mCursor.getColumnIndex(DownloadManager.COLUMN_URI));
+        String url = mCursor.getString(mCursor.getColumnIndex(COLUMN_DOWNLOAD_URL));
 
         compositeDisposable.add(
                 downloadEventStore
@@ -89,20 +92,20 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             DownloadEvent downloadEvent = event.peekContent();
                             if (downloadEvent instanceof Download){
                                 Download download = (Download)downloadEvent;
-                                if (download.getUrl().equals(uri)){
+                                if (download.getUrl().equals(url)){
                                     Timber.d("Downloading running for %s", download.getUrl());
                                     downloadRunning(holder);
                                     holder.chapterIndex = download.getChapterIndex();
                                 }
                             }else if (downloadEvent instanceof Downloaded){
                                 Downloaded downloaded = (Downloaded)downloadEvent;
-                                if (downloaded.getUrl().equals(uri)){
+                                if (downloaded.getUrl().equals(url)){
                                     downloadCompleted(holder,mDownloader.getDownloadIdByURL(downloaded.getUrl()));
                                 }
 
                             }else if (downloadEvent instanceof Progress){
                                 Progress progress = (Progress)downloadEvent;
-                                if (progress.getUrl().equals(uri)){
+                                if (progress.getUrl().equals(url)){
                                     holder.mProgressBar.setProgress((int)progress.getPercent());
                                     holder.chapterIndex = progress.getChapterIndex();
 
@@ -114,12 +117,12 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 }
                             }else if(downloadEvent instanceof Cancelled){
                                 Cancelled cancelled = (Cancelled) downloadEvent;
-                                if(cancelled.getFileUrl().equals(uri)){
+                                if(cancelled.getFileUrl().equals(url)){
                                     downloadInterrupted(holder);
                                 }
                             }else if (downloadEvent instanceof Restart){
                                 Restart download = (Restart)downloadEvent;
-                                if (download.getUrl().equals(uri)){
+                                if (download.getUrl().equals(url)){
                                     Timber.d("Restart running for %s", download.getUrl());
                                     downloadRunning(holder);
                                     holder.chapterIndex = download.getChapterIndex();
@@ -129,13 +132,13 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         })
                 );
 
-        if(mDownloader.getStatusByDownloadId(holder.downloadId)==null){
+        if(mDownloader.getStatusByDownloadId(holder.downloadId)==FileDownloadStatus.error ||
+                mDownloader.getStatusByDownloadId(holder.downloadId)==FileDownloadStatus.INVALID_STATUS ||
+                mDownloader.getStatusByDownloadId(holder.downloadId)==FileDownloadStatus.paused){
             downloadInterrupted(holder);
-        }else if(mDownloader.getStatusByDownloadId(holder.downloadId).length>0 &&
-                mDownloader.getStatusByDownloadId(holder.downloadId)[0].equals(Utility.STATUS_RUNNING)){
+        }else if(mDownloader.getStatusByDownloadId(holder.downloadId)==FileDownloadStatus.progress){
             downloadRunning(holder);
-        }else if(mDownloader.getStatusByDownloadId(holder.downloadId).length>0 &&
-                mDownloader.getStatusByDownloadId(holder.downloadId)[0].equals(Utility.STATUS_SUCCESS)){
+        }else if(mDownloader.getStatusByDownloadId(holder.downloadId)== FileDownloadStatus.completed){
             downloadCompleted(holder,holder.downloadId);
         }
     }
@@ -180,7 +183,7 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         holder.mProgressBar.setVisibility(View.GONE);
         long[] progress = mDownloader.getProgress(downloadId);
         if(progress != null){
-            holder.mProgressDetails.setText(Utility.bytes2String(progress[1]));
+            holder.mProgressDetails.setText("Completed");
         }
         holder.mFileName.setOnClickListener(view -> mDownloader.openDownloadedFile(mContext,holder.downloadId));
     }
@@ -245,18 +248,12 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return ArchiveUtils.Companion.getLocalSavePath(mIdentifier);
     }
 
-    private int getAppropriateFileIconFromFormat(String format) {
-        Timber.d("Format is %s", format);
-        return R.drawable.ic_file_music;
-    }
-
     @Override
     public int getItemCount() {
         return mCursor.getCount();
     }
 
     private static String getFormattedUpdates(long downloadedSize, long fileSize) {
-        //format: 625KB/s - 998KB of 112MB, 31 mins left
         return Utility.bytes2String(downloadedSize)+ " of "+Utility.bytes2String(fileSize);
     }
 
