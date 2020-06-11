@@ -8,12 +8,12 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract;
+import com.liulishuo.filedownloader.FileDownloader;
 
 import java.util.Arrays;
 
 import timber.log.Timber;
 
-import static android.content.Context.DOWNLOAD_SERVICE;
 import static com.allsoftdroid.audiobook.feature_downloader.utils.DownloadStatus.DOWNLOADER_NOT_DOWNLOADING;
 import static com.allsoftdroid.audiobook.feature_downloader.utils.DownloadStatus.DOWNLOADER_PENDING_ID;
 import static com.allsoftdroid.audiobook.feature_downloader.utils.DownloadStatus.DOWNLOADER_PROTOCOL_NOT_SUPPORTED;
@@ -196,25 +196,24 @@ public class downloadUtils {
         MatrixCursor customCursor;
 
         customCursor = new MatrixCursor(new String[]{
-                DownloadManager.COLUMN_ID,
-                DownloadManager.COLUMN_TOTAL_SIZE_BYTES,
-                DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR,
-                DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP,
-                DownloadManager.COLUMN_LOCAL_URI,
-                DownloadManager.COLUMN_MEDIA_TYPE,
-                DownloadManager.COLUMN_STATUS,
-                DownloadManager.COLUMN_URI,
-                DownloadManager.COLUMN_TITLE});
-
+                downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID,
+                downloadContract.downloadEntry.COLUMN_TOTAL_SIZE_BYTES,
+                downloadContract.downloadEntry.COLUMN_BYTES_DOWNLOADED_SO_FAR,
+                downloadContract.downloadEntry.COLUMN_DOWNLOAD_LOCAL_PATH,
+                downloadContract.downloadEntry.COLUMN_MEDIA_MIME,
+                downloadContract.downloadEntry.COLUMN_DOWNLOAD_URL,
+                downloadContract.downloadEntry.COLUMN_DOWNLOAD_NAME
+        });
 
         String[] projection = {
                 downloadContract.downloadEntry._ID,
                 downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID,
                 downloadContract.downloadEntry.COLUMN_DOWNLOAD_NAME,
-                downloadContract.downloadEntry.COLUMN_DOWNLOAD_URL
+                downloadContract.downloadEntry.COLUMN_DOWNLOAD_URL,
+                downloadContract.downloadEntry.COLUMN_DOWNLOAD_LOCAL_PATH
         };
 
-        String order = downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID + " DESC";
+        String order = downloadContract.downloadEntry._ID + " ASC";
 
         Cursor cursor = context.getContentResolver().query(
                 downloadContract.downloadEntry.CONTENT_URI,
@@ -224,48 +223,32 @@ public class downloadUtils {
                 order);
 
         if (cursor != null && cursor.getCount() > 0) {
-            DownloadManager downloadManager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
-            DownloadManager.Query query = new DownloadManager.Query();
 
             while (cursor.moveToNext()) {
                 long downloadId = cursor.getLong(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID));
+                String localPath = cursor.getString(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_LOCAL_PATH));
+
+                long so_far_byte = FileDownloader.getImpl().getSoFar((int) downloadId);
+                long total_byte = FileDownloader.getImpl().getTotal((int) downloadId);
 
                 if(downloadId!=DOWNLOADER_PENDING_ID){
-                    query.setFilterById(downloadId);
-                    if (downloadManager != null) {
-                        Cursor c = downloadManager.query(query);
-                        if (c!=null && c.moveToFirst()) {
-                            Timber.d("%s => %s", downloadUtils.class.getSimpleName(), "size of c: " + c.getCount() +
-                                    "\ncolumn count:" + c.getColumnCount() + "\nColumn name at 0: " + c.getColumnName(0) +
-                                    "\nColumn value at 0: " + c.getString(0)+
-                                    "column uri is "+c.getString(c.getColumnIndex(DownloadManager.COLUMN_URI))
-                            );
-
-                            customCursor.addRow(new Object[]{
-                                    c.getLong(c.getColumnIndex(DownloadManager.COLUMN_ID)),
-                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)),
-                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)),
-                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP)),
-                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)),
-                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_MEDIA_TYPE)),
-                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_STATUS)),
-                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_URI)),
-                                    c.getString(c.getColumnIndex(DownloadManager.COLUMN_TITLE))
-                            });
-
-                            c.close();
-                        }
-                    }
+                    customCursor.addRow(new Object[]{
+                            cursor.getLong(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID)),
+                            total_byte+"",
+                            so_far_byte+"",
+                            localPath,
+                            "audio/mp3",
+                            cursor.getString(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_URL)),
+                            cursor.getString(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_NAME))
+                    });
                 }else{
                     //It is pending download Id and there is no records with DownloadManager
                     customCursor.addRow(new Object[]{
                             cursor.getLong(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID)),
                             "",
                             "",
-                            "",
-                            "",
-                            "",
-                            "",
+                            localPath,
+                            "audio/mp3",
                             cursor.getString(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_URL)),
                             cursor.getString(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_NAME))
                     });

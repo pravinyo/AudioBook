@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.allsoftdroid.audiobook.feature_downloader.R;
-import com.allsoftdroid.audiobook.feature_downloader.data.Downloader;
+import com.allsoftdroid.audiobook.feature_downloader.data.Downloader2;
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloader;
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloaderRefresh;
 import com.allsoftdroid.audiobook.feature_downloader.presentation.recycleviewAdapter.DownloaderAdapter;
@@ -63,7 +63,7 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
 
         mEmptyView = findViewById(R.id.download_emptyView);
 
-        downloader = new Downloader(this);
+        downloader = new Downloader2(mDownloadEventStore,getApplication());
 
         downloadViewModel = new DownloadViewModel();
 

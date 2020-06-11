@@ -3,6 +3,7 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val DOWNLOADER_VERSION = "1.7.7"
     const val TOOL_TIP = "2.0.3"
     const val FIREBASE_CRASHLYTICS = "17.0.0"
     const val FIREBASE_VERSION = "17.4.2"
@@ -128,4 +129,5 @@ object LibraryDependency {
     const val FIREBASE_CRASHLYTICS = "com.google.firebase:firebase-crashlytics:${LibraryVersion.FIREBASE_CRASHLYTICS}"
 
     const val TOOL_TIP = "it.sephiroth.android.library.targettooltip:target-tooltip-library:${LibraryVersion.TOOL_TIP}"
+    const val DOWNLOADER = "com.liulishuo.filedownloader:library:${LibraryVersion.DOWNLOADER_VERSION}"
 }
