@@ -386,23 +386,10 @@ public class Downloader2 implements IDownloader {
 
         mDownloadQueue.put(obj.getUrl(),obj);
 
-        File[] dir2 = ContextCompat.getExternalFilesDirs(mAppContext,null);
-
-        List<String> dir = new ArrayList<>();
-
-        String packageName = mAppContext.getPackageName();
-
-        for (File file: dir2) {
-            Timber.d("external file dir is : %s",file.getAbsolutePath());
-            dir.add(
-                    file.getAbsolutePath()
-                            .replace("/Android/data/"+packageName+"/files", ""));
-        }
-
         String rootFolder = ArchiveUtils.Companion.getDownloadsRootFolder(this.mAppContext);
         File file = new File(rootFolder,obj.getSubPath()+obj.getName());
 
-        String localPath = dir.get(0)+file.getAbsolutePath();
+        String localPath = file.getAbsolutePath();
         Timber.d("File path:%s", localPath);
 
         insertDownloadDatabase(DOWNLOADER_PENDING_ID,obj.getName(),obj.getUrl(),localPath);
