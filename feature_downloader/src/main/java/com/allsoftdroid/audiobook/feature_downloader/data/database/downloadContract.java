@@ -22,6 +22,11 @@ public final class downloadContract {
         public final static String COLUMN_DOWNLOAD_ID="downloadId";
         public final static String COLUMN_DOWNLOAD_LOCAL_PATH="downloadLocalPath";
 
+        public static final String COLUMN_TOTAL_SIZE_BYTES = "total_size";
+        public static final String COLUMN_BYTES_DOWNLOADED_SO_FAR = "bytes_so_far";
+        public static final String COLUMN_MEDIA_MIME = "media_mime";
+
+
 
         /**
          * The MIME type of the {@link #CONTENT_URI} for a list
