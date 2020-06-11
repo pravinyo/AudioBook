@@ -20,6 +20,7 @@ public final class downloadContract {
         public final static String COLUMN_DOWNLOAD_NAME="name";
         public final static String COLUMN_DOWNLOAD_URL="url";
         public final static String COLUMN_DOWNLOAD_ID="downloadId";
+        public final static String COLUMN_DOWNLOAD_LOCAL_PATH="downloadLocalPath";
 
 
         /**
