@@ -29,7 +29,10 @@ import com.allsoftdroid.common.base.store.downloader.Progress;
 import com.allsoftdroid.common.base.store.downloader.Restart;
 import com.liulishuo.filedownloader.model.FileDownloadStatus;
 
-import io.reactivex.disposables.CompositeDisposable;
+import java.util.HashMap;
+import java.util.Objects;
+
+import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -46,7 +49,7 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private IDownloader mDownloader;
     private IDownloaderRefresh mDownloaderRefresh;
     private final DownloadEventStore downloadEventStore;
-    private CompositeDisposable compositeDisposable;
+    private HashMap<String, Disposable> compositeDisposable;
 
     private Cursor mCursor;
 
@@ -59,7 +62,7 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mDownloader = downloader;
         downloadEventStore = eventStore;
         mDownloaderRefresh = (IDownloaderRefresh) mContext;
-        compositeDisposable = new CompositeDisposable();
+        compositeDisposable = new HashMap<>();
     }
 
     @NonNull
@@ -85,7 +88,7 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         String url = mCursor.getString(mCursor.getColumnIndex(COLUMN_DOWNLOAD_URL));
 
-        compositeDisposable.add(
+        compositeDisposable.put(url,
                 downloadEventStore
                         .observe()
                         .subscribe(event -> {
@@ -103,15 +106,40 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                     downloadCompleted(holder,mDownloader.getDownloadIdByURL(downloaded.getUrl()));
                                 }
 
+                                try{
+                                    Objects.requireNonNull(compositeDisposable.get(url)).dispose();
+                                }catch (Exception e){
+                                    Timber.e("Error:%s", e.getMessage());
+                                }
+
                             }else if (downloadEvent instanceof Progress){
                                 Progress progress = (Progress)downloadEvent;
                                 if (progress.getUrl().equals(url)){
+
+                                    if(holder.mCancelButton.getVisibility()!=View.VISIBLE ||
+                                            holder.mProgressBar.getVisibility()!=View.VISIBLE){
+
+                                        holder.mCancelButton.setVisibility(View.VISIBLE);
+                                        holder.mDeleteButton.setVisibility(View.GONE);
+                                        holder.mProgressBar.setVisibility(View.VISIBLE);
+
+                                        holder.mCancelButton.setImageResource(R.drawable.ic_close_circle);
+                                        holder.mCancelButton.setOnClickListener(view -> {
+                                            //remove from local database and downloader database
+
+                                            Timber.d("Holder download Id: %s", holder.downloadId);
+                                            String mIdentifier = url.split("/")[4];
+                                            downloadEventStore.publish(
+                                                    new Event<>(new Cancel(mIdentifier, holder.chapterIndex, url))
+                                            );
+                                        });
+                                    }
+
                                     holder.mProgressBar.setProgress((int)progress.getPercent());
                                     holder.chapterIndex = progress.getChapterIndex();
 
                                     long[] progressStat = mDownloader.getProgress(mDownloader.getDownloadIdByURL(progress.getUrl()));
                                     if (progressStat!=null && progressStat.length>0 && progressStat[1]>progressStat[2]){
-                                        holder.mProgressBar.setProgress((int)progressStat[0]);
                                         holder.mProgressDetails.setText(getFormattedUpdates(progressStat[2],progressStat[1]));
                                     }
                                 }
@@ -260,6 +288,8 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
-        compositeDisposable.dispose();
+        for (Disposable disposable: compositeDisposable.values()) {
+            disposable.dispose();
+        }
     }
 }
