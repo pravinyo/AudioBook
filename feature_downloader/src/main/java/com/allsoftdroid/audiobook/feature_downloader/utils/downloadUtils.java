@@ -213,7 +213,7 @@ public class downloadUtils {
                 downloadContract.downloadEntry.COLUMN_DOWNLOAD_LOCAL_PATH
         };
 
-        String order = downloadContract.downloadEntry._ID + " DESC";
+        String order = downloadContract.downloadEntry._ID + " ASC";
 
         Cursor cursor = context.getContentResolver().query(
                 downloadContract.downloadEntry.CONTENT_URI,
