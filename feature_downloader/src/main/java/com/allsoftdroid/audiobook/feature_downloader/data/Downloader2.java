@@ -16,6 +16,7 @@ import androidx.core.content.FileProvider;
 import com.allsoftdroid.audiobook.feature_downloader.data.config.ProviderConfig;
 import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContract;
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloader;
+import com.allsoftdroid.audiobook.feature_downloader.utils.DownloadNotificationUtils;
 import com.allsoftdroid.common.base.extension.Event;
 import com.allsoftdroid.common.base.network.ArchiveUtils;
 import com.allsoftdroid.common.base.store.downloader.Cancel;
@@ -29,6 +30,7 @@ import com.allsoftdroid.common.base.store.downloader.MultiDownload;
 import com.allsoftdroid.common.base.store.downloader.Progress;
 import com.allsoftdroid.common.base.store.downloader.PullAndUpdateStatus;
 import com.allsoftdroid.common.base.store.downloader.Restart;
+import com.allsoftdroid.common.base.utils.BindingUtils;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadListener;
 import com.liulishuo.filedownloader.FileDownloader;
@@ -63,6 +65,14 @@ public class Downloader2 implements IDownloader {
         mDownloadEventStore.publish(
                 new Event<DownloadEvent>(new Downloaded(mUrl,mBookId,mChapterIndex))
         );
+
+        String filename = "Chap:"+mChapterIndex + " from " + mBookId;
+
+        DownloadNotificationUtils.INSTANCE.sendNotification(
+                mAppContext,
+                filename,
+                mDownloadQueue.size(),
+                100);
     }
 
     @Override
@@ -71,6 +81,14 @@ public class Downloader2 implements IDownloader {
         mDownloadEventStore.publish(
                 new Event<DownloadEvent>(new Progress(mUrl,mBookId,mChapterIndex,progress))
         );
+
+        String filename = "Chap:"+mChapterIndex + " from " + mBookId;
+
+        DownloadNotificationUtils.INSTANCE.sendNotification(
+                mAppContext.getApplicationContext(),
+                filename,
+                mDownloadQueue.size(),
+                progress);
     }
 
     @Override
