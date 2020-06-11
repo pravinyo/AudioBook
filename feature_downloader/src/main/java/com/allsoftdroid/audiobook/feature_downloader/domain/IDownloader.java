@@ -22,7 +22,7 @@ public interface IDownloader extends IDownloaderCore {
     String findURLbyDownloadId(long downloadId);
     long getDownloadIdByURL(String url);
 
-    String[] getStatusByDownloadId(long downloadId);
+    byte getStatusByDownloadId(long downloadId);
 
     void openDownloadedFile(Context context, long downloadId);
 }
