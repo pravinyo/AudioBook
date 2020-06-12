@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.allsoftdroid.audiobook.feature_downloader.data.config.ProviderConfig;
@@ -30,14 +29,12 @@ import com.allsoftdroid.common.base.store.downloader.MultiDownload;
 import com.allsoftdroid.common.base.store.downloader.Progress;
 import com.allsoftdroid.common.base.store.downloader.PullAndUpdateStatus;
 import com.allsoftdroid.common.base.store.downloader.Restart;
-import com.allsoftdroid.common.base.utils.BindingUtils;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadListener;
 import com.liulishuo.filedownloader.FileDownloader;
 import com.liulishuo.filedownloader.model.FileDownloadStatus;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -61,34 +58,42 @@ public class Downloader2 implements IDownloader {
 
     @Override
     public void updateDownloaded(String mUrl, String mBookId, int mChapterIndex) {
-        Timber.d("\nFile URL:"+mUrl+"\nDownloaded");
-        mDownloadEventStore.publish(
-                new Event<DownloadEvent>(new Downloaded(mUrl,mBookId,mChapterIndex))
-        );
+        try {
+            Timber.d("\nFile URL:"+mUrl+"\nDownloaded");
+            mDownloadEventStore.publish(
+                    new Event<DownloadEvent>(new Downloaded(mUrl,mBookId,mChapterIndex))
+            );
 
-        String filename = "Chap:"+mChapterIndex + " from " + mBookId;
+            String filename = "Chap:"+mChapterIndex + " from " + mBookId;
 
-        DownloadNotificationUtils.INSTANCE.sendNotification(
-                mAppContext,
-                filename,
-                mDownloadQueue.size(),
-                100);
+            DownloadNotificationUtils.INSTANCE.sendNotification(
+                    mAppContext,
+                    filename,
+                    mDownloadQueue.size(),
+                    100);
+        }catch (Exception e){
+            Timber.e("Error: %s",e.getMessage());
+        }
     }
 
     @Override
     public void updateProgress(String mUrl, String mBookId, int mChapterIndex, long progress) {
         Timber.d("\nFile URL:"+mUrl+"\nProgress :"+progress);
-        mDownloadEventStore.publish(
-                new Event<DownloadEvent>(new Progress(mUrl,mBookId,mChapterIndex,progress))
-        );
+        try{
+            mDownloadEventStore.publish(
+                    new Event<DownloadEvent>(new Progress(mUrl,mBookId,mChapterIndex,progress))
+            );
 
-        String filename = "Chap:"+mChapterIndex + " from " + mBookId;
+            String filename = "Chap:"+mChapterIndex + " from " + mBookId;
 
-        DownloadNotificationUtils.INSTANCE.sendNotification(
-                mAppContext.getApplicationContext(),
-                filename,
-                mDownloadQueue.size(),
-                progress);
+            DownloadNotificationUtils.INSTANCE.sendNotification(
+                    mAppContext.getApplicationContext(),
+                    filename,
+                    mDownloadQueue.size(),
+                    progress);
+        }catch (Exception e){
+            Timber.e("Error: %s", e.getMessage());
+        }
     }
 
     @Override
@@ -202,52 +207,63 @@ public class Downloader2 implements IDownloader {
 
     @Override
     public long getDownloadIdByURL(String url) {
-        String[] projection = {
-                downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID
-        };
+        try{
+            String[] projection = {
+                    downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID
+            };
 
-        String selection= downloadContract.downloadEntry.COLUMN_DOWNLOAD_URL+" = ?";
-        String[] selectionArgs={url};
+            String selection= downloadContract.downloadEntry.COLUMN_DOWNLOAD_URL+" = ?";
+            String[] selectionArgs={url};
 
-        Cursor cursor = mAppContext.getContentResolver().query(
-                downloadContract.downloadEntry.CONTENT_URI,
-                projection,
-                selection,
-                selectionArgs,
-                null);
+            Cursor cursor = mAppContext.getContentResolver().query(
+                    downloadContract.downloadEntry.CONTENT_URI,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    null);
 
-        if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
-            long data = cursor.getLong(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID));
-            cursor.close();
-            return data;
+            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                long data = cursor.getLong(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID));
+                cursor.close();
+                return data;
+            }
+            if(cursor!=null) cursor.close();
+
         }
-        if(cursor!=null) cursor.close();
+        catch (Exception e){
+            Timber.e("Error: %s",e.getMessage());
+        }
         return 0;
     }
 
     @Override
     public byte getStatusByDownloadId(long downloadId) {
 
-        String[] projection = {
-                downloadContract.downloadEntry.COLUMN_DOWNLOAD_LOCAL_PATH
-        };
+        try {
+            String[] projection = {
+                    downloadContract.downloadEntry.COLUMN_DOWNLOAD_LOCAL_PATH
+            };
 
-        String selection= downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID+" = ?";
-        String[] selectionArgs={downloadId+""};
-        Cursor cursor = mAppContext.getContentResolver().query(
-                downloadContract.downloadEntry.CONTENT_URI,
-                projection,
-                selection,
-                selectionArgs,
-                null);
+            String selection= downloadContract.downloadEntry.COLUMN_DOWNLOAD_ID+" = ?";
+            String[] selectionArgs={downloadId+""};
+            Cursor cursor = mAppContext.getContentResolver().query(
+                    downloadContract.downloadEntry.CONTENT_URI,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    null);
 
-        if (cursor != null && cursor.moveToFirst()) {
-            //We found the entry, so just have to update the row with new values
-            String path = cursor.getString(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_LOCAL_PATH));
+            if (cursor != null && cursor.moveToFirst()) {
+                //We found the entry, so just have to update the row with new values
+                String path = cursor.getString(cursor.getColumnIndex(downloadContract.downloadEntry.COLUMN_DOWNLOAD_LOCAL_PATH));
+                cursor.close();
 
-            return FileDownloader.getImpl().getStatus((int) downloadId,path);
+                return FileDownloader.getImpl().getStatus((int) downloadId,path);
+            }
         }
-
+        catch (Exception e){
+            Timber.e("Error: %s",e.getMessage());
+        }
         return FileDownloadStatus.error;
     }
 
