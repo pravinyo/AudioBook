@@ -47,13 +47,11 @@ class ArchiveUtils {
 
                 val dir: MutableList<String> = ArrayList()
 
-                val packageName: String = context.packageName
-
                 for (file in dir2) {
                     Timber.d("external file dir is : %s", file.absolutePath)
                     dir.add(
                         file.absolutePath
-                            .replace("/Android/data/$packageName/files", "")
+                            .replace("/files", "")
                     )
                 }
 
