@@ -21,7 +21,8 @@ import com.allsoftdroid.common.base.utils.SettingsPreferenceUtils
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import timber.log.Timber
-import java.util.*
+import java.io.File
+import java.io.FileFilter
 
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat(), KoinComponent {
@@ -139,23 +140,60 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat(), KoinComponent {
         }
     }
 
+    private fun getExternalStoragePath():Array<File>?{
+        var mount = File("/storage")
+
+        if (!mount.exists()){
+           mount = File("/mnt");
+        }
+
+        val roots = mount.listFiles(FileFilter {
+            return@FileFilter it.isDirectory && it.exists() && it.canWrite() && !it.isHidden
+        })
+
+        roots?.map {
+            Timber
+                .d("Root is :${it.absolutePath}")
+        }?: Timber
+            .d("Root is : null")
+
+        return roots
+    }
+
     private fun showDownloadLocationChoice(context: Context, application: Application) {
 
         val dir2 = ContextCompat.getExternalFilesDirs(context, null)
-
-        val dir: MutableList<String> = ArrayList()
-
-        val packageName: String = context.packageName
+        val roots  = mutableSetOf<String>()
 
         for (file in dir2) {
             Timber.d("external file dir is : %s", file.absolutePath)
-            dir.add(
+            roots.add(
                 file.absolutePath
-                    .replace("/Android/data/$packageName/files", "")
+                    .replace("/files", "")
             )
         }
 
-        val storage = dir.toTypedArray()
+        val tempRoot = getExternalStoragePath()
+        tempRoot?.map { file ->
+            var foundPath=""
+
+            val path = file.absolutePath
+
+            roots.forEach {
+                if (it.contains(path)){
+                    foundPath = it
+                    return@forEach
+                }
+            }
+
+            if (foundPath.isEmpty()){
+                roots.add("$path/Android/data/${context.packageName}")
+            }
+        }
+
+        val storage = roots.map {
+            it.substring(0,20)+"..."
+        }.toTypedArray()
 
         if (storage.size<=1) return
 
@@ -165,7 +203,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat(), KoinComponent {
         val currentStorage = ArchiveUtils.getDownloadsRootFolder(application)
         var checkedItem = 0
 
-        storage.mapIndexed { index, location ->
+        roots.mapIndexed { index, location ->
             if (location == currentStorage){
                 checkedItem = index
                 Timber.d("Location matched at index:$checkedItem")
@@ -185,7 +223,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat(), KoinComponent {
         alertBuilder.setPositiveButton("Change"
         ) { _, _ ->
             // user clicked OK
-            ArchiveUtils.setDownloadsRootFolder(application,storage[checkedItem])
+            ArchiveUtils.setDownloadsRootFolder(application,roots.toTypedArray()[checkedItem])
             this.findNavController()
                 .navigate(R.id.SettingsFragment,null, NavOptions.Builder()
                     .setPopUpTo(R.id.SettingsFragment,true)
