@@ -42,7 +42,7 @@
             app:cardCornerRadius="@dimen/cardview_radius_big"
             android:layout_margin="@dimen/margin_normal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/image_card_size"
             app:trackBookBanner="@{viewModel.playingTrackDetails}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -64,16 +64,16 @@
                     tools:text="The great book title"/>
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="@dimen/image_card_size"
-                    android:layout_height="@dimen/image_card_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
                     android:layout_gravity="center"
                     app:cardCornerRadius="@dimen/image_card_radius"
                     app:cardElevation="@dimen/image_card_elevation">
                     <ImageView
                         android:id="@+id/book_thumbnail"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
                         android:layout_gravity="center"
                         android:contentDescription="@string/book_thumbnail_image"/>
                 </androidx.cardview.widget.CardView>
