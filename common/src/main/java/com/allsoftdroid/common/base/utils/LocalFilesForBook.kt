@@ -2,8 +2,6 @@ package com.allsoftdroid.common.base.utils
 
 import android.app.Application
 import android.net.Uri
-import android.os.Environment
-import androidx.annotation.VisibleForTesting
 import androidx.core.net.toUri
 import com.allsoftdroid.common.base.extension.AudioPlayListItem
 import com.allsoftdroid.common.base.network.ArchiveUtils
@@ -14,9 +12,8 @@ import java.util.*
 class LocalFilesForBook(private val app:Application) {
 
     fun getDownloadedFilesList(bookId:String):List<String>?{
-        val directory = Environment.getExternalStoragePublicDirectory(ArchiveUtils.getDownloadsRootFolder(context = app))
 
-        val path = directory.toString() + ArchiveUtils.getLocalSavePath(bookId)
+        val path = ArchiveUtils.getDownloadsRootFolder(context = app) + ArchiveUtils.getLocalSavePath(bookId)
         Timber.d("Path: $path")
         val dir = File(path)
 
@@ -41,7 +38,7 @@ class LocalFilesForBook(private val app:Application) {
         if (localList != null) {
 
             for(localFile in localList){
-                val name = localFile.split("/").last()
+                val name = localFile.split(File.separator).last()
                 for (i in trackList.indices){
                     if(trackList[i].filename.toLowerCase(Locale.ROOT) == name.toLowerCase(Locale.ROOT)) {
                         returnList.removeAt(i)
