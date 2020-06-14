@@ -533,6 +533,7 @@ internal class BookDetailsViewModel(
         _audioBookTracks.value?.let {tracks ->
 
             Timber.d("List is non null and ready to update")
+            if(statusEvent.chapterIndex>tracks.size) return
 
             tracks[statusEvent.chapterIndex-1].downloadStatus = when(statusEvent){
                 is Downloading -> {
