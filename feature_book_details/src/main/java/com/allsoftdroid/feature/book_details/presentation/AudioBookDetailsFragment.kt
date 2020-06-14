@@ -164,7 +164,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                         if(bookDetailsViewModel.audioBookTracks.value.isNullOrEmpty()){
                             setVisibility(dataBinding.networkNoConnection,set = true)
                         }
-                        Toast.makeText(activity,"Connection Error",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity,getString(R.string.connection_error_message),Toast.LENGTH_SHORT).show()
                     }
                     NetworkState.SERVER_ERROR -> {
                         setVisibility(dataBinding.pbContentLoading,set = false)
@@ -172,7 +172,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                         if(bookDetailsViewModel.audioBookTracks.value.isNullOrEmpty()){
                             setVisibility(dataBinding.serverError,set = true)
                         }
-                        Toast.makeText(activity,"Server Error",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity,getString(R.string.server_error_message),Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -331,10 +331,10 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
     }
 
     private fun isLinkValid(archiveUrl: String): Boolean {
-        if (archiveUrl.toLowerCase(Locale.ROOT).contains("archive.org"))
+        if (archiveUrl.toLowerCase(Locale.ROOT).contains(getString(R.string.archive_domain)))
             return true
 
-        if (archiveUrl.toLowerCase(Locale.ROOT).contains("gutenberg.org"))
+        if (archiveUrl.toLowerCase(Locale.ROOT).contains(getString(R.string.gutenberg_domain)))
             return true
 
         return false
@@ -426,7 +426,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                 )
             ))
 
-        }?:Toast.makeText(this.context,"Track is not available",Toast.LENGTH_SHORT).show()
+        }?:Toast.makeText(this.context,getString(R.string.track_not_available_message),Toast.LENGTH_SHORT).show()
     }
 
     private fun setVisibility(view:View,set:Boolean){
