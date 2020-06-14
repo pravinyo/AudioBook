@@ -23,4 +23,7 @@
     <string name="guest_user">by AllSoftDroid</string>
     <string name="audiobook_refresh">Refresh list</string>
     <string name="pic_attribution">Animal Face Vectors by Vecteezy</string>
+    <string name="completed_message">Completed</string>
+    <string name="loading_message">Loading</string>
+    <string name="network_error_message">Network Error</string>
 </resources>
