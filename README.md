@@ -39,6 +39,30 @@ This App is based on Single Activity Navigation. Each Fragment screen is develop
   <img src="/photos/mybooks.png" width="200" />
 </p>
 
+# Release: 6.5.0
+## :star: New Features
+
+- Now downloader support resume and pause feature
+- Downloads folder changed to Android/Data
+- Implemented location preference for downloading media
+- new notification look for downloading media
+
+## :beetle: Bug Fixes
+
+- fixed downloader crash on closing while downloading
+- fixed play button bug
+- fixed UI issue in book details screen
+- fixed downloads screen bug
+- fixed bug for downloads cancel button
+
+
+## :heart: Contributors
+
+We'd like to thank all the contributors who worked on this release!
+
+- [@pravinyo](https://github.com/pravinyo)
+
+
 # Release: 6.4.3
 ## :star: New Features
 
