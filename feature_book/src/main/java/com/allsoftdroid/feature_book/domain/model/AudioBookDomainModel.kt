@@ -5,5 +5,5 @@ data class AudioBookDomainModel(
     val title: String,
     val creator: String?,
     val date: String?,
-    val addeddate:String
+    val addeddate:String?
 )
