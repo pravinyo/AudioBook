@@ -20,6 +20,12 @@ public final class downloadContract {
         public final static String COLUMN_DOWNLOAD_NAME="name";
         public final static String COLUMN_DOWNLOAD_URL="url";
         public final static String COLUMN_DOWNLOAD_ID="downloadId";
+        public final static String COLUMN_DOWNLOAD_LOCAL_PATH="downloadLocalPath";
+
+        public static final String COLUMN_TOTAL_SIZE_BYTES = "total_size";
+        public static final String COLUMN_BYTES_DOWNLOADED_SO_FAR = "bytes_so_far";
+        public static final String COLUMN_MEDIA_MIME = "media_mime";
+
 
 
         /**

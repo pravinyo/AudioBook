@@ -1,6 +1,7 @@
 package com.allsoftdroid.audiobook.feature.feature_playerfullscreen.utils
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -33,7 +34,9 @@ fun TextView.setTrackTitle(item : PlayingTrackDetails?){
 @BindingAdapter("trackBookTitle")
 fun TextView.setTrackBookTitle(item : PlayingTrackDetails?){
     item?.let {
-        text = getNormalizedText(item.bookTitle,30)
+        text = if(item.bookTitle.length>60){
+            getNormalizedText(item.bookTitle,58)
+        }else item.bookTitle
     }
 }
 
@@ -103,7 +106,7 @@ fun setTrackBookBanner(cardView: CardView, item: PlayingTrackDetails?) {
                                 val dominant = it.getDominantColor(it.getVibrantColor(0))
                                 val light = it.getLightMutedColor(it.getLightVibrantColor(0))
 
-//                                cardView.setBackgroundColor(dominant)
+                                cardView.setBackgroundColor(Color.TRANSPARENT)
 
                                 with(cardView.rootView.findViewById<View>(R.id.parentContainer)){
                                     setBackgroundColor(dark)

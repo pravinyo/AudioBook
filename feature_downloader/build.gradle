@@ -49,4 +49,5 @@ dependencies {
 
     implementation(LibraryDependency.RECYCLER_VIEW)
     implementation(LibraryDependency.CARD_VIEW)
+    implementation(LibraryDependency.DOWNLOADER)
 }

@@ -7,8 +7,8 @@ object AndroidConfig {
     const val BUILD_TOOLS_VERSION = "29.0.0"
 
     const val versionMajor = 6
-    const val versionMinor = 4
-    const val versionPatch = 3
+    const val versionMinor = 5
+    const val versionPatch = 0
     var versionClassifier = "SNAPSHOT"
     const val isSnapshot = false
 

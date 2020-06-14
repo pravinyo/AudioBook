@@ -1,9 +1,15 @@
 package com.allsoftdroid.audiobook.feature_settings
 
+import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.allsoftdroid.audiobook.feature_settings.model.Feedback
@@ -14,6 +20,9 @@ import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import com.allsoftdroid.common.base.utils.SettingsPreferenceUtils
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import timber.log.Timber
+import java.io.File
+import java.io.FileFilter
 
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat(), KoinComponent {
@@ -117,12 +126,113 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat(), KoinComponent {
     }
 
     private fun setupDownloadPref() {
-        activity?.let {
+        activity?.let {fragActivity ->
             val downloadPref = findPreference<Preference>(SettingsPreferenceUtils.DOWNLOADS_KEY)
-            val path = ArchiveUtils.getDownloadsRootFolder(it.application)
+            val path = ArchiveUtils.getDownloadsRootFolder(fragActivity.application)
 
-            val folder = "/$path/${ArchiveUtils.AppFolderName}/"
+            val folder = "$path/${ArchiveUtils.AppFolderName}/"
             downloadPref?.summary = folder
+
+            downloadPref?.setOnPreferenceClickListener {
+                showDownloadLocationChoice(fragActivity,fragActivity.application)
+                return@setOnPreferenceClickListener true
+            }
         }
+    }
+
+    private fun getExternalStoragePath():Array<File>?{
+        var mount = File("/storage")
+
+        if (!mount.exists()){
+           mount = File("/mnt");
+        }
+
+        val roots = mount.listFiles(FileFilter {
+            return@FileFilter it.isDirectory && it.exists() && it.canWrite() && !it.isHidden
+        })
+
+        roots?.map {
+            Timber
+                .d("Root is :${it.absolutePath}")
+        }?: Timber
+            .d("Root is : null")
+
+        return roots
+    }
+
+    private fun showDownloadLocationChoice(context: Context, application: Application) {
+
+        val dir2 = ContextCompat.getExternalFilesDirs(context, null)
+        val roots  = mutableSetOf<String>()
+
+        for (file in dir2) {
+            Timber.d("external file dir is : %s", file.absolutePath)
+            roots.add(
+                file.absolutePath
+                    .replace("/files", "")
+            )
+        }
+
+        val tempRoot = getExternalStoragePath()
+        tempRoot?.map { file ->
+            var foundPath=""
+
+            val path = file.absolutePath
+
+            roots.forEach {
+                if (it.contains(path)){
+                    foundPath = it
+                    return@forEach
+                }
+            }
+
+            if (foundPath.isEmpty()){
+                roots.add("$path/Android/data/${context.packageName}")
+            }
+        }
+
+        val storage = roots.map {
+            it.substring(0,20)+"..."
+        }.toTypedArray()
+
+        if (storage.size<=1) return
+
+        val alertBuilder = AlertDialog.Builder(context)
+        alertBuilder.setTitle("Choose storage")
+
+        val currentStorage = ArchiveUtils.getDownloadsRootFolder(application)
+        var checkedItem = 0
+
+        roots.mapIndexed { index, location ->
+            if (location == currentStorage){
+                checkedItem = index
+                Timber.d("Location matched at index:$checkedItem")
+                return@mapIndexed
+            }
+        }
+
+
+        alertBuilder.setSingleChoiceItems(
+            storage,
+            checkedItem
+        ) { _, which ->
+            // user checked an item
+            checkedItem = which
+        }
+
+        alertBuilder.setPositiveButton("Change"
+        ) { _, _ ->
+            // user clicked OK
+            ArchiveUtils.setDownloadsRootFolder(application,roots.toTypedArray()[checkedItem])
+            this.findNavController()
+                .navigate(R.id.SettingsFragment,null, NavOptions.Builder()
+                    .setPopUpTo(R.id.SettingsFragment,true)
+                    .build())
+        }
+
+        alertBuilder.setNegativeButton("Cancel", null)
+
+        val dialog: AlertDialog = alertBuilder.create()
+        dialog.show()
     }
 }

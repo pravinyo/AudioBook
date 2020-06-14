@@ -9,12 +9,13 @@ import com.allsoftdroid.audiobook.feature_downloader.data.database.downloadContr
 public class DBHelper extends SQLiteOpenHelper {
 
     private final static String DATABASE_NAME="audiobook_download.db";
-    private final static int DATABASE_VERSION=2;
+    private final static int DATABASE_VERSION=3;
 
     private static final String SQL_CREATE_ENTERIES_DOWNLOAD="CREATE TABLE "+ downloadEntry.TABLE_NAME+"("+
             downloadEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"+
             downloadEntry.COLUMN_DOWNLOAD_ID + " TEXT NOT NULL,"+
             downloadEntry.COLUMN_DOWNLOAD_URL + " TEXT NOT NULL,"+
+            downloadEntry.COLUMN_DOWNLOAD_LOCAL_PATH + " TEXT NOT NULL,"+
             downloadEntry.COLUMN_DOWNLOAD_NAME + " TEXT NOT NULL)";
 
 

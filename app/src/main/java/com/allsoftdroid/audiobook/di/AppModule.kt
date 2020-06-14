@@ -3,7 +3,7 @@ package com.allsoftdroid.audiobook.di
 import android.app.Activity
 import androidx.lifecycle.SavedStateHandle
 import com.allsoftdroid.audiobook.domain.usecase.GetLastPlayedUsecase
-import com.allsoftdroid.audiobook.feature_downloader.data.Downloader
+import com.allsoftdroid.audiobook.feature_downloader.data.Downloader2
 import com.allsoftdroid.audiobook.feature_downloader.domain.IDownloaderCore
 import com.allsoftdroid.audiobook.presentation.viewModel.MainActivityViewModel
 import com.allsoftdroid.audiobook.services.audio.AudioManager
@@ -58,8 +58,8 @@ object AppModule {
     private val downloaderModule : Module = module {
         single {
                 (ctx:Activity) ->
-            Downloader(
-                ctx,
+            Downloader2(
+                get(),
                 get()
             ) as IDownloaderCore
         }

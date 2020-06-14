@@ -144,10 +144,8 @@ class AudioBookPlayer(private val context:Application,
     fun stopIfPlaying(){
 
         exoPlayer?.let {
-            if(it.isPlaying){
-                it.stop()
-                Timber.d("Player stopped")
-            }
+            it.stop()
+            Timber.d("Player stopped")
         }
     }
 

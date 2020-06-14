@@ -1,7 +1,6 @@
 package com.allsoftdroid.audiobook.feature_mybooks.data.repository
 
 import android.app.Application
-import android.os.Environment
 import com.allsoftdroid.audiobook.feature_mybooks.data.model.LocalBookFiles
 import com.allsoftdroid.audiobook.feature_mybooks.domain.ILocalBooksRepository
 import com.allsoftdroid.common.base.network.ArchiveUtils
@@ -25,9 +24,9 @@ class LocalBooksRepositoryImpl(
             val rootFolder = ArchiveUtils.getDownloadsRootFolder(application)
             Timber.d("Root Folder is $rootFolder")
 
-            val directory = Environment.getExternalStoragePublicDirectory("$rootFolder/AudioBooks/")
+            val directory = File("$rootFolder${File.separator}${ArchiveUtils.AppFolderName}${File.separator}")
             val bookIds = directory.listFiles()?.map {
-                it.absolutePath.split("/").last()
+                it.absolutePath.split(File.separator).last()
             }
 
             Timber.d("BookIds are  $bookIds")
@@ -50,9 +49,9 @@ class LocalBooksRepositoryImpl(
             val rootFolder = ArchiveUtils.getDownloadsRootFolder(application)
             Timber.d("Root Folder is $rootFolder")
 
-            val directory = Environment.getExternalStoragePublicDirectory("$rootFolder/AudioBooks/")
+            val directory = File("$rootFolder${File.separator}${ArchiveUtils.AppFolderName}${File.separator}")
             val books = directory.listFiles()?.filter {
-                it.absolutePath.split("/").last() == identifier
+                it.absolutePath.split(File.separator).last() == identifier
             }
 
             Timber.d("Books to be removed are : $books")
