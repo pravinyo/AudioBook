@@ -8,7 +8,7 @@ internal data class AudioBookDataModel(
     val title: String,
     val creator: Any?,
     val date: String,
-    val addeddate:String
+    val addeddate:String?
 )
 
 internal fun AudioBookDataModel.toDomainModel(): AudioBookDomainModel {
