@@ -14,5 +14,5 @@
     <dimen name="book_image_height">90dp</dimen>
 
     <dimen name="item_icon_size">16dp</dimen>
-    <dimen name="icon_size">24dp</dimen>
+    <dimen name="icon_size">32dp</dimen>
 </resources>

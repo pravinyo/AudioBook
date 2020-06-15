@@ -50,6 +50,7 @@
             android:layout_marginBottom="@dimen/margin_min"
             android:background="@drawable/ic_skip_previous_white_24dp"
             android:onClick="@{() -> viewModel.playPrevious()}"
+            android:contentDescription="@string/play_previous_track"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/iv_miniPlayer_album_art"
             app:layout_constraintTop_toBottomOf="@+id/tv_miniPlayer_trackTitle" />
@@ -62,6 +63,7 @@
             android:layout_marginStart="@dimen/margin_big"
             android:background="@drawable/ic_skip_next_white_24dp"
             android:onClick="@{() -> viewModel.playNext()}"
+            android:contentDescription="@string/play_next_track"
             app:layout_constraintBottom_toBottomOf="@+id/view_PlayPause_wait"
             app:layout_constraintStart_toEndOf="@+id/view_PlayPause_wait"
             app:layout_constraintTop_toTopOf="@+id/view_PlayPause_wait"
@@ -82,12 +84,14 @@
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="@dimen/mini_player_control_btn"
                 android:layout_height="@dimen/mini_player_control_btn"
+                android:contentDescription="@string/play_or_pause_track"
                 app:controlIconPlayPause="@{viewModel.shouldItPlay}"
                 android:onClick="@{() -> viewModel.playPause()}"
                 android:visibility="gone"/>
 
             <ProgressBar
                 android:id="@+id/btn_miniPlayer_Progress"
+                android:contentDescription="@string/loading_track_to_play"
                 android:layout_width="@dimen/mini_player_control_btn"
                 android:layout_height="@dimen/mini_player_control_btn"/>
 

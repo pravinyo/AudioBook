@@ -63,6 +63,7 @@
                 android:layout_width="@dimen/track_timer_icon_size"
                 android:layout_height="@dimen/track_timer_icon_size"
                 android:src="@drawable/clock_outline"
+                android:contentDescription="@string/track_play_time"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/track_title"
                 app:layout_constraintTop_toTopOf="@+id/track_duration" />
@@ -105,6 +106,7 @@
             android:progressDrawable="@drawable/circular_progressbar"
             android:background="@drawable/circle_shape"
             style="?android:attr/progressBarStyleHorizontal"
+            android:contentDescription="@string/downloading_section_progress"
             android:onClick="@{()->progressClickListener.onProgressbarItemClicked(track)}"
             android:max="100" />
     </LinearLayout>
