@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">feature_mini_player</string>
     <string name="audio_book_album_art">audio book album art</string>
+    <string name="loading_track_to_play">loading track to play</string>
 </resources>
