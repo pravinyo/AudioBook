@@ -50,11 +50,13 @@ class ArchiveUtils {
                 val dir: MutableList<String> = ArrayList()
 
                 for (file in dir2) {
-                    Timber.d("external file dir is : %s", file.absolutePath)
-                    dir.add(
-                        file.absolutePath
-                            .replace("/files", "")
-                    )
+                    file?.let {
+                        Timber.d("external file dir is : %s", it.absolutePath)
+                        dir.add(
+                            it.absolutePath
+                                .replace("/files", "")
+                        )
+                    }
                 }
 
                 val tempRoot = getExternalStoragePath()
