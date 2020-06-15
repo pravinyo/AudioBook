@@ -15,6 +15,7 @@ import androidx.preference.PreferenceFragmentCompat
 import com.allsoftdroid.audiobook.feature_settings.model.Feedback
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.ArchiveUtils
+import com.allsoftdroid.common.base.network.ArchiveUtils.Companion.getExternalStoragePath
 import com.allsoftdroid.common.base.store.userAction.OpenLicensesUI
 import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import com.allsoftdroid.common.base.utils.SettingsPreferenceUtils
@@ -138,26 +139,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat(), KoinComponent {
                 return@setOnPreferenceClickListener true
             }
         }
-    }
-
-    private fun getExternalStoragePath():Array<File>?{
-        var mount = File("/storage")
-
-        if (!mount.exists()){
-           mount = File("/mnt");
-        }
-
-        val roots = mount.listFiles(FileFilter {
-            return@FileFilter it.isDirectory && it.exists() && it.canWrite() && !it.isHidden
-        })
-
-        roots?.map {
-            Timber
-                .d("Root is :${it.absolutePath}")
-        }?: Timber
-            .d("Root is : null")
-
-        return roots
     }
 
     private fun showDownloadLocationChoice(context: Context, application: Application) {

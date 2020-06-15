@@ -188,16 +188,17 @@ public class DownloaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             String mIdentifier = url.split("/")[4];
 
             String fileName = holder.mFileName.getText().toString();
-            downloadEventStore.publish(
-                    new Event<>(new Restart(
-                            url,
-                            fileName,
-                            "Downloading "+fileName,
-                            getSubPathFolder(mIdentifier),
-                            mIdentifier,
-                            "",
-                            holder.chapterIndex))
-            );
+            if(holder.chapterIndex>0){
+                downloadEventStore.publish(
+                        new Event<>(new Restart(
+                                url,
+                                fileName,
+                                "Downloading "+fileName,
+                                getSubPathFolder(mIdentifier),
+                                mIdentifier,
+                                "",
+                                holder.chapterIndex)));
+            }
         });
 
         holder.mProgressBar.setVisibility(View.INVISIBLE);

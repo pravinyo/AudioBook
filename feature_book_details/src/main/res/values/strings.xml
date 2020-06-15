@@ -6,7 +6,7 @@
     <string name="previous">prev</string>
     <string name="playpause">pp</string>
     <string name="next">nex</string>
-    <string name="download_icon">download icon</string>
+    <string name="download_icon">download track</string>
     <string name="banner_image_info">more information</string>
     <string name="banner_image_share">Share book details</string>
     <string name="banner_image_download">Download Book</string>
@@ -25,6 +25,13 @@
     <string name="download_soon_start">Download will soon start...</string>
     <string name="open_with_label">Open with</string>
     <string name="wait_message">Please Wait</string>
+    <string name="archive_domain">archive.org</string>
+    <string name="gutenberg_domain">gutenberg.org</string>
+    <string name="connection_error_message">Connection Error</string>
+    <string name="server_error_message">Server Error</string>
+    <string name="track_not_available_message">Track is not available</string>
+    <string name="downloading_section_progress">downloading section progress</string>
+    <string name="track_play_time">track play time</string>
 
     <string-array name="track_format_array">
         <item>Good</item>

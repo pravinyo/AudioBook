@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.core.content.ContextCompat
 import com.allsoftdroid.common.R
 import timber.log.Timber
+import java.io.File
+import java.io.FileFilter
 import java.util.*
 
 class ArchiveUtils {
@@ -48,11 +50,31 @@ class ArchiveUtils {
                 val dir: MutableList<String> = ArrayList()
 
                 for (file in dir2) {
-                    Timber.d("external file dir is : %s", file.absolutePath)
-                    dir.add(
-                        file.absolutePath
-                            .replace("/files", "")
-                    )
+                    file?.let {
+                        Timber.d("external file dir is : %s", it.absolutePath)
+                        dir.add(
+                            it.absolutePath
+                                .replace("/files", "")
+                        )
+                    }
+                }
+
+                val tempRoot = getExternalStoragePath()
+                tempRoot?.map { file ->
+                    var foundPath=""
+
+                    val path = file.absolutePath
+
+                    dir.forEach {
+                        if (it.contains(path)){
+                            foundPath = it
+                            return@forEach
+                        }
+                    }
+
+                    if (foundPath.isEmpty()){
+                        dir.add("$path/Android/data/${context.packageName}")
+                    }
                 }
 
                 setDownloadsRootFolder(context,dir[0])
@@ -61,6 +83,26 @@ class ArchiveUtils {
             }
 
             return rootFolder
+        }
+
+        fun getExternalStoragePath():Array<File>?{
+            var mount = File("/storage")
+
+            if (!mount.exists()){
+                mount = File("/mnt");
+            }
+
+            val roots = mount.listFiles(FileFilter {
+                return@FileFilter it.isDirectory && it.exists() && it.canWrite() && !it.isHidden
+            })
+
+            roots?.map {
+                Timber
+                    .d("Root is :${it.absolutePath}")
+            }?: Timber
+                .d("Root is : null")
+
+            return roots
         }
     }
 }

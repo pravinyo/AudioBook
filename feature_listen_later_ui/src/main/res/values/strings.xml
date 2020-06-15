@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="toolbar_back_arrow">Navigate to previous screen</string>
-    <string name="toolbar_title_text">Listen later</string>
+    <string name="toolbar_title_text_listen_later">Listen later</string>
     <string name="sort">Sort</string>
     <string name="no_books_found">You have finished all the books !</string>
     <string name="thumbnail">listen later thumb nail</string>

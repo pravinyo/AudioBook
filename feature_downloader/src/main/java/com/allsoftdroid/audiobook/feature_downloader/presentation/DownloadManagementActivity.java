@@ -127,8 +127,10 @@ public class DownloadManagementActivity extends AppCompatActivity implements IDo
     }
 
     private void disableClearAll(){
-        clearAllBtn.setEnabled(false);
-        clearAllBtn.getIcon().setAlpha(130);
+        if(clearAllBtn!=null){
+            clearAllBtn.setEnabled(false);
+            clearAllBtn.getIcon().setAlpha(130);
+        }
     }
 
     @Override
