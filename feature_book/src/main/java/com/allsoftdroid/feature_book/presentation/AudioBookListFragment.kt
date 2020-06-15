@@ -220,10 +220,6 @@ class AudioBookListFragment : BaseUIFragment(){
         })
 
         booksViewModel.searchBooks.observe(this, Observer {
-            it.map {book ->
-                Timber.d("Fetched: ${book.mId}")
-            }
-
             if(it.isNotEmpty()){
                 val prev = bookAdapter.itemCount
                 bookAdapter.submitList(it)
