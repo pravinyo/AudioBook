@@ -40,7 +40,7 @@
                 android:layout_marginStart="@dimen/margin_normal"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:gravity="start|center_vertical"
-                android:text="@string/toolbar_title_text"
+                android:text="@string/toolbar_title_text_listen_later"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
         </LinearLayout>
