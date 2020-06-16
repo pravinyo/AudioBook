@@ -8,7 +8,7 @@ object AndroidConfig {
 
     const val versionMajor = 6
     const val versionMinor = 5
-    const val versionPatch = 3
+    const val versionPatch = 6
     var versionClassifier = "SNAPSHOT"
     const val isSnapshot = false
 

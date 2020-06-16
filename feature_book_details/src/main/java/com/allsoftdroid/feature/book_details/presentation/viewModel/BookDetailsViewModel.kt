@@ -424,9 +424,9 @@ internal class BookDetailsViewModel(
     fun updateNextTrackPlaying(){
         _audioBookTracks.value?.let {trackList ->
             if(currentPlayingTrack<=trackList.size){
-                var newTrack =  (currentPlayingTrack+1)%audioBookTracks.value!!.size
+                var newTrack =  (currentPlayingTrack+1)%trackList.size
 
-                if(newTrack==0) newTrack = audioBookTracks.value!!.size
+                if(newTrack==0) newTrack = trackList.size
 
                 Timber.d("New Track is $newTrack")
                 onPlayItemClicked(newTrack)
@@ -435,15 +435,16 @@ internal class BookDetailsViewModel(
     }
 
     fun updatePreviousTrackPlaying(){
+        audioBookTracks.value?.let {tracks ->
+            if(currentPlayingTrack>tracks.size){
+                currentPlayingTrack = tracks.size
+            }
 
-        if(currentPlayingTrack>audioBookTracks.value!!.size){
-            currentPlayingTrack = audioBookTracks.value!!.size
-        }
-
-        if(currentPlayingTrack>0){
-            val newTrack =  if (currentPlayingTrack>1)(currentPlayingTrack-1)%audioBookTracks.value!!.size else 1
-            Timber.d("Previous Track is $newTrack")
-            onPlayItemClicked(newTrack)
+            if(currentPlayingTrack>0){
+                val newTrack =  if (currentPlayingTrack>1)(currentPlayingTrack-1)%tracks.size else 1
+                Timber.d("Previous Track is $newTrack")
+                onPlayItemClicked(newTrack)
+            }
         }
     }
 

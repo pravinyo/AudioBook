@@ -1,6 +1,8 @@
 package com.allsoftdroid.feature_book.presentation
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,6 +22,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
+import com.allsoftdroid.common.base.network.StoreUtils
 import com.allsoftdroid.common.base.store.userAction.OpenDownloadUI
 import com.allsoftdroid.common.base.store.userAction.UserActionEventStore
 import com.allsoftdroid.feature_book.R
@@ -89,6 +92,14 @@ class AudioBookListFragment : BaseUIFragment(){
                 R.id.nav_item_my_book -> {
                     this.findNavController()
                         .navigate(R.id.action_AudioBookListFragment_to_MyBooksFragment)
+                }
+
+                R.id.nav_item_rate -> {
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = Uri.parse(StoreUtils.getStoreUrl(requireActivity()))
+                        setPackage("com.android.vending")
+                    }
+                    startActivity(intent)
                 }
             }
 
@@ -220,10 +231,6 @@ class AudioBookListFragment : BaseUIFragment(){
         })
 
         booksViewModel.searchBooks.observe(this, Observer {
-            it.map {book ->
-                Timber.d("Fetched: ${book.mId}")
-            }
-
             if(it.isNotEmpty()){
                 val prev = bookAdapter.itemCount
                 bookAdapter.submitList(it)

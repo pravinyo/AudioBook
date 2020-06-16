@@ -23,6 +23,7 @@ import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerV
 import com.allsoftdroid.common.base.utils.ShareUtils
 import com.allsoftdroid.audiobook.feature_listen_later_ui.utils.SortType
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
+import com.allsoftdroid.common.base.network.StoreUtils
 import org.koin.android.ext.android.inject
 import org.koin.core.KoinComponent
 
@@ -70,7 +71,8 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
                         ShareUtils.share(
                             context = parent,
                             subject = "${item.title} on AudioBook",
-                            txt = "Listen ${item.title} written by '${item.author}' on AudioBook App, Start Listening: http://www.allsoftdroid.com/"
+                            txt = "Listen ${item.title} written by '${item.author}' on AudioBook App," +
+                                    " Start Listening: ${StoreUtils.getStoreUrl(requireActivity())}"
                         )
                     }
                 }
