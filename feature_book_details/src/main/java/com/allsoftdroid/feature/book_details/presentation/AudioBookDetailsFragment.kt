@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
+import com.allsoftdroid.common.base.network.StoreUtils
 import com.allsoftdroid.common.base.store.audioPlayer.*
 import com.allsoftdroid.common.base.store.downloader.*
 import com.allsoftdroid.common.base.store.userAction.OpenDownloadUI
@@ -290,7 +291,8 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                 ShareUtils.share(
                     context = this.requireActivity(),
                     subject = "${it.title} on AudioBook",
-                    txt = "Listen ${it.title} written by '${it.creator}' on AudioBook App, Start Listening: http://www.allsoftdroid.com/"
+                    txt = "Listen ${it.title} written by '${it.creator}' on AudioBook App," +
+                            " Start Listening: ${StoreUtils.getStoreUrl(requireActivity())}"
                 )
             }
         }
