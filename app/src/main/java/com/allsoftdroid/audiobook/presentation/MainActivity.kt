@@ -8,7 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
-import androidx.navigation.Navigation
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
 import com.allsoftdroid.audiobook.R
 import com.allsoftdroid.audiobook.di.AppModule
@@ -100,8 +100,8 @@ class MainActivity : BaseActivity() {
 
             connectionListener.value?.let { connectedEvent->
                 if(connectedEvent.peekContent()){
-                    Navigation.findNavController(this,R.id.navHostFragment)
-                        .navigate(com.allsoftdroid.feature_book.R.id.action_AudioBookListFragment_to_AudioBookDetailsFragment,bundle)
+                    findNavController(this,R.id.navHostFragment)
+                        .navigate(R.id.action_AudioBookListFragment_to_AudioBookDetailsFragment,bundle)
                     mainActivityViewModel.clearSharedPref()
                 }else{
                     Toast.makeText(this,"Please connect to internet",Toast.LENGTH_SHORT).show()
