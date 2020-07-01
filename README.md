@@ -1,5 +1,20 @@
 # AudioBook App
-`Current Major Version : 6` , [`Privacy Policy for Published App`](http://privacy.audiobooks.allsoftdroid.com/)
+<table style="width:100%">
+  <tr>
+    <th>Details</th>
+    <th>Store Link</td>
+  </tr>
+  <tr>
+    <td> Current Major Version : 6.5.7-SNAPSHOT </td>
+    <td rowspan="2">
+      <a href='https://play.google.com/store/apps/details?id=com.allsoftdroid.audiobook&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img      
+      alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="240px"/></a>
+    </td>
+  </tr>
+  <tr>
+    <td> Privacy Page of Published App: http://privacy.audiobooks.allsoftdroid.com/</td>
+  </tr>
+</table>
 
 ![AudioBook Feature UnitTest](https://github.com/pravinyo/AudioBook/workflows/AudioBook%20Feature%20UnitTest/badge.svg) ![AudioBook Dependency Graph Generator](https://github.com/pravinyo/AudioBook/workflows/AudioBook%20Dependency%20Graph%20Generator/badge.svg) ![Issues](https://img.shields.io/github/issues-closed/pravinyo/AudioBook)  ![Closed Pull Request](https://img.shields.io/github/issues-pr-closed/pravinyo/AudioBook) ![top language](https://img.shields.io/github/languages/top/pravinyo/AudioBook) ![license](https://img.shields.io/github/license/pravinyo/AudioBook)
 
@@ -38,6 +53,24 @@ This App is based on Single Activity Navigation. Each Fragment screen is develop
   <img src="/photos/listen_later.png" width="200" />
   <img src="/photos/mybooks.png" width="200" />
 </p>
+
+# Release: 6.5.7
+
+## :beetle: Bug Fixes
+
+* Fixed Downloader update
+* Fixed Accessibility issues
+* App Url fixed
+* Previous button bug fixed
+* Navigation bug fixed
+
+
+## :heart: Contributors
+
+We'd like to thank all the contributors who worked on this release!
+
+- [@pravinyo](https://github.com/pravinyo)
+
 
 # Release: 6.5.0
 ## :star: New Features
