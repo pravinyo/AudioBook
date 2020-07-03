@@ -5,7 +5,7 @@
     <th>Store Link</td>
   </tr>
   <tr>
-    <td> Current Major Version : 6.5.7-SNAPSHOT </td>
+    <td> Current Version : 6.5.8 </td>
     <td rowspan="2">
       <a href='https://play.google.com/store/apps/details?id=com.allsoftdroid.audiobook&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img      
       alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="240px"/></a>
@@ -53,6 +53,22 @@ This App is based on Single Activity Navigation. Each Fragment screen is develop
   <img src="/photos/listen_later.png" width="200" />
   <img src="/photos/mybooks.png" width="200" />
 </p>
+
+# Release: 6.5.8
+## :star: New Features
+- Play high quality tracks by default.
+
+## :beetle: Bug Fixes
+
+- Empty track bug fixed
+- AudioService bug fixed
+
+## :heart: Contributors
+
+We'd like to thank all the contributors who worked on this release!
+
+- [@pravinyo](https://github.com/pravinyo)
+
 
 # Release: 6.5.7
 
