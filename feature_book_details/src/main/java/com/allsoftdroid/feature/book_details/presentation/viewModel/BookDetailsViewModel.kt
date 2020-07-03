@@ -169,9 +169,7 @@ internal class BookDetailsViewModel(
             viewModelScope.launch {
                 Timber.i("Starting to fetch new content from Remote repository")
                 fetchMetadata()
-                loadTrackWithFormat(index =
-                    if(sharedPref.bookId() == getMetadataUsecase.getBookIdentifier()) sharedPref.trackFormatIndex()  else 0
-                )
+                loadTrackAsync()
 
                 audioBookMetadata.observeForever {
                     Timber.d("Metadata is available, fetching enhance details")
@@ -362,7 +360,7 @@ internal class BookDetailsViewModel(
     }
 
 
-    fun loadTrackWithFormat(index:Int=0){
+    private fun loadTrackAsync(){
         job?.cancel()
 
         job = viewModelScope.launch {
