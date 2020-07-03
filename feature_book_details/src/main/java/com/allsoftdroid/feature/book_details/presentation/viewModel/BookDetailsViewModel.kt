@@ -133,8 +133,8 @@ internal class BookDetailsViewModel(
     private var job: Job? = null
     private var enhanceDetailsJob:Job?= null
 
-    val trackFormatIndex:Int
-    get() = sharedPref.trackFormatIndex()
+//    val trackFormatIndex:Int
+//    get() = sharedPref.trackFormatIndex()
 
     init {
         initialLoad()
@@ -364,13 +364,14 @@ internal class BookDetailsViewModel(
         job?.cancel()
 
         job = viewModelScope.launch {
-            stateHandle.set(StateKey.CurrentTrackFormat.key,index)
-            when(index){
-                0 -> fetchTrackList(format = TrackFormat.FormatBP64)
-                1 -> fetchTrackList(format = TrackFormat.FormatVBR)
-                else -> fetchTrackList(format = TrackFormat.FormatBP128)
-            }
-            sharedPref.saveTrackFormatIndex(index)
+//            stateHandle.set(StateKey.CurrentTrackFormat.key,index)
+//            when(index){
+//                0 -> fetchTrackList(format = TrackFormat.FormatBP64)
+//                1 -> fetchTrackList(format = TrackFormat.FormatVBR)
+//                else -> fetchTrackList(format = TrackFormat.FormatBP128)
+//            }
+//            sharedPref.saveTrackFormatIndex(index)
+            fetchOptimalTrackList()
         }
     }
 
