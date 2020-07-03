@@ -155,12 +155,14 @@ class AudioBookPlayer(private val context:Application,
 
     fun playFromPosition(pos:Int){
         exoPlayer?.let {
-            it.seekTo(pos, C.TIME_UNSET)
-            Timber.d("Seek is set to $pos")
-            it.playWhenReady = true
+            if(trackList.isNotEmpty()){
+                it.seekTo(pos, C.TIME_UNSET)
+                Timber.d("Seek is set to $pos")
+                it.playWhenReady = true
 
-            _trackTitle.value = trackList[it.currentWindowIndex].title?:"NA"
-            Timber.d("Track title updated and soon will be played")
+                _trackTitle.value = trackList[it.currentWindowIndex].title?:"NA"
+                Timber.d("Track title updated and soon will be played")
+            }
         }
     }
 

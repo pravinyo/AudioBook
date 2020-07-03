@@ -56,7 +56,12 @@ class SaveMetadataInDatabase(metadataDao: MetadataDao) : SaveInDatabase<Metadata
             }
 
             for(track in tracks){
-                trackList.add(track.toDatabaseModel(metadata.identifier))
+                try{
+                    trackList.add(track.toDatabaseModel(metadata.identifier))
+                }catch (e:Exception){
+                    Timber.d("Error in track conversion to database: ")
+                    e.printStackTrace()
+                }
             }
 
             val album = DatabaseAlbumEntity(

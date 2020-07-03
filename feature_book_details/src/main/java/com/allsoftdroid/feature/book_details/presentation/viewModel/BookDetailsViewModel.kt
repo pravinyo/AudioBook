@@ -133,8 +133,8 @@ internal class BookDetailsViewModel(
     private var job: Job? = null
     private var enhanceDetailsJob:Job?= null
 
-    val trackFormatIndex:Int
-    get() = sharedPref.trackFormatIndex()
+//    val trackFormatIndex:Int
+//    get() = sharedPref.trackFormatIndex()
 
     init {
         initialLoad()
@@ -169,9 +169,7 @@ internal class BookDetailsViewModel(
             viewModelScope.launch {
                 Timber.i("Starting to fetch new content from Remote repository")
                 fetchMetadata()
-                loadTrackWithFormat(index =
-                    if(sharedPref.bookId() == getMetadataUsecase.getBookIdentifier()) sharedPref.trackFormatIndex()  else 0
-                )
+                loadTrackAsync()
 
                 audioBookMetadata.observeForever {
                     Timber.d("Metadata is available, fetching enhance details")
@@ -362,17 +360,18 @@ internal class BookDetailsViewModel(
     }
 
 
-    fun loadTrackWithFormat(index:Int=0){
+    private fun loadTrackAsync(){
         job?.cancel()
 
         job = viewModelScope.launch {
-            stateHandle.set(StateKey.CurrentTrackFormat.key,index)
-            when(index){
-                0 -> fetchTrackList(format = TrackFormat.FormatBP64)
-                1 -> fetchTrackList(format = TrackFormat.FormatVBR)
-                else -> fetchTrackList(format = TrackFormat.FormatBP128)
-            }
-            sharedPref.saveTrackFormatIndex(index)
+//            stateHandle.set(StateKey.CurrentTrackFormat.key,index)
+//            when(index){
+//                0 -> fetchTrackList(format = TrackFormat.FormatBP64)
+//                1 -> fetchTrackList(format = TrackFormat.FormatVBR)
+//                else -> fetchTrackList(format = TrackFormat.FormatBP128)
+//            }
+//            sharedPref.saveTrackFormatIndex(index)
+            fetchOptimalTrackList()
         }
     }
 
@@ -387,19 +386,67 @@ internal class BookDetailsViewModel(
     /**
      * Function which fetch track list for the book
      */
-    private suspend fun fetchTrackList(format: TrackFormat){
-        val requestValues  = GetTrackListUsecase.RequestValues(trackFormat = format)
+    private suspend fun fetchOptimalTrackList(){
+        var tracks_bp_64:List<AudioBookTrackDomainModel>? = null
+        var tracks_bp_128:List<AudioBookTrackDomainModel>?=null
+
+        val requestValues64  = GetTrackListUsecase.RequestValues(trackFormat = TrackFormat.FormatBP64)
+        val requestValues128  = GetTrackListUsecase.RequestValues(trackFormat = TrackFormat.FormatBP128)
 
         useCaseHandler.execute(
             useCase = getTrackListUsecase,
-            values = requestValues,
+            values = requestValues64,
             callback = object : BaseUseCase.UseCaseCallback<GetTrackListUsecase.ResponseValues> {
                 override suspend fun onSuccess(response: GetTrackListUsecase.ResponseValues) {
 
                     getTrackListUsecase.getTrackListData().observeForever {
 
-                        checkLocalDownloadedFiles(it)
-                        restorePreviousStateIfAny()
+                        tracks_bp_64 = it
+
+                        tracks_bp_64?.let { track_64->
+                            if (tracks_bp_128==null){
+                                checkLocalDownloadedFiles(track_64)
+                            }else{
+                                tracks_bp_128?.let {tracks_128->
+                                    checkLocalDownloadedFiles(tracks_128)
+                                }
+                            }
+
+                            restorePreviousStateIfAny()
+                        }
+                    }
+
+                    Timber.d("Track list fetch success")
+                }
+
+                override suspend fun onError(t: Throwable) {
+                    _newTrackStateEvent.value = Event(Unit)
+                }
+            }
+        )
+
+        useCaseHandler.execute(
+            useCase = getTrackListUsecase,
+            values = requestValues128,
+            callback = object : BaseUseCase.UseCaseCallback<GetTrackListUsecase.ResponseValues> {
+                override suspend fun onSuccess(response: GetTrackListUsecase.ResponseValues) {
+
+                    getTrackListUsecase.getTrackListData().observeForever {
+
+                        tracks_bp_128 = it
+
+                        tracks_bp_64?.let {tracks_64 ->
+                            tracks_bp_128?.let { track_128->
+                                if (tracks_bp_64==null || tracks_64.size <= track_128.size){
+                                    checkLocalDownloadedFiles(track_128)
+                                }else{
+                                    checkLocalDownloadedFiles(tracks_64)
+                                }
+
+                                restorePreviousStateIfAny()
+                            }
+                        }
+
                     }
 
                     Timber.d("Track list fetch success")

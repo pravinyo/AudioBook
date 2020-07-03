@@ -13,9 +13,8 @@ object CodeVersionGenerator {
 
         if (AndroidConfig.isSnapshot) {
             AndroidConfig.versionClassifier = "SNAPSHOT"
+            versionName += "-" + AndroidConfig.versionClassifier
         }
-
-        versionName += "-" + AndroidConfig.versionClassifier
 
         return versionName
     }

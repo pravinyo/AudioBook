@@ -278,6 +278,6 @@ class AudioService : Service(),KoinComponent{
         }
 
         disposable.dispose()
-        AudioServiceModule.unLoadModules()
+//        AudioServiceModule.unLoadModules()
     }
 }
