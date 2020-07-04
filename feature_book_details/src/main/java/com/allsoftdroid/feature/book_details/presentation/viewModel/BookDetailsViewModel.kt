@@ -470,7 +470,7 @@ internal class BookDetailsViewModel(
 
     fun updateNextTrackPlaying(){
         _audioBookTracks.value?.let {trackList ->
-            if(currentPlayingTrack<=trackList.size){
+            if(trackList.isNotEmpty() && currentPlayingTrack<=trackList.size){
                 var newTrack =  (currentPlayingTrack+1)%trackList.size
 
                 if(newTrack==0) newTrack = trackList.size
@@ -487,7 +487,7 @@ internal class BookDetailsViewModel(
                 currentPlayingTrack = tracks.size
             }
 
-            if(currentPlayingTrack>0){
+            if(currentPlayingTrack>0 && tracks.isNotEmpty()){
                 val newTrack =  if (currentPlayingTrack>1)(currentPlayingTrack-1)%tracks.size else 1
                 Timber.d("Previous Track is $newTrack")
                 onPlayItemClicked(newTrack)
