@@ -379,10 +379,12 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
                     is PlaySelectedTrack -> {
                         Timber.d("Play selected track event occurred, updating ui")
-                        dataBindingReference.tvToolbarTitle.apply {
-                            text = getNormalizedText(text = event.trackList[event.position-1].title,limit = 30)
+                        if(event.trackList.isNotEmpty()){
+                            dataBindingReference.tvToolbarTitle.apply {
+                                text = getNormalizedText(text = event.trackList[event.position-1].title,limit = 30)
+                            }
+                            bookDetailsViewModel.onPlayItemClicked(event.position)
                         }
-                        bookDetailsViewModel.onPlayItemClicked(event.position)
 
                     }
 
