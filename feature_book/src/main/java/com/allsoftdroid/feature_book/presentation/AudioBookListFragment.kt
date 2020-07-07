@@ -204,13 +204,13 @@ class AudioBookListFragment : BaseUIFragment(){
             it.getContentIfNotHandled()?.let { networkState ->
                 when(networkState){
                     NetworkState.LOADING -> {
-                        Toast.makeText(context,getString(R.string.loading_message),Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(context,getString(R.string.loading_message),Toast.LENGTH_SHORT).show()
                         setVisibility(binding.loadingProgressbar,set = true)
                         setVisibility(binding.networkNoConnection,set=false)
                     }
 
                     NetworkState.COMPLETED -> {
-                        Toast.makeText(context,getString(R.string.completed_message),Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(context,getString(R.string.completed_message),Toast.LENGTH_SHORT).show()
                         setVisibility(binding.loadingProgressbar,set=false)
                         setVisibility(binding.networkNoConnection,set=false)
                     }
