@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
@@ -12,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.R
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.databinding.LayoutMainFragmentBinding
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.di.FeatureMainPlayerModule
+import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.utils.OnSwipeTouchListener
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
 import io.reactivex.disposables.CompositeDisposable
@@ -65,6 +67,18 @@ class MainPlayerFragment : BaseContainerFragment(){
             handleBackPressEvent()
         }
 
+        binding.parentContainer.let {layout ->
+            layout.setOnTouchListener(object : OnSwipeTouchListener(layout.context) {
+
+                override fun onSwipeBottom() {
+                    super.onSwipeBottom()
+                    val anim = AnimationUtils.loadAnimation(requireActivity(),R.anim.slide_down)
+                    layout.startAnimation(anim)
+
+                    handleBackPressEvent()
+                }
+            })
+        }
 
         compositeDisposable.add(eventStore.observe()
             .subscribe {
