@@ -65,6 +65,11 @@ class AudioBookListFragment : BaseUIFragment(){
 
         setupUI(binding)
 
+        binding.swipeBookRefresh.setOnRefreshListener {
+            booksViewModel.refresh()
+            binding.swipeBookRefresh.isRefreshing = false
+        }
+
         return binding.root
     }
 
@@ -144,10 +149,6 @@ class AudioBookListFragment : BaseUIFragment(){
         binding.toolbarNavHamburger.setOnClickListener {
             drawer.openDrawer(GravityCompat.START)
         }
-
-        binding.toolbarBookRefresh.setOnClickListener {
-            booksViewModel.refresh()
-        }
     }
 
     private fun setupUI(binding:FragmentAudiobookListBinding){
@@ -204,13 +205,11 @@ class AudioBookListFragment : BaseUIFragment(){
             it.getContentIfNotHandled()?.let { networkState ->
                 when(networkState){
                     NetworkState.LOADING -> {
-//                        Toast.makeText(context,getString(R.string.loading_message),Toast.LENGTH_SHORT).show()
                         setVisibility(binding.loadingProgressbar,set = true)
                         setVisibility(binding.networkNoConnection,set=false)
                     }
 
                     NetworkState.COMPLETED -> {
-//                        Toast.makeText(context,getString(R.string.completed_message),Toast.LENGTH_SHORT).show()
                         setVisibility(binding.loadingProgressbar,set=false)
                         setVisibility(binding.networkNoConnection,set=false)
                     }
