@@ -16,6 +16,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.VisibleForTesting
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
+import androidx.core.view.ViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -70,6 +71,7 @@ class AudioBookListFragment : BaseUIFragment(){
             binding.swipeBookRefresh.isRefreshing = false
         }
 
+        ViewCompat.setTranslationZ(binding.root, 0f)
         return binding.root
     }
 
@@ -229,7 +231,7 @@ class AudioBookListFragment : BaseUIFragment(){
             }
         })
 
-        booksViewModel.searchBooks.observe(this, Observer {
+        booksViewModel.searchBooks.observe(viewLifecycleOwner, Observer {
             if(it.isNotEmpty()){
                 val prev = bookAdapter.itemCount
                 bookAdapter.submitList(it)
