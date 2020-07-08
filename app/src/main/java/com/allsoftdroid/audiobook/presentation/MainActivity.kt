@@ -378,6 +378,18 @@ class MainActivity : BaseActivity() {
                         controller.navigate(R.id.action_AudioBookListFragment_to_MainPlayerFragment,bundle)
                     }
 
+                    R.id.MyBooksFragment -> {
+                        controller.navigate(R.id.action_MyBooksFragment_to_MainPlayerFragment,bundle)
+                    }
+                    
+                    R.id.ListenLaterFragment -> {
+                        controller.navigate(R.id.action_ListenLaterFragment_to_MainPlayerFragment,bundle)
+                    }
+
+                    R.id.SettingsFragment -> {
+                        controller.navigate(R.id.action_SettingsFragment_to_MainPlayerFragment,bundle)
+                    }
+
                     else -> {
                         Timber.d("Operation not allowed")
                         Toast.makeText(this,"Can't navigate to Player",Toast.LENGTH_SHORT).show()
