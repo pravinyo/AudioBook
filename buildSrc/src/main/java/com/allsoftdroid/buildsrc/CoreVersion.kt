@@ -5,5 +5,5 @@ object CoreVersion {
     const val COROUTINES_ANDROID = "1.3.4"
     const val KTLINT = "0.34.2"
     const val NAVIGATION = "2.1.0"
-    const val FRAGMENT_KTX="1.2.0-alpha04"
+    const val FRAGMENT_KTX="1.3.0-alpha06"
 }
