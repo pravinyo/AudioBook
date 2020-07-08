@@ -244,9 +244,6 @@ class MainActivity : BaseActivity() {
 
                     override fun onSwipeTop() {
                         super.onSwipeTop()
-                        val anim = AnimationUtils.loadAnimation(applicationContext,R.anim.slide_up)
-                        containerView.startAnimation(anim)
-
                         Timber.d("Event sent for opening main player event")
                         userActionEventStore.publish(Event(OpenMainPlayerUI(this::class.java.simpleName)))
                     }
