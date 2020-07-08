@@ -3,6 +3,7 @@ package com.allsoftdroid.audiobook.presentation
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -236,12 +237,16 @@ class MainActivity : BaseActivity() {
                     .commit()
             }
 
-            findViewById<MovableFrameLayout>(R.id.miniPlayerContainer).apply {
+            val containerView = findViewById<MovableFrameLayout>(R.id.miniPlayerContainer)
+            containerView.apply {
                 visibility = View.VISIBLE
                 setOnTouchListener(object : OnSwipeTouchListener(context) {
 
                     override fun onSwipeTop() {
                         super.onSwipeTop()
+                        val anim = AnimationUtils.loadAnimation(applicationContext,R.anim.slide_up)
+                        containerView.startAnimation(anim)
+
                         Timber.d("Event sent for opening main player event")
                         userActionEventStore.publish(Event(OpenMainPlayerUI(this::class.java.simpleName)))
                     }
