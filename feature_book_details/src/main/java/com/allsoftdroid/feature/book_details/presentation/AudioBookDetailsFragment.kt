@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
@@ -88,18 +89,9 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         setupEventListener(dataBinding)
         configureBackdrop(dataBinding)
 
-
-
-//        dataBinding.mstbTrackFormat.apply {
-//            setElements(R.array.track_format_array,bookDetailsViewModel.trackFormatIndex)
-//
-//            setOnValueChangedListener {
-//                bookDetailsViewModel.loadTrackWithFormat(it)
-//                Toast.makeText(activity,"Loading",Toast.LENGTH_SHORT).show()
-//            }
-//        }
-
         dataBindingReference = dataBinding
+
+        ViewCompat.setTranslationZ(dataBinding.root, 0f)
         return dataBinding.root
     }
 
@@ -148,7 +140,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                 }
         )
 
-        bookDetailsViewModel.networkResponse.observe(this, Observer {
+        bookDetailsViewModel.networkResponse.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let { networkState ->
                 when(networkState){
                     NetworkState.LOADING -> {
