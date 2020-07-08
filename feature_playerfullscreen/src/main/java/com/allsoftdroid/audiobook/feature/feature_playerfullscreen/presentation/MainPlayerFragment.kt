@@ -72,9 +72,6 @@ class MainPlayerFragment : BaseContainerFragment(){
 
                 override fun onSwipeBottom() {
                     super.onSwipeBottom()
-                    val anim = AnimationUtils.loadAnimation(requireActivity(),R.anim.slide_down)
-                    layout.startAnimation(anim)
-
                     handleBackPressEvent()
                 }
             })
