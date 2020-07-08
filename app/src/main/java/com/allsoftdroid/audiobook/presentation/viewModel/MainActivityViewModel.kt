@@ -41,6 +41,8 @@ class MainActivityViewModel(application : Application,
     private var _lastPlayed = MutableLiveData<Event<LastPlayedTrack>>()
     val lastPlayed :LiveData<Event<LastPlayedTrack>> = _lastPlayed
 
+    private var _isPausedByUser = false
+
     private lateinit var _playingTrackDetails:PlayingTrackDetails
 
     fun getPlayingTrack():PlayingTrackDetails? = _playingTrackDetails
@@ -84,6 +86,8 @@ class MainActivityViewModel(application : Application,
         )
 
         Timber.d("Play selected track event:track item position:${event.position} and bookid:${event.bookId} and name:${event.bookName}")
+
+        _isPausedByUser = false
     }
 
     fun nextTrack(event: Next){
@@ -103,6 +107,8 @@ class MainActivityViewModel(application : Application,
         _playingTrackDetails.isPlaying = true
 
         Timber.d("Next event occurred")
+
+        _isPausedByUser = false
     }
 
     fun previousTrack(){
@@ -120,12 +126,16 @@ class MainActivityViewModel(application : Application,
         _playingTrackDetails.isPlaying = true
 
         Timber.d("Previous event occur")
+
+        _isPausedByUser = false
     }
 
     fun pauseTrack(){
         audioManager.pauseTrack()
         _playingTrackDetails.isPlaying = false
         Timber.d("pause event")
+
+        _isPausedByUser = true
     }
 
     fun rewindTrack(){
@@ -145,10 +155,14 @@ class MainActivityViewModel(application : Application,
             audioManager.resumeTrack()
             _playingTrackDetails.isPlaying = true
             Timber.d("Play/Resume track event")
+
+            _isPausedByUser = false
         }
     }
 
     fun playIfAnyTrack(){
+
+        if (_isPausedByUser) return
 
         if(audioManager.isServiceReady()){
             eventStore.publish(Event(
