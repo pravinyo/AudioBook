@@ -58,22 +58,11 @@
                 app:layout_constraintTop_toBottomOf="@+id/divider1"
                 app:layout_constraintStart_toStartOf="parent">
 
-                <LinearLayout
+                <TextView
+                    android:text="@string/what_is_this_book_based_on"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:src="@drawable/ic_details"
-                        android:layout_gravity="center_vertical"
-                        android:layout_width="@dimen/track_item_control_btn_size_small"
-                        android:layout_height="@dimen/track_item_control_btn_size_small"
-                        android:contentDescription="@string/book_play_time" />
-                    <TextView
-                        android:text="@string/what_is_this_book_based_on"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"/>
-                </LinearLayout>
+                    android:layout_height="wrap_content"/>
 
                 <TextView
                     android:id="@+id/tv_book_desc_text"

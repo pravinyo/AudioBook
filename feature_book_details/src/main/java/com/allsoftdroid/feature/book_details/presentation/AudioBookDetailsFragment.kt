@@ -1,5 +1,6 @@
 package com.allsoftdroid.feature.book_details.presentation
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.allsoftdroid.common.base.extension.Event
@@ -49,6 +51,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
     private lateinit var argBookTitle :String
     private lateinit var argBookName: String
     private var argBookTrackNumber:Int = 0
+    private var isBackDropFragmentVisible = false
 
     /**
     Lazily initialize the view model
@@ -88,21 +91,13 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         setupEventListener(dataBinding)
         configureBackdrop(dataBinding)
 
-
-
-//        dataBinding.mstbTrackFormat.apply {
-//            setElements(R.array.track_format_array,bookDetailsViewModel.trackFormatIndex)
-//
-//            setOnValueChangedListener {
-//                bookDetailsViewModel.loadTrackWithFormat(it)
-//                Toast.makeText(activity,"Loading",Toast.LENGTH_SHORT).show()
-//            }
-//        }
-
         dataBindingReference = dataBinding
+
+        ViewCompat.setTranslationZ(dataBinding.root, 0f)
         return dataBinding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun configureBackdrop(dataBinding:FragmentAudiobookDetailsBinding) {
         // Get the fragment reference
         val fragment = this.childFragmentManager.findFragmentById(R.id.filter_fragment) as BackDropFragment
@@ -120,6 +115,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                     dataBinding.imgViewBookInfo.setOnClickListener {
                         Timber.d("Info button clicked")
                         bsb.state = BottomSheetBehavior.STATE_EXPANDED
+                        isBackDropFragmentVisible = true
                     }
 
                     Timber.d("Fragment filter listener attached")
@@ -127,6 +123,14 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                     mBottomSheetBehavior = bsb
                 }
             }?:Timber.d("Fragment filter view is null")
+        }
+
+        dataBinding.contentContainer.setOnTouchListener { _, _ ->
+            Timber.d("Screen touch occur => count is ${this.childFragmentManager.backStackEntryCount}")
+            if (fragment.isResumed && isBackDropFragmentVisible){
+                onBackPressed()
+            }
+            return@setOnTouchListener false
         }
     }
 
@@ -148,7 +152,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                 }
         )
 
-        bookDetailsViewModel.networkResponse.observe(this, Observer {
+        bookDetailsViewModel.networkResponse.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let { networkState ->
                 when(networkState){
                     NetworkState.LOADING -> {
@@ -379,10 +383,12 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
                     is PlaySelectedTrack -> {
                         Timber.d("Play selected track event occurred, updating ui")
-                        dataBindingReference.tvToolbarTitle.apply {
-                            text = getNormalizedText(text = event.trackList[event.position-1].title,limit = 30)
+                        if(event.trackList.isNotEmpty()){
+                            dataBindingReference.tvToolbarTitle.apply {
+                                text = getNormalizedText(text = event.trackList[event.position-1].title,limit = 30)
+                            }
+                            bookDetailsViewModel.onPlayItemClicked(event.position)
                         }
-                        bookDetailsViewModel.onPlayItemClicked(event.position)
 
                     }
 
@@ -444,6 +450,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
             mBottomSheetBehavior?.let {
                 if (it.state == BottomSheetBehavior.STATE_EXPANDED) {
                     it.state = BottomSheetBehavior.STATE_COLLAPSED
+                    isBackDropFragmentVisible = false
                 } else {
                     callback.isEnabled = false
                     this.requireActivity().onBackPressed()

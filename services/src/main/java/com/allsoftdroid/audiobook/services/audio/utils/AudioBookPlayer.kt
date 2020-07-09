@@ -108,11 +108,13 @@ class AudioBookPlayer(private val context:Application,
         override fun onPositionDiscontinuity(reason: Int) {
 
             exoPlayer?.let {
-                Timber.d("Event ended audio about to start new")
-                if(trackPos != it.currentWindowIndex){
-                    _playerState.value = Event(PlayerState.PlayingNext)
-                    _trackTitle.value = trackList[it.currentWindowIndex].title?:"NA"
-                    trackPos = it.currentWindowIndex
+                if(trackList.isNotEmpty()){
+                    Timber.d("Event ended audio about to start new")
+                    if(trackPos != it.currentWindowIndex){
+                        _playerState.value = Event(PlayerState.PlayingNext)
+                        _trackTitle.value = trackList[it.currentWindowIndex].title?:"NA"
+                        trackPos = it.currentWindowIndex
+                    }
                 }
             }
         }
@@ -195,7 +197,7 @@ class AudioBookPlayer(private val context:Application,
     fun goToPreviousOrBeginning() {
         Timber.d("Previous called")
         exoPlayer?.run {
-            if (hasPrevious()) {
+            if (hasPrevious() && trackList.isNotEmpty()) {
                 this.playWhenReady = true
                 previous()
                 if(this.currentWindowIndex>=0){
@@ -212,7 +214,7 @@ class AudioBookPlayer(private val context:Application,
     fun goToNext() {
         Timber.d("Next called")
         exoPlayer?.let {
-            if(it.hasNext()){
+            if(it.hasNext() && trackList.isNotEmpty()){
                 it.playWhenReady = true
                 it.next()
                 if(it.currentWindowIndex< trackList.size)

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/notification_display"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:padding="@dimen/padding_min"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/notification_track_thumbnail"
+        android:contentDescription="@string/audiobook_thumbnail"
+        android:layout_width="@dimen/notification_icon_size"
+        android:layout_marginEnd="@dimen/margin_mid"
+        android:layout_height="@dimen/notification_icon_size"/>
+
+    <TextView
+        android:id="@+id/notification_track_name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="@color/black"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
+
+    <ImageButton
+        android:id="@+id/image_notification_playpause"
+        android:layout_width="wrap_content"
+        android:backgroundTint="@color/transparent"
+        android:contentDescription="@string/play_or_pause_track"
+        android:layout_marginEnd="@dimen/margin_min"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

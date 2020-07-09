@@ -3,6 +3,7 @@ package com.allsoftdroid.audiobook.presentation
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -236,7 +237,8 @@ class MainActivity : BaseActivity() {
                     .commit()
             }
 
-            findViewById<MovableFrameLayout>(R.id.miniPlayerContainer).apply {
+            val containerView = findViewById<MovableFrameLayout>(R.id.miniPlayerContainer)
+            containerView.apply {
                 visibility = View.VISIBLE
                 setOnTouchListener(object : OnSwipeTouchListener(context) {
 
@@ -374,6 +376,18 @@ class MainActivity : BaseActivity() {
 
                     R.id.AudioBookListFragment ->{
                         controller.navigate(R.id.action_AudioBookListFragment_to_MainPlayerFragment,bundle)
+                    }
+
+                    R.id.MyBooksFragment -> {
+                        controller.navigate(R.id.action_MyBooksFragment_to_MainPlayerFragment,bundle)
+                    }
+                    
+                    R.id.ListenLaterFragment -> {
+                        controller.navigate(R.id.action_ListenLaterFragment_to_MainPlayerFragment,bundle)
+                    }
+
+                    R.id.SettingsFragment -> {
+                        controller.navigate(R.id.action_SettingsFragment_to_MainPlayerFragment,bundle)
                     }
 
                     else -> {

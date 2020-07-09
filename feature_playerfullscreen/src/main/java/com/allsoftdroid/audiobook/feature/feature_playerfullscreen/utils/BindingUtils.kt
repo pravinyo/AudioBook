@@ -109,7 +109,11 @@ fun setTrackBookBanner(cardView: CardView, item: PlayingTrackDetails?) {
                                 cardView.setBackgroundColor(Color.TRANSPARENT)
 
                                 with(cardView.rootView.findViewById<View>(R.id.parentContainer)){
-                                    setBackgroundColor(dark)
+                                    if(dark != 0){
+                                        setBackgroundColor(dark)
+                                    }else{
+                                        setBackgroundColor(Color.BLACK)
+                                    }
 
                                     cardView.findViewById<TextView>(R.id.tv_book_title).apply {
                                         if(dark == light){
