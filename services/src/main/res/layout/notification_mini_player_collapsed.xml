@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+    android:padding="4dp">
 
     <LinearLayout
         android:id="@+id/notification_display"
@@ -15,10 +15,9 @@
         <ImageView
             android:id="@+id/notification_track_thumbnail"
             android:contentDescription="@string/audiobook_thumbnail"
-            android:layout_width="50dp"
-            android:background="@drawable/background_drawable_round_corner"
+            android:layout_width="@dimen/notification_icon_size"
             android:layout_marginEnd="8dp"
-            android:layout_height="50dp"/>
+            android:layout_height="@dimen/notification_icon_size"/>
 
         <LinearLayout
             android:id="@+id/notification_track_details"
