@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp">
+    android:padding="@dimen/padding_min">
 
     <LinearLayout
         android:id="@+id/notification_display"
@@ -16,7 +16,7 @@
             android:id="@+id/notification_track_thumbnail"
             android:contentDescription="@string/audiobook_thumbnail"
             android:layout_width="@dimen/notification_icon_size"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/margin_mid"
             android:layout_height="@dimen/notification_icon_size"/>
 
         <LinearLayout
@@ -27,7 +27,7 @@
 
             <TextView
                 android:id="@+id/notification_book_name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
