@@ -1,5 +1,6 @@
 package com.allsoftdroid.feature.book_details.presentation
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -50,6 +51,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
     private lateinit var argBookTitle :String
     private lateinit var argBookName: String
     private var argBookTrackNumber:Int = 0
+    private var isBackDropFragmentVisible = false
 
     /**
     Lazily initialize the view model
@@ -95,6 +97,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         return dataBinding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun configureBackdrop(dataBinding:FragmentAudiobookDetailsBinding) {
         // Get the fragment reference
         val fragment = this.childFragmentManager.findFragmentById(R.id.filter_fragment) as BackDropFragment
@@ -112,6 +115,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                     dataBinding.imgViewBookInfo.setOnClickListener {
                         Timber.d("Info button clicked")
                         bsb.state = BottomSheetBehavior.STATE_EXPANDED
+                        isBackDropFragmentVisible = true
                     }
 
                     Timber.d("Fragment filter listener attached")
@@ -119,6 +123,14 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                     mBottomSheetBehavior = bsb
                 }
             }?:Timber.d("Fragment filter view is null")
+        }
+
+        dataBinding.contentContainer.setOnTouchListener { _, _ ->
+            Timber.d("Screen touch occur => count is ${this.childFragmentManager.backStackEntryCount}")
+            if (fragment.isResumed && isBackDropFragmentVisible){
+                onBackPressed()
+            }
+            return@setOnTouchListener false
         }
     }
 
@@ -438,6 +450,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
             mBottomSheetBehavior?.let {
                 if (it.state == BottomSheetBehavior.STATE_EXPANDED) {
                     it.state = BottomSheetBehavior.STATE_COLLAPSED
+                    isBackDropFragmentVisible = false
                 } else {
                     callback.isEnabled = false
                     this.requireActivity().onBackPressed()
