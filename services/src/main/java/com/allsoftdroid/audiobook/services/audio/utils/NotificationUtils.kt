@@ -33,6 +33,8 @@ class NotificationUtils {
         fun sendNotification(isAudioPlaying:Boolean, currentAudioPos:Int, service: AudioService, applicationContext: Context, trackTitle:String, bookName:String) {
 
             val collapsedView = RemoteViews(applicationContext.packageName, R.layout.notification_mini_player_collapsed)
+            val normalView = RemoteViews(applicationContext.packageName, R.layout.notification_mini_player)
+
             var playPauseIcon = 0
 
             when (applicationContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
@@ -40,6 +42,11 @@ class NotificationUtils {
                     playPauseIcon = if (!isAudioPlaying) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
                     collapsedView.setImageViewResource(R.id.image_notification_prev,R.drawable.ic_skip_previous_black_24dp)
                     collapsedView.setImageViewResource(R.id.image_notification_next,R.drawable.ic_skip_next_black_24dp)
+
+                    collapsedView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.black))
+                    collapsedView.setTextColor(R.id.notification_book_name,applicationContext.getColor(R.color.black))
+
+                    normalView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.black))
                 } // Night mode is not active, we're using the light theme
 
                 Configuration.UI_MODE_NIGHT_YES -> {
@@ -51,12 +58,18 @@ class NotificationUtils {
 
                     collapsedView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.white))
                     collapsedView.setTextColor(R.id.notification_book_name,applicationContext.getColor(R.color.white))
+
+                    normalView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.white))
                 } // Night mode is active, we're using dark theme
             }
 
             collapsedView.setTextViewText(R.id.notification_book_name,TextFormatter.getPartialString(bookName))
+
             collapsedView.setTextViewText(R.id.notification_track_name,TextFormatter.getPartialString(trackTitle))
+            normalView.setTextViewText(R.id.notification_track_name,TextFormatter.getPartialString(trackTitle))
+
             collapsedView.setImageViewResource(R.id.image_notification_playpause,playPauseIcon)
+            normalView.setImageViewResource(R.id.image_notification_playpause,playPauseIcon)
 
             val drawable = CreateImageOverlay
                 .with(applicationContext)
@@ -65,6 +78,7 @@ class NotificationUtils {
             val roundImage  = ImageUtils.getCircleBitmap(drawable.toBitmap())
 
             collapsedView.setImageViewBitmap(R.id.notification_track_thumbnail,roundImage)
+            normalView.setImageViewBitmap(R.id.notification_track_thumbnail,roundImage)
 
             collapsedView.setOnClickPendingIntent(
                 R.id.image_notification_prev,
@@ -94,6 +108,16 @@ class NotificationUtils {
                     value = currentAudioPos
                 ))
 
+            normalView.setOnClickPendingIntent(R.id.image_notification_playpause,
+                NotificationPlayerEventBroadcastReceiver1.newPendingIntent(
+                    context = applicationContext,
+                    action = if(isAudioPlaying) AudioService.PAUSE else AudioService.PLAY,
+                    requestCode = AudioService.ACTION_PLAY_PAUSE,
+                    key = if(isAudioPlaying) NotificationPlayerEventBroadcastReceiver1.ACTION_PAUSE_ITEM_INDEX else
+                        NotificationPlayerEventBroadcastReceiver1.ACTION_PLAY_ITEM_INDEX,
+                    value = currentAudioPos
+                ))
+
             var notifyWhen = 0L
             var showWhen = false
             var usesChronometer = false
@@ -108,8 +132,9 @@ class NotificationUtils {
             if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.O) {
                 val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 val name = applicationContext.getString(R.string.app_name)
-                val importance = NotificationManager.IMPORTANCE_LOW
+                val importance = NotificationManager.IMPORTANCE_DEFAULT
                 NotificationChannel(NOTIFICATION_CHANNEL, name, importance).apply {
+                    lockscreenVisibility = Notification.VISIBILITY_PUBLIC
                     enableLights(false)
                     enableVibration(false)
                     notificationManager.createNotificationChannel(this)
@@ -136,7 +161,8 @@ class NotificationUtils {
                 .setOngoing(ongoing)
                 .setChannelId(NOTIFICATION_CHANNEL)
                 .setCategory(Notification.CATEGORY_SERVICE)
-                .setCustomContentView(collapsedView)
+                .setCustomContentView(normalView)
+                .setCustomBigContentView(collapsedView)
                 .setStyle(NotificationCompat.DecoratedCustomViewStyle())
 
             if(!isAudioPlaying) notification.setAutoCancel(true)

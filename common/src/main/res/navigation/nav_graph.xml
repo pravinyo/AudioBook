@@ -14,6 +14,10 @@
             />
         <action
             android:id="@+id/action_AudioBookListFragment_to_MainPlayerFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/stationary"
+            app:popEnterAnim="@anim/stationary"
+            app:popExitAnim="@anim/slide_down"
             app:destination="@id/MainPlayerFragment" />
 
         <action
@@ -34,6 +38,14 @@
         android:id="@+id/SettingsFragment"
         android:name="com.allsoftdroid.audiobook.feature_settings.SettingsFragment"
         android:label="SettingsFragment">
+
+        <action
+            android:id="@+id/action_SettingsFragment_to_MainPlayerFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/stationary"
+            app:popEnterAnim="@anim/stationary"
+            app:popExitAnim="@anim/slide_down"
+            app:destination="@id/MainPlayerFragment" />
     </fragment>
 
     <fragment
@@ -43,6 +55,14 @@
         <action
             android:id="@+id/action_MyBooksFragment_to_AudioBookDetailsFragment"
             app:destination="@id/AudioBookDetailsFragment"/>
+
+        <action
+            android:id="@+id/action_MyBooksFragment_to_MainPlayerFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/stationary"
+            app:popEnterAnim="@anim/stationary"
+            app:popExitAnim="@anim/slide_down"
+            app:destination="@id/MainPlayerFragment" />
     </fragment>
 
     <fragment
@@ -53,6 +73,14 @@
             android:id="@+id/action_ListenLaterFragment_to_AudioBookDetailsFragment"
             app:destination="@id/AudioBookDetailsFragment"
             />
+
+        <action
+            android:id="@+id/action_ListenLaterFragment_to_MainPlayerFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/stationary"
+            app:popEnterAnim="@anim/stationary"
+            app:popExitAnim="@anim/slide_down"
+            app:destination="@id/MainPlayerFragment" />
     </fragment>
 
     <fragment
@@ -79,6 +107,10 @@
             app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_AudioBookDetailsFragment_to_MainPlayerFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/stationary"
+            app:popEnterAnim="@anim/stationary"
+            app:popExitAnim="@anim/slide_down"
             app:destination="@id/MainPlayerFragment" />
     </fragment>
 

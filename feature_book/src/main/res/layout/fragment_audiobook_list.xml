@@ -14,167 +14,162 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
     android:layout_height="match_parent"
     tools:openDrawer="start">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_book_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="?actionBarSize"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:id="@+id/toolbar"
-            android:orientation="vertical">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <LinearLayout
-                android:id="@+id/toolbar_side_1"
-                android:orientation="horizontal"
-                android:layout_marginStart="@dimen/margin_normal"
-                android:layout_marginEnd="@dimen/margin_normal"
-                app:toolbarItemVisibility="@{audioBookListViewModel.displaySearch}"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <ImageView
-                    android:id="@+id/toolbar_nav_hamburger"
-                    android:layout_width="@dimen/control_icon_size"
-                    android:layout_height="@dimen/control_icon_size"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_toolbar_menu_hamburger"
-                    android:contentDescription="@string/toolbar_nav_hamburger" />
+                android:layout_width="0dp"
+                android:layout_height="?actionBarSize"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/toolbar"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/toolbar_title"
-                    android:textColor="@color/colorPrimary"
-                    android:layout_width="0dp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:gravity="center"
-                    android:text="@string/audio_book_list_title"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
-
-                <ImageView
-                    android:id="@+id/toolbar_book_search"
-                    android:layout_width="@dimen/control_icon_size"
-                    android:layout_height="@dimen/control_icon_size"
+                <LinearLayout
+                    android:id="@+id/toolbar_side_1"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/margin_normal"
                     android:layout_marginEnd="@dimen/margin_normal"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/book_search_outline"
-                    android:contentDescription="@string/audiobook_search" />
+                    app:toolbarItemVisibility="@{audioBookListViewModel.displaySearch}"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <ImageView
+                        android:id="@+id/toolbar_nav_hamburger"
+                        android:layout_width="@dimen/control_icon_size"
+                        android:layout_height="@dimen/control_icon_size"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_toolbar_menu_hamburger"
+                        android:contentDescription="@string/toolbar_nav_hamburger" />
 
-                <ImageView
-                    android:id="@+id/toolbar_book_refresh"
-                    android:layout_width="@dimen/control_icon_size"
-                    android:layout_height="@dimen/control_icon_size"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_refresh"
-                    android:contentDescription="@string/audiobook_refresh" />
+                    <TextView
+                        android:id="@+id/toolbar_title"
+                        android:textColor="@color/colorPrimary"
+                        android:layout_width="0dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:gravity="center"
+                        android:text="@string/audio_book_list_title"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
+
+                    <ImageView
+                        android:id="@+id/toolbar_book_search"
+                        android:layout_width="@dimen/control_icon_size"
+                        android:layout_height="@dimen/control_icon_size"
+                        android:layout_marginEnd="@dimen/margin_normal"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/book_search_outline"
+                        android:contentDescription="@string/audiobook_search" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/toolbar_side_2"
+                    app:toolbarItemVisibility="@{audioBookListViewModel.displaySearch}"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/margin_normal"
+                    android:layout_marginEnd="@dimen/margin_normal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <ImageView
+                        android:layout_width="@dimen/control_icon_size"
+                        android:layout_height="@dimen/control_icon_size"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_search_web"
+                        android:contentDescription="@string/web_search_icon" />
+                    <EditText
+                        android:id="@+id/et_toolbar_search"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:ellipsize="end"
+                        android:inputType="text"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/type_here"
+                        android:importantForAutofill="no" />
+
+                    <ImageView
+                        android:id="@+id/iv_search"
+                        android:layout_width="@dimen/control_icon_size"
+                        android:layout_height="@dimen/control_icon_size"
+                        android:src="@drawable/ic_arrow_chevron_right"
+                        android:layout_gravity="center_vertical"
+                        app:searchOrClose="@{audioBookListViewModel.searchOrClose}"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:contentDescription="@string/press_to_clear_search" />
+
+                    <ImageView
+                        android:id="@+id/iv_search_cancel"
+                        android:layout_width="@dimen/control_icon_size"
+                        android:layout_height="@dimen/control_icon_size"
+                        android:src="@drawable/close"
+                        app:searchOrClose="@{audioBookListViewModel.searchOrClose}"
+                        android:layout_gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:contentDescription="@string/press_to_clear_search" />
+                </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_books"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:clipToPadding="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                tools:listitem="@layout/archive_book_item" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/loading_progressbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:visibility="gone"
-                android:id="@+id/toolbar_side_2"
-                app:toolbarItemVisibility="@{audioBookListViewModel.displaySearch}"
-                android:orientation="horizontal"
-                android:layout_marginStart="@dimen/margin_normal"
-                android:layout_marginEnd="@dimen/margin_normal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <ImageView
-                    android:layout_width="@dimen/control_icon_size"
-                    android:layout_height="@dimen/control_icon_size"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_search_web"
-                    android:contentDescription="@string/web_search_icon" />
-                <EditText
-                    android:id="@+id/et_toolbar_search"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:maxLines="1"
-                    android:scrollHorizontally="true"
-                    android:ellipsize="end"
-                    android:inputType="text"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/type_here"
-                    android:importantForAutofill="no" />
+                app:layout_constraintBottom_toBottomOf="@+id/recycler_view_books"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/recycler_view_books"
+                app:lottie_rawRes="@raw/indefinite_progress"
+                app:lottie_loop="true"
+                app:lottie_autoPlay="true" />
 
-                <ImageView
-                    android:id="@+id/iv_search"
-                    android:layout_width="@dimen/control_icon_size"
-                    android:layout_height="@dimen/control_icon_size"
-                    android:src="@drawable/ic_arrow_chevron_right"
-                    android:layout_gravity="center_vertical"
-                    app:searchOrClose="@{audioBookListViewModel.searchOrClose}"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:contentDescription="@string/press_to_clear_search" />
+            <include android:id="@+id/search_no_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:goneIfNotSearchError="@{audioBookListViewModel.searchError}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                layout="@layout/layout_no_results_found"/>
 
-                <ImageView
-                    android:id="@+id/iv_search_cancel"
-                    android:layout_width="@dimen/control_icon_size"
-                    android:layout_height="@dimen/control_icon_size"
-                    android:src="@drawable/close"
-                    app:searchOrClose="@{audioBookListViewModel.searchOrClose}"
-                    android:layout_gravity="center_vertical"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:contentDescription="@string/press_to_clear_search" />
-            </LinearLayout>
-        </LinearLayout>
+            <include android:id="@+id/network_no_connection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                layout="@layout/layout_no_connection"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_books"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:clipToPadding="false"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            tools:listitem="@layout/archive_book_item" />
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/loading_progressbar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/recycler_view_books"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/recycler_view_books"
-            app:lottie_rawRes="@raw/indefinite_progress"
-            app:lottie_loop="true"
-            app:lottie_autoPlay="true" />
-
-        <include android:id="@+id/search_no_data"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:goneIfNotSearchError="@{audioBookListViewModel.searchError}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            layout="@layout/layout_no_results_found"/>
-
-        <include android:id="@+id/network_no_connection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            layout="@layout/layout_no_connection"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"

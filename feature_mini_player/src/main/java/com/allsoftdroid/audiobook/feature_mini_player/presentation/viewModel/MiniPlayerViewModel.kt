@@ -18,6 +18,8 @@ class MiniPlayerViewModel(
     private var _shouldItPlay:Boolean = true
     var shouldItPlay  = MutableLiveData<Boolean>()
 
+    private var _isPauseByUser = false
+
     private var _trackTitle = MutableLiveData<String>()
     val trackTitle :LiveData<String> = _trackTitle
 
@@ -34,7 +36,13 @@ class MiniPlayerViewModel(
     private var currentPlayingIndex = 0
 
     init {
-        shouldItPlay.value = _shouldItPlay
+
+        Timber.d("Init")
+        if (!_isPauseByUser){
+            shouldItPlay.value = _shouldItPlay
+        }else{
+            shouldItPlay.value = !_shouldItPlay
+        }
 
         dispose = eventStore.observe()
             .subscribe {
@@ -53,18 +61,22 @@ class MiniPlayerViewModel(
 
                         is Play -> {
                             setShouldPlay(play = true)
+                            _isPauseByUser = false
                         }
 
                         is Pause -> {
                             setShouldPlay(play = false)
+                            _isPauseByUser = true
                         }
 
                         is Next -> {
                             setShouldPlay(play = true)
+                            _isPauseByUser = false
                         }
 
                         is Previous -> {
                             setShouldPlay(play = true)
+                            _isPauseByUser = false
                         }
 
                         is AudioPlayerPlayingState -> setPlayerReady(event.isReady)
@@ -152,6 +164,9 @@ class MiniPlayerViewModel(
         setTrackTitle(title)
         setBookId(bookId)
 
+        if (_isPauseByUser){
+            setShouldPlay(play = false)
+        }
         Timber.d("State change event sent: title : $title and book id:$bookId")
     }
 

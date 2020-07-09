@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.ViewCompat
 import com.allsoftdroid.audiobook.feature_settings.databinding.LayoutSettingsFragmentBinding
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 
@@ -30,6 +31,7 @@ class SettingsFragment : BaseUIFragment() {
 
         loadSettingsUI()
 
+        ViewCompat.setTranslationZ(dataBinding.root, 0f)
         return dataBinding.root
     }
 

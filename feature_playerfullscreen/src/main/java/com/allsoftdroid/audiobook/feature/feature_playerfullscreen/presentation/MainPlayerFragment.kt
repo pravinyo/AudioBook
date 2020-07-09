@@ -7,11 +7,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.R
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.databinding.LayoutMainFragmentBinding
 import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.di.FeatureMainPlayerModule
+import com.allsoftdroid.audiobook.feature.feature_playerfullscreen.utils.OnSwipeTouchListener
 import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.common.base.store.audioPlayer.*
 import io.reactivex.disposables.CompositeDisposable
@@ -40,14 +42,14 @@ class MainPlayerFragment : BaseContainerFragment(){
         binding.viewModel = mainPlayerViewModel
 
         try{
-            val isPlaying=arguments!!.getBoolean("isPlaying")
+            val isPlaying=requireArguments().getBoolean("isPlaying")
 
             mainPlayerViewModel.setBookDetails(
-                bookId= arguments!!.getString("bookId")!!,
-                bookName = arguments!!.getString("bookTitle")?:"NA",
-                trackName = arguments!!.getString("trackName")?:"NA",
-                currentPlayingTrack = arguments!!.getInt("chapterIndex"),
-                totalChapter = arguments!!.getInt("totalChapter"),
+                bookId= requireArguments().getString("bookId")!!,
+                bookName = requireArguments().getString("bookTitle")?:"NA",
+                trackName = requireArguments().getString("trackName")?:"NA",
+                currentPlayingTrack = requireArguments().getInt("chapterIndex"),
+                totalChapter = requireArguments().getInt("totalChapter"),
                 isPlaying = isPlaying)
 
             if(isPlaying){
@@ -65,6 +67,15 @@ class MainPlayerFragment : BaseContainerFragment(){
             handleBackPressEvent()
         }
 
+        binding.parentContainer.let {layout ->
+            layout.setOnTouchListener(object : OnSwipeTouchListener(layout.context) {
+
+                override fun onSwipeBottom() {
+                    super.onSwipeBottom()
+                    handleBackPressEvent()
+                }
+            })
+        }
 
         compositeDisposable.add(eventStore.observe()
             .subscribe {
@@ -127,6 +138,7 @@ class MainPlayerFragment : BaseContainerFragment(){
             Timber.d("Remaining time received is $it")
         })
 
+        ViewCompat.setTranslationZ(binding.root, 100f)
         return binding.root
     }
 
