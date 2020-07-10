@@ -31,142 +31,145 @@ class NotificationUtils {
 
         @SuppressLint("NewApi")
         fun sendNotification(isAudioPlaying:Boolean, currentAudioPos:Int, service: AudioService, applicationContext: Context, trackTitle:String, bookName:String) {
+            try{
+                val collapsedView = RemoteViews(applicationContext.packageName, R.layout.notification_mini_player_collapsed)
+                val normalView = RemoteViews(applicationContext.packageName, R.layout.notification_mini_player)
 
-            val collapsedView = RemoteViews(applicationContext.packageName, R.layout.notification_mini_player_collapsed)
-            val normalView = RemoteViews(applicationContext.packageName, R.layout.notification_mini_player)
+                var playPauseIcon = 0
 
-            var playPauseIcon = 0
+                when (applicationContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                    Configuration.UI_MODE_NIGHT_NO -> {
+                        playPauseIcon = if (!isAudioPlaying) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
+                        collapsedView.setImageViewResource(R.id.image_notification_prev,R.drawable.ic_skip_previous_black_24dp)
+                        collapsedView.setImageViewResource(R.id.image_notification_next,R.drawable.ic_skip_next_black_24dp)
 
-            when (applicationContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-                Configuration.UI_MODE_NIGHT_NO -> {
-                    playPauseIcon = if (!isAudioPlaying) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
-                    collapsedView.setImageViewResource(R.id.image_notification_prev,R.drawable.ic_skip_previous_black_24dp)
-                    collapsedView.setImageViewResource(R.id.image_notification_next,R.drawable.ic_skip_next_black_24dp)
+                        collapsedView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.black))
+                        collapsedView.setTextColor(R.id.notification_book_name,applicationContext.getColor(R.color.black))
 
-                    collapsedView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.black))
-                    collapsedView.setTextColor(R.id.notification_book_name,applicationContext.getColor(R.color.black))
+                        normalView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.black))
+                    } // Night mode is not active, we're using the light theme
 
-                    normalView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.black))
-                } // Night mode is not active, we're using the light theme
+                    Configuration.UI_MODE_NIGHT_YES -> {
 
-                Configuration.UI_MODE_NIGHT_YES -> {
+                        playPauseIcon = if (!isAudioPlaying) R.drawable.ic_play_arrow_white_24dp else R.drawable.ic_pause_white_24dp
 
-                    playPauseIcon = if (!isAudioPlaying) R.drawable.ic_play_arrow_white_24dp else R.drawable.ic_pause_white_24dp
+                        collapsedView.setImageViewResource(R.id.image_notification_prev,R.drawable.ic_skip_previous_white_24dp)
+                        collapsedView.setImageViewResource(R.id.image_notification_next,R.drawable.ic_skip_next_white_24dp)
 
-                    collapsedView.setImageViewResource(R.id.image_notification_prev,R.drawable.ic_skip_previous_white_24dp)
-                    collapsedView.setImageViewResource(R.id.image_notification_next,R.drawable.ic_skip_next_white_24dp)
+                        collapsedView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.white))
+                        collapsedView.setTextColor(R.id.notification_book_name,applicationContext.getColor(R.color.white))
 
-                    collapsedView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.white))
-                    collapsedView.setTextColor(R.id.notification_book_name,applicationContext.getColor(R.color.white))
-
-                    normalView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.white))
-                } // Night mode is active, we're using dark theme
-            }
-
-            collapsedView.setTextViewText(R.id.notification_book_name,TextFormatter.getPartialString(bookName))
-
-            collapsedView.setTextViewText(R.id.notification_track_name,TextFormatter.getPartialString(trackTitle))
-            normalView.setTextViewText(R.id.notification_track_name,TextFormatter.getPartialString(trackTitle))
-
-            collapsedView.setImageViewResource(R.id.image_notification_playpause,playPauseIcon)
-            normalView.setImageViewResource(R.id.image_notification_playpause,playPauseIcon)
-
-            val drawable = CreateImageOverlay
-                .with(applicationContext)
-                .buildOverlay(front = R.mipmap.ic_launcher,back = R.drawable.gradiant_background)
-
-            val roundImage  = ImageUtils.getCircleBitmap(drawable.toBitmap())
-
-            collapsedView.setImageViewBitmap(R.id.notification_track_thumbnail,roundImage)
-            normalView.setImageViewBitmap(R.id.notification_track_thumbnail,roundImage)
-
-            collapsedView.setOnClickPendingIntent(
-                R.id.image_notification_prev,
-                NotificationPlayerEventBroadcastReceiver1.newPendingIntent(
-                    context = applicationContext,
-                    action = AudioService.PREVIOUS,
-                    requestCode = AudioService.ACTION_PREVIOUS,
-                    key = NotificationPlayerEventBroadcastReceiver1.ACTION_PREVIOUS_ITEM_INDEX,
-                    value = if (currentAudioPos>1) currentAudioPos-1 else 0))
-
-            collapsedView.setOnClickPendingIntent(R.id.image_notification_next,
-                NotificationPlayerEventBroadcastReceiver1.newPendingIntent(
-                    context = applicationContext,
-                    action = AudioService.NEXT,
-                    requestCode = AudioService.ACTION_NEXT,
-                    key = NotificationPlayerEventBroadcastReceiver1.ACTION_NEXT_ITEM_INDEX,
-                    value = currentAudioPos+1
-                ))
-
-            collapsedView.setOnClickPendingIntent(R.id.image_notification_playpause,
-                NotificationPlayerEventBroadcastReceiver1.newPendingIntent(
-                    context = applicationContext,
-                    action = if(isAudioPlaying) AudioService.PAUSE else AudioService.PLAY,
-                    requestCode = AudioService.ACTION_PLAY_PAUSE,
-                    key = if(isAudioPlaying) NotificationPlayerEventBroadcastReceiver1.ACTION_PAUSE_ITEM_INDEX else
-                        NotificationPlayerEventBroadcastReceiver1.ACTION_PLAY_ITEM_INDEX,
-                    value = currentAudioPos
-                ))
-
-            normalView.setOnClickPendingIntent(R.id.image_notification_playpause,
-                NotificationPlayerEventBroadcastReceiver1.newPendingIntent(
-                    context = applicationContext,
-                    action = if(isAudioPlaying) AudioService.PAUSE else AudioService.PLAY,
-                    requestCode = AudioService.ACTION_PLAY_PAUSE,
-                    key = if(isAudioPlaying) NotificationPlayerEventBroadcastReceiver1.ACTION_PAUSE_ITEM_INDEX else
-                        NotificationPlayerEventBroadcastReceiver1.ACTION_PLAY_ITEM_INDEX,
-                    value = currentAudioPos
-                ))
-
-            var notifyWhen = 0L
-            var showWhen = false
-            var usesChronometer = false
-            var ongoing = false
-            if (isAudioPlaying) {
-                notifyWhen = System.currentTimeMillis() - (currentAudioPos)
-                showWhen = true
-                usesChronometer = true
-                ongoing = true
-            }
-
-            if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.O) {
-                val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                val name = applicationContext.getString(R.string.app_name)
-                val importance = NotificationManager.IMPORTANCE_DEFAULT
-                NotificationChannel(NOTIFICATION_CHANNEL, name, importance).apply {
-                    lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-                    enableLights(false)
-                    enableVibration(false)
-                    notificationManager.createNotificationChannel(this)
+                        normalView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.white))
+                    } // Night mode is active, we're using dark theme
                 }
-            }
 
-            val notification = NotificationCompat.Builder(applicationContext,
-                NOTIFICATION_CHANNEL
-            )
-                .setSmallIcon(R.drawable.ic_book_play)
-                .setContentTitle(bookName)
-                .setContentText(trackTitle)
+                collapsedView.setTextViewText(R.id.notification_book_name,TextFormatter.getPartialString(bookName))
 
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setWhen(notifyWhen)
-                .setShowWhen(showWhen)
-                .setUsesChronometer(usesChronometer)
-                .setContentIntent(
-                    getContentIntent(
-                        applicationContext
-                    )
+                collapsedView.setTextViewText(R.id.notification_track_name,TextFormatter.getPartialString(trackTitle))
+                normalView.setTextViewText(R.id.notification_track_name,TextFormatter.getPartialString(trackTitle))
+
+                collapsedView.setImageViewResource(R.id.image_notification_playpause,playPauseIcon)
+                normalView.setImageViewResource(R.id.image_notification_playpause,playPauseIcon)
+
+                val drawable = CreateImageOverlay
+                    .with(applicationContext)
+                    .buildOverlay(front = R.mipmap.ic_launcher,back = R.drawable.gradiant_background)
+
+                val roundImage  = ImageUtils.getCircleBitmap(drawable.toBitmap())
+
+                collapsedView.setImageViewBitmap(R.id.notification_track_thumbnail,roundImage)
+                normalView.setImageViewBitmap(R.id.notification_track_thumbnail,roundImage)
+
+                collapsedView.setOnClickPendingIntent(
+                    R.id.image_notification_prev,
+                    NotificationPlayerEventBroadcastReceiver1.newPendingIntent(
+                        context = applicationContext,
+                        action = AudioService.PREVIOUS,
+                        requestCode = AudioService.ACTION_PREVIOUS,
+                        key = NotificationPlayerEventBroadcastReceiver1.ACTION_PREVIOUS_ITEM_INDEX,
+                        value = if (currentAudioPos>1) currentAudioPos-1 else 0))
+
+                collapsedView.setOnClickPendingIntent(R.id.image_notification_next,
+                    NotificationPlayerEventBroadcastReceiver1.newPendingIntent(
+                        context = applicationContext,
+                        action = AudioService.NEXT,
+                        requestCode = AudioService.ACTION_NEXT,
+                        key = NotificationPlayerEventBroadcastReceiver1.ACTION_NEXT_ITEM_INDEX,
+                        value = currentAudioPos+1
+                    ))
+
+                collapsedView.setOnClickPendingIntent(R.id.image_notification_playpause,
+                    NotificationPlayerEventBroadcastReceiver1.newPendingIntent(
+                        context = applicationContext,
+                        action = if(isAudioPlaying) AudioService.PAUSE else AudioService.PLAY,
+                        requestCode = AudioService.ACTION_PLAY_PAUSE,
+                        key = if(isAudioPlaying) NotificationPlayerEventBroadcastReceiver1.ACTION_PAUSE_ITEM_INDEX else
+                            NotificationPlayerEventBroadcastReceiver1.ACTION_PLAY_ITEM_INDEX,
+                        value = currentAudioPos
+                    ))
+
+                normalView.setOnClickPendingIntent(R.id.image_notification_playpause,
+                    NotificationPlayerEventBroadcastReceiver1.newPendingIntent(
+                        context = applicationContext,
+                        action = if(isAudioPlaying) AudioService.PAUSE else AudioService.PLAY,
+                        requestCode = AudioService.ACTION_PLAY_PAUSE,
+                        key = if(isAudioPlaying) NotificationPlayerEventBroadcastReceiver1.ACTION_PAUSE_ITEM_INDEX else
+                            NotificationPlayerEventBroadcastReceiver1.ACTION_PLAY_ITEM_INDEX,
+                        value = currentAudioPos
+                    ))
+
+                var notifyWhen = 0L
+                var showWhen = false
+                var usesChronometer = false
+                var ongoing = false
+                if (isAudioPlaying) {
+                    notifyWhen = System.currentTimeMillis() - (currentAudioPos)
+                    showWhen = true
+                    usesChronometer = true
+                    ongoing = true
+                }
+
+                if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.O) {
+                    val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                    val name = applicationContext.getString(R.string.app_name)
+                    val importance = NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationChannel(NOTIFICATION_CHANNEL, name, importance).apply {
+                        lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                        enableLights(false)
+                        enableVibration(false)
+                        notificationManager.createNotificationChannel(this)
+                    }
+                }
+
+                val notification = NotificationCompat.Builder(applicationContext,
+                    NOTIFICATION_CHANNEL
                 )
-                .setOngoing(ongoing)
-                .setChannelId(NOTIFICATION_CHANNEL)
-                .setCategory(Notification.CATEGORY_SERVICE)
-                .setCustomContentView(normalView)
-                .setCustomBigContentView(collapsedView)
-                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                    .setSmallIcon(R.drawable.ic_book_play)
+                    .setContentTitle(bookName)
+                    .setContentText(trackTitle)
 
-            if(!isAudioPlaying) notification.setAutoCancel(true)
-            service.startForeground(NOTIFY_ID, notification.build())
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setWhen(notifyWhen)
+                    .setShowWhen(showWhen)
+                    .setUsesChronometer(usesChronometer)
+                    .setContentIntent(
+                        getContentIntent(
+                            applicationContext
+                        )
+                    )
+                    .setOngoing(ongoing)
+                    .setChannelId(NOTIFICATION_CHANNEL)
+                    .setCategory(Notification.CATEGORY_SERVICE)
+                    .setCustomContentView(normalView)
+                    .setCustomBigContentView(collapsedView)
+                    .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+
+                if(!isAudioPlaying) notification.setAutoCancel(true)
+                service.startForeground(NOTIFY_ID, notification.build())
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
 
              //delay foreground state updating a bit, so the notification can be swiped away properly after initial display
             Handler(Looper.getMainLooper()).postDelayed({
