@@ -54,6 +54,21 @@ This App is based on Single Activity Navigation. Each Fragment screen is develop
   <img src="/photos/mybooks.png" width="200" />
 </p>
 
+# Release: 6.5.12
+## :star: New Features / Improvement
+- html code removed from track title
+
+## :beetle: Bug Fixes
+
+- app crash due to notification is fixed
+
+## :heart: Contributors
+
+We'd like to thank all the contributors who worked on this release!
+
+- [@pravinyo](https://github.com/pravinyo)
+
+
 # Release: 6.5.11
 ## :star: New Features / Improvement
 - Refresh icon is replaced with Pull down to refresh swipe.

@@ -133,9 +133,6 @@ internal class BookDetailsViewModel(
     private var job: Job? = null
     private var enhanceDetailsJob:Job?= null
 
-//    val trackFormatIndex:Int
-//    get() = sharedPref.trackFormatIndex()
-
     init {
         initialLoad()
         showPrefStat()
