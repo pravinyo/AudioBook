@@ -7,6 +7,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation.findNavController
@@ -212,14 +213,22 @@ class MainActivity : BaseActivity() {
     }
 
     private fun navigateToDownloadManagementActivity() {
+
+        val parent = findViewById<View>(R.id.navHostFragment)
+        val options = ActivityOptionsCompat.makeClipRevealAnimation(parent,parent.width,0,parent.width/2,parent.height/2)
+
         val intent = Intent(this,
             DownloadManagementActivity::class.java)
-        startActivity(intent)
+        startActivity(intent,options.toBundle())
     }
 
     private fun navigateToLicensesActivity(){
+
+        val parent = findViewById<View>(R.id.navHostFragment)
+        val options = ActivityOptionsCompat.makeClipRevealAnimation(parent,parent.width,0,parent.width/2,parent.height/2)
+
         OssLicensesMenuActivity.setActivityTitle("Third-party Licenses")
-        startActivity(Intent(this,OssLicensesMenuActivity::class.java))
+        startActivity(Intent(this,OssLicensesMenuActivity::class.java),options.toBundle())
     }
 
     private fun miniPlayerViewState(shouldShow: Boolean) {
