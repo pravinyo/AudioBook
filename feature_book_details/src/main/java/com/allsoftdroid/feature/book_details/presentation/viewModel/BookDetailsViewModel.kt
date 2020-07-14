@@ -406,7 +406,7 @@ internal class BookDetailsViewModel(
                         }
                     }
 
-                    Timber.d("Track list fetch success")
+                    Timber.d("Optimal Track list fetch success")
                 }
 
                 override suspend fun onError(t: Throwable) {
@@ -438,7 +438,7 @@ internal class BookDetailsViewModel(
                         }
                     }
 
-                    Timber.d("Track list fetch success")
+                    Timber.d("Optimal Track list fetch success")
                 }
 
                 override suspend fun onError(t: Throwable) {
