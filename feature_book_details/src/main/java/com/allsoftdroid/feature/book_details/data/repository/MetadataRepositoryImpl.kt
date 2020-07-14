@@ -45,6 +45,8 @@ class MetadataRepositoryImpl(
     private val audioBookMetadata : LiveData<AudioBookMetadataDomainModel>
         get() = _audioBookMetadata
 
+    private var currentRequest:Call<String>? = null
+
     override fun getBookId() = bookId
 
     /***
@@ -61,10 +63,13 @@ class MetadataRepositoryImpl(
                 Timber.i("Starting network call")
                 Timber.i("Loading for id:$bookId")
 
-                metadataDataSource.getMetadata(bookId).enqueue(object : Callback<String> {
+                currentRequest?.cancel()
+                currentRequest = metadataDataSource.getMetadata(bookId)
+
+                currentRequest?.enqueue(object : Callback<String> {
                     override fun onFailure(call: Call<String>, t: Throwable) {
                         Timber.i("Failure occur:${t.message}")
-                        _networkResponse.value= Event(NetworkState.CONNECTION_ERROR)
+                        if (!call.isCanceled) _networkResponse.value= Event(NetworkState.CONNECTION_ERROR)
                     }
 
                     override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -98,4 +103,8 @@ class MetadataRepositoryImpl(
     override fun getMetadata() = audioBookMetadata
 
     override fun networkResponse(): Variable<Event<NetworkState>> = _networkResponse
+
+    override fun cancelRequestInFlight(){
+        currentRequest?.cancel()
+    }
 }
