@@ -493,19 +493,21 @@ internal class BookDetailsViewModel(
                 }
 
                 list?.let {localFiles ->
-
-                    Timber.d("Found local files: ${localFiles.size}")
-                    val names = localFiles.map {
-                        it.split("/").last().toLowerCase(Locale.ROOT)
-                    }
-
-                    val updatedTracks = tracks.map { track->
-                        if(names.contains(track.filename.toLowerCase(Locale.ROOT))){
-                            track.downloadStatus = DOWNLOADED
+                    if (localFiles.isNotEmpty()){
+                        Timber.d("Found local files: ${localFiles.size}")
+                        val names = localFiles.map {
+                            it.split("/").last().toLowerCase(Locale.ROOT)
                         }
-                        track
+
+                        val updatedTracks = tracks.map { track->
+                            if(names.contains(track.filename.toLowerCase(Locale.ROOT))){
+                                track.downloadStatus = DOWNLOADED
+                            }
+                            track
+                        }
+                        _audioBookTracks.value = updatedTracks
+                        _newTrackStateEvent.value = Event(true)
                     }
-                    _audioBookTracks.value = updatedTracks
                 }
 
                 if(list.isNullOrEmpty()){
