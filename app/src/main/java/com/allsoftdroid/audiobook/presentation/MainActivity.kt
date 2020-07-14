@@ -86,6 +86,11 @@ class MainActivity : BaseActivity() {
     }
 
 
+    /**
+     * Show Dialog for continuing last played book on App start.
+     * @param lastPlayedTrack It holds data related to @[LastPlayedTrack]
+     * @return @[AlertDialog] object
+     */
     private fun alertDialog(lastPlayedTrack: LastPlayedTrack):AlertDialog{
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.resume_book_header,lastPlayedTrack.bookName))
@@ -185,6 +190,10 @@ class MainActivity : BaseActivity() {
             })
     }
 
+    /**
+     * Handler function for @[DownloadEvent]. It checks whether storage permission is granted or not.
+     * if it is not granted, it request to the user else forward the request to download Manager for further handling.
+     */
     private fun handleDownloadEvent(event: Event<DownloadEvent>) {
 
         event.getContentIfNotHandled()?.let {
@@ -231,6 +240,10 @@ class MainActivity : BaseActivity() {
         startActivity(Intent(this,OssLicensesMenuActivity::class.java),options.toBundle())
     }
 
+    /**
+     * This function handles visibility and loading of mini player. Based on @[shouldShow] parameter, it decides whether mini player,
+     * should be visible or not. It also loads the fragment into the view if it should show.
+     */
     private fun miniPlayerViewState(shouldShow: Boolean) {
         if(shouldShow){
 
@@ -291,6 +304,9 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    /**
+     * This function handles all the @[AudioPlayerEvent] related event on @[AudioPlayerEventStore]
+     */
     private fun performAction(event: AudioPlayerEvent){
         when(event){
             is Next -> {
@@ -341,6 +357,10 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    /**
+     * This function handles the network status related visibility. If network is not available, it
+     * display snackBar to let the user know of the network connecton issue
+     */
     private fun showNetworkMessage(isConnected: Boolean) {
         if (!isConnected) {
             snackBar.show()
@@ -364,6 +384,9 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    /**
+     * This function handles opening of Main Player and prepare necessary param data required to start the Main player
+     */
     private fun navigateToMainPlayerScreen(){
         val controller = findNavController(R.id.navHostFragment)
         val playingTrackDetails = mainActivityViewModel.getPlayingTrack()
