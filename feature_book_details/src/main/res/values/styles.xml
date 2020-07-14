@@ -8,4 +8,29 @@
         <item name="android:layout_marginTop">16dp</item>
         <item name="android:background">@android:color/darker_gray</item>
     </style>
+
+    <style name="BookActionIconStyle">
+        <item name="android:layout_width">@dimen/track_item_control_btn_size</item>
+        <item name="android:layout_height">@dimen/track_item_control_btn_size</item>
+        <item name="android:padding">@dimen/padding_min</item>
+        <item name="android:layout_marginTop">@dimen/track_item_control_btn_margin</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="BookActionButtonIconStyle">
+        <item name="android:layout_width">@dimen/track_item_control_btn_size</item>
+        <item name="android:layout_height">@dimen/track_item_control_btn_size</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
+    <style name="BookActionButtonTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginStart">@dimen/margin_min</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Large</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
 </resources>
