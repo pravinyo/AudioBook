@@ -513,9 +513,8 @@ internal class BookDetailsViewModel(
                 if(list.isNullOrEmpty()){
                     Timber.d("List is empty resetting to original value")
                     _audioBookTracks.value = tracks
+                    _newTrackStateEvent.value = Event(true)
                 }
-
-                _newTrackStateEvent.value = Event(true)
             }
         }
     }
