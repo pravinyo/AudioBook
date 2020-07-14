@@ -42,6 +42,9 @@ class GetAudioBookListUsecase( private val audioBookRep: AudioBookRepository) :
 
     fun getBookList() = audioBookRep.getAudioBooks()
 
+    fun cancelRequestInFlight() = audioBookRep.cancelRequestInFlight()
+
+
     class RequestValues(val pageNumber : Int) : BaseUseCase.RequestValues
     class ResponseValues (val event : Event<Any>) : BaseUseCase.ResponseValues
 }

@@ -55,6 +55,9 @@ class AudioBookRepositoryImpl(
 
     private var listener: NetworkResponseListener? = null
 
+    private var currentRequest : Call<String>? = null
+    private var searchRequest : Call<String>? = null
+
     override fun registerNetworkResponse(listener: NetworkResponseListener){
         this.listener = listener
     }
@@ -72,15 +75,21 @@ class AudioBookRepositoryImpl(
             withContext(Dispatchers.IO) {
                 Timber.i("Starting network call")
 
-                remoteBookService.getAudioBooks(
+                currentRequest?.cancel()
+
+                currentRequest = remoteBookService.getAudioBooks(
                     page = page,
                     rowCount = Utils.Books.DEFAULT_ROW_COUNT
-                ).enqueue(object : Callback<String> {
+                )
+
+                currentRequest?.enqueue(object : Callback<String> {
                     override fun onFailure(call: Call<String>, t: Throwable) {
                         Timber.i("Failure occur")
 
-                        GlobalScope.launch {
-                            listener?.onResponse(Failure(Error(t)))
+                        if (!call.isCanceled){
+                            GlobalScope.launch {
+                                listener?.onResponse(Failure(Error(t)))
+                            }
                         }
                     }
 
@@ -132,16 +141,21 @@ class AudioBookRepositoryImpl(
             withContext(Dispatchers.IO) {
                 Timber.i("Starting network call")
 
-                remoteBookService.searchBooks(
+                searchRequest?.cancel()
+                searchRequest = remoteBookService.searchBooks(
                     search = Utils.Books.buildQuery(query),
                     page = page,
                     rowCount = Utils.Books.DEFAULT_ROW_COUNT
-                ).enqueue(object : Callback<String> {
+                )
+
+                searchRequest?.enqueue(object : Callback<String> {
                     override fun onFailure(call: Call<String>, t: Throwable) {
                         Timber.i("Failure occur")
 
-                        GlobalScope.launch {
-                            listener?.onResponse(Failure(Error(t)))
+                        if (!call.isCanceled){
+                            GlobalScope.launch {
+                                listener?.onResponse(Failure(Error(t)))
+                            }
                         }
                     }
 
@@ -165,5 +179,11 @@ class AudioBookRepositoryImpl(
     }
 
     override fun getSearchBooks(): LiveData<List<AudioBookDomainModel>> = _searchResponse
+
+    override fun cancelRequestInFlight(){
+        Timber.d("Cancelling ongoing request")
+        currentRequest?.cancel()
+        searchRequest?.cancel()
+    }
 }
 

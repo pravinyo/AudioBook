@@ -53,13 +53,6 @@ class AudioBookListViewModel(
     val itemClicked: LiveData<Event<String>>
         get() = _itemClicked
 
-
-    // when back button is pressed in the UI
-    private var _backArrowPressed = MutableLiveData<Event<Boolean>>()
-    val backArrowPressed: LiveData<Event<Boolean>>
-        get() = _backArrowPressed
-
-
     private var bookListRequestValues  = GetAudioBookListUsecase.RequestValues(pageNumber = 1)
     private var searchBookRequestValues = GetSearchBookUsecase.RequestValues(query = "",pageNumber = 0)
 
@@ -230,13 +223,11 @@ class AudioBookListViewModel(
         }
     }
 
-    fun onBackArrowPressed(){
-        _backArrowPressed.value = Event(true)
-    }
-
     //cancel the job when viewmodel is not longer in use
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
+        getAlbumListUseCase.cancelRequestInFlight()
+        getSearchBookUsecase.cancelRequestInFlight()
     }
 }
