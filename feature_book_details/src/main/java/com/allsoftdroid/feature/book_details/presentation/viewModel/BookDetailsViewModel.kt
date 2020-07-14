@@ -377,8 +377,8 @@ internal class BookDetailsViewModel(
      * Function which fetch track list for the book
      */
     private suspend fun fetchOptimalTrackList(){
-        var tracks_bp_64:List<AudioBookTrackDomainModel>? = null
-        var tracks_bp_128:List<AudioBookTrackDomainModel>?=null
+        var tracksBp64:List<AudioBookTrackDomainModel>? = null
+        var tracksBp128:List<AudioBookTrackDomainModel>?=null
 
         val requestValues64  = GetTrackListUsecase.RequestValues(trackFormat = TrackFormat.FormatBP64)
         val requestValues128  = GetTrackListUsecase.RequestValues(trackFormat = TrackFormat.FormatBP128)
@@ -391,13 +391,13 @@ internal class BookDetailsViewModel(
 
                     getTrackListUsecase.getTrackListData().observeForever {
 
-                        tracks_bp_64 = it
+                        tracksBp64 = it
 
-                        tracks_bp_64?.let { track_64->
-                            if (tracks_bp_128==null){
+                        tracksBp64?.let { track_64->
+                            if (tracksBp128==null){
                                 checkLocalDownloadedFiles(track_64)
                             }else{
-                                tracks_bp_128?.let {tracks_128->
+                                tracksBp128?.let { tracks_128->
                                     checkLocalDownloadedFiles(tracks_128)
                                 }
                             }
@@ -423,11 +423,11 @@ internal class BookDetailsViewModel(
 
                     getTrackListUsecase.getTrackListData().observeForever {
 
-                        tracks_bp_128 = it
+                        tracksBp128 = it
 
-                        tracks_bp_64?.let {tracks_64 ->
-                            tracks_bp_128?.let { track_128->
-                                if (tracks_bp_64==null || tracks_64.size <= track_128.size){
+                        tracksBp64?.let { tracks_64 ->
+                            tracksBp128?.let { track_128->
+                                if (tracksBp64==null || tracks_64.size <= track_128.size){
                                     checkLocalDownloadedFiles(track_128)
                                 }else{
                                     checkLocalDownloadedFiles(tracks_64)
@@ -436,7 +436,6 @@ internal class BookDetailsViewModel(
                                 restorePreviousStateIfAny()
                             }
                         }
-
                     }
 
                     Timber.d("Track list fetch success")
