@@ -361,13 +361,6 @@ internal class BookDetailsViewModel(
         job?.cancel()
 
         job = viewModelScope.launch {
-//            stateHandle.set(StateKey.CurrentTrackFormat.key,index)
-//            when(index){
-//                0 -> fetchTrackList(format = TrackFormat.FormatBP64)
-//                1 -> fetchTrackList(format = TrackFormat.FormatVBR)
-//                else -> fetchTrackList(format = TrackFormat.FormatBP128)
-//            }
-//            sharedPref.saveTrackFormatIndex(index)
             fetchOptimalTrackList()
         }
     }
