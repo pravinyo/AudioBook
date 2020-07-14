@@ -26,4 +26,5 @@
     <string name="completed_message">Completed</string>
     <string name="loading_message">Loading</string>
     <string name="network_error_message">Network Error</string>
+    <string name="android_vending_package">com.android.vending</string>
 </resources>
