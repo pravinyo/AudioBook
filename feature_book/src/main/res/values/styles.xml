@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ToolbarButtonStyle">
+        <item name="android:layout_width">@dimen/control_icon_size</item>
+        <item name="android:layout_height">@dimen/control_icon_size</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+</resources>
