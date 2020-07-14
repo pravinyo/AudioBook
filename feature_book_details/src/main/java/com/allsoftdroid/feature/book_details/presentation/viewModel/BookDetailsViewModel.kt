@@ -121,7 +121,7 @@ internal class BookDetailsViewModel(
             }
         }else{
             _audioBookTracks.value?.let {
-                _audioBookTracks.value = it.toList()
+                if (it.isNotEmpty()) _audioBookTracks.value = it.toList()
             }
         }
 
