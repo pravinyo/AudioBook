@@ -96,14 +96,9 @@
                     <ImageView
                         android:id="@+id/imgView_book_listen_later"
                         android:src="@drawable/ic_clock_outline"
-                        android:layout_width="@dimen/track_item_control_btn_size"
-                        android:layout_height="@dimen/track_item_control_btn_size"
+                        style="@style/BookActionIconStyle"
                         android:layout_marginEnd="@dimen/banner_image_margin_end_normal"
-                        android:padding="@dimen/padding_min"
                         android:contentDescription="@string/banner_image_listen_later"
-                        android:layout_marginTop="@dimen/track_item_control_btn_margin"
-                        android:clickable="true"
-                        android:focusable="true"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/imgView_book_image_card"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -111,10 +106,7 @@
                     <ImageView
                         android:id="@+id/imgView_book_download"
                         android:src="@drawable/arrow_collapse_down"
-                        android:layout_width="@dimen/track_item_control_btn_size"
-                        android:layout_height="@dimen/track_item_control_btn_size"
-                        android:layout_marginTop="@dimen/track_item_control_btn_margin"
-                        android:padding="@dimen/padding_min"
+                        style="@style/BookActionIconStyle"
                         android:contentDescription="@string/banner_image_download"
                         app:layout_constraintEnd_toEndOf="@+id/imgView_book_listen_later"
                         app:layout_constraintStart_toStartOf="@+id/imgView_book_listen_later"
@@ -123,10 +115,7 @@
                     <ImageView
                         android:id="@+id/imgView_book_share"
                         android:src="@drawable/share_outline"
-                        android:layout_width="@dimen/track_item_control_btn_size"
-                        android:layout_height="@dimen/track_item_control_btn_size"
-                        android:layout_marginTop="@dimen/track_item_control_btn_margin"
-                        android:padding="@dimen/padding_min"
+                        style="@style/BookActionIconStyle"
                         android:contentDescription="@string/banner_image_share"
                         app:layout_constraintEnd_toEndOf="@+id/imgView_book_listen_later"
                         app:layout_constraintStart_toStartOf="@+id/imgView_book_listen_later"
@@ -135,12 +124,7 @@
                     <ImageView
                         android:id="@+id/imgView_book_info"
                         android:src="@drawable/ic_information_variant"
-                        android:layout_width="@dimen/track_item_control_btn_size"
-                        android:layout_height="@dimen/track_item_control_btn_size"
-                        android:layout_marginTop="@dimen/track_item_control_btn_margin"
-                        android:padding="@dimen/padding_min"
-                        android:clickable="true"
-                        android:focusable="true"
+                        style="@style/BookActionIconStyle"
                         android:contentDescription="@string/banner_image_info"
                         app:layout_constraintEnd_toEndOf="@+id/imgView_book_listen_later"
                         app:layout_constraintStart_toStartOf="@+id/imgView_book_listen_later"
@@ -172,18 +156,11 @@
                         android:background="@drawable/semi_circle_shape_left">
                         <ImageView
                             android:src="@drawable/ic_book_open_outline"
-                            android:layout_width="@dimen/track_item_control_btn_size"
-                            android:layout_height="@dimen/track_item_control_btn_size"
-                            android:layout_gravity="center_vertical"
+                            style="@style/BookActionButtonIconStyle"
                             android:contentDescription="@string/read_text" />
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="@dimen/margin_min"
-                            android:layout_gravity="center_vertical"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                            android:text="@string/read"
-                            android:textColor="@color/white" />
+                            style="@style/BookActionButtonTextStyle"
+                            android:text="@string/read"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -198,18 +175,11 @@
                         android:background="@drawable/semi_circle_shape_right">
                         <ImageView
                             android:src="@drawable/ic_headphones"
-                            android:layout_width="@dimen/track_item_control_btn_size"
-                            android:layout_height="@dimen/track_item_control_btn_size"
-                            android:layout_gravity="center_vertical"
+                            style="@style/BookActionButtonIconStyle"
                             android:contentDescription="@string/play_book" />
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="@dimen/margin_min"
-                            android:layout_gravity="center_vertical"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                            android:text="@string/play"
-                            android:textColor="@color/white" />
+                            style="@style/BookActionButtonTextStyle"
+                            android:text="@string/play"/>
                     </LinearLayout>
                 </LinearLayout>
 
