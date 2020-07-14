@@ -12,6 +12,7 @@ class GetPlayingTrackProgressUsecase(private val audioManager: AudioManager) :
     BaseUseCase<GetPlayingTrackProgressUsecase.RequestValues, GetPlayingTrackProgressUsecase.ResponseValues>(){
 
     private lateinit var mainHandler: Handler
+    private var isCancelled:Boolean = false
 
     private var _trackProgress = MutableLiveData<Int>().apply {
         this.value = 0
@@ -23,6 +24,8 @@ class GetPlayingTrackProgressUsecase(private val audioManager: AudioManager) :
 
     private val updateTextTask = object : Runnable {
         override fun run() {
+            if (isCancelled) return
+
             val progress = audioManager.getPlayingTrackProgress()
             _trackProgress.value = progress
 
@@ -53,6 +56,7 @@ class GetPlayingTrackProgressUsecase(private val audioManager: AudioManager) :
     fun cancel() {
         if(this::mainHandler.isInitialized){
             canCancelTrack = false
+            isCancelled = true
             mainHandler.removeCallbacks(updateTextTask)
         }
     }
@@ -61,6 +65,7 @@ class GetPlayingTrackProgressUsecase(private val audioManager: AudioManager) :
         if(this::mainHandler.isInitialized){
             stopPreviousTrackProgress()
             canCancelTrack = true
+            isCancelled = false
             mainHandler.post(updateTextTask)
         }
     }
