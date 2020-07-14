@@ -63,7 +63,7 @@ class MainActivity : BaseActivity() {
 
 
     private val snackBar by lazy {
-        val sb = Snackbar.make(findViewById(R.id.navHostFragment), "You are offline", Snackbar.LENGTH_LONG) //Assume "rootLayout" as the root layout of every activity.
+        val sb = Snackbar.make(findViewById(R.id.navHostFragment), getString(R.string.offline_message), Snackbar.LENGTH_LONG) //Assume "rootLayout" as the root layout of every activity.
         sb.duration = BaseTransientBottomBar.LENGTH_INDEFINITE
         sb
     }
@@ -88,11 +88,11 @@ class MainActivity : BaseActivity() {
 
     private fun alertDialog(lastPlayedTrack: LastPlayedTrack):AlertDialog{
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("continue ${lastPlayedTrack.bookName} from where you left,")
-        builder.setMessage("Chapter : ${lastPlayedTrack.title}")
+        builder.setTitle(getString(R.string.resume_book_header,lastPlayedTrack.bookName))
+        builder.setMessage(getString(R.string.resume_book_message,lastPlayedTrack.title))
 
-        builder.setPositiveButton("Listen") { _, _ ->
-            Toast.makeText(this,"Playing",Toast.LENGTH_SHORT).show()
+        builder.setPositiveButton(getString(R.string.btn_listen_label)) { _, _ ->
+            Toast.makeText(this,getString(R.string.playing_label),Toast.LENGTH_SHORT).show()
             //Navigate to display page
             val bundle = bundleOf(
                 "bookId" to lastPlayedTrack.bookId,
@@ -106,12 +106,12 @@ class MainActivity : BaseActivity() {
                         .navigate(R.id.action_AudioBookListFragment_to_AudioBookDetailsFragment,bundle)
                     mainActivityViewModel.clearSharedPref()
                 }else{
-                    Toast.makeText(this,"Please connect to internet",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,getString(R.string.network_connect_message),Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        builder.setNegativeButton("Dismiss"){
+        builder.setNegativeButton(getString(R.string.btn_dismiss_label)){
             _,_ ->
             mainActivityViewModel.clearSharedPref()
         }
@@ -206,9 +206,9 @@ class MainActivity : BaseActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(StoragePermissionHandler.isRequestGrantedFor(requestCode,grantResults)){
-            Toast.makeText(this,"Thanks for granting permission",Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,getString(R.string.permission_granted_message),Toast.LENGTH_SHORT).show()
         }else{
-            Toast.makeText(this,"This Feature need Storage Permission",Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,getString(R.string.permission_failed_message),Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -227,7 +227,7 @@ class MainActivity : BaseActivity() {
         val parent = findViewById<View>(R.id.navHostFragment)
         val options = ActivityOptionsCompat.makeClipRevealAnimation(parent,parent.width,0,parent.width/2,parent.height/2)
 
-        OssLicensesMenuActivity.setActivityTitle("Third-party Licenses")
+        OssLicensesMenuActivity.setActivityTitle(getString(R.string.license_screen_title))
         startActivity(Intent(this,OssLicensesMenuActivity::class.java),options.toBundle())
     }
 
@@ -401,7 +401,7 @@ class MainActivity : BaseActivity() {
 
                     else -> {
                         Timber.d("Operation not allowed")
-                        Toast.makeText(this,"Can't navigate to Player",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this,getString(R.string.player_navigation_error),Toast.LENGTH_SHORT).show()
                     }
                 }
             }
