@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -323,17 +325,23 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
             bookDetailsViewModel.additionalBookDetails.value?.let {
                 if(it.gutenbergUrl.isNotEmpty() && isLinkValid(it.gutenbergUrl)){
                     val uri  = Uri.parse(it.gutenbergUrl)
-                    val intent = Intent(Intent.ACTION_VIEW,uri)
-                    startActivity(Intent.createChooser(intent,getString(R.string.open_with_label)))
+                    loadInBrowser(uri)
                 }else if (it.archiveUrl.isNotEmpty() && isLinkValid(it.archiveUrl)){
                     val uri  = Uri.parse(it.archiveUrl)
-                    val intent = Intent(Intent.ACTION_VIEW,uri)
-                    startActivity(Intent.createChooser(intent,getString(R.string.open_with_label)))
+                    loadInBrowser(uri)
                 }else{
                     Toast.makeText(this.requireActivity(),getString(R.string.no_link_found),Toast.LENGTH_SHORT).show()
                 }
             }?:Toast.makeText(this.requireActivity(),getString(R.string.wait_message),Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun loadInBrowser(uri:Uri){
+        CustomTabsIntent.Builder()
+            .setToolbarColor(ContextCompat.getColor(requireContext(),R.color.colorPrimary))
+            .setShowTitle(true)
+            .build()
+            .launchUrl(requireContext(),uri)
     }
 
     private fun isLinkValid(archiveUrl: String): Boolean {
