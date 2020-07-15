@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
@@ -107,8 +108,12 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat(), KoinComponent {
 
     private fun openPrivacyPageOnBrowser() {
         val uri  = Uri.parse(getString(R.string.privacy_page_url))
-        val intent = Intent(Intent.ACTION_VIEW,uri)
-        startActivity(Intent.createChooser(intent,"Open URL with"))
+
+        CustomTabsIntent.Builder()
+            .setToolbarColor(ContextCompat.getColor(requireContext(),R.color.colorPrimary))
+            .setShowTitle(true)
+            .build()
+            .launchUrl(requireContext(),uri)
     }
 
     private fun setupMiscellaneousPref() {
