@@ -3,6 +3,7 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val BROWSER_VERSION = "1.2.0"
     const val DOWNLOADER_VERSION = "1.7.7"
     const val TOOL_TIP = "2.0.3"
     const val FIREBASE_CRASHLYTICS = "17.0.0"
@@ -130,4 +131,6 @@ object LibraryDependency {
 
     const val TOOL_TIP = "it.sephiroth.android.library.targettooltip:target-tooltip-library:${LibraryVersion.TOOL_TIP}"
     const val DOWNLOADER = "com.liulishuo.filedownloader:library:${LibraryVersion.DOWNLOADER_VERSION}"
+
+    const val BROWSER = "androidx.browser:browser:${LibraryVersion.BROWSER_VERSION}"
 }

@@ -62,7 +62,7 @@ dependencies {
     implementation(LibraryDependency.GLIDE)
     kapt(LibraryDependency.GLIDE_COMPILER)
     implementation(LibraryDependency.KOIN_X_VIEWMODEL)
-//    implementation(LibraryDependency.MULTISTAGE_TOGGLE_BUTTON)
+    implementation(LibraryDependency.BROWSER)
     implementation(LibraryDependency.LOTTIE)
     implementation(LibraryDependency.PALETTE)
     implementation(LibraryDependency.MATERIAL)
