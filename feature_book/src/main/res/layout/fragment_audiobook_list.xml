@@ -84,6 +84,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
                         android:scrollHorizontally="true"
                         android:ellipsize="end"
                         android:inputType="text"
+                        android:imeOptions="actionSend"
                         android:layout_gravity="center_vertical"
                         android:textColor="@color/colorPrimaryDark"
                         android:layout_height="wrap_content"
