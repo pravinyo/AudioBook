@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -140,6 +141,14 @@ class AudioBookListFragment : BaseUIFragment(){
                 }
             }
         })
+
+        binding.etToolbarSearch.setOnKeyListener { view, keyCode, keyEvent ->
+            if(keyCode == KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_DOWN){
+                binding.ivSearch.performClick()
+                return@setOnKeyListener true
+            }
+            return@setOnKeyListener false
+        }
 
         binding.ivSearchCancel.setOnClickListener {
             binding.etToolbarSearch.clearFocus()
