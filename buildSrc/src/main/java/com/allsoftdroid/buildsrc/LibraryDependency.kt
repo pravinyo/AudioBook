@@ -23,7 +23,7 @@ private object LibraryVersion {
     const val RX_KOTLIN = "2.4.0"
     const val RX_ANDROID = "2.1.1"
     const val CARD_VIEW = "28.0.0"
-    const val GLIDE = "4.9.0"
+    const val GLIDE = "4.11.0"
     const val ROOM = "2.2.0-rc01"
     const val version_retrofit_coroutines_adapter = "0.9.2"
     const val GSON = "2.8.5"
