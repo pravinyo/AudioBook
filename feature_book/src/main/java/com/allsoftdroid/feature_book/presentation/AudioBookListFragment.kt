@@ -129,16 +129,10 @@ class AudioBookListFragment : BaseUIFragment(){
         }
 
         binding.etToolbarSearch.addTextChangedListener(object : TextWatcher{
-            override fun afterTextChanged(p0: Editable?) {
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
+            override fun afterTextChanged(p0: Editable?) {}
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                s?.let {
-                    booksViewModel.setSearchOrClose(isSearchBtn = it.isNotEmpty() && it.length>3)
-                }
+                s?.let {booksViewModel.setSearchOrClose(isSearchBtn = it.isNotEmpty() && it.length>3)}
             }
         })
 
