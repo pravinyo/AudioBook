@@ -33,6 +33,7 @@ class FetchAdditionalBookDetailsUsecaseTest{
         fetchAdditionalBookDetailsUsecase = FetchAdditionalBookDetailsUsecase(fetchAdditionBookDetailsRepository)
     }
 
+    @ExperimentalCoroutinesApi
     @Test
     fun testAudioBookListUsecase_requestCompleted_returnsList(){
         mainCoroutineRule.runBlockingTest {

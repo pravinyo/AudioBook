@@ -23,6 +23,10 @@ class FakeAudioBookRepository(private val manualFailure:Boolean = false) : Audio
         listener = null
     }
 
+    override fun cancelRequestInFlight() {
+
+    }
+
     private var audioBooks = MutableLiveData<List<AudioBookDomainModel>>()
 
     override suspend fun fetchBookList(page: Int) {

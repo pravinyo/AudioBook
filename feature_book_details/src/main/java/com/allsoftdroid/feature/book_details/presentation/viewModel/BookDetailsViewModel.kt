@@ -121,7 +121,7 @@ internal class BookDetailsViewModel(
             }
         }else{
             _audioBookTracks.value?.let {
-                _audioBookTracks.value = it.toList()
+                if (it.isNotEmpty()) _audioBookTracks.value = it.toList()
             }
         }
 
@@ -361,13 +361,6 @@ internal class BookDetailsViewModel(
         job?.cancel()
 
         job = viewModelScope.launch {
-//            stateHandle.set(StateKey.CurrentTrackFormat.key,index)
-//            when(index){
-//                0 -> fetchTrackList(format = TrackFormat.FormatBP64)
-//                1 -> fetchTrackList(format = TrackFormat.FormatVBR)
-//                else -> fetchTrackList(format = TrackFormat.FormatBP128)
-//            }
-//            sharedPref.saveTrackFormatIndex(index)
             fetchOptimalTrackList()
         }
     }
@@ -384,8 +377,8 @@ internal class BookDetailsViewModel(
      * Function which fetch track list for the book
      */
     private suspend fun fetchOptimalTrackList(){
-        var tracks_bp_64:List<AudioBookTrackDomainModel>? = null
-        var tracks_bp_128:List<AudioBookTrackDomainModel>?=null
+        var tracksBp64:List<AudioBookTrackDomainModel>? = null
+        var tracksBp128:List<AudioBookTrackDomainModel>?=null
 
         val requestValues64  = GetTrackListUsecase.RequestValues(trackFormat = TrackFormat.FormatBP64)
         val requestValues128  = GetTrackListUsecase.RequestValues(trackFormat = TrackFormat.FormatBP128)
@@ -398,13 +391,13 @@ internal class BookDetailsViewModel(
 
                     getTrackListUsecase.getTrackListData().observeForever {
 
-                        tracks_bp_64 = it
+                        tracksBp64 = it
 
-                        tracks_bp_64?.let { track_64->
-                            if (tracks_bp_128==null){
+                        tracksBp64?.let { track_64->
+                            if (tracksBp128==null){
                                 checkLocalDownloadedFiles(track_64)
                             }else{
-                                tracks_bp_128?.let {tracks_128->
+                                tracksBp128?.let { tracks_128->
                                     checkLocalDownloadedFiles(tracks_128)
                                 }
                             }
@@ -413,7 +406,7 @@ internal class BookDetailsViewModel(
                         }
                     }
 
-                    Timber.d("Track list fetch success")
+                    Timber.d("Optimal Track list fetch success")
                 }
 
                 override suspend fun onError(t: Throwable) {
@@ -430,11 +423,11 @@ internal class BookDetailsViewModel(
 
                     getTrackListUsecase.getTrackListData().observeForever {
 
-                        tracks_bp_128 = it
+                        tracksBp128 = it
 
-                        tracks_bp_64?.let {tracks_64 ->
-                            tracks_bp_128?.let { track_128->
-                                if (tracks_bp_64==null || tracks_64.size <= track_128.size){
+                        tracksBp64?.let { tracks_64 ->
+                            tracksBp128?.let { track_128->
+                                if (tracksBp64==null || tracks_64.size <= track_128.size){
                                     checkLocalDownloadedFiles(track_128)
                                 }else{
                                     checkLocalDownloadedFiles(tracks_64)
@@ -443,10 +436,9 @@ internal class BookDetailsViewModel(
                                 restorePreviousStateIfAny()
                             }
                         }
-
                     }
 
-                    Timber.d("Track list fetch success")
+                    Timber.d("Optimal Track list fetch success")
                 }
 
                 override suspend fun onError(t: Throwable) {
@@ -501,27 +493,28 @@ internal class BookDetailsViewModel(
                 }
 
                 list?.let {localFiles ->
-
-                    Timber.d("Found local files: ${localFiles.size}")
-                    val names = localFiles.map {
-                        it.split("/").last().toLowerCase(Locale.ROOT)
-                    }
-
-                    val updatedTracks = tracks.map { track->
-                        if(names.contains(track.filename.toLowerCase(Locale.ROOT))){
-                            track.downloadStatus = DOWNLOADED
+                    if (localFiles.isNotEmpty()){
+                        Timber.d("Found local files: ${localFiles.size}")
+                        val names = localFiles.map {
+                            it.split("/").last().toLowerCase(Locale.ROOT)
                         }
-                        track
+
+                        val updatedTracks = tracks.map { track->
+                            if(names.contains(track.filename.toLowerCase(Locale.ROOT))){
+                                track.downloadStatus = DOWNLOADED
+                            }
+                            track
+                        }
+                        _audioBookTracks.value = updatedTracks
+                        _newTrackStateEvent.value = Event(true)
                     }
-                    _audioBookTracks.value = updatedTracks
                 }
 
                 if(list.isNullOrEmpty()){
                     Timber.d("List is empty resetting to original value")
                     _audioBookTracks.value = tracks
+                    _newTrackStateEvent.value = Event(true)
                 }
-
-                _newTrackStateEvent.value = Event(true)
             }
         }
     }

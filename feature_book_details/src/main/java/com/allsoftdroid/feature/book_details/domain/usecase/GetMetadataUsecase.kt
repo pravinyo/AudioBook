@@ -49,6 +49,7 @@ class GetMetadataUsecase( private val metadataRepository: IMetadataRepository) :
     fun getBookIdentifier() = metadataRepository.getBookId()
 
     fun dispose(){
+        metadataRepository.cancelRequestInFlight()
         disposable.dispose()
     }
 

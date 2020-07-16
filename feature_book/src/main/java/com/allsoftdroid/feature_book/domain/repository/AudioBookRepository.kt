@@ -13,4 +13,6 @@ interface AudioBookRepository {
 
     fun registerNetworkResponse(listener: NetworkResponseListener)
     fun unRegisterNetworkResponse()
+
+    fun cancelRequestInFlight()
 }

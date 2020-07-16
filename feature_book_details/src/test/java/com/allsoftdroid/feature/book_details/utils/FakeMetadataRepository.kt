@@ -36,6 +36,10 @@ class FakeMetadataRepository(private val bookId:String) : IMetadataRepository {
         return bookId
     }
 
+    override fun cancelRequestInFlight() {
+
+    }
+
     override fun networkResponse(): Variable<Event<NetworkState>> {
         return networkResponse
     }

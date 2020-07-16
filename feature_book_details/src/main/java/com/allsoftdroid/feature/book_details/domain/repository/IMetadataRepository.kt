@@ -7,4 +7,6 @@ interface IMetadataRepository : IBaseRepository{
     suspend fun loadMetadata()
     fun getMetadata() : LiveData<AudioBookMetadataDomainModel>
     fun getBookId() : String
+
+    fun cancelRequestInFlight()
 }

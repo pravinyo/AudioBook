@@ -104,7 +104,7 @@ class AudioBookListFragment : BaseUIFragment(){
                 R.id.nav_item_rate -> {
                     val intent = Intent(Intent.ACTION_VIEW).apply {
                         data = Uri.parse(StoreUtils.getStoreUrl(requireActivity()))
-                        setPackage("com.android.vending")
+                        setPackage(getString(R.string.android_vending_package))
                     }
                     startActivity(intent)
                 }

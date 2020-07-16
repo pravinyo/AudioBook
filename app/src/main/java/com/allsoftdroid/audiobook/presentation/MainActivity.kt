@@ -3,10 +3,10 @@ package com.allsoftdroid.audiobook.presentation
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation.findNavController
@@ -62,7 +62,7 @@ class MainActivity : BaseActivity() {
 
 
     private val snackBar by lazy {
-        val sb = Snackbar.make(findViewById(R.id.navHostFragment), "You are offline", Snackbar.LENGTH_LONG) //Assume "rootLayout" as the root layout of every activity.
+        val sb = Snackbar.make(findViewById(R.id.navHostFragment), getString(R.string.offline_message), Snackbar.LENGTH_LONG) //Assume "rootLayout" as the root layout of every activity.
         sb.duration = BaseTransientBottomBar.LENGTH_INDEFINITE
         sb
     }
@@ -85,13 +85,18 @@ class MainActivity : BaseActivity() {
     }
 
 
+    /**
+     * Show Dialog for continuing last played book on App start.
+     * @param lastPlayedTrack It holds data related to @[LastPlayedTrack]
+     * @return @[AlertDialog] object
+     */
     private fun alertDialog(lastPlayedTrack: LastPlayedTrack):AlertDialog{
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("continue ${lastPlayedTrack.bookName} from where you left,")
-        builder.setMessage("Chapter : ${lastPlayedTrack.title}")
+        builder.setTitle(getString(R.string.resume_book_header,lastPlayedTrack.bookName))
+        builder.setMessage(getString(R.string.resume_book_message,lastPlayedTrack.title))
 
-        builder.setPositiveButton("Listen") { _, _ ->
-            Toast.makeText(this,"Playing",Toast.LENGTH_SHORT).show()
+        builder.setPositiveButton(getString(R.string.btn_listen_label)) { _, _ ->
+            Toast.makeText(this,getString(R.string.playing_label),Toast.LENGTH_SHORT).show()
             //Navigate to display page
             val bundle = bundleOf(
                 "bookId" to lastPlayedTrack.bookId,
@@ -105,12 +110,12 @@ class MainActivity : BaseActivity() {
                         .navigate(R.id.action_AudioBookListFragment_to_AudioBookDetailsFragment,bundle)
                     mainActivityViewModel.clearSharedPref()
                 }else{
-                    Toast.makeText(this,"Please connect to internet",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,getString(R.string.network_connect_message),Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        builder.setNegativeButton("Dismiss"){
+        builder.setNegativeButton(getString(R.string.btn_dismiss_label)){
             _,_ ->
             mainActivityViewModel.clearSharedPref()
         }
@@ -184,6 +189,10 @@ class MainActivity : BaseActivity() {
             })
     }
 
+    /**
+     * Handler function for @[DownloadEvent]. It checks whether storage permission is granted or not.
+     * if it is not granted, it request to the user else forward the request to download Manager for further handling.
+     */
     private fun handleDownloadEvent(event: Event<DownloadEvent>) {
 
         event.getContentIfNotHandled()?.let {
@@ -205,23 +214,35 @@ class MainActivity : BaseActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(StoragePermissionHandler.isRequestGrantedFor(requestCode,grantResults)){
-            Toast.makeText(this,"Thanks for granting permission",Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,getString(R.string.permission_granted_message),Toast.LENGTH_SHORT).show()
         }else{
-            Toast.makeText(this,"This Feature need Storage Permission",Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,getString(R.string.permission_failed_message),Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun navigateToDownloadManagementActivity() {
+
+        val parent = findViewById<View>(R.id.navHostFragment)
+        val options = ActivityOptionsCompat.makeClipRevealAnimation(parent,parent.width,0,parent.width/2,parent.height/2)
+
         val intent = Intent(this,
             DownloadManagementActivity::class.java)
-        startActivity(intent)
+        startActivity(intent,options.toBundle())
     }
 
     private fun navigateToLicensesActivity(){
-        OssLicensesMenuActivity.setActivityTitle("Third-party Licenses")
-        startActivity(Intent(this,OssLicensesMenuActivity::class.java))
+
+        val parent = findViewById<View>(R.id.navHostFragment)
+        val options = ActivityOptionsCompat.makeClipRevealAnimation(parent,parent.width,0,parent.width/2,parent.height/2)
+
+        OssLicensesMenuActivity.setActivityTitle(getString(R.string.license_screen_title))
+        startActivity(Intent(this,OssLicensesMenuActivity::class.java),options.toBundle())
     }
 
+    /**
+     * This function handles visibility and loading of mini player. Based on @[shouldShow] parameter, it decides whether mini player,
+     * should be visible or not. It also loads the fragment into the view if it should show.
+     */
     private fun miniPlayerViewState(shouldShow: Boolean) {
         if(shouldShow){
 
@@ -282,6 +303,9 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    /**
+     * This function handles all the @[AudioPlayerEvent] related event on @[AudioPlayerEventStore]
+     */
     private fun performAction(event: AudioPlayerEvent){
         when(event){
             is Next -> {
@@ -332,6 +356,10 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    /**
+     * This function handles the network status related visibility. If network is not available, it
+     * display snackBar to let the user know of the network connecton issue
+     */
     private fun showNetworkMessage(isConnected: Boolean) {
         if (!isConnected) {
             snackBar.show()
@@ -355,6 +383,9 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    /**
+     * This function handles opening of Main Player and prepare necessary param data required to start the Main player
+     */
     private fun navigateToMainPlayerScreen(){
         val controller = findNavController(R.id.navHostFragment)
         val playingTrackDetails = mainActivityViewModel.getPlayingTrack()
@@ -392,7 +423,7 @@ class MainActivity : BaseActivity() {
 
                     else -> {
                         Timber.d("Operation not allowed")
-                        Toast.makeText(this,"Can't navigate to Player",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this,getString(R.string.player_navigation_error),Toast.LENGTH_SHORT).show()
                     }
                 }
             }
