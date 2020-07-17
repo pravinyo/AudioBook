@@ -66,6 +66,7 @@ dependencies {
     implementation(LibraryDependency.LOTTIE)
     implementation(LibraryDependency.PALETTE)
     implementation(LibraryDependency.MATERIAL)
+    implementation(LibraryDependency.LIFECYCLE_LIVEDATA_KTX)
 
     //Unit Testing
     testImplementation(TestLibraryDependency.JUNIT)

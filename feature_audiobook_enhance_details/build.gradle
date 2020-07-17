@@ -56,6 +56,8 @@ dependencies {
         because("Replaced with Gson as it makes code better and clean")
     }
 
+    implementation(LibraryDependency.LIFECYCLE_LIVEDATA_KTX)
+
     // Unit Testing
     testImplementation(TestLibraryDependency.JUNIT)
     testImplementation(TestLibraryDependency.HAMCREST)
