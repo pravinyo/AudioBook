@@ -23,6 +23,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import com.allsoftdroid.common.base.network.StoreUtils
@@ -140,7 +141,7 @@ class AudioBookListFragment : BaseUIFragment(){
             }
         })
 
-        binding.etToolbarSearch.setOnKeyListener { view, keyCode, keyEvent ->
+        binding.etToolbarSearch.setOnKeyListener { _, keyCode, keyEvent ->
             if(keyCode == KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_DOWN){
                 binding.ivSearch.performClick()
                 return@setOnKeyListener true
