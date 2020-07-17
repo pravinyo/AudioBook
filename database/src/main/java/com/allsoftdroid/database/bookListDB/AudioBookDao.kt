@@ -1,10 +1,10 @@
 package com.allsoftdroid.database.bookListDB
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 /**
  * This DAO interface specifies what are the type of database operation can be done.
@@ -17,7 +17,7 @@ interface AudioBookDao {
      * Get List of {@link DatabaseAudioBook} from database
      */
     @Query("SELECT * FROM AudioBook_Table order by datetime(published_date) desc")
-    fun getBooks(): LiveData<List<DatabaseAudioBook>>
+    fun getBooks(): Flow<List<DatabaseAudioBook>>
 
     /**
      * Get Database Book instance by username
