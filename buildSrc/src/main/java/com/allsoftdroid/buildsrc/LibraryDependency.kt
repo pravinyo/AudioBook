@@ -24,7 +24,7 @@ private object LibraryVersion {
     const val RX_ANDROID = "2.1.1"
     const val CARD_VIEW = "28.0.0"
     const val GLIDE = "4.11.0"
-    const val ROOM = "2.2.0-rc01"
+    const val ROOM = "2.2.5"
     const val version_retrofit_coroutines_adapter = "0.9.2"
     const val GSON = "2.8.5"
     const val koin_version = "2.1.0-alpha-3"
@@ -41,7 +41,7 @@ private object LibraryVersion {
     const val CONSTRAINT_LAYOUT = "1.1.3"
     const val CORE_KTX = "1.0.2"
     const val FRAGMENT_KTX = CoreVersion.FRAGMENT_KTX
-    const val LIFECYCLE_VIEW_MODEL_KTX = "2.2.0-alpha01"
+    const val LIFECYCLE_VIEW_MODEL_KTX = "2.2.0"
     const val COIL = "0.6.1"
     const val K_ANDROID = "0.8.8@aar"
     const val LOTTIE = "3.3.1"
@@ -91,8 +91,8 @@ object LibraryDependency {
 
     const val LIFECYCLE_EXTENSIONS = "androidx.lifecycle:lifecycle-extensions:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
     const val LIFECYCLE_COMPILER ="androidx.lifecycle:lifecycle-compiler:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
-    const val LIFECYCLE_VIEW_MODEL_KTX =
-        "androidx.lifecycle:lifecycle-viewmodel-ktx:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
+    const val LIFECYCLE_VIEW_MODEL_KTX = "androidx.lifecycle:lifecycle-viewmodel-ktx:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
+    const val LIFECYCLE_LIVEDATA_KTX = "androidx.lifecycle:lifecycle-livedata-ktx:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
 
     const val NAVIGATION_FRAGMENT_KTX = "androidx.navigation:navigation-fragment-ktx:${CoreVersion.NAVIGATION}"
     const val NAVIGATION_UI_KTX = "androidx.navigation:navigation-ui-ktx:${CoreVersion.NAVIGATION}"
