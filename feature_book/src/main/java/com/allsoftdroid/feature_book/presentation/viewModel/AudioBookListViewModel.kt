@@ -135,7 +135,8 @@ class AudioBookListViewModel(
             })
     }
 
-    fun search(query:String,isNext: Boolean= false){
+    @ExperimentalCoroutinesApi
+    fun search(query:String, isNext: Boolean= false){
         _isSearching = true
         _searchError.value = false
 
