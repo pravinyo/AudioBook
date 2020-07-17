@@ -90,7 +90,7 @@ internal class BookDetailsViewModel(
 
         val trackNumber = trackNumberEvent.getContentIfNotHandled()?:trackNumberEvent.peekContent()
 
-        if (trackNumber is Int && trackNumber>0){
+        if (trackNumber is Int && trackNumber>0 && !_audioBookTracks.value.isNullOrEmpty()){
 
             _audioBookTracks.value?.let {
 
@@ -505,12 +505,15 @@ internal class BookDetailsViewModel(
                             }
                             track
                         }
-                        _audioBookTracks.value = updatedTracks
-                        _newTrackStateEvent.value = Event(true)
+
+                        if (updatedTracks.isNotEmpty()) {
+                            _audioBookTracks.value = updatedTracks
+                            _newTrackStateEvent.value = Event(true)
+                        }
                     }
                 }
 
-                if(list.isNullOrEmpty()){
+                if(list.isNullOrEmpty() && tracks.isNotEmpty()){
                     Timber.d("List is empty resetting to original value")
                     _audioBookTracks.value = tracks
                     _newTrackStateEvent.value = Event(true)
