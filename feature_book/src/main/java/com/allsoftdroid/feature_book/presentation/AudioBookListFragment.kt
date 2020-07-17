@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
@@ -54,6 +55,7 @@ class AudioBookListFragment : BaseUIFragment(){
     private lateinit var navView : NavigationView
 
     private val userActionEventStore: UserActionEventStore by inject()
+    private var shouldScrollToTop = false
 
     @ExperimentalCoroutinesApi
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -189,11 +191,22 @@ class AudioBookListFragment : BaseUIFragment(){
         }
 
         //Observe the books list and update the list as soon as we get the update
-        booksViewModel.audioBooks.observe(viewLifecycleOwner, Observer {
-            it?.let {
+        booksViewModel.audioBooks.observe(viewLifecycleOwner, Observer {bookList->
+            bookList?.let {
                 if(!booksViewModel.isSearching){
-                    if(it.isNotEmpty()) setVisibility(binding.networkNoConnection,set=false)
-                    bookAdapter.submitList(it)
+                    if(it.isNotEmpty()) {
+                        setVisibility(binding.networkNoConnection,set=false)
+                        bookAdapter.submitList(it)
+                        bookAdapter.notifyDataSetChanged()
+
+                        Handler().postDelayed({
+                            if (shouldScrollToTop){
+                                binding.recyclerViewBooks.smoothScrollToPosition(0)
+                                shouldScrollToTop = false
+                            }
+                        },1000)
+
+                    }
                 }
             }
         })
@@ -292,6 +305,7 @@ class AudioBookListFragment : BaseUIFragment(){
                     onSearchFinished()
                     loadRecentBookList()
                 }
+                shouldScrollToTop = true
             }
 
             else -> {
