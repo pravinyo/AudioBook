@@ -37,6 +37,7 @@ import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.Paginatio
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
 import com.allsoftdroid.feature_book.utils.NetworkState
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -54,6 +55,7 @@ class AudioBookListFragment : BaseUIFragment(){
 
     private val userActionEventStore: UserActionEventStore by inject()
 
+    @ExperimentalCoroutinesApi
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         val binding:FragmentAudiobookListBinding = inflateLayout(inflater,R.layout.fragment_audiobook_list,container)
@@ -156,6 +158,7 @@ class AudioBookListFragment : BaseUIFragment(){
         }
     }
 
+    @ExperimentalCoroutinesApi
     private fun setupUI(binding:FragmentAudiobookListBinding){
         setupToolbar(binding)
         setupDrawer()
