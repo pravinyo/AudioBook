@@ -20,6 +20,8 @@ import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsShared
 import com.allsoftdroid.feature.book_details.domain.usecase.*
 import com.allsoftdroid.feature.book_details.utils.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import timber.log.Timber
 import java.util.*
 
@@ -192,15 +194,15 @@ internal class BookDetailsViewModel(
                 override suspend fun onSuccess(response: SearchBookDetailsUsecase.ResponseValues) {
                     Timber.d("Result received for book details search : $response")
 
-                    searchBookDetailsUsecase.getSearchBookList().observeForever {
+                    searchBookDetailsUsecase.getSearchBookList().distinctUntilChanged().collect {
                         Timber.d("List is => $it")
-                        if(it.first().list.isNullOrEmpty() || it.first().author.isEmpty()){
+                        if(!it.isNullOrEmpty() && (it.first().list.isNullOrEmpty() || it.first().author.isEmpty())){
                             Timber.d("It appears that book is not ready")
                             _additionalBookDetails.value = null
                         }
                     }
 
-                    searchBookDetailsUsecase.getBooksWithRanks(title,author).observeForever {
+                    searchBookDetailsUsecase.getBooksWithRanks(title,author).distinctUntilChanged().collect {
                         if (!it.isNullOrEmpty()){
                             Timber.d("Ranks is => $it")
                             Timber.d("Selecting top item in list as best match")
@@ -223,22 +225,24 @@ internal class BookDetailsViewModel(
         viewModelScope.launch {
             val requestValues  = FetchAdditionalBookDetailsUsecase.RequestValues(bookUrl = webDocument.url)
 
-            getFetchAdditionalBookDetailsUseCase.getAdditionalBookDetails().observeForever {
-                Timber.d("Book details fetched is : $it")
-                if (it!=null){
-                    it.webDocument = webDocument
-                        _additionalBookDetails.value = it
-                }else{
-                    _additionalBookDetails.value = BookDetails(chapters = emptyList())
-                }
-            }
-
             useCaseHandler.execute(
                 useCase = getFetchAdditionalBookDetailsUseCase,
                 values = requestValues,
                 callback = object : BaseUseCase.UseCaseCallback<FetchAdditionalBookDetailsUsecase.ResponseValues> {
                     override suspend fun onSuccess(response: FetchAdditionalBookDetailsUsecase.ResponseValues) {
                         Timber.d("Result received : ${response.details}")
+
+                        response.details?.let { bookDetails ->
+
+                            if (bookDetails.archiveUrl.isNotEmpty()){
+                                bookDetails.webDocument = webDocument
+                                _additionalBookDetails.value = bookDetails
+                            }
+
+                        }?: run {
+                            Timber.d("Book details received is null")
+                            _additionalBookDetails.value = BookDetails(chapters = emptyList())
+                        }
                     }
 
                     override suspend fun onError(t: Throwable) {
