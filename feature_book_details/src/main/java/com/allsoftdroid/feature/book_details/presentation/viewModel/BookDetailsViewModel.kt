@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import timber.log.Timber
 import java.util.*
 
+@ExperimentalCoroutinesApi
 internal class BookDetailsViewModel(
     private val localFilesForBook:LocalFilesForBook,
     private val sharedPref: BookDetailsSharedPreferenceRepository,
@@ -164,6 +165,7 @@ internal class BookDetailsViewModel(
         sharedPref.clear()
     }
 
+    @ExperimentalCoroutinesApi
     private fun initialLoad(){
         if(_audioBookTracks.value.isNullOrEmpty()){
             viewModelScope.launch {
@@ -183,7 +185,8 @@ internal class BookDetailsViewModel(
         }
     }
 
-    private suspend fun fetchEnhanceDetails(title:String,author:String) {
+    @ExperimentalCoroutinesApi
+    private suspend fun fetchEnhanceDetails(title:String, author:String) {
 
         Timber.d("Fetching enhanced details for title:$title and author:$author")
         val requestValues  = SearchBookDetailsUsecase.RequestValues(searchTitle =title,author = author)
