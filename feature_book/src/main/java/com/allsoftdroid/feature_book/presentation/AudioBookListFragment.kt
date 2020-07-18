@@ -195,6 +195,7 @@ class AudioBookListFragment : BaseUIFragment(){
         booksViewModel.audioBooks.observe(viewLifecycleOwner, Observer {bookList->
             bookList?.let {
                 if(!booksViewModel.isSearching){
+                    Timber.d("Audiobook loading in adapter and it is not search result")
                     if(it.isNotEmpty()) {
                         setVisibility(binding.networkNoConnection,set=false)
                         bookAdapter.submitList(it)
