@@ -218,6 +218,7 @@ class AudioBookListViewModel(
     fun onSearchFinished(){
         _displaySearchView.value = false
         _searchError.value = false
+        searchBooks.value = emptyList()
     }
 
     fun setSearchOrClose(isSearchBtn:Boolean){
