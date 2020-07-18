@@ -34,13 +34,13 @@ class MetadataRepositoryImpl(
      * Books count at restricted to {@link BOOK_LIMIT}.
      * Data are converted to Domain model type instance
      */
-    private var _audioBookMetadata : LiveData<AudioBookMetadataDomainModel> = Transformations.map(
-        metadataDao.getMetadata(bookId)
-    ){
+    @ExperimentalCoroutinesApi
+    private var _audioBookMetadata : Flow<AudioBookMetadataDomainModel> = metadataDao.getMetadata(bookId).map {
         it?.asMetadataDomainModel()
     }.flowOn(Dispatchers.IO)
 
-    private val audioBookMetadata : LiveData<AudioBookMetadataDomainModel>
+    @ExperimentalCoroutinesApi
+    private val audioBookMetadata : Flow<AudioBookMetadataDomainModel>
         get() = _audioBookMetadata
 
     private var currentRequest:Call<String>? = null
@@ -98,6 +98,7 @@ class MetadataRepositoryImpl(
         }
     }
 
+    @ExperimentalCoroutinesApi
     override fun getMetadata() = audioBookMetadata
 
     override fun networkResponse(): Variable<Event<NetworkState>> = _networkResponse
