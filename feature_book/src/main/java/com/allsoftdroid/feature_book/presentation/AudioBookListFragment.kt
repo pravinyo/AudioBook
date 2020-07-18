@@ -252,14 +252,16 @@ class AudioBookListFragment : BaseUIFragment(){
         })
 
         booksViewModel.searchBooks.observe(viewLifecycleOwner, Observer {
-            if(it.isNotEmpty()){
-                val prev = bookAdapter.itemCount
-                bookAdapter.submitList(it)
-                if (prev >0) binding.recyclerViewBooks.scrollToPosition(prev-1)
-                Timber.d("Adapter size: $prev and List size:${it.size} and scroll to : ${prev-1}")
-                setVisibility(binding.networkNoConnection,set=false)
-            }else{
-                setVisibility(binding.networkNoConnection,set=true)
+            if(booksViewModel.isSearching){
+                if(it.isNotEmpty()){
+                    val prev = bookAdapter.itemCount
+                    bookAdapter.submitList(it)
+                    if (prev >0) binding.recyclerViewBooks.scrollToPosition(prev-1)
+                    Timber.d("Adapter size: $prev and List size:${it.size} and scroll to : ${prev-1}")
+                    setVisibility(binding.networkNoConnection,set=false)
+                }else{
+                    setVisibility(binding.networkNoConnection,set=true)
+                }
             }
         })
 
