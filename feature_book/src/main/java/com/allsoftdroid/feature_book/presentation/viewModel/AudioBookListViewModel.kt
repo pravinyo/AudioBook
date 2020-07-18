@@ -141,7 +141,7 @@ class AudioBookListViewModel(
         _isSearching = true
         _searchError.value = false
 
-        if(networkResponse.value?.peekContent() != NetworkState.LOADING){
+        if(networkResponse.value?.peekContent() == NetworkState.LOADING){
             cancelSearchRequest()
         }
 
