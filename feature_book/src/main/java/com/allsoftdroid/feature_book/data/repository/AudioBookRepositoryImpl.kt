@@ -16,14 +16,11 @@ import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import com.allsoftdroid.feature_book.domain.repository.NetworkResponseListener
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,10 +37,12 @@ class AudioBookRepositoryImpl(
      * Books count at restricted to {@link BOOK_LIMIT}.
      * Data are converted to Domain model type instance
      */
+    @ExperimentalCoroutinesApi
     private var _audioBooks : Flow<List<AudioBookDomainModel>> = bookDao.getBooks().map {
         it.asBookDomainModel()
     }.flowOn(Dispatchers.IO)
 
+    @ExperimentalCoroutinesApi
     private val audioBook : Flow<List<AudioBookDomainModel>>
     get() = _audioBooks
 
@@ -133,6 +132,7 @@ class AudioBookRepositoryImpl(
     }
 
 
+    @ExperimentalCoroutinesApi
     override fun getAudioBooks() =  this.audioBook
 
     override suspend fun searchBookList(query: String, page: Int) {
