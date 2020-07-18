@@ -1,7 +1,6 @@
 package com.allsoftdroid.feature.book_details.presentation
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -252,20 +252,45 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
         bookDetailsViewModel.additionalBookDetails.observe(viewLifecycleOwner, Observer {bookDetails->
             Timber.d("Book details received: $bookDetails")
+            val metadata by lazy { bookDetailsViewModel.audioBookMetadata.value }
+
             try{
-                dataBinding.textViewBookIntro.text = if(bookDetails==null || bookDetails.description.isEmpty()){
-                    bookDetailsViewModel.audioBookMetadata.value?.let {
-                        formattedBookDetails(it)
+                dataBinding.textViewBookIntro.text = when {
+                    bookDetails==null -> {
+                        metadata?.let {  details -> formattedBookDetails(details)  }
                     }
-                }else formattedBookDetails(bookDetails)
+
+                    bookDetails.webDocument!=null -> {
+                        Timber.d("web document is available")
+                        val document = bookDetails.webDocument
+                        val validation = "validation"
+                        document?.let {
+                            val status =
+                                it.list.map {item ->
+                                    item.trim().toLowerCase(Locale.getDefault())
+                                }.first { item ->  item == validation}
+                            Timber.d("Status is: $status")
+
+                            if (status == validation){
+                                Timber.d("Status is validation")
+                                showBookReviewMessage()
+                                metadata?.let {  details -> formattedBookDetails(details)  }
+                            }else{
+                                Timber.d("Status is not validation")
+                                formattedBookDetails(bookDetails)
+                            }
+                        }
+                    }
+
+                    else -> {
+                        metadata?.let {  details -> formattedBookDetails(details)  }
+                    }
+                }
 
             }catch ( e:Exception){
                 e.printStackTrace()
-                bookDetailsViewModel.audioBookMetadata.value?.let {
-                    dataBinding.textViewBookIntro.text = formattedBookDetails(it)
-                }
+                dataBinding.textViewBookIntro.text = metadata?.let {  details -> formattedBookDetails(details)  }
             }
-
             removeLoading()
             mDescriptionLoadingAnimation?.stop()
         })
@@ -334,6 +359,27 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                 }
             }?:Toast.makeText(this.requireActivity(),getString(R.string.wait_message),Toast.LENGTH_SHORT).show()
         }
+    }
+
+    @ExperimentalCoroutinesApi
+    private fun showBookReviewMessage() {
+        val builder = AlertDialog.Builder(this.requireContext())
+        //set title for alert dialog
+        builder.setTitle(R.string.reviewTitle)
+        //set message for alert dialog
+        builder.setMessage(R.string.reviewMessage)
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+
+        //performing positive action
+        builder.setPositiveButton("OK"){ di, _ ->
+            di.dismiss()
+            bookDetailsViewModel.resetUI()
+        }
+
+        val alertDialog: AlertDialog = builder.create()
+        // Set other dialog properties
+        alertDialog.setCancelable(false)
+        alertDialog.show()
     }
 
     private fun loadInBrowser(uri:Uri){
