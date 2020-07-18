@@ -318,11 +318,11 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
         dataBinding.imgViewBookShare.setOnClickListener {
 
-            bookDetailsViewModel.audioBookMetadata.value?.let {
+            bookDetailsViewModel.audioBookMetadata.value?.let {metadata ->
                 ShareUtils.share(
                     context = this.requireActivity(),
-                    subject = "${it.title} on AudioBook",
-                    txt = "Listen ${it.title} written by '${it.creator}' on AudioBook App," +
+                    subject = "${metadata.title} on AudioBook",
+                    txt = "Listen ${metadata.title} written by '${metadata.creator}' on AudioBook App," +
                             " Start Listening: ${StoreUtils.getStoreUrl(requireActivity())}"
                 )
             }
@@ -401,8 +401,8 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
     }
 
     private fun resumeOrPlayFromStart() {
-        bookDetailsViewModel.audioBookMetadata.value?.let {
-            playSelectedTrackFile(bookDetailsViewModel.getCurrentPlayingTrack(),it.title)
+        bookDetailsViewModel.audioBookMetadata.value?.let {metadata ->
+            playSelectedTrackFile(bookDetailsViewModel.getCurrentPlayingTrack(),metadata.title)
         }
     }
 
