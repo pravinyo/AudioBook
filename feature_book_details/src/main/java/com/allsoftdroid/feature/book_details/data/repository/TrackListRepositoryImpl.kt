@@ -1,15 +1,16 @@
 package com.allsoftdroid.feature.book_details.data.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.test.wrapEspressoIdlingResource
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.feature.book_details.data.databaseExtension.asTrackDomainModel
 import com.allsoftdroid.feature.book_details.data.model.TrackFormat
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.ITrackListRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 
 class TrackListRepositoryImpl (
@@ -17,48 +18,31 @@ class TrackListRepositoryImpl (
     private val bookId: String
 ) : ITrackListRepository{
 
-    private val trackLoadEvent = MutableLiveData<Event<TrackFormat>>()
+    private lateinit var _audioBookTrackList2 : Flow<List<AudioBookTrackDomainModel>>
 
-    private var _audioBookTrackList2 : LiveData<List<AudioBookTrackDomainModel>>
-            = Transformations.switchMap(trackLoadEvent){ event ->
+    @ExperimentalCoroutinesApi
+    override suspend fun loadTrackListData(format: TrackFormat) : Flow<List<AudioBookTrackDomainModel>> {
         wrapEspressoIdlingResource {
-            event.getContentIfNotHandled()?.let {format ->
-                when(format){
-                    is TrackFormat.FormatBP64 -> {
-                        Transformations.map(
-                            metadataDao.getTrackDetails(bookId,formatContains = "64")
-                        ){
-                            it.asTrackDomainModel()
-                        }
-                    }
-                    is TrackFormat.FormatBP128 -> {
-                        Transformations.map(
-                            metadataDao.getTrackDetails(bookId,formatContains = "128")
-                        ){
-                            it.asTrackDomainModel()
-                        }
-                    }
-                    else ->{
-                        Transformations.map(
-                            metadataDao.getTrackDetailsVBR(bookId)
-                        ){
-                            it.asTrackDomainModel()
-                        }
-                    }
+            Timber.d("Track format :${format}")
+            _audioBookTrackList2 = when(format){
+                is TrackFormat.FormatBP64 -> {
+                    metadataDao.getTrackDetails(bookId,formatContains = "64")
+                        .map { it.asTrackDomainModel() }
+                        .flowOn(Dispatchers.IO)
+                }
+                is TrackFormat.FormatBP128 -> {
+                    metadataDao.getTrackDetails(bookId,formatContains = "128")
+                        .map { it.asTrackDomainModel() }
+                        .flowOn(Dispatchers.IO)
+                }
+                else ->{
+                    metadataDao.getTrackDetailsVBR(bookId)
+                        .map { it.asTrackDomainModel() }
+                        .flowOn(Dispatchers.IO)
                 }
             }
+
+            return _audioBookTrackList2
         }
     }
-
-    private val audioBookTrackList : LiveData<List<AudioBookTrackDomainModel>>
-        get() = _audioBookTrackList2
-
-    override suspend fun loadTrackListData(format: TrackFormat) {
-        wrapEspressoIdlingResource {
-            trackLoadEvent.value = Event(format)
-            Timber.d("Track format :${format}")
-        }
-    }
-
-    override fun getTrackList() = audioBookTrackList
 }

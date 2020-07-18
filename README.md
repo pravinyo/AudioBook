@@ -58,6 +58,7 @@ This App is based on Single Activity Navigation. Each Fragment screen is develop
 ## :star: New Features / Improvement
 - Browser instance is used to load URL
 - Cancel network request when parent is removed
+- search books when keyboard entry pressed
 
 ## :beetle: Bug Fixes
 

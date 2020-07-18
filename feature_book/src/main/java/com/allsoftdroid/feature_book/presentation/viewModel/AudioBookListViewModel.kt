@@ -1,9 +1,6 @@
 package com.allsoftdroid.feature_book.presentation.viewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
@@ -13,10 +10,9 @@ import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
 import com.allsoftdroid.feature_book.domain.usecase.GetSearchBookUsecase
 import com.allsoftdroid.feature_book.utils.NetworkState
-import kotlinx.coroutines.CompletableJob
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import org.koin.core.qualifier.named
@@ -61,7 +57,7 @@ class AudioBookListViewModel(
 
     //audio book list reference
     val audioBooks:LiveData<List<AudioBookDomainModel>> = Transformations.switchMap(listChangedEvent){
-        getAlbumListUseCase.getBookList()
+        getAlbumListUseCase.getBookList().asLiveData(viewModelScope.coroutineContext)
     }
 
     val searchBooks = MutableLiveData<List<AudioBookDomainModel>>()
@@ -106,6 +102,7 @@ class AudioBookListViewModel(
         }
     }
 
+    @ExperimentalCoroutinesApi
     fun loadNextData(){
         if(networkResponse.value?.peekContent() != NetworkState.LOADING){
             viewModelScope.launch {
@@ -139,7 +136,8 @@ class AudioBookListViewModel(
             })
     }
 
-    fun search(query:String,isNext: Boolean= false){
+    @ExperimentalCoroutinesApi
+    fun search(query:String, isNext: Boolean= false){
         _isSearching = true
         _searchError.value = false
 
@@ -152,7 +150,8 @@ class AudioBookListViewModel(
         }
     }
 
-    private suspend fun searchBook(searchQuery:String,isNext: Boolean){
+    @ExperimentalCoroutinesApi
+    private suspend fun searchBook(searchQuery:String, isNext: Boolean){
         searchBookRequestValues = if(isNext){
             GetSearchBookUsecase.RequestValues(
                 query = searchQuery,
@@ -175,18 +174,22 @@ class AudioBookListViewModel(
                     _networkResponse.value = Event(NetworkState.COMPLETED)
                     Timber.d("Data received in viewModel onSuccess")
 
-                    if (getSearchBookUsecase.getSearchResults().value.isNullOrEmpty()){
-                        _searchError.value = true
-                    }
-
-                    if(searchBooks.value.isNullOrEmpty()){
-                        searchBooks.value = getSearchBookUsecase.getSearchResults().value
-                    }else{
-                        searchBooks.value?.let {prevList ->
-                            getSearchBookUsecase.getSearchResults().value?.let {response ->
-                                val temp = prevList.toMutableList()
-                                temp.addAll(response.asIterable())
-                                searchBooks.value = temp
+                    getSearchBookUsecase.getSearchResults().distinctUntilChanged().collect { list ->
+                        when {
+                            list.isNullOrEmpty() -> {
+                                _searchError.value = true
+                            }
+                            searchBooks.value.isNullOrEmpty() -> {
+                                searchBooks.value = list
+                            }
+                            else -> {
+                                searchBooks.value?.let {prevList ->
+                                    getSearchBookUsecase.getSearchResults().collect {response ->
+                                        val temp = prevList.toMutableList()
+                                        temp.addAll(response.asIterable())
+                                        searchBooks.value = temp
+                                    }
+                                }
                             }
                         }
                     }

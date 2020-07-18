@@ -32,6 +32,8 @@
     <string name="track_not_available_message">Track is not available</string>
     <string name="downloading_section_progress">downloading section progress</string>
     <string name="track_play_time">track play time</string>
+    <string name="reviewTitle">Book is in review</string>
+    <string name="reviewMessage">This book is not yet ready, but you can still listen. Some feature may not work</string>
 
     <string-array name="track_format_array">
         <item>Good</item>

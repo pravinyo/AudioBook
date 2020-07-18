@@ -7,14 +7,16 @@ import com.allsoftdroid.common.base.extension.Variable
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.IMetadataRepository
 import com.allsoftdroid.feature.book_details.utils.NetworkState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class FakeMetadataRepository(private val bookId:String) : IMetadataRepository {
-    private val metadata = MutableLiveData<AudioBookMetadataDomainModel>()
+    private lateinit var metadata :AudioBookMetadataDomainModel
     private val networkResponse = Variable(Event(NetworkState.LOADING))
     override suspend fun loadMetadata() {
         networkResponse.value = Event(NetworkState.LOADING)
 
-        metadata.value = AudioBookMetadataDomainModel(
+        metadata = AudioBookMetadataDomainModel(
             bookId,
             "pravin",
             "2020-05-02",
@@ -28,8 +30,8 @@ class FakeMetadataRepository(private val bookId:String) : IMetadataRepository {
         networkResponse.value = Event(NetworkState.COMPLETED)
     }
 
-    override fun getMetadata(): LiveData<AudioBookMetadataDomainModel> {
-        return metadata
+    override fun getMetadata(): Flow<AudioBookMetadataDomainModel> {
+        return flow { emit(metadata) }
     }
 
     override fun getBookId(): String {

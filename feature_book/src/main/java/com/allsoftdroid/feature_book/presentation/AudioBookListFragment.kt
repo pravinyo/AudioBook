@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +23,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import com.allsoftdroid.common.base.network.StoreUtils
@@ -36,6 +39,7 @@ import com.allsoftdroid.feature_book.presentation.recyclerView.adapter.Paginatio
 import com.allsoftdroid.feature_book.presentation.viewModel.AudioBookListViewModel
 import com.allsoftdroid.feature_book.utils.NetworkState
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -52,7 +56,9 @@ class AudioBookListFragment : BaseUIFragment(){
     private lateinit var navView : NavigationView
 
     private val userActionEventStore: UserActionEventStore by inject()
+    private var shouldScrollToTop = false
 
+    @ExperimentalCoroutinesApi
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         val binding:FragmentAudiobookListBinding = inflateLayout(inflater,R.layout.fragment_audiobook_list,container)
@@ -128,18 +134,20 @@ class AudioBookListFragment : BaseUIFragment(){
         }
 
         binding.etToolbarSearch.addTextChangedListener(object : TextWatcher{
-            override fun afterTextChanged(p0: Editable?) {
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
+            override fun afterTextChanged(p0: Editable?) {}
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                s?.let {
-                    booksViewModel.setSearchOrClose(isSearchBtn = it.isNotEmpty() && it.length>3)
-                }
+                s?.let {booksViewModel.setSearchOrClose(isSearchBtn = it.isNotEmpty() && it.length>3)}
             }
         })
+
+        binding.etToolbarSearch.setOnKeyListener { _, keyCode, keyEvent ->
+            if(keyCode == KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_DOWN){
+                binding.ivSearch.performClick()
+                return@setOnKeyListener true
+            }
+            return@setOnKeyListener false
+        }
 
         binding.ivSearchCancel.setOnClickListener {
             binding.etToolbarSearch.clearFocus()
@@ -153,6 +161,7 @@ class AudioBookListFragment : BaseUIFragment(){
         }
     }
 
+    @ExperimentalCoroutinesApi
     private fun setupUI(binding:FragmentAudiobookListBinding){
         setupToolbar(binding)
         setupDrawer()
@@ -183,11 +192,22 @@ class AudioBookListFragment : BaseUIFragment(){
         }
 
         //Observe the books list and update the list as soon as we get the update
-        booksViewModel.audioBooks.observe(viewLifecycleOwner, Observer {
-            it?.let {
+        booksViewModel.audioBooks.observe(viewLifecycleOwner, Observer {bookList->
+            bookList?.let {
                 if(!booksViewModel.isSearching){
-                    if(it.isNotEmpty()) setVisibility(binding.networkNoConnection,set=false)
-                    bookAdapter.submitList(it)
+                    if(it.isNotEmpty()) {
+                        setVisibility(binding.networkNoConnection,set=false)
+                        bookAdapter.submitList(it)
+                        bookAdapter.notifyDataSetChanged()
+
+                        Handler().postDelayed({
+                            if (shouldScrollToTop){
+                                binding.recyclerViewBooks.smoothScrollToPosition(0)
+                                shouldScrollToTop = false
+                            }
+                        },1000)
+
+                    }
                 }
             }
         })
@@ -286,6 +306,7 @@ class AudioBookListFragment : BaseUIFragment(){
                     onSearchFinished()
                     loadRecentBookList()
                 }
+                shouldScrollToTop = true
             }
 
             else -> {

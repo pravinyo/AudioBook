@@ -15,14 +15,18 @@ import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.common.base.utils.LocalFilesForBook
 import com.allsoftdroid.feature.book_details.data.model.TrackFormat
+import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.*
 import com.allsoftdroid.feature.book_details.utils.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import timber.log.Timber
 import java.util.*
 
+@ExperimentalCoroutinesApi
 internal class BookDetailsViewModel(
     private val localFilesForBook:LocalFilesForBook,
     private val sharedPref: BookDetailsSharedPreferenceRepository,
@@ -71,8 +75,8 @@ internal class BookDetailsViewModel(
     private val metadataStateChangeEvent = MutableLiveData<Event<Any>>()
 
     //audio book metadata reference
-    val audioBookMetadata = Transformations.switchMap(metadataStateChangeEvent){
-        getMetadataUsecase.getMetadata()
+    val audioBookMetadata:LiveData<AudioBookMetadataDomainModel> = Transformations.switchMap(metadataStateChangeEvent){
+        getMetadataUsecase.getMetadata().asLiveData(viewModelScope.coroutineContext)
     }
 
     private var _additionalBookDetails = MutableLiveData<BookDetails>()
@@ -90,7 +94,7 @@ internal class BookDetailsViewModel(
 
         val trackNumber = trackNumberEvent.getContentIfNotHandled()?:trackNumberEvent.peekContent()
 
-        if (trackNumber is Int && trackNumber>0){
+        if (trackNumber is Int && trackNumber>0 && !_audioBookTracks.value.isNullOrEmpty()){
 
             _audioBookTracks.value?.let {
 
@@ -161,6 +165,7 @@ internal class BookDetailsViewModel(
         sharedPref.clear()
     }
 
+    @ExperimentalCoroutinesApi
     private fun initialLoad(){
         if(_audioBookTracks.value.isNullOrEmpty()){
             viewModelScope.launch {
@@ -168,11 +173,11 @@ internal class BookDetailsViewModel(
                 fetchMetadata()
                 loadTrackAsync()
 
-                audioBookMetadata.observeForever {
+                audioBookMetadata.observeForever {metadata ->
                     Timber.d("Metadata is available, fetching enhance details")
-                    if(enhanceDetailsJob==null && it!=null){
+                    if(enhanceDetailsJob==null && metadata!=null){
                         enhanceDetailsJob = viewModelScope.launch {
-                            fetchEnhanceDetails(title = it.title,author = it.creator)
+                            fetchEnhanceDetails(title = metadata.title,author = metadata.creator)
                         }
                     }
                 }
@@ -180,7 +185,8 @@ internal class BookDetailsViewModel(
         }
     }
 
-    private suspend fun fetchEnhanceDetails(title:String,author:String) {
+    @ExperimentalCoroutinesApi
+    private suspend fun fetchEnhanceDetails(title:String, author:String) {
 
         Timber.d("Fetching enhanced details for title:$title and author:$author")
         val requestValues  = SearchBookDetailsUsecase.RequestValues(searchTitle =title,author = author)
@@ -192,15 +198,15 @@ internal class BookDetailsViewModel(
                 override suspend fun onSuccess(response: SearchBookDetailsUsecase.ResponseValues) {
                     Timber.d("Result received for book details search : $response")
 
-                    searchBookDetailsUsecase.getSearchBookList().observeForever {
+                    searchBookDetailsUsecase.getSearchBookList().distinctUntilChanged().collect {
                         Timber.d("List is => $it")
-                        if(it.first().list.isNullOrEmpty() || it.first().author.isEmpty()){
+                        if(!it.isNullOrEmpty() && (it.first().list.isNullOrEmpty() || it.first().author.isEmpty())){
                             Timber.d("It appears that book is not ready")
                             _additionalBookDetails.value = null
                         }
                     }
 
-                    searchBookDetailsUsecase.getBooksWithRanks(title,author).observeForever {
+                    searchBookDetailsUsecase.getBooksWithRanks(title,author).distinctUntilChanged().collect {
                         if (!it.isNullOrEmpty()){
                             Timber.d("Ranks is => $it")
                             Timber.d("Selecting top item in list as best match")
@@ -223,22 +229,21 @@ internal class BookDetailsViewModel(
         viewModelScope.launch {
             val requestValues  = FetchAdditionalBookDetailsUsecase.RequestValues(bookUrl = webDocument.url)
 
-            getFetchAdditionalBookDetailsUseCase.getAdditionalBookDetails().observeForever {
-                Timber.d("Book details fetched is : $it")
-                if (it!=null){
-                    it.webDocument = webDocument
-                        _additionalBookDetails.value = it
-                }else{
-                    _additionalBookDetails.value = BookDetails(chapters = emptyList())
-                }
-            }
-
             useCaseHandler.execute(
                 useCase = getFetchAdditionalBookDetailsUseCase,
                 values = requestValues,
                 callback = object : BaseUseCase.UseCaseCallback<FetchAdditionalBookDetailsUsecase.ResponseValues> {
                     override suspend fun onSuccess(response: FetchAdditionalBookDetailsUsecase.ResponseValues) {
                         Timber.d("Result received : ${response.details}")
+
+                        response.details?.let { bookDetails ->
+                            bookDetails.webDocument = webDocument
+                            _additionalBookDetails.value = bookDetails
+
+                        }?: run {
+                            Timber.d("Book details received is null")
+                            _additionalBookDetails.value = BookDetails(chapters = emptyList())
+                        }
                     }
 
                     override suspend fun onError(t: Throwable) {
@@ -389,8 +394,7 @@ internal class BookDetailsViewModel(
             callback = object : BaseUseCase.UseCaseCallback<GetTrackListUsecase.ResponseValues> {
                 override suspend fun onSuccess(response: GetTrackListUsecase.ResponseValues) {
 
-                    getTrackListUsecase.getTrackListData().observeForever {
-
+                    response.event.getContentIfNotHandled()?.let {
                         tracksBp64 = it
 
                         tracksBp64?.let { track_64->
@@ -421,8 +425,7 @@ internal class BookDetailsViewModel(
             callback = object : BaseUseCase.UseCaseCallback<GetTrackListUsecase.ResponseValues> {
                 override suspend fun onSuccess(response: GetTrackListUsecase.ResponseValues) {
 
-                    getTrackListUsecase.getTrackListData().observeForever {
-
+                    response.event.getContentIfNotHandled()?.let {
                         tracksBp128 = it
 
                         tracksBp64?.let { tracks_64 ->
@@ -505,12 +508,15 @@ internal class BookDetailsViewModel(
                             }
                             track
                         }
-                        _audioBookTracks.value = updatedTracks
-                        _newTrackStateEvent.value = Event(true)
+
+                        if (updatedTracks.isNotEmpty()) {
+                            _audioBookTracks.value = updatedTracks
+                            _newTrackStateEvent.value = Event(true)
+                        }
                     }
                 }
 
-                if(list.isNullOrEmpty()){
+                if(list.isNullOrEmpty() && tracks.isNotEmpty()){
                     Timber.d("List is empty resetting to original value")
                     _audioBookTracks.value = tracks
                     _newTrackStateEvent.value = Event(true)

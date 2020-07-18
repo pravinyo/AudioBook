@@ -1,9 +1,8 @@
 package com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.usecase
 
-import androidx.lifecycle.LiveData
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.WebDocument
-import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.ISearchBookDetailsRepository
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.network.NetworkResponseListener
+import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.ISearchBookDetailsRepository
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.network.Failure
 import com.allsoftdroid.common.base.network.Loading
@@ -11,6 +10,7 @@ import com.allsoftdroid.common.base.network.NetworkResult
 import com.allsoftdroid.common.base.network.Success
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -40,11 +40,9 @@ class SearchBookDetailsUsecase(private val searchBookDetailsRepository: ISearchB
         }?:useCaseCallback?.onError(Error("Request is null"))
     }
 
-    fun getSearchBookList():LiveData<List<WebDocument>>{
-        return searchBookDetailsRepository.getSearchBooksList()
-    }
+    fun getSearchBookList() = searchBookDetailsRepository.getSearchBooksList()
 
-    fun getBooksWithRanks(bookTitle:String,bookAuthor:String):LiveData<List<Pair<Int,WebDocument>>>{
+    fun getBooksWithRanks(bookTitle:String,bookAuthor:String):Flow<List<Pair<Int,WebDocument>>>{
         return searchBookDetailsRepository.getBookListWithRanks(bookTitle,bookAuthor)
     }
 

@@ -1,17 +1,17 @@
 package com.allsoftdroid.feature_book.data.dataSource
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.database.bookListDB.AudioBookDao
 import com.allsoftdroid.database.bookListDB.DatabaseAudioBook
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class FakeAudioDataSource(var bookList: MutableList<DatabaseAudioBook> = mutableListOf()) : AudioBookDao {
 
-    private var _bookListLiveData = MutableLiveData<List<DatabaseAudioBook>>()
+    private var _bookListLiveData : List<DatabaseAudioBook> = emptyList()
 
-    override fun getBooks(): LiveData<List<DatabaseAudioBook>> {
-        _bookListLiveData.value = bookList
-        return _bookListLiveData
+    override fun getBooks(): Flow<List<DatabaseAudioBook>> {
+        _bookListLiveData = bookList
+        return flow { emit(bookList) }
     }
 
     override fun getBookBy(identifier: String): DatabaseAudioBook {

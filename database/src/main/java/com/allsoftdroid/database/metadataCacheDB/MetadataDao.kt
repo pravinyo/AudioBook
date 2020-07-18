@@ -1,6 +1,5 @@
 package com.allsoftdroid.database.metadataCacheDB
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -8,6 +7,7 @@ import androidx.room.Query
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseAlbumEntity
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseMetadataEntity
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseTrackEntity
+import kotlinx.coroutines.flow.Flow
 
 /**
  * This DAO interface specifies what are the type of database operation can be done.
@@ -21,7 +21,7 @@ interface MetadataDao{
      * @return {@link DatabaseMetadataEntity} has details of the request book
      */
     @Query("SELECT * FROM metadata_table where metadata_id=:bookId")
-    fun getMetadata( bookId : String):LiveData<DatabaseMetadataEntity>
+    fun getMetadata( bookId : String): Flow<DatabaseMetadataEntity>
 
     @Query("SELECT * FROM metadata_table where metadata_id=:bookId")
     fun getMetadataNonLive( bookId : String):DatabaseMetadataEntity
@@ -32,7 +32,7 @@ interface MetadataDao{
      * @return {@link DatabaseAlbumEntity} has details of the album
      */
     @Query("SELECT * FROM Album_Table  where album_metadata_id = :metadata_id")
-    fun getAlbumDetails( metadata_id:String):LiveData<DatabaseAlbumEntity>
+    fun getAlbumDetails( metadata_id:String):Flow<DatabaseAlbumEntity>
 
     /**
      * get list of  media track files for the given album id . here album id is same as metadata id so we will
@@ -41,7 +41,7 @@ interface MetadataDao{
      * @return list of {@link DatabaseTrackEntity} track
      */
     @Query("SELECT * FROM MediaTrack_Table where track_album_id=:metadata_id")
-    fun getTrackDetails(metadata_id:String):LiveData<List<DatabaseTrackEntity>>
+    fun getTrackDetails(metadata_id:String):Flow<List<DatabaseTrackEntity>>
 
     /**
      * get list of  media track files for the given album id . here album id is same as metadata id so we will
@@ -51,7 +51,7 @@ interface MetadataDao{
      * @return list of {@link DatabaseTrackEntity} track
      */
     @Query("SELECT * FROM MediaTrack_Table where track_album_id=:metadata_id and format like '%' || :formatContains || '%'")
-    fun getTrackDetails(metadata_id:String,formatContains:String):LiveData<List<DatabaseTrackEntity>>
+    fun getTrackDetails(metadata_id:String,formatContains:String):Flow<List<DatabaseTrackEntity>>
 
     @Query("SELECT * FROM MediaTrack_Table where track_album_id=:metadata_id and format like '%' || :formatContains || '%'")
     fun getTrackDetailsNonLive(metadata_id:String,formatContains:String):List<DatabaseTrackEntity>
@@ -63,7 +63,7 @@ interface MetadataDao{
      * @return list of {@link DatabaseTrackEntity} track
      */
     @Query("select * from ( select * from  MediaTrack_Table where track_album_id=:metadata_id and format not like '%64%' INTERSECT select * from  MediaTrack_Table where track_album_id=:metadata_id and format not like '%128%') order by trackNumber")
-    fun getTrackDetailsVBR(metadata_id:String):LiveData<List<DatabaseTrackEntity>>
+    fun getTrackDetailsVBR(metadata_id:String):Flow<List<DatabaseTrackEntity>>
 
     /**
      * Insert individual book metadata in the database

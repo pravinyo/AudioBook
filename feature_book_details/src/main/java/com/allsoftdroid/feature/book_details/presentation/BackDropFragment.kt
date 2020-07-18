@@ -11,12 +11,14 @@ import com.allsoftdroid.common.base.fragment.BaseContainerFragment
 import com.allsoftdroid.feature.book_details.R
 import com.allsoftdroid.feature.book_details.databinding.FragmentAdditionalDetailsBackdropBinding
 import com.allsoftdroid.feature.book_details.presentation.viewModel.BookDetailsViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 internal class BackDropFragment : BaseContainerFragment() {
 
     /**
     Lazily initialize the view model
      */
+    @ExperimentalCoroutinesApi
     private lateinit var bookDetailsViewModel: BookDetailsViewModel
     private lateinit var binding: FragmentAdditionalDetailsBackdropBinding
 
@@ -31,6 +33,7 @@ internal class BackDropFragment : BaseContainerFragment() {
         return dataBinding.root
     }
 
+    @ExperimentalCoroutinesApi
     fun setSharedViewModel(sharedVM : BookDetailsViewModel){
         this.bookDetailsViewModel = sharedVM
 

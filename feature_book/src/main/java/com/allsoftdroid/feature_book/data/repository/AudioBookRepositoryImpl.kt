@@ -1,8 +1,5 @@
 package com.allsoftdroid.feature_book.data.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.network.Failure
 import com.allsoftdroid.common.base.network.Success
 import com.allsoftdroid.common.test.wrapEspressoIdlingResource
@@ -19,10 +16,11 @@ import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import com.allsoftdroid.feature_book.domain.repository.NetworkResponseListener
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,19 +37,19 @@ class AudioBookRepositoryImpl(
      * Books count at restricted to {@link BOOK_LIMIT}.
      * Data are converted to Domain model type instance
      */
-    private var _audioBooks : LiveData<List<AudioBookDomainModel>> = Transformations.map(
-        bookDao.getBooks()
-    ){
+    @ExperimentalCoroutinesApi
+    private var _audioBooks : Flow<List<AudioBookDomainModel>> = bookDao.getBooks().map {
         it.asBookDomainModel()
-    }
+    }.flowOn(Dispatchers.IO)
 
-    private val audioBook : LiveData<List<AudioBookDomainModel>>
+    @ExperimentalCoroutinesApi
+    private val audioBook : Flow<List<AudioBookDomainModel>>
     get() = _audioBooks
 
     /***
      * track network response for  completion and started
      */
-    private var _searchResponse = MutableLiveData<List<AudioBookDomainModel>>()
+    private lateinit var _searchResponse :Flow<List<AudioBookDomainModel>>
 
     private var listener: NetworkResponseListener? = null
 
@@ -134,6 +132,7 @@ class AudioBookRepositoryImpl(
     }
 
 
+    @ExperimentalCoroutinesApi
     override fun getAudioBooks() =  this.audioBook
 
     override suspend fun searchBookList(query: String, page: Int) {
@@ -166,7 +165,7 @@ class AudioBookRepositoryImpl(
 
                         result?.response?.docs?.let {list->
                             Timber.i("Size:${result.response.docs.size}")
-                            _searchResponse.value = list.map { it.toDomainModel() }
+                            _searchResponse = flowOf(list.map { it.toDomainModel() })
 
                             GlobalScope.launch {
                                 listener?.onResponse(Success(result = result.response.docs.size))
@@ -178,7 +177,7 @@ class AudioBookRepositoryImpl(
         }
     }
 
-    override fun getSearchBooks(): LiveData<List<AudioBookDomainModel>> = _searchResponse
+    override fun getSearchBooks(): Flow<List<AudioBookDomainModel>> = _searchResponse
 
     override fun cancelRequestInFlight(){
         Timber.d("Cancelling ongoing request")
