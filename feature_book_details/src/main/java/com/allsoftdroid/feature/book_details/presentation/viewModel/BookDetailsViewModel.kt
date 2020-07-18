@@ -15,6 +15,7 @@ import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.common.base.utils.LocalFilesForBook
 import com.allsoftdroid.feature.book_details.data.model.TrackFormat
+import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomainModel
 import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 import com.allsoftdroid.feature.book_details.domain.usecase.*
@@ -73,8 +74,8 @@ internal class BookDetailsViewModel(
     private val metadataStateChangeEvent = MutableLiveData<Event<Any>>()
 
     //audio book metadata reference
-    val audioBookMetadata = Transformations.switchMap(metadataStateChangeEvent){
-        getMetadataUsecase.getMetadata()
+    val audioBookMetadata:LiveData<AudioBookMetadataDomainModel> = Transformations.switchMap(metadataStateChangeEvent){
+        getMetadataUsecase.getMetadata().asLiveData(viewModelScope.coroutineContext)
     }
 
     private var _additionalBookDetails = MutableLiveData<BookDetails>()
@@ -170,11 +171,11 @@ internal class BookDetailsViewModel(
                 fetchMetadata()
                 loadTrackAsync()
 
-                audioBookMetadata.observeForever {
+                audioBookMetadata.observeForever {metadata ->
                     Timber.d("Metadata is available, fetching enhance details")
-                    if(enhanceDetailsJob==null && it!=null){
+                    if(enhanceDetailsJob==null && metadata!=null){
                         enhanceDetailsJob = viewModelScope.launch {
-                            fetchEnhanceDetails(title = it.title,author = it.creator)
+                            fetchEnhanceDetails(title = metadata.title,author = metadata.creator)
                         }
                     }
                 }
@@ -233,11 +234,8 @@ internal class BookDetailsViewModel(
                         Timber.d("Result received : ${response.details}")
 
                         response.details?.let { bookDetails ->
-
-                            if (bookDetails.archiveUrl.isNotEmpty()){
-                                bookDetails.webDocument = webDocument
-                                _additionalBookDetails.value = bookDetails
-                            }
+                            bookDetails.webDocument = webDocument
+                            _additionalBookDetails.value = bookDetails
 
                         }?: run {
                             Timber.d("Book details received is null")
@@ -393,8 +391,7 @@ internal class BookDetailsViewModel(
             callback = object : BaseUseCase.UseCaseCallback<GetTrackListUsecase.ResponseValues> {
                 override suspend fun onSuccess(response: GetTrackListUsecase.ResponseValues) {
 
-                    getTrackListUsecase.getTrackListData().observeForever {
-
+                    response.event.getContentIfNotHandled()?.let {
                         tracksBp64 = it
 
                         tracksBp64?.let { track_64->
@@ -425,8 +422,7 @@ internal class BookDetailsViewModel(
             callback = object : BaseUseCase.UseCaseCallback<GetTrackListUsecase.ResponseValues> {
                 override suspend fun onSuccess(response: GetTrackListUsecase.ResponseValues) {
 
-                    getTrackListUsecase.getTrackListData().observeForever {
-
+                    response.event.getContentIfNotHandled()?.let {
                         tracksBp128 = it
 
                         tracksBp64?.let { tracks_64 ->
