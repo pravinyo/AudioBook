@@ -3,7 +3,9 @@ package com.allsoftdroid.feature.book_details.domain.usecase
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.feature.book_details.data.model.TrackFormat
+import com.allsoftdroid.feature.book_details.domain.model.AudioBookTrackDomainModel
 import com.allsoftdroid.feature.book_details.domain.repository.ITrackListRepository
+import kotlinx.coroutines.flow.collect
 import timber.log.Timber
 
 class GetTrackListUsecase(
@@ -12,15 +14,16 @@ class GetTrackListUsecase(
 
     public override suspend fun executeUseCase(requestValues: RequestValues?) {
         requestValues?.let {
-            listRepository.loadTrackListData(requestValues.trackFormat)
+            val result = listRepository.loadTrackListData(requestValues.trackFormat)
             Timber.d("fetching started")
 
-            useCaseCallback?.onSuccess(ResponseValues(Event(Unit)))
+            result.collect {tracks ->
+                useCaseCallback?.onSuccess(ResponseValues(Event(tracks)))
+            }
+
         }?:useCaseCallback?.onError(Error("Request value should not be null"))
     }
 
-    fun getTrackListData() = listRepository.getTrackList()
-
     class RequestValues(val trackFormat: TrackFormat) : BaseUseCase.RequestValues
-    class ResponseValues (val event : Event<Any>) : BaseUseCase.ResponseValues
+    class ResponseValues (val event : Event<List<AudioBookTrackDomainModel>>) : BaseUseCase.ResponseValues
 }
