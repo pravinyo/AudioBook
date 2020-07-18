@@ -170,7 +170,6 @@ class AudioBookListViewModel(
         useCaseHandler.execute(getSearchBookUsecase,searchBookRequestValues,
             object : BaseUseCase.UseCaseCallback<GetSearchBookUsecase.ResponseValues>{
                 override suspend fun onSuccess(response: GetSearchBookUsecase.ResponseValues) {
-                    listChangedEvent.value = response.event
                     _networkResponse.value = Event(NetworkState.COMPLETED)
                     Timber.d("Data received in viewModel onSuccess")
 
@@ -197,7 +196,6 @@ class AudioBookListViewModel(
 
                 override suspend fun onError(t: Throwable) {
                     _networkResponse.value = Event(NetworkState.ERROR)
-                    listChangedEvent.value = Event(Unit)
                     Timber.d("Data received in viewModel onError ${t.message}")
                 }
             })
