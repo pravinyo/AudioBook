@@ -1,7 +1,5 @@
 package com.allsoftdroid.feature.book_details.data.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import com.allsoftdroid.common.base.extension.Event
 import com.allsoftdroid.common.base.extension.Variable
 import com.allsoftdroid.common.test.wrapEspressoIdlingResource
@@ -15,10 +13,10 @@ import com.allsoftdroid.feature.book_details.domain.model.AudioBookMetadataDomai
 import com.allsoftdroid.feature.book_details.domain.repository.IMetadataRepository
 import com.allsoftdroid.feature.book_details.utils.NetworkState
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,7 +38,7 @@ class MetadataRepositoryImpl(
         metadataDao.getMetadata(bookId)
     ){
         it?.asMetadataDomainModel()
-    }
+    }.flowOn(Dispatchers.IO)
 
     private val audioBookMetadata : LiveData<AudioBookMetadataDomainModel>
         get() = _audioBookMetadata
