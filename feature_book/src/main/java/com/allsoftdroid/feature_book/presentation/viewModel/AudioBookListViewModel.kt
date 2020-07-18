@@ -115,6 +115,7 @@ class AudioBookListViewModel(
     private suspend fun fetchBookList(isNext:Boolean = false){
 
         if(isNext){
+            Timber.d("Fetch next called")
             bookListRequestValues = GetAudioBookListUsecase.RequestValues(pageNumber = bookListRequestValues.pageNumber.plus(1))
         }
 
@@ -153,6 +154,7 @@ class AudioBookListViewModel(
     @ExperimentalCoroutinesApi
     private suspend fun searchBook(searchQuery:String, isNext: Boolean){
         searchBookRequestValues = if(isNext){
+            Timber.d("Search next called")
             GetSearchBookUsecase.RequestValues(
                 query = searchQuery,
                 pageNumber = searchBookRequestValues.pageNumber.plus(1))
