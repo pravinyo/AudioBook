@@ -38,6 +38,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.KoinComponent
@@ -58,6 +59,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
     /**
     Lazily initialize the view model
      */
+    @ExperimentalCoroutinesApi
     private val bookDetailsViewModel: BookDetailsViewModel by viewModel{
         parametersOf(Bundle(), "vm_audio_book_details")
     }
@@ -70,6 +72,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
     private var mBottomSheetBehavior: BottomSheetBehavior<View?>? = null
     private var mDescriptionLoadingAnimation:ViewLoadingAnimation?=null
 
+    @ExperimentalCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -99,6 +102,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         return dataBinding.root
     }
 
+    @ExperimentalCoroutinesApi
     @SuppressLint("ClickableViewAccessibility")
     private fun configureBackdrop(dataBinding:FragmentAudiobookDetailsBinding) {
         // Get the fragment reference
@@ -136,6 +140,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         }
     }
 
+    @ExperimentalCoroutinesApi
     private fun setupEventListener(dataBinding: FragmentAudiobookDetailsBinding) {
         disposable.add(
             eventStore.observe()
@@ -192,6 +197,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         })
     }
 
+    @ExperimentalCoroutinesApi
     private fun setupUI(dataBinding: FragmentAudiobookDetailsBinding) {
 
         mDescriptionLoadingAnimation = ViewLoadingAnimation(dataBinding.textViewBookIntro)
@@ -400,6 +406,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         return false
     }
 
+    @ExperimentalCoroutinesApi
     private fun resumeOrPlayFromStart() {
         bookDetailsViewModel.audioBookMetadata.value?.let {metadata ->
             playSelectedTrackFile(bookDetailsViewModel.getCurrentPlayingTrack(),metadata.title)
@@ -411,6 +418,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         setVisibility(dataBindingReference.pbContentLoading,set = false)
     }
 
+    @ExperimentalCoroutinesApi
     private fun handleDownloaderEvent(event: Event<DownloadEvent>) {
         event.peekContent().let {
             if(it is DownloadNothing || it is PullAndUpdateStatus || it is MultiDownload) return
@@ -420,6 +428,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         }
     }
 
+    @ExperimentalCoroutinesApi
     private fun handleEvent(event: Event<AudioPlayerEvent>) {
         activity?.let {
             Timber.d("Peeking content by default")
@@ -476,7 +485,8 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         }
     }
 
-    private fun playSelectedTrackFile(currentPos:Int,bookName:String) {
+    @ExperimentalCoroutinesApi
+    private fun playSelectedTrackFile(currentPos:Int, bookName:String) {
         bookDetailsViewModel.audioBookTracks.value?.let {
             Timber.d("Sending new event for play selected track by the user")
             eventStore.publish(Event(
