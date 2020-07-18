@@ -5,6 +5,7 @@ import com.allsoftdroid.common.test.MainCoroutineRule
 import com.allsoftdroid.common.test.getOrAwaitValue
 import com.allsoftdroid.database.common.SaveInDatabase
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
+import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseAlbumEntity
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseMetadataEntity
 import com.allsoftdroid.feature.book_details.data.databaseExtension.SaveMetadataInDatabase
 import com.allsoftdroid.feature.book_details.data.network.service.ArchiveMetadataService
@@ -12,6 +13,7 @@ import com.allsoftdroid.feature.book_details.domain.repository.IMetadataReposito
 import com.allsoftdroid.feature.book_details.utils.FakeMetadataSource
 import com.allsoftdroid.feature.book_details.utils.FakeRemoteMetadataSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
@@ -42,7 +44,10 @@ class MetadataRepositoryImplTest{
     @Before
     fun setup(){
         metadataDao =
-            FakeMetadataSource()
+            FakeMetadataSource(
+                _albumEntity = DatabaseAlbumEntity("","",""),
+                _metadata = DatabaseMetadataEntity("","","","","","","","",""),
+                _tracks = emptyList())
         remoteMetaDataSource =
             FakeRemoteMetadataSource()
         saveInDatabase = mock(SaveInDatabase::class.java) as SaveInDatabase<MetadataDao, SaveMetadataInDatabase>
@@ -71,8 +76,11 @@ class MetadataRepositoryImplTest{
         runBlocking {
             metadataRepository.loadMetadata()
             stubDataToDao()
-            val result = metadataRepository.getMetadata().getOrAwaitValue()
-            assertThat(result.identifier,IsEqual(bookId))
+
+            metadataRepository.getMetadata().collect { result ->
+                assertThat(result.identifier,IsEqual(bookId))
+            }
+
         }
     }
 

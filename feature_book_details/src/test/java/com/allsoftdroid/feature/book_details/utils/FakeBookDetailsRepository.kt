@@ -20,7 +20,7 @@ class FakeBookDetailsRepository: IFetchAdditionBookDetailsRepository {
         listener?.onResponse(Success(result = "success"))
     }
 
-    override fun getBookDetails(): LiveData<BookDetails> {
+    fun getBookDetails(): LiveData<BookDetails> {
         return details
     }
 

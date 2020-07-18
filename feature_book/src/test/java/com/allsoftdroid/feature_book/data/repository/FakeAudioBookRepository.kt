@@ -1,12 +1,12 @@
 package com.allsoftdroid.feature_book.data.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.common.base.network.Failure
 import com.allsoftdroid.common.base.network.Success
 import com.allsoftdroid.feature_book.domain.model.AudioBookDomainModel
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import com.allsoftdroid.feature_book.domain.repository.NetworkResponseListener
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class FakeAudioBookRepository(private val manualFailure:Boolean = false) : AudioBookRepository{
     private var listener:NetworkResponseListener? = null
@@ -27,31 +27,30 @@ class FakeAudioBookRepository(private val manualFailure:Boolean = false) : Audio
 
     }
 
-    private var audioBooks = MutableLiveData<List<AudioBookDomainModel>>()
+    private var audioBooks:List<AudioBookDomainModel> = emptyList()
 
     override suspend fun fetchBookList(page: Int) {
         if(!manualFailure){
             val list = ArrayList<AudioBookDomainModel>()
             list.add(AudioBookDomainModel("1","Title","creator","2019","2020-06-01T11:22:00"))
 
-            audioBooks.value = list
+            audioBooks = list
 
             listener?.onResponse(Success(result = list.size))
         }else{
-            audioBooks.value = emptyList()
+            audioBooks = emptyList()
 
             listener?.onResponse(Failure(error = Error(FAILURE_MESSAGE)))
         }
     }
 
-    override fun getAudioBooks()= audioBooks
+    override fun getAudioBooks(): Flow<List<AudioBookDomainModel>> = flow { emit(audioBooks) }
 
     override suspend fun searchBookList(query: String, page: Int) {
 
     }
 
-    override fun getSearchBooks(): LiveData<List<AudioBookDomainModel>> {
-        val list = MutableLiveData<List<AudioBookDomainModel>>()
-        return list
+    override fun getSearchBooks(): Flow<List<AudioBookDomainModel>> {
+        return flow { emit(emptyList()) }
     }
 }

@@ -1,76 +1,74 @@
 package com.allsoftdroid.feature.book_details.utils
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.allsoftdroid.common.test.getOrAwaitValue
 import com.allsoftdroid.database.metadataCacheDB.MetadataDao
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseAlbumEntity
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseMetadataEntity
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseTrackEntity
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
-class FakeMetadataSource(private val _metadataLiveData: MutableLiveData<DatabaseMetadataEntity> = MutableLiveData(),
-                          private val _albumEntity: MutableLiveData<DatabaseAlbumEntity> = MutableLiveData(),
-                          private val _tracks: MutableLiveData<List<DatabaseTrackEntity>> = MutableLiveData()) : MetadataDao {
+class FakeMetadataSource(private var _metadata: DatabaseMetadataEntity,
+                         private var _albumEntity: DatabaseAlbumEntity,
+                         private var _tracks: List<DatabaseTrackEntity>) : MetadataDao {
 
 
 
-    override fun getMetadata(bookId: String): LiveData<DatabaseMetadataEntity> {
-        return _metadataLiveData
+    override fun getMetadata(bookId: String): Flow<DatabaseMetadataEntity> {
+        return flow { emit(_metadata) }
     }
 
     override fun getMetadataNonLive(bookId: String): DatabaseMetadataEntity {
-        return _metadataLiveData.getOrAwaitValue()
+        return _metadata
     }
 
-    override fun getAlbumDetails(metadata_id: String): LiveData<DatabaseAlbumEntity> {
+    override fun getAlbumDetails(metadata_id: String): Flow<DatabaseAlbumEntity> {
 
-        return _albumEntity
+        return flow { emit(_albumEntity) }
     }
 
-    override fun getTrackDetails(metadata_id: String): LiveData<List<DatabaseTrackEntity>> {
-        val tracks = MutableLiveData<List<DatabaseTrackEntity>>()
-        return tracks
+    override fun getTrackDetails(metadata_id: String): Flow<List<DatabaseTrackEntity>> {
+        return flow { emit(emptyList()) }
     }
 
     override fun getTrackDetails(
         metadata_id: String,
         formatContains: String
-    ): LiveData<List<DatabaseTrackEntity>> {
-        return _tracks
+    ): Flow<List<DatabaseTrackEntity>> {
+        return flow { emit(_tracks) }
     }
 
     override fun getTrackDetailsNonLive(
         metadata_id: String,
         formatContains: String
     ): List<DatabaseTrackEntity> {
-        return _tracks.getOrAwaitValue()
-    }
-
-    override fun getTrackDetailsVBR(metadata_id: String): LiveData<List<DatabaseTrackEntity>> {
         return _tracks
     }
 
+    override fun getTrackDetailsVBR(metadata_id: String): Flow<List<DatabaseTrackEntity>> {
+        return flow { emit(_tracks) }
+    }
+
     override fun insertMetadata(metadataEntity: DatabaseMetadataEntity) {
-        _metadataLiveData.value = metadataEntity
+        _metadata = metadataEntity
     }
 
     override fun insertAlbum(albumEntity: DatabaseAlbumEntity) {
-        _albumEntity.value = albumEntity
+        _albumEntity = albumEntity
     }
 
     override fun insertAllTracks(trackEntityList: List<DatabaseTrackEntity>) {
-        _tracks.value = trackEntityList
+        _tracks = trackEntityList
     }
 
     override fun removeMetadata(metadata_id: String): Int {
-        _metadataLiveData.value = null
+        _metadata = DatabaseMetadataEntity("","","","","","","","","")
         return 0
     }
 
     override fun removeAll(): Int {
-        _albumEntity.value = null
-        _metadataLiveData.value = null
-        _tracks.value = null
+        _albumEntity = DatabaseAlbumEntity("","","")
+        _metadata = DatabaseMetadataEntity("","","","","","","","","")
+        _tracks = emptyList()
 
         return 0
     }
