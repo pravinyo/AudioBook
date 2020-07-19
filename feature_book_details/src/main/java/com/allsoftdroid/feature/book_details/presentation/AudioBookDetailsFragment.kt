@@ -287,7 +287,8 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
                             if (status != complete){
                                 Timber.d("Status is validation")
-                                showBookReviewMessage()
+
+                                if (!bookDetailsViewModel.isAlertShown()) showBookReviewMessage()
                                 metadata?.let {  details -> formattedBookDetails(details)  }
                             }else{
                                 Timber.d("Status is not validation")
@@ -388,6 +389,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         builder.setPositiveButton("OK"){ di, _ ->
             di.dismiss()
             bookDetailsViewModel.resetUI()
+            bookDetailsViewModel.alertShown()
         }
 
         val alertDialog: AlertDialog = builder.create()
