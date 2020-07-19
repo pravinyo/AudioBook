@@ -88,6 +88,8 @@ internal class BookDetailsViewModel(
     //audio book track reference
     private var _audioBookTracks = MutableLiveData<List<AudioBookTrackDomainModel>>()
 
+    private var _isAlertShown = false
+
     //get updated track list on track state change
     val audioBookTracks : LiveData<List<AudioBookTrackDomainModel>> =
         Transformations.switchMap(_newTrackStateEvent){trackNumberEvent ->
@@ -163,6 +165,11 @@ internal class BookDetailsViewModel(
 
         currentPlayingTrack = 0
         sharedPref.clear()
+    }
+
+    fun isAlertShown() = _isAlertShown
+    fun alertShown(){
+        _isAlertShown = true
     }
 
     @ExperimentalCoroutinesApi
