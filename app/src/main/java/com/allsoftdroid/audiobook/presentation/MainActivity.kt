@@ -58,7 +58,6 @@ class MainActivity : BaseActivity() {
     private val downloader: IDownloaderCore by inject{parametersOf(this)}
     private val userActionEventStore:UserActionEventStore by inject()
     private val disposables = CompositeDisposable()
-    private var isShownTooltip = false
 
 
     private val snackBar by lazy {
@@ -270,7 +269,7 @@ class MainActivity : BaseActivity() {
                     }
                 })
             }.post {
-                if(!isShownTooltip) showToolTipForMiniPlayer()
+                if(!mainActivityViewModel.isToolTipShown()) showToolTipForMiniPlayer()
             }
 
             findViewById<View>(R.id.navHostFragment).apply {
@@ -426,6 +425,8 @@ class MainActivity : BaseActivity() {
                         Toast.makeText(this,getString(R.string.player_navigation_error),Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                mainActivityViewModel.setToolTipShown(shouldSkip = true)
             }
         }
 
@@ -450,7 +451,6 @@ class MainActivity : BaseActivity() {
         tooltip
             ?.doOnHidden {
                 tooltip = null
-                isShownTooltip = true
             }
             ?.show(containerView.rootView, gravity, true)
     }

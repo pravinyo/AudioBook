@@ -25,4 +25,7 @@ interface BookDetailsSharedPreferenceRepository {
 
     fun saveIsPlaying(isPlaying: Boolean)
     fun isPlaying(): Boolean
+
+    fun isToolTipShown():Boolean
+    fun setToolTipShown(shouldSkip:Boolean)
 }

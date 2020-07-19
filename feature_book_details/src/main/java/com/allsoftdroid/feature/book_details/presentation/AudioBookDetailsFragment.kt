@@ -51,7 +51,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
 
     private lateinit var argBookId : String
-    private lateinit var argBookTitle :String
+    private lateinit var argBookTrackTitle :String
     private lateinit var argBookName: String
     private var argBookTrackNumber:Int = 0
     private var isBackDropFragmentVisible = false
@@ -82,7 +82,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         val dataBinding : FragmentAudiobookDetailsBinding = inflateLayout(inflater,R.layout.fragment_audiobook_details,container)
 
         argBookId = arguments?.getString("bookId")?:""
-        argBookTitle = arguments?.getString("title")?:""
+        argBookTrackTitle = arguments?.getString("title")?:""
         argBookTrackNumber = arguments?.getInt("trackNumber")?:0
         argBookName = arguments?.getString("bookName")?:"NA"
 
@@ -249,7 +249,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                     if(argBookTrackNumber>0){
                         Timber.d("Book Track number is $argBookTrackNumber")
                         playSelectedTrackFile(argBookTrackNumber,argBookName)
-                        dataBinding.tvToolbarTitle.text = argBookTitle
+                        dataBinding.tvToolbarTitle.text = argBookTrackTitle
                         argBookTrackNumber = 0
                     }
                 }
@@ -270,16 +270,25 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                         Timber.d("web document is available")
                         val document = bookDetails.webDocument
                         val validation = "validation"
+                        val complete = "complete"
                         document?.let {
                             val status =
-                                it.list.map {item ->
-                                    item.trim().toLowerCase(Locale.getDefault())
-                                }.first { item ->  item == validation}
+                                try{
+                                    when(it.list.first().trim()){
+                                        "Validation" -> validation
+                                        "Complete" -> complete
+                                        else -> ""
+                                    }
+                                }catch (e:Exception){
+                                    Timber.e(e)
+                                    ""
+                                }
                             Timber.d("Status is: $status")
 
-                            if (status == validation){
+                            if (status != complete){
                                 Timber.d("Status is validation")
-                                showBookReviewMessage()
+
+                                if (!bookDetailsViewModel.isAlertShown()) showBookReviewMessage()
                                 metadata?.let {  details -> formattedBookDetails(details)  }
                             }else{
                                 Timber.d("Status is not validation")
@@ -380,6 +389,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         builder.setPositiveButton("OK"){ di, _ ->
             di.dismiss()
             bookDetailsViewModel.resetUI()
+            bookDetailsViewModel.alertShown()
         }
 
         val alertDialog: AlertDialog = builder.create()
