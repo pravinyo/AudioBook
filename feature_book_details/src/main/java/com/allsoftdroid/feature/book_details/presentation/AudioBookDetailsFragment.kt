@@ -51,7 +51,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
 
     private lateinit var argBookId : String
-    private lateinit var argBookTitle :String
+    private lateinit var argBookTrackTitle :String
     private lateinit var argBookName: String
     private var argBookTrackNumber:Int = 0
     private var isBackDropFragmentVisible = false
@@ -82,7 +82,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         val dataBinding : FragmentAudiobookDetailsBinding = inflateLayout(inflater,R.layout.fragment_audiobook_details,container)
 
         argBookId = arguments?.getString("bookId")?:""
-        argBookTitle = arguments?.getString("title")?:""
+        argBookTrackTitle = arguments?.getString("title")?:""
         argBookTrackNumber = arguments?.getInt("trackNumber")?:0
         argBookName = arguments?.getString("bookName")?:"NA"
 
@@ -249,7 +249,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                     if(argBookTrackNumber>0){
                         Timber.d("Book Track number is $argBookTrackNumber")
                         playSelectedTrackFile(argBookTrackNumber,argBookName)
-                        dataBinding.tvToolbarTitle.text = argBookTitle
+                        dataBinding.tvToolbarTitle.text = argBookTrackTitle
                         argBookTrackNumber = 0
                     }
                 }
