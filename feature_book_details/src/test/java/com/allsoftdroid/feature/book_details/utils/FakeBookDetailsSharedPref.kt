@@ -67,4 +67,12 @@ class FakeBookDetailsSharedPref : BookDetailsSharedPreferenceRepository {
     override fun isPlaying(): Boolean {
         return isPlaying
     }
+
+    override fun isToolTipShown(): Boolean {
+        return true
+    }
+
+    override fun setToolTipShown(shouldSkip: Boolean) {
+
+    }
 }
