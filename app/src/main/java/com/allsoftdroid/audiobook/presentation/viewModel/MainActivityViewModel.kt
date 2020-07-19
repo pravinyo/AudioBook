@@ -184,6 +184,11 @@ class MainActivityViewModel(application : Application,
         audioManager.unBoundAudioService()
     }
 
+    fun isToolTipShown():Boolean = sharedPref.isToolTipShown()
+
+    fun setToolTipShown(shouldSkip:Boolean){
+        sharedPref.setToolTipShown(shouldSkip)
+    }
 
     fun clearSharedPref(){
         sharedPref.clear()
