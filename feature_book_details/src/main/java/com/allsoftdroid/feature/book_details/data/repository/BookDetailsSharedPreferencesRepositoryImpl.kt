@@ -5,10 +5,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.allsoftdroid.common.test.wrapEspressoIdlingResource
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.subjects.BehaviorSubject
 
 class BookDetailsSharedPreferencesRepositoryImpl(private val preferences : SharedPreferences) : BookDetailsSharedPreferenceRepository {
 
@@ -25,6 +21,7 @@ class BookDetailsSharedPreferencesRepositoryImpl(private val preferences : Share
         private const val KEY_NAME_BOOK_ID="key_name_book_id"
         private const val KEY_NAME_TRACK_FORMAT = "key_name_track_format"
         private const val KEY_NAME_BOOK_NAME = "key_name_book_name"
+        private const val KEY_NAME_IS_TOOL_TIP_SHOWN = "key_name_is_tool_tip_shown"
     }
 
     override fun saveTrackPosition(pos: Int)=
@@ -47,6 +44,16 @@ class BookDetailsSharedPreferencesRepositoryImpl(private val preferences : Share
 
     override fun isPlaying():Boolean = wrapEspressoIdlingResource {
         preferences.getBoolean(KEY_NAME_TRACK_IS_PLAYING,false)
+    }
+
+    override fun isToolTipShown(): Boolean = wrapEspressoIdlingResource {
+        preferences.getBoolean(KEY_NAME_IS_TOOL_TIP_SHOWN,false)
+    }
+
+    override fun setToolTipShown(shouldSkip: Boolean) = wrapEspressoIdlingResource {
+        preferences.editSharedPreferences {
+            putBoolean(KEY_NAME_IS_TOOL_TIP_SHOWN,shouldSkip)
+        }
     }
 
     override fun saveTrackTitle(title: String) =
