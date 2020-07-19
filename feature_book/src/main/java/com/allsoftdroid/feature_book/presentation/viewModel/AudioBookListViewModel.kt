@@ -115,6 +115,7 @@ class AudioBookListViewModel(
     private suspend fun fetchBookList(isNext:Boolean = false){
 
         if(isNext){
+            Timber.d("Fetch next called")
             bookListRequestValues = GetAudioBookListUsecase.RequestValues(pageNumber = bookListRequestValues.pageNumber.plus(1))
         }
 
@@ -141,7 +142,7 @@ class AudioBookListViewModel(
         _isSearching = true
         _searchError.value = false
 
-        if(networkResponse.value?.peekContent() != NetworkState.LOADING){
+        if(networkResponse.value?.peekContent() == NetworkState.LOADING){
             cancelSearchRequest()
         }
 
@@ -153,6 +154,7 @@ class AudioBookListViewModel(
     @ExperimentalCoroutinesApi
     private suspend fun searchBook(searchQuery:String, isNext: Boolean){
         searchBookRequestValues = if(isNext){
+            Timber.d("Search next called")
             GetSearchBookUsecase.RequestValues(
                 query = searchQuery,
                 pageNumber = searchBookRequestValues.pageNumber.plus(1))
@@ -170,7 +172,6 @@ class AudioBookListViewModel(
         useCaseHandler.execute(getSearchBookUsecase,searchBookRequestValues,
             object : BaseUseCase.UseCaseCallback<GetSearchBookUsecase.ResponseValues>{
                 override suspend fun onSuccess(response: GetSearchBookUsecase.ResponseValues) {
-                    listChangedEvent.value = response.event
                     _networkResponse.value = Event(NetworkState.COMPLETED)
                     Timber.d("Data received in viewModel onSuccess")
 
@@ -197,7 +198,6 @@ class AudioBookListViewModel(
 
                 override suspend fun onError(t: Throwable) {
                     _networkResponse.value = Event(NetworkState.ERROR)
-                    listChangedEvent.value = Event(Unit)
                     Timber.d("Data received in viewModel onError ${t.message}")
                 }
             })
@@ -218,6 +218,7 @@ class AudioBookListViewModel(
     fun onSearchFinished(){
         _displaySearchView.value = false
         _searchError.value = false
+        searchBooks.value = emptyList()
     }
 
     fun setSearchOrClose(isSearchBtn:Boolean){

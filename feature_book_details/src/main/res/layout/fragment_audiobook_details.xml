@@ -36,7 +36,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_marginStart="@dimen/margin_mid"
+                    android:gravity="start|center_vertical"
                     app:bookTitle="@{audioBookDetailsViewModel.audioBookMetadata}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="@color/white" />
