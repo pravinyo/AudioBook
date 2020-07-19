@@ -1,6 +1,5 @@
 package com.allsoftdroid.audiobook.services.audio.utils
 
-import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -12,6 +11,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.widget.RemoteViews
+import androidx.annotation.ColorRes
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.allsoftdroid.audiobook.services.R
@@ -29,7 +29,6 @@ class NotificationUtils {
         private const val NOTIFY_ID = 1
         private const val NOTIFICATION_CHANNEL = "audio_book_music_player_channel"
 
-        @SuppressLint("NewApi")
         fun sendNotification(isAudioPlaying:Boolean, currentAudioPos:Int, service: AudioService, applicationContext: Context, trackTitle:String, bookName:String) {
             try{
                 val collapsedView = RemoteViews(applicationContext.packageName, R.layout.notification_mini_player_collapsed)
@@ -43,10 +42,10 @@ class NotificationUtils {
                         collapsedView.setImageViewResource(R.id.image_notification_prev,R.drawable.ic_skip_previous_black_24dp)
                         collapsedView.setImageViewResource(R.id.image_notification_next,R.drawable.ic_skip_next_black_24dp)
 
-                        collapsedView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.black))
-                        collapsedView.setTextColor(R.id.notification_book_name,applicationContext.getColor(R.color.black))
+                        collapsedView.setTextColor(R.id.notification_track_name,getColorId(applicationContext,R.color.black))
+                        collapsedView.setTextColor(R.id.notification_book_name,getColorId(applicationContext,R.color.black))
 
-                        normalView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.black))
+                        normalView.setTextColor(R.id.notification_track_name,getColorId(applicationContext,R.color.black))
                     } // Night mode is not active, we're using the light theme
 
                     Configuration.UI_MODE_NIGHT_YES -> {
@@ -56,10 +55,10 @@ class NotificationUtils {
                         collapsedView.setImageViewResource(R.id.image_notification_prev,R.drawable.ic_skip_previous_white_24dp)
                         collapsedView.setImageViewResource(R.id.image_notification_next,R.drawable.ic_skip_next_white_24dp)
 
-                        collapsedView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.white))
-                        collapsedView.setTextColor(R.id.notification_book_name,applicationContext.getColor(R.color.white))
+                        collapsedView.setTextColor(R.id.notification_track_name,getColorId(applicationContext,R.color.white))
+                        collapsedView.setTextColor(R.id.notification_book_name,getColorId(applicationContext,R.color.white))
 
-                        normalView.setTextColor(R.id.notification_track_name,applicationContext.getColor(R.color.white))
+                        normalView.setTextColor(R.id.notification_track_name,getColorId(applicationContext,R.color.white))
                     } // Night mode is active, we're using dark theme
                 }
 
@@ -177,6 +176,14 @@ class NotificationUtils {
                     service.stopForeground(false)
                 }
             }, 200L)
+        }
+
+        private fun getColorId(context: Context,@ColorRes color: Int): Int {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                context.getColor(color)
+            } else {
+                context.resources.getColor(color)
+            }
         }
 
         private fun getContentIntent(applicationContext: Context): PendingIntent {
