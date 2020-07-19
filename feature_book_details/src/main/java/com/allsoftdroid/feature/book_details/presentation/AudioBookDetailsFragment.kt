@@ -270,14 +270,22 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                         Timber.d("web document is available")
                         val document = bookDetails.webDocument
                         val validation = "validation"
+                        val complete = "complete"
                         document?.let {
                             val status =
-                                it.list.map {item ->
-                                    item.trim().toLowerCase(Locale.getDefault())
-                                }.first { item ->  item == validation}
+                                try{
+                                    when(it.list.first().trim()){
+                                        "Validation" -> validation
+                                        "Complete" -> complete
+                                        else -> ""
+                                    }
+                                }catch (e:Exception){
+                                    Timber.e(e)
+                                    ""
+                                }
                             Timber.d("Status is: $status")
 
-                            if (status == validation){
+                            if (status != complete){
                                 Timber.d("Status is validation")
                                 showBookReviewMessage()
                                 metadata?.let {  details -> formattedBookDetails(details)  }
