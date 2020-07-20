@@ -6,11 +6,13 @@ import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.network.NetworkResponseListener
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.ISearchBookDetailsRepository
 import com.allsoftdroid.common.base.network.Success
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class FakeSearchBookDetailsRepository : ISearchBookDetailsRepository {
 
     private var listener: NetworkResponseListener? = null
-    private val bookList = MutableLiveData<List<WebDocument>>()
+    private lateinit var bookList : List<WebDocument>
 
     override suspend fun searchBookDetailsInRemoteRepository(
         searchTitle: String,
@@ -18,23 +20,20 @@ class FakeSearchBookDetailsRepository : ISearchBookDetailsRepository {
         page: Int
     ) {
         val doc = WebDocument("The Art of War","pravin","None", mutableListOf("novel"))
-        bookList.value = mutableListOf(doc)
+        bookList = mutableListOf(doc)
 
         listener?.onResponse(Success(result = "success"))
     }
 
-    override fun getSearchBooksList(): LiveData<List<WebDocument>> {
-        return bookList
+    override fun getSearchBooksList(): Flow<List<WebDocument>> {
+        return flow { emit(bookList) }
     }
 
     override fun getBookListWithRanks(
         bookTitle: String,
         bookAuthor: String
-    ): LiveData<List<Pair<Int, WebDocument>>> {
-        val rankList = MutableLiveData<List<Pair<Int, WebDocument>>>()
-        rankList.value = mutableListOf(Pair(3,bookList.value!![0]))
-
-        return rankList
+    ): Flow<List<Pair<Int, WebDocument>>> {
+        return flow { emit(mutableListOf(Pair(3,bookList[0]))) }
     }
 
     override fun registerNetworkResponse(listener: NetworkResponseListener) {

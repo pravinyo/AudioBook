@@ -41,11 +41,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
                     android:layout_height="match_parent">
                     <ImageView
                         android:id="@+id/toolbar_nav_hamburger"
-                        android:layout_width="@dimen/control_icon_size"
-                        android:layout_height="@dimen/control_icon_size"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:layout_gravity="center_vertical"
+                        style="@style/ToolbarButtonStyle"
                         android:src="@drawable/ic_toolbar_menu_hamburger"
                         android:contentDescription="@string/toolbar_nav_hamburger" />
 
@@ -61,12 +57,8 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
 
                     <ImageView
                         android:id="@+id/toolbar_book_search"
-                        android:layout_width="@dimen/control_icon_size"
-                        android:layout_height="@dimen/control_icon_size"
+                        style="@style/ToolbarButtonStyle"
                         android:layout_marginEnd="@dimen/margin_normal"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:layout_gravity="center_vertical"
                         android:src="@drawable/book_search_outline"
                         android:contentDescription="@string/audiobook_search" />
                 </LinearLayout>
@@ -81,9 +73,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
                     <ImageView
-                        android:layout_width="@dimen/control_icon_size"
-                        android:layout_height="@dimen/control_icon_size"
-                        android:layout_gravity="center_vertical"
+                        style="@style/ToolbarButtonStyle"
                         android:src="@drawable/ic_search_web"
                         android:contentDescription="@string/web_search_icon" />
                     <EditText
@@ -94,6 +84,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
                         android:scrollHorizontally="true"
                         android:ellipsize="end"
                         android:inputType="text"
+                        android:imeOptions="actionSend"
                         android:layout_gravity="center_vertical"
                         android:textColor="@color/colorPrimaryDark"
                         android:layout_height="wrap_content"
@@ -102,24 +93,16 @@ xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.
 
                     <ImageView
                         android:id="@+id/iv_search"
-                        android:layout_width="@dimen/control_icon_size"
-                        android:layout_height="@dimen/control_icon_size"
+                        style="@style/ToolbarButtonStyle"
                         android:src="@drawable/ic_arrow_chevron_right"
-                        android:layout_gravity="center_vertical"
                         app:searchOrClose="@{audioBookListViewModel.searchOrClose}"
-                        android:clickable="true"
-                        android:focusable="true"
                         android:contentDescription="@string/press_to_clear_search" />
 
                     <ImageView
                         android:id="@+id/iv_search_cancel"
-                        android:layout_width="@dimen/control_icon_size"
-                        android:layout_height="@dimen/control_icon_size"
+                        style="@style/ToolbarButtonStyle"
                         android:src="@drawable/close"
                         app:searchOrClose="@{audioBookListViewModel.searchOrClose}"
-                        android:layout_gravity="center_vertical"
-                        android:clickable="true"
-                        android:focusable="true"
                         android:contentDescription="@string/press_to_clear_search" />
                 </LinearLayout>
             </LinearLayout>

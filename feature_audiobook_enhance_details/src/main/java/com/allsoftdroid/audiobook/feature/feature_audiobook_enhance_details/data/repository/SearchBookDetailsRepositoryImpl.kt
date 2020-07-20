@@ -1,7 +1,5 @@
 package com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.data.model.WebDocument
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.network.NetworkResponseListener
 import com.allsoftdroid.audiobook.feature.feature_audiobook_enhance_details.domain.repository.ISearchBookDetailsRepository
@@ -12,6 +10,9 @@ import com.allsoftdroid.common.base.network.Success
 import com.dropbox.android.external.store4.get
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import timber.log.Timber
 
 class SearchBookDetailsRepositoryImpl(private val storeCachingRepository:IStoreRepository,
@@ -19,11 +20,11 @@ class SearchBookDetailsRepositoryImpl(private val storeCachingRepository:IStoreR
 ) :   ISearchBookDetailsRepository {
 
     /***
-     * hold stories related to politics
+     * hold books result
      */
-    private var _listOfItem  = MutableLiveData<List<WebDocument>>()
+    private lateinit var  _listOfItem:Flow<List<WebDocument>>
 
-    private var _bestMatch  = MutableLiveData<List<Pair<Int, WebDocument>>>()
+    private lateinit var _bestMatch:Flow<List<Pair<Int, WebDocument>>>
 
     private var listener: NetworkResponseListener? = null
 
@@ -47,25 +48,29 @@ class SearchBookDetailsRepositoryImpl(private val storeCachingRepository:IStoreR
                 val list = bestMatcher.getList(data)
                 val best = bestMatcher.getListWithRanks(list,searchTitle,author)
 
-                _listOfItem.value = list
-                _bestMatch.value = best
+                _listOfItem = flow{ emit(list) }
+                _bestMatch = flow { emit(best) }
 
-                Timber.d("best match is :${_bestMatch.value}")
-                Timber.d("Search list is :${_listOfItem.value}")
+                Timber.d("best match is :$best")
+                Timber.d("Search list is :$list")
 
                 listener?.onResponse(Success(true))
             }else{
+                _listOfItem = flowOf(emptyList())
+                _bestMatch = flowOf(emptyList())
                 Timber.d("Data is empty")
                 listener?.onResponse(Failure(Error("No data received")))
             }
         }catch (e:Exception){
+            _listOfItem = flowOf(emptyList())
+            _bestMatch = flowOf(emptyList())
             e.printStackTrace()
         }
     }
 
-    override fun getSearchBooksList(): LiveData<List<WebDocument>> = _listOfItem
+    override fun getSearchBooksList(): Flow<List<WebDocument>> = _listOfItem
 
-    override fun getBookListWithRanks(bookTitle:String,bookAuthor:String): LiveData<List<Pair<Int, WebDocument>>> {
+    override fun getBookListWithRanks(bookTitle:String,bookAuthor:String): Flow<List<Pair<Int, WebDocument>>> {
         return _bestMatch
     }
 }

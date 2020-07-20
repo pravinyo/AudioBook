@@ -4,6 +4,10 @@ import com.allsoftdroid.audiobook.domain.model.LastPlayedTrack
 import com.allsoftdroid.common.base.usecase.BaseUseCase
 import com.allsoftdroid.feature.book_details.domain.repository.BookDetailsSharedPreferenceRepository
 
+/**
+ * This usecase checks the shared preference for any last played track record so that user can continue.
+ * If there is no data found it will respond with null value.
+ */
 class GetLastPlayedUsecase : BaseUseCase<GetLastPlayedUsecase.RequestValues, GetLastPlayedUsecase.ResponseValues>() {
 
     override suspend fun executeUseCase(requestValues: RequestValues?) {

@@ -1,7 +1,6 @@
 package com.allsoftdroid.feature.book_details.presentation
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,6 +38,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.KoinComponent
@@ -48,7 +51,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
 
     private lateinit var argBookId : String
-    private lateinit var argBookTitle :String
+    private lateinit var argBookTrackTitle :String
     private lateinit var argBookName: String
     private var argBookTrackNumber:Int = 0
     private var isBackDropFragmentVisible = false
@@ -56,6 +59,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
     /**
     Lazily initialize the view model
      */
+    @ExperimentalCoroutinesApi
     private val bookDetailsViewModel: BookDetailsViewModel by viewModel{
         parametersOf(Bundle(), "vm_audio_book_details")
     }
@@ -68,6 +72,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
     private var mBottomSheetBehavior: BottomSheetBehavior<View?>? = null
     private var mDescriptionLoadingAnimation:ViewLoadingAnimation?=null
 
+    @ExperimentalCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -77,7 +82,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         val dataBinding : FragmentAudiobookDetailsBinding = inflateLayout(inflater,R.layout.fragment_audiobook_details,container)
 
         argBookId = arguments?.getString("bookId")?:""
-        argBookTitle = arguments?.getString("title")?:""
+        argBookTrackTitle = arguments?.getString("title")?:""
         argBookTrackNumber = arguments?.getInt("trackNumber")?:0
         argBookName = arguments?.getString("bookName")?:"NA"
 
@@ -97,6 +102,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         return dataBinding.root
     }
 
+    @ExperimentalCoroutinesApi
     @SuppressLint("ClickableViewAccessibility")
     private fun configureBackdrop(dataBinding:FragmentAudiobookDetailsBinding) {
         // Get the fragment reference
@@ -134,6 +140,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         }
     }
 
+    @ExperimentalCoroutinesApi
     private fun setupEventListener(dataBinding: FragmentAudiobookDetailsBinding) {
         disposable.add(
             eventStore.observe()
@@ -190,6 +197,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         })
     }
 
+    @ExperimentalCoroutinesApi
     private fun setupUI(dataBinding: FragmentAudiobookDetailsBinding) {
 
         mDescriptionLoadingAnimation = ViewLoadingAnimation(dataBinding.textViewBookIntro)
@@ -241,7 +249,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
                     if(argBookTrackNumber>0){
                         Timber.d("Book Track number is $argBookTrackNumber")
                         playSelectedTrackFile(argBookTrackNumber,argBookName)
-                        dataBinding.tvToolbarTitle.text = argBookTitle
+                        dataBinding.tvToolbarTitle.text = argBookTrackTitle
                         argBookTrackNumber = 0
                     }
                 }
@@ -250,20 +258,54 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
         bookDetailsViewModel.additionalBookDetails.observe(viewLifecycleOwner, Observer {bookDetails->
             Timber.d("Book details received: $bookDetails")
+            val metadata by lazy { bookDetailsViewModel.audioBookMetadata.value }
+
             try{
-                dataBinding.textViewBookIntro.text = if(bookDetails==null || bookDetails.description.isEmpty()){
-                    bookDetailsViewModel.audioBookMetadata.value?.let {
-                        formattedBookDetails(it)
+                dataBinding.textViewBookIntro.text = when {
+                    bookDetails==null -> {
+                        metadata?.let {  details -> formattedBookDetails(details)  }
                     }
-                }else formattedBookDetails(bookDetails)
+
+                    bookDetails.webDocument!=null -> {
+                        Timber.d("web document is available")
+                        val document = bookDetails.webDocument
+                        val validation = "validation"
+                        val complete = "complete"
+                        document?.let {
+                            val status =
+                                try{
+                                    when(it.list.first().trim()){
+                                        "Validation" -> validation
+                                        "Complete" -> complete
+                                        else -> ""
+                                    }
+                                }catch (e:Exception){
+                                    Timber.e(e)
+                                    ""
+                                }
+                            Timber.d("Status is: $status")
+
+                            if (status != complete){
+                                Timber.d("Status is validation")
+
+                                if (!bookDetailsViewModel.isAlertShown()) showBookReviewMessage()
+                                metadata?.let {  details -> formattedBookDetails(details)  }
+                            }else{
+                                Timber.d("Status is not validation")
+                                formattedBookDetails(bookDetails)
+                            }
+                        }
+                    }
+
+                    else -> {
+                        metadata?.let {  details -> formattedBookDetails(details)  }
+                    }
+                }
 
             }catch ( e:Exception){
                 e.printStackTrace()
-                bookDetailsViewModel.audioBookMetadata.value?.let {
-                    dataBinding.textViewBookIntro.text = formattedBookDetails(it)
-                }
+                dataBinding.textViewBookIntro.text = metadata?.let {  details -> formattedBookDetails(details)  }
             }
-
             removeLoading()
             mDescriptionLoadingAnimation?.stop()
         })
@@ -291,11 +333,11 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
 
         dataBinding.imgViewBookShare.setOnClickListener {
 
-            bookDetailsViewModel.audioBookMetadata.value?.let {
+            bookDetailsViewModel.audioBookMetadata.value?.let {metadata ->
                 ShareUtils.share(
                     context = this.requireActivity(),
-                    subject = "${it.title} on AudioBook",
-                    txt = "Listen ${it.title} written by '${it.creator}' on AudioBook App," +
+                    subject = "${metadata.title} on AudioBook",
+                    txt = "Listen ${metadata.title} written by '${metadata.creator}' on AudioBook App," +
                             " Start Listening: ${StoreUtils.getStoreUrl(requireActivity())}"
                 )
             }
@@ -323,17 +365,45 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
             bookDetailsViewModel.additionalBookDetails.value?.let {
                 if(it.gutenbergUrl.isNotEmpty() && isLinkValid(it.gutenbergUrl)){
                     val uri  = Uri.parse(it.gutenbergUrl)
-                    val intent = Intent(Intent.ACTION_VIEW,uri)
-                    startActivity(Intent.createChooser(intent,getString(R.string.open_with_label)))
+                    loadInBrowser(uri)
                 }else if (it.archiveUrl.isNotEmpty() && isLinkValid(it.archiveUrl)){
                     val uri  = Uri.parse(it.archiveUrl)
-                    val intent = Intent(Intent.ACTION_VIEW,uri)
-                    startActivity(Intent.createChooser(intent,getString(R.string.open_with_label)))
+                    loadInBrowser(uri)
                 }else{
                     Toast.makeText(this.requireActivity(),getString(R.string.no_link_found),Toast.LENGTH_SHORT).show()
                 }
             }?:Toast.makeText(this.requireActivity(),getString(R.string.wait_message),Toast.LENGTH_SHORT).show()
         }
+    }
+
+    @ExperimentalCoroutinesApi
+    private fun showBookReviewMessage() {
+        val builder = AlertDialog.Builder(this.requireContext())
+        //set title for alert dialog
+        builder.setTitle(R.string.reviewTitle)
+        //set message for alert dialog
+        builder.setMessage(R.string.reviewMessage)
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+
+        //performing positive action
+        builder.setPositiveButton("OK"){ di, _ ->
+            di.dismiss()
+            bookDetailsViewModel.resetUI()
+            bookDetailsViewModel.alertShown()
+        }
+
+        val alertDialog: AlertDialog = builder.create()
+        // Set other dialog properties
+        alertDialog.setCancelable(false)
+        alertDialog.show()
+    }
+
+    private fun loadInBrowser(uri:Uri){
+        CustomTabsIntent.Builder()
+            .setToolbarColor(ContextCompat.getColor(requireContext(),R.color.colorPrimary))
+            .setShowTitle(true)
+            .build()
+            .launchUrl(requireContext(),uri)
     }
 
     private fun isLinkValid(archiveUrl: String): Boolean {
@@ -346,9 +416,10 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         return false
     }
 
+    @ExperimentalCoroutinesApi
     private fun resumeOrPlayFromStart() {
-        bookDetailsViewModel.audioBookMetadata.value?.let {
-            playSelectedTrackFile(bookDetailsViewModel.getCurrentPlayingTrack(),it.title)
+        bookDetailsViewModel.audioBookMetadata.value?.let {metadata ->
+            playSelectedTrackFile(bookDetailsViewModel.getCurrentPlayingTrack(),metadata.title)
         }
     }
 
@@ -357,6 +428,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         setVisibility(dataBindingReference.pbContentLoading,set = false)
     }
 
+    @ExperimentalCoroutinesApi
     private fun handleDownloaderEvent(event: Event<DownloadEvent>) {
         event.peekContent().let {
             if(it is DownloadNothing || it is PullAndUpdateStatus || it is MultiDownload) return
@@ -366,6 +438,7 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         }
     }
 
+    @ExperimentalCoroutinesApi
     private fun handleEvent(event: Event<AudioPlayerEvent>) {
         activity?.let {
             Timber.d("Peeking content by default")
@@ -422,7 +495,8 @@ class AudioBookDetailsFragment : BaseUIFragment(),KoinComponent {
         }
     }
 
-    private fun playSelectedTrackFile(currentPos:Int,bookName:String) {
+    @ExperimentalCoroutinesApi
+    private fun playSelectedTrackFile(currentPos:Int, bookName:String) {
         bookDetailsViewModel.audioBookTracks.value?.let {
             Timber.d("Sending new event for play selected track by the user")
             eventStore.publish(Event(

@@ -53,10 +53,12 @@ class MiniPlayerViewModel(
                             Timber.d("Received event for update track details event")
                             updateTrackDetails(title = event.trackTitle,bookId = event.bookId)
                             currentPlayingIndex = event.position
+                            setShouldPlay(play = true)
                         }
 
                         is PlaySelectedTrack -> {
                             setShouldPlay(play = true)
+                            _isPauseByUser = false
                         }
 
                         is Play -> {

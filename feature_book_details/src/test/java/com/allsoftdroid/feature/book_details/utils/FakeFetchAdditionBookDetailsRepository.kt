@@ -17,7 +17,7 @@ class FakeFetchAdditionBookDetailsRepository : IFetchAdditionBookDetailsReposito
         )
     }
 
-    override fun getBookDetails(): LiveData<BookDetails> {
+    fun getBookDetails(): LiveData<BookDetails> {
         return details
     }
 

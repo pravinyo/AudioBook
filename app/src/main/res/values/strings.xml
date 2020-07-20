@@ -3,4 +3,15 @@
     <string name="title_feature_book">Feature Book</string>
     <string name="title_feature_downloader">Download Feature</string>
     <string name="tooltip_open_player_message">Swipe up to open player</string>
+    <string name="license_screen_title">Third-party Licenses</string>
+    <string name="permission_granted_message">Thanks for granting permission</string>
+    <string name="permission_failed_message">This Feature need Storage Permission</string>
+    <string name="btn_dismiss_label">Dismiss</string>
+    <string name="network_connect_message">Please connect to internet</string>
+    <string name="playing_label">Playing</string>
+    <string name="resume_book_header">continue %s from where you left,</string>
+    <string name="resume_book_message">Chapter : %s</string>
+    <string name="btn_listen_label">Listen</string>
+    <string name="offline_message">You are offline</string>
+    <string name="player_navigation_error">Can\'t navigate to Player</string>
 </resources>

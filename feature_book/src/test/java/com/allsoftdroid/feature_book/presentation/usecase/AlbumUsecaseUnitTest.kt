@@ -7,6 +7,7 @@ import com.allsoftdroid.feature_book.data.repository.FakeAudioBookRepository
 import com.allsoftdroid.feature_book.domain.repository.AudioBookRepository
 import com.allsoftdroid.feature_book.domain.usecase.GetAudioBookListUsecase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
@@ -38,9 +39,9 @@ class AlbumUsecaseUnitTest{
 
             albumUsecase.executeUseCase(GetAudioBookListUsecase.RequestValues(0))
 
-            val list  = albumUsecase.getBookList().getOrAwaitValue()
-
-            Assert.assertThat(list,`is`(notNullValue()))
+            albumUsecase.getBookList().collect {list->
+                Assert.assertThat(list,`is`(notNullValue()))
+            }
         }
     }
 
@@ -53,9 +54,9 @@ class AlbumUsecaseUnitTest{
 
             albumUsecase.executeUseCase(GetAudioBookListUsecase.RequestValues(0))
 
-            val list = albumUsecase.getBookList().getOrAwaitValue()
-
-            Assert.assertThat(list.size,`is`(0))
+            albumUsecase.getBookList().collect {list->
+                Assert.assertThat(list.size,`is`(0))
+            }
         }
     }
 

@@ -1,6 +1,9 @@
 package com.allsoftdroid.feature.book_details.domain.usecase
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.allsoftdroid.common.base.extension.Event
+import com.allsoftdroid.common.base.usecase.BaseUseCase
+import com.allsoftdroid.common.base.usecase.UseCaseHandler
 import com.allsoftdroid.common.test.MainCoroutineRule
 import com.allsoftdroid.common.test.getOrAwaitValue
 import com.allsoftdroid.feature.book_details.data.model.TrackFormat
@@ -15,6 +18,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import timber.log.Timber
 import java.util.concurrent.TimeoutException
 
 
@@ -45,7 +49,29 @@ class GetTrackListUsecaseTest{
     fun trackListUsecase_EmptyList_returnsNothing(){
         mainCoroutineRule.runBlockingTest {
             try {
-                trackListUsecase.getTrackListData().getOrAwaitValue()
+                val useCaseHandler = UseCaseHandler.getInstance()
+
+                val requestValues64  = GetTrackListUsecase.RequestValues(trackFormat = TrackFormat.FormatBP64)
+
+                useCaseHandler.execute(
+                    useCase = trackListUsecase,
+                    values = requestValues64,
+                    callback = object : BaseUseCase.UseCaseCallback<GetTrackListUsecase.ResponseValues> {
+                        override suspend fun onSuccess(response: GetTrackListUsecase.ResponseValues) {
+
+                            response.event.getContentIfNotHandled()?.let {
+                                Assert.assertThat(it, CoreMatchers.`is`(notNullValue()))
+                            }
+
+                            Timber.d("Optimal Track list fetch success")
+                        }
+
+                        override suspend fun onError(t: Throwable) {
+
+                        }
+                    }
+                )
+
             }catch (exception:TimeoutException){
                 Assert.assertThat(exception.message, CoreMatchers.`is`("LiveData value was never set."))
             }
@@ -59,24 +85,30 @@ class GetTrackListUsecaseTest{
 
             trackListUsecase.executeUseCase(GetTrackListUsecase.RequestValues(TrackFormat.FormatBP64))
 
-            val list = trackListUsecase.getTrackListData().getOrAwaitValue()
+            val useCaseHandler = UseCaseHandler.getInstance()
 
-            Assert.assertThat(list,`is`(notNullValue()))
-            Assert.assertThat(list.size,`is`(2))
-            Assert.assertThat(list[1].trackId,`is`("2"))
-        }
-    }
+            val requestValues64  = GetTrackListUsecase.RequestValues(trackFormat = TrackFormat.FormatBP64)
 
-    @ExperimentalCoroutinesApi
-    @Test
-    fun trackListUsecase_PullTracks_returnsTrackList(){
-        mainCoroutineRule.runBlockingTest {
-            try {
-                trackListUsecase.executeUseCase(null)
-                trackListUsecase.getTrackListData().getOrAwaitValue()
-            }catch (exception:TimeoutException){
-                Assert.assertThat(exception.message, CoreMatchers.`is`("LiveData value was never set."))
-            }
+            useCaseHandler.execute(
+                useCase = trackListUsecase,
+                values = requestValues64,
+                callback = object : BaseUseCase.UseCaseCallback<GetTrackListUsecase.ResponseValues> {
+                    override suspend fun onSuccess(response: GetTrackListUsecase.ResponseValues) {
+
+                        response.event.getContentIfNotHandled()?.let {list ->
+                            Assert.assertThat(list,`is`(notNullValue()))
+                            Assert.assertThat(list.size,`is`(2))
+                            Assert.assertThat(list[1].trackId,`is`("2"))
+                        }
+
+                        Timber.d("Optimal Track list fetch success")
+                    }
+
+                    override suspend fun onError(t: Throwable) {
+
+                    }
+                }
+            )
         }
     }
 }

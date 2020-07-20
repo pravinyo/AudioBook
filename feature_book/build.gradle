@@ -65,6 +65,8 @@ dependencies {
     implementation(LibraryDependency.LOTTIE)
     implementation(LibraryDependency.LOGGING_INTERCEPTOR)
 
+    implementation(LibraryDependency.LIFECYCLE_LIVEDATA_KTX)
+
 
     testImplementation(TestLibraryDependency.MOCKITO_CORE)
 

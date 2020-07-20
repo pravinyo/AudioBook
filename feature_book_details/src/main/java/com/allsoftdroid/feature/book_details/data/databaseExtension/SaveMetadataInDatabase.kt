@@ -7,6 +7,7 @@ import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseMetadataEntity
 import com.allsoftdroid.database.metadataCacheDB.entity.DatabaseTrackEntity
 import com.allsoftdroid.feature.book_details.data.model.toDatabaseModel
 import com.allsoftdroid.feature.book_details.data.network.response.GetAudioBookMetadataResponse
+import kotlinx.coroutines.flow.collect
 import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
@@ -78,14 +79,14 @@ class SaveMetadataInDatabase(metadataDao: MetadataDao) : SaveInDatabase<Metadata
             mDao.insertAllTracks(trackList)
             Timber.d("#${trackList.size} tracks loaded in the DB")
 
-            val list = mDao.getTrackDetails(metadata_id = metadata.identifier).value
+            val list = mDao.getTrackDetails(metadata_id = metadata.identifier)
 
-            list?.forEach {
-                Timber.d(it.trackAlbum_id)
-                Timber.d(it.trackTitle)
+            list.collect { result1 ->
+                result1.forEach {
+                    Timber.d(it.trackAlbum_id)
+                    Timber.d(it.trackTitle)
+                }
             }
-
-            list?: emptyList()
         }catch (e:Exception){
             e.printStackTrace()
             return -1

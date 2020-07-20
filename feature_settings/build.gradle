@@ -45,4 +45,5 @@ dependencies {
     implementation(project(path: ModuleDependency.LIBRARY_COMMON))
 
     implementation(LibraryDependency.PREFERENCE)
+    implementation(LibraryDependency.BROWSER)
 }
