@@ -1,7 +1,7 @@
 package com.allsoftdroid.audiobook.feature_listen_later_ui.di
 
 import com.allsoftdroid.audiobook.feature_listen_later_ui.data.repository.ListenLaterRepositoryImpl
-import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.IListenLaterRepository
+import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.repository.IListenLaterRepository
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.ListenLaterViewModel
 import com.allsoftdroid.database.common.AudioBookDatabase
 import kotlinx.coroutines.CoroutineScope
