@@ -1,5 +1,6 @@
 package com.allsoftdroid.audiobook.feature_listen_later_ui.data.repository
 
+import android.os.ParcelFileDescriptor
 import com.allsoftdroid.audiobook.feature_listen_later_ui.data.model.BookMarkDataItem
 import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.repository.IImportUserDataRepository
 import com.allsoftdroid.audiobook.feature_listen_later_ui.utils.CommonUtility
@@ -10,6 +11,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
 import java.io.File
+import java.io.FileInputStream
 import java.lang.Exception
 
 class ImportUserDataRepository(private val dispatcher:CoroutineDispatcher = Dispatchers.IO) :
@@ -45,6 +47,46 @@ class ImportUserDataRepository(private val dispatcher:CoroutineDispatcher = Disp
             Timber.d("return list is $returnList")
             returnList
         }
+    }
+
+    suspend fun fromFile(pfd: ParcelFileDescriptor): List<BookMarkDataItem> {
+        val jsonString:String? = withContext(dispatcher) {
+            getContent(pfd)
+        }
+
+        Timber.d("Json string received is : $jsonString")
+
+        return if (jsonString == null) emptyList()
+        else{
+            val returnList = mutableListOf<BookMarkDataItem>()
+            val jsonArray = JSONArray(jsonString)
+            Timber.d("json array is $jsonArray")
+            Timber.d("json array length is ${jsonArray.length()}")
+
+            for (i in 0 until jsonArray.length()){
+                val item = jsonArray[i] as JSONObject
+                returnList.add(
+                    BookMarkDataItem(
+                        bookId = item.getString("bookId"),
+                        bookName = item.getString("bookName"),
+                        bookAuthor = item.getString("bookAuthor"),
+                        duration = item.getString("duration"),
+                        timeStamp = item.getString("timeStamp")
+                    ))
+            }
+            Timber.d("return list is $returnList")
+            returnList
+        }
+    }
+
+    private fun getContent(pfd: ParcelFileDescriptor):String?{
+        var result:String?=null
+
+        val fileStream = FileInputStream(pfd.fileDescriptor)
+        val encryptedData = fileStream.bufferedReader().use { input -> input.readText() }
+        result = CommonUtility.decryptWithAES(secretKey,encryptedData)
+
+        return result
     }
 
     private fun getContent(path: String):String?{
