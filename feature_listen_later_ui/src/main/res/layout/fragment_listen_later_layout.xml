@@ -43,6 +43,17 @@
                 android:text="@string/toolbar_title_text_listen_later"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
+
+            <ImageView
+                android:id="@+id/toolbar_export_import"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginEnd="@dimen/margin_normal"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/backup_restore"
+                android:contentDescription="@string/toolbar_backup_restore" />
         </LinearLayout>
 
 
