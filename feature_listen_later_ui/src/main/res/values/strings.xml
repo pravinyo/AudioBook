@@ -11,4 +11,8 @@
     <string name="latest_first">Latest First</string>
     <string name="oldest_first">Oldest First</string>
     <string name="shortest_first">Shortest First</string>
+    <string name="toolbar_backup_restore">backup or restore</string>
+    <string name="export_data">Export data</string>
+    <string name="import_data">Import data</string>
+    <string name="backup_restore_header">Select Action</string>
 </resources>
