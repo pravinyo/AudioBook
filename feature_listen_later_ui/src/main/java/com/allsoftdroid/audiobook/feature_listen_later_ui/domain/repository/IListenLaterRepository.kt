@@ -1,4 +1,4 @@
-package com.allsoftdroid.audiobook.feature_listen_later_ui.domain
+package com.allsoftdroid.audiobook.feature_listen_later_ui.domain.repository
 
 import com.allsoftdroid.audiobook.feature_listen_later_ui.data.model.ListenLaterItemDomainModel
 
