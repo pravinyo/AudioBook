@@ -1,9 +1,11 @@
 package com.allsoftdroid.audiobook.feature_listen_later_ui.presentation
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.os.ParcelFileDescriptor
+import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
@@ -20,16 +22,23 @@ import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.Success
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ItemClickedListener
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ListenLaterAdapter
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.OptionsClickedListener
-import com.allsoftdroid.common.base.utils.ShareUtils
 import com.allsoftdroid.audiobook.feature_listen_later_ui.utils.SortType
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import com.allsoftdroid.common.base.network.StoreUtils
+import com.allsoftdroid.common.base.utils.ShareUtils
+import com.allsoftdroid.common.base.utils.StoragePermissionHandler
 import org.koin.android.ext.android.inject
 import org.koin.core.KoinComponent
+import java.io.FileNotFoundException
+import java.io.IOException
+
 
 class ListenLaterFragment : BaseUIFragment(),KoinComponent {
 
+    private val CREATE_REQUEST_CODE = 121
+    private val OPEN_REQUEST_CODE = 123
     private val listenLaterViewModel: ListenLaterViewModel by inject()
+
     private lateinit var bindingRef:FragmentListenLaterLayoutBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,7 +130,91 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
 
         bindingRef = dataBinding
 
+        registerForContextMenu(dataBinding.toolbarExportImport)
+        dataBinding.toolbarExportImport.setOnClickListener {
+            it.showContextMenu()
+        }
+
         return dataBinding.root
+    }
+
+    private fun export() {
+        if (StoragePermissionHandler.isPermissionGranted(requireActivity())){
+            pickFilePath()
+        }else{
+            StoragePermissionHandler.requestPermission(requireActivity())
+        }
+    }
+
+    private fun pickFilePath() {
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
+
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_TITLE, "export_${System.currentTimeMillis()}.data")
+
+        startActivityForResult(intent, CREATE_REQUEST_CODE)
+    }
+
+    private fun openFile(){
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "text/plain"
+        startActivityForResult(intent, OPEN_REQUEST_CODE)
+    }
+
+    private fun import() {
+        if (StoragePermissionHandler.isPermissionGranted(requireActivity())){
+            openFile()
+        }else{
+            StoragePermissionHandler.requestPermission(requireActivity())
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
+        super.onActivityResult(requestCode, resultCode, resultData)
+        val currentUri: Uri?
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == CREATE_REQUEST_CODE) {
+                if (resultData != null) {
+                    currentUri = resultData.data
+                    currentUri?.let { writeFileContent(currentUri) }
+                }
+            }else if (requestCode == OPEN_REQUEST_CODE) {
+
+                if (resultData != null) {
+                    currentUri = resultData.data
+                    currentUri?.let { readFileContent(currentUri) }
+                }
+            }
+        }
+    }
+
+    private fun readFileContent(currentUri: Uri) {
+        try {
+            val pfd: ParcelFileDescriptor? = requireActivity().contentResolver.openFileDescriptor(currentUri, "r")
+            pfd?.let {parcelFileDesc ->
+                listenLaterViewModel.import(parcelFileDesc)
+            }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun writeFileContent(currentUri: Uri) {
+        try {
+            val pfd: ParcelFileDescriptor? = requireActivity().contentResolver.openFileDescriptor(currentUri, "w")
+            pfd?.let {parcelFileDesc ->
+                listenLaterViewModel.export(parcelFileDesc)
+            }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 
     private fun showPopMenu(view: View?) {
@@ -150,7 +243,6 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
                 return@setOnMenuItemClickListener false
             }
             popUp.show()
-
         }
     }
 
@@ -213,5 +305,30 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
     override fun onResume() {
         super.onResume()
         listenLaterViewModel.loadList()
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        val inflater = MenuInflater(v.context)
+
+        inflater.inflate(R.menu.backup_restore_menu,menu)
+        menu.setHeaderTitle(getString(R.string.backup_restore_header))
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+
+        return when(item.itemId){
+            R.id.export_data -> {
+                export()
+                true
+            }
+            R.id.import_data -> {
+                import()
+                true
+            }
+            else -> {
+                false
+            }
+        }
     }
 }
