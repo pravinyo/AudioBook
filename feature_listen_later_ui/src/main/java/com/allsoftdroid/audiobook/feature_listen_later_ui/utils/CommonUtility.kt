@@ -14,6 +14,11 @@ import java.security.InvalidKeyException
 import java.security.Security
 
 object CommonUtility {
+
+    const val defaultSecretKey: String = "662ede816988e58fb6d057d9d85605e0"
+    const val CREATE_REQUEST_CODE = 121
+    const val OPEN_REQUEST_CODE = 123
+
     fun encrypt(strToEncrypt: String, secret_key: String): String? {
         Security.addProvider(BouncyCastleProvider())
         val keyBytes: ByteArray
