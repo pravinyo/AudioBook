@@ -17,8 +17,6 @@ class ExportUserDataRepository(private val dispatcher: CoroutineDispatcher = Dis
     IExportUserDataRepository {
 
     private var dataToExport: String? = null
-    private val secretKey: String =
-        "662ede816988e58fb6d057d9d85605e0"
 
     private fun prepareUserData(data: List<BookMarkDataItem>) {
         val jsonArray = JSONArray()
@@ -35,7 +33,7 @@ class ExportUserDataRepository(private val dispatcher: CoroutineDispatcher = Dis
 
         val intermediateData = jsonArray.toString()
         Timber.d("Data Before is :$intermediateData")
-        dataToExport = CommonUtility.encrypt(intermediateData,secretKey)
+        dataToExport = CommonUtility.encrypt(intermediateData,CommonUtility.defaultSecretKey)
         Timber.d("Data After is :$dataToExport")
     }
 
