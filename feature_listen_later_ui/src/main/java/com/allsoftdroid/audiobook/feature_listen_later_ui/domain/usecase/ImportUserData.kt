@@ -3,17 +3,16 @@ package com.allsoftdroid.audiobook.feature_listen_later_ui.domain.usecase
 import android.os.ParcelFileDescriptor
 import com.allsoftdroid.audiobook.feature_listen_later_ui.data.model.BookMarkDataItem
 import com.allsoftdroid.audiobook.feature_listen_later_ui.data.model.toDatabaseModel
-import com.allsoftdroid.audiobook.feature_listen_later_ui.data.repository.ImportUserDataRepository
+import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.repository.IImportUserDataRepository
 import com.allsoftdroid.database.listenLaterDB.ListenLaterDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.lang.Exception
 
 class ImportUserData(private val listenLaterDao: ListenLaterDao,
-                     private val importUserDataRepository: ImportUserDataRepository) {
+                     private val importUserDataRepository: IImportUserDataRepository) {
 
     suspend fun fromFile(path:String): Flow<Boolean> {
         var result : Flow<Boolean> = flow {  }
