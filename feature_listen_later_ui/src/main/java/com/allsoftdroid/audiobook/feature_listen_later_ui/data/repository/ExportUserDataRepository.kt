@@ -51,7 +51,7 @@ class ExportUserDataRepository(private val dispatcher: CoroutineDispatcher = Dis
         }
     }
 
-    suspend fun toFile(pfd: ParcelFileDescriptor, data: List<BookMarkDataItem>) {
+    override suspend fun toFile(pfd: ParcelFileDescriptor, data: List<BookMarkDataItem>) {
         withContext(dispatcher){
             prepareUserData(data)
 
