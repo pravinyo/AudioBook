@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
 import android.view.*
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
@@ -22,6 +23,8 @@ import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.Success
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ItemClickedListener
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ListenLaterAdapter
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.OptionsClickedListener
+import com.allsoftdroid.audiobook.feature_listen_later_ui.utils.CommonUtility.CREATE_REQUEST_CODE
+import com.allsoftdroid.audiobook.feature_listen_later_ui.utils.CommonUtility.OPEN_REQUEST_CODE
 import com.allsoftdroid.audiobook.feature_listen_later_ui.utils.SortType
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import com.allsoftdroid.common.base.network.StoreUtils
@@ -34,9 +37,6 @@ import java.io.IOException
 
 
 class ListenLaterFragment : BaseUIFragment(),KoinComponent {
-
-    private val CREATE_REQUEST_CODE = 121
-    private val OPEN_REQUEST_CODE = 123
     private val listenLaterViewModel: ListenLaterViewModel by inject()
 
     private lateinit var bindingRef:FragmentListenLaterLayoutBinding
@@ -125,6 +125,12 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
                         }
                     }
                 }
+            }
+        })
+
+        listenLaterViewModel.notification.observe(viewLifecycleOwner, Observer {
+            it.getContentIfNotHandled()?.let { message ->
+                Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
             }
         })
 
