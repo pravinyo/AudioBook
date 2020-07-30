@@ -1,7 +1,13 @@
 package com.allsoftdroid.audiobook.feature_listen_later_ui.di
 
+import com.allsoftdroid.audiobook.feature_listen_later_ui.data.repository.ExportUserDataRepository
+import com.allsoftdroid.audiobook.feature_listen_later_ui.data.repository.ImportUserDataRepository
 import com.allsoftdroid.audiobook.feature_listen_later_ui.data.repository.ListenLaterRepositoryImpl
+import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.repository.IExportUserDataRepository
+import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.repository.IImportUserDataRepository
 import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.repository.IListenLaterRepository
+import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.usecase.ExportUserData
+import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.usecase.ImportUserData
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.ListenLaterViewModel
 import com.allsoftdroid.database.common.AudioBookDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +31,8 @@ object FeatureListenLaterModule {
             listOf(
                 listenLaterViewModel,
                 dataModule,
-                jobModule
+                jobModule,
+                usecaseModule
             )
         )
     }
@@ -34,13 +41,24 @@ object FeatureListenLaterModule {
         loadKoinModules(listOf(
             listenLaterViewModel,
             dataModule,
-            jobModule
+            jobModule,
+            usecaseModule
         ))
     }
 
     var listenLaterViewModel : Module = module {
         viewModel {
-            ListenLaterViewModel(repository = get())
+            ListenLaterViewModel(repository = get(),exportUserData = get(),importUserData = get())
+        }
+    }
+
+    var usecaseModule : Module = module {
+        factory {
+            ExportUserData(listenLaterDao = get(named(name = BEAN_NAME)),exportUserDataRepository = get())
+        }
+
+        factory {
+            ImportUserData(listenLaterDao = get(named(name = BEAN_NAME)),importUserDataRepository = get())
         }
     }
 
@@ -51,6 +69,14 @@ object FeatureListenLaterModule {
 
         factory {
             ListenLaterRepositoryImpl(listenLaterDao = get(named(name = BEAN_NAME))) as IListenLaterRepository
+        }
+
+        factory {
+            ExportUserDataRepository() as IExportUserDataRepository
+        }
+
+        factory {
+            ImportUserDataRepository() as IImportUserDataRepository
         }
     }
 
