@@ -18,4 +18,6 @@
     <string name="import_cancelled_message">Import Cancelled</string>
     <string name="export_cancelled_message">Export Cancelled</string>
     <string name="export_filename_format">export_%s.data</string>
+    <string name="no_data_export_message">There is no data to export</string>
+    <string name="book_count">%d Books</string>
 </resources>
