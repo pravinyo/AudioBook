@@ -148,8 +148,12 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
 
     private fun export() {
         if (StoragePermissionHandler.isPermissionGranted(requireActivity())){
-            val argument = System.currentTimeMillis().toString()
-            exportFileContract.launch(getString(R.string.export_filename_format,argument))
+            if (listenLaterViewModel.listenLaterData.isNotEmpty()){
+                val argument = System.currentTimeMillis().toString()
+                exportFileContract.launch(getString(R.string.export_filename_format,argument))
+            }else{
+                Toast.makeText(requireActivity(),getString(R.string.no_data_export_message),Toast.LENGTH_SHORT).show()
+            }
         }else{
             StoragePermissionHandler.requestPermission(requireActivity())
         }
@@ -243,7 +247,7 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
     private fun dataAvailable(list: List<ListenLaterItemDomainModel>) {
 
         bindingRef.bookStatsCount.apply {
-            this.text = "${list.size} Books"
+            this.text = context.getString(R.string.book_count,list.size)
         }
 
         bindingRef.loadingProgressbar.apply {
