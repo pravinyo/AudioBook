@@ -3,6 +3,7 @@ package com.allsoftdroid.buildsrc
 import CoreVersion
 
 private object LibraryVersion {
+    const val BOUNCYCASTLE_VERSION = "1.46"
     const val BROWSER_VERSION = "1.2.0"
     const val DOWNLOADER_VERSION = "1.7.7"
     const val TOOL_TIP = "2.0.3"
@@ -133,4 +134,5 @@ object LibraryDependency {
     const val DOWNLOADER = "com.liulishuo.filedownloader:library:${LibraryVersion.DOWNLOADER_VERSION}"
 
     const val BROWSER = "androidx.browser:browser:${LibraryVersion.BROWSER_VERSION}"
+    const val BOUNCY_CASTLE = "org.bouncycastle:bcprov-jdk16:${LibraryVersion.BOUNCYCASTLE_VERSION}"
 }

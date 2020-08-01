@@ -1,10 +1,12 @@
 package com.allsoftdroid.audiobook.feature_listen_later_ui.presentation
 
+import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.os.ParcelFileDescriptor
+import android.view.*
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
@@ -17,24 +19,33 @@ import com.allsoftdroid.audiobook.feature_listen_later_ui.di.FeatureListenLaterM
 import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.Empty
 import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.Started
 import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.Success
+import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.contracts.ExportFileContract
+import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.contracts.ImportFileContract
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ItemClickedListener
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ListenLaterAdapter
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.OptionsClickedListener
-import com.allsoftdroid.common.base.utils.ShareUtils
 import com.allsoftdroid.audiobook.feature_listen_later_ui.utils.SortType
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import com.allsoftdroid.common.base.network.StoreUtils
+import com.allsoftdroid.common.base.utils.ShareUtils
+import com.allsoftdroid.common.base.utils.StoragePermissionHandler
 import org.koin.android.ext.android.inject
 import org.koin.core.KoinComponent
+import java.io.FileNotFoundException
+import java.io.IOException
+
 
 class ListenLaterFragment : BaseUIFragment(),KoinComponent {
-
     private val listenLaterViewModel: ListenLaterViewModel by inject()
+
     private lateinit var bindingRef:FragmentListenLaterLayoutBinding
+    private lateinit var importFileContract: ActivityResultLauncher<Int>
+    private lateinit var exportFileContract: ActivityResultLauncher<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FeatureListenLaterModule.injectFeature()
+        initializeContracts()
     }
 
     override fun onCreateView(
@@ -119,9 +130,81 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
             }
         })
 
+        listenLaterViewModel.notification.observe(viewLifecycleOwner, Observer {
+            it.getContentIfNotHandled()?.let { message ->
+                Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
+            }
+        })
+
         bindingRef = dataBinding
 
+        registerForContextMenu(dataBinding.toolbarExportImport)
+        dataBinding.toolbarExportImport.setOnClickListener {
+            it.showContextMenu()
+        }
+
         return dataBinding.root
+    }
+
+    private fun export() {
+        if (StoragePermissionHandler.isPermissionGranted(requireActivity())){
+            val argument = System.currentTimeMillis().toString()
+            exportFileContract.launch(getString(R.string.export_filename_format,argument))
+        }else{
+            StoragePermissionHandler.requestPermission(requireActivity())
+        }
+    }
+
+    private fun initializeContracts(){
+        importFileContract = registerForActivityResult(ImportFileContract()){ resultUri ->
+            if (resultUri == null){
+                Toast.makeText(requireActivity(),getString(R.string.import_cancelled_message),Toast.LENGTH_SHORT).show()
+            }else{
+                readFileContent(resultUri)
+            }
+        }
+
+        exportFileContract = registerForActivityResult(ExportFileContract()){ resultUri ->
+            if (resultUri == null){
+                Toast.makeText(requireActivity(),getString(R.string.export_cancelled_message),Toast.LENGTH_SHORT).show()
+            }else{
+                writeFileContent(resultUri)
+            }
+        }
+    }
+
+    private fun import() {
+        if (StoragePermissionHandler.isPermissionGranted(requireActivity())){
+            importFileContract.launch(null)
+        }else{
+            StoragePermissionHandler.requestPermission(requireActivity())
+        }
+    }
+
+    private fun readFileContent(currentUri: Uri) {
+        try {
+            val pfd: ParcelFileDescriptor? = requireActivity().contentResolver.openFileDescriptor(currentUri, "r")
+            pfd?.let {parcelFileDesc ->
+                listenLaterViewModel.import(parcelFileDesc)
+            }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun writeFileContent(currentUri: Uri) {
+        try {
+            val pfd: ParcelFileDescriptor? = requireActivity().contentResolver.openFileDescriptor(currentUri, "w")
+            pfd?.let {parcelFileDesc ->
+                listenLaterViewModel.export(parcelFileDesc)
+            }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 
     private fun showPopMenu(view: View?) {
@@ -150,7 +233,6 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
                 return@setOnMenuItemClickListener false
             }
             popUp.show()
-
         }
     }
 
@@ -213,5 +295,30 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
     override fun onResume() {
         super.onResume()
         listenLaterViewModel.loadList()
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        val inflater = MenuInflater(v.context)
+
+        inflater.inflate(R.menu.backup_restore_menu,menu)
+        menu.setHeaderTitle(getString(R.string.backup_restore_header))
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+
+        return when(item.itemId){
+            R.id.export_data -> {
+                export()
+                true
+            }
+            R.id.import_data -> {
+                import()
+                true
+            }
+            else -> {
+                false
+            }
+        }
     }
 }
