@@ -15,4 +15,7 @@
     <string name="export_data">Export data</string>
     <string name="import_data">Import data</string>
     <string name="backup_restore_header">Select Action</string>
+    <string name="import_cancelled_message">Import Cancelled</string>
+    <string name="export_cancelled_message">Export Cancelled</string>
+    <string name="export_filename_format">export_%s.data</string>
 </resources>
