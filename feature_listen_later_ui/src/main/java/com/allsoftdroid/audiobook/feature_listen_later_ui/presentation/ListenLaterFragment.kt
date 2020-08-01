@@ -1,13 +1,12 @@
 package com.allsoftdroid.audiobook.feature_listen_later_ui.presentation
 
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
 import android.view.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
@@ -20,11 +19,11 @@ import com.allsoftdroid.audiobook.feature_listen_later_ui.di.FeatureListenLaterM
 import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.Empty
 import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.Started
 import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.Success
+import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.contracts.ExportFileContract
+import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.contracts.ImportFileContract
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ItemClickedListener
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.ListenLaterAdapter
 import com.allsoftdroid.audiobook.feature_listen_later_ui.presentation.recyclerView.OptionsClickedListener
-import com.allsoftdroid.audiobook.feature_listen_later_ui.utils.CommonUtility.CREATE_REQUEST_CODE
-import com.allsoftdroid.audiobook.feature_listen_later_ui.utils.CommonUtility.OPEN_REQUEST_CODE
 import com.allsoftdroid.audiobook.feature_listen_later_ui.utils.SortType
 import com.allsoftdroid.common.base.fragment.BaseUIFragment
 import com.allsoftdroid.common.base.network.StoreUtils
@@ -40,10 +39,13 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
     private val listenLaterViewModel: ListenLaterViewModel by inject()
 
     private lateinit var bindingRef:FragmentListenLaterLayoutBinding
+    private lateinit var importFileContract: ActivityResultLauncher<Int>
+    private lateinit var exportFileContract: ActivityResultLauncher<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FeatureListenLaterModule.injectFeature()
+        initializeContracts()
     }
 
     override fun onCreateView(
@@ -146,54 +148,36 @@ class ListenLaterFragment : BaseUIFragment(),KoinComponent {
 
     private fun export() {
         if (StoragePermissionHandler.isPermissionGranted(requireActivity())){
-            pickFilePath()
+            val argument = System.currentTimeMillis().toString()
+            exportFileContract.launch(getString(R.string.export_filename_format,argument))
         }else{
             StoragePermissionHandler.requestPermission(requireActivity())
         }
     }
 
-    private fun pickFilePath() {
-        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
+    private fun initializeContracts(){
+        importFileContract = registerForActivityResult(ImportFileContract()){ resultUri ->
+            if (resultUri == null){
+                Toast.makeText(requireActivity(),getString(R.string.import_cancelled_message),Toast.LENGTH_SHORT).show()
+            }else{
+                readFileContent(resultUri)
+            }
+        }
 
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "text/plain"
-        intent.putExtra(Intent.EXTRA_TITLE, "export_${System.currentTimeMillis()}.data")
-
-        startActivityForResult(intent, CREATE_REQUEST_CODE)
-    }
-
-    private fun openFile(){
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "text/plain"
-        startActivityForResult(intent, OPEN_REQUEST_CODE)
+        exportFileContract = registerForActivityResult(ExportFileContract()){ resultUri ->
+            if (resultUri == null){
+                Toast.makeText(requireActivity(),getString(R.string.export_cancelled_message),Toast.LENGTH_SHORT).show()
+            }else{
+                writeFileContent(resultUri)
+            }
+        }
     }
 
     private fun import() {
         if (StoragePermissionHandler.isPermissionGranted(requireActivity())){
-            openFile()
+            importFileContract.launch(null)
         }else{
             StoragePermissionHandler.requestPermission(requireActivity())
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
-        super.onActivityResult(requestCode, resultCode, resultData)
-        val currentUri: Uri?
-
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == CREATE_REQUEST_CODE) {
-                if (resultData != null) {
-                    currentUri = resultData.data
-                    currentUri?.let { writeFileContent(currentUri) }
-                }
-            }else if (requestCode == OPEN_REQUEST_CODE) {
-
-                if (resultData != null) {
-                    currentUri = resultData.data
-                    currentUri?.let { readFileContent(currentUri) }
-                }
-            }
         }
     }
 
