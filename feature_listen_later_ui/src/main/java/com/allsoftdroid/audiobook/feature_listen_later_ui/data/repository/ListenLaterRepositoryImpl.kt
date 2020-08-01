@@ -2,7 +2,7 @@ package com.allsoftdroid.audiobook.feature_listen_later_ui.data.repository
 
 import com.allsoftdroid.audiobook.feature_listen_later_ui.data.model.ListenLaterItemDomainModel
 import com.allsoftdroid.audiobook.feature_listen_later_ui.data.model.toDomainModel
-import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.IListenLaterRepository
+import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.repository.IListenLaterRepository
 import com.allsoftdroid.database.listenLaterDB.ListenLaterDao
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
