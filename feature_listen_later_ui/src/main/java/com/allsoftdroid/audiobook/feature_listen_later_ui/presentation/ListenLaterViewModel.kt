@@ -4,6 +4,7 @@ import android.os.ParcelFileDescriptor
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.allsoftdroid.audiobook.feature_listen_later_ui.data.model.ListenLaterItemDomainModel
 import com.allsoftdroid.audiobook.feature_listen_later_ui.di.FeatureListenLaterModule.SUPER_VISOR_JOB
 import com.allsoftdroid.audiobook.feature_listen_later_ui.di.FeatureListenLaterModule.VIEW_MODEL_SCOPE
 import com.allsoftdroid.audiobook.feature_listen_later_ui.domain.Empty
@@ -49,6 +50,9 @@ class ListenLaterViewModel(
     private var _notification = MutableLiveData<Event<String>>()
     val notification : LiveData<Event<String>> = _notification
 
+    private var _listenLaterDataList = mutableListOf<ListenLaterItemDomainModel>()
+    val listenLaterData:List<ListenLaterItemDomainModel> = _listenLaterDataList
+
     fun setCurrentShortType(type:SortType){
         currentShortType = type
         loadList()
@@ -74,6 +78,8 @@ class ListenLaterViewModel(
 
             if(!data.isNullOrEmpty()){
                 _requestStatus.value = Event(Success(data))
+                _listenLaterDataList.clear()
+                _listenLaterDataList.addAll(data)
             }else{
                 _requestStatus.value = Event(Empty)
             }
