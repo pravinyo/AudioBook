@@ -92,6 +92,9 @@ dependencies {
     implementation(LibraryDependency.FIREBASE_ANALYTICS_KTX)
     implementation(LibraryDependency.FIREBASE_CRASHLYTICS)
 
+    //leaks
+    debugImplementation(LibraryDependency.LEAKY_CANARY)
+
     //test
     testImplementation(TestLibraryDependency.JUNIT)
     testImplementation(TestLibraryDependency.COROUTINES_TEST)
