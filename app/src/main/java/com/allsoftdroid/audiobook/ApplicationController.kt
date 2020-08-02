@@ -5,6 +5,8 @@ import com.allsoftdroid.common.di.BaseModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import timber.log.Timber
+import android.os.StrictMode
+
 
 class ApplicationController : Application(){
 
@@ -20,5 +22,19 @@ class ApplicationController : Application(){
         if(BuildConfig.DEBUG){
             Timber.plant(Timber.DebugTree())
         }
+
+        enabledStrictMode()
     }
+
+    private fun enabledStrictMode() {
+        StrictMode.setThreadPolicy(
+            StrictMode.ThreadPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .penaltyDeath()
+                .build()
+        )
+    }
+    
+    
 }
