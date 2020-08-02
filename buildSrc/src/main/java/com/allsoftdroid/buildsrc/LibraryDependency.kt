@@ -17,7 +17,7 @@ private object LibraryVersion {
     const val JSOUP = "1.12.1"
     const val SUPPORT_V13 = "28.0.0"
     const val MULTISTAGE_TOGGLE_BTN = "0.2.2"
-    const val LEAKY_CANARY = "2.0"
+    const val LEAKY_CANARY = "2.4"
     const val EXOPLAYER = "2.10.8"
     const val RX_RELAY = "2.1.1"
     const val RX_JAVA = "2.2.10"
